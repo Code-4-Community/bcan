@@ -1,0 +1,14 @@
+# Ignore node_modules in subdirectories
+/backend/node_modules
+/frontend/node_modules
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Logs
+*.log
