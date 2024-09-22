@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import AWS from 'aws-sdk';
 import { JwtService } from '@nestjs/jwt';
-import * as crypto from 'crypto'; // Correctly import crypto
+import * as crypto from 'crypto';
 
 AWS.config.update({
   region: process.env.AWS_REGION || 'us-east-1',

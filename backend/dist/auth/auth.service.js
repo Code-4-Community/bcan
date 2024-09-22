@@ -40,7 +40,7 @@ exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
 const jwt_1 = require("@nestjs/jwt");
-const crypto = __importStar(require("crypto")); // Correctly import crypto
+const crypto = __importStar(require("crypto"));
 aws_sdk_1.default.config.update({
     region: process.env.AWS_REGION || 'us-east-1',
 });
