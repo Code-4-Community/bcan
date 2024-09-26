@@ -28,9 +28,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -39,21 +36,70 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
-const jwt_1 = require("@nestjs/jwt");
 const crypto = __importStar(require("crypto"));
 aws_sdk_1.default.config.update({
     region: process.env.AWS_REGION || 'us-east-1',
 });
 let AuthService = AuthService_1 = class AuthService {
-    constructor(jwtService) {
-        this.jwtService = jwtService;
+    constructor() {
         this.logger = new common_1.Logger(AuthService_1.name);
-        this.cognito = new aws_sdk_1.default.CognitoIdentityServiceProvider({
-            region: process.env.AWS_REGION || 'us-east-2',
-        });
+        this.cognito = new aws_sdk_1.default.CognitoIdentityServiceProvider();
+        this.dynamoDb = new aws_sdk_1.default.DynamoDB.DocumentClient();
     }
     computeSecretHash(username, clientId, clientSecret) {
-        return crypto.createHmac('SHA256', clientSecret).update(username + clientId).digest('base64');
+        return crypto
+            .createHmac('SHA256', clientSecret)
+            .update(username + clientId)
+            .digest('base64');
+    }
+    async register(username, password, email) {
+        const userPoolId = process.env.COGNITO_USER_POOL_ID;
+        if (!userPoolId) {
+            this.logger.error('Cognito User Pool ID is not defined.');
+            throw new Error('Cognito User Pool ID is not defined.');
+        }
+        try {
+            // Create the user in Cognito
+            await this.cognito
+                .adminCreateUser({
+                UserPoolId: userPoolId,
+                Username: username,
+                UserAttributes: [
+                    { Name: 'email', Value: email },
+                    { Name: 'email_verified', Value: 'true' },
+                ],
+                MessageAction: 'SUPPRESS',
+            })
+                .promise();
+            // Set the user's password
+            await this.cognito
+                .adminSetUserPassword({
+                UserPoolId: userPoolId,
+                Username: username,
+                Password: password,
+                Permanent: true,
+            })
+                .promise();
+            // Create a new user record in DynamoDB
+            const tableName = process.env.DYNAMODB_TABLE_NAME || 'BCANBeings';
+            const params = {
+                TableName: tableName,
+                Item: {
+                    userId: username,
+                    email: email,
+                    biography: '', // Initialize biography as empty
+                },
+            };
+            await this.dynamoDb.put(params).promise();
+            this.logger.log(`User ${username} registered successfully and added to DynamoDB.`);
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                this.logger.error('Registration failed', error.stack);
+                throw new Error(error.message || 'Registration failed');
+            }
+            throw new Error('An unknown error occurred during registration');
+        }
     }
     async login(username, password) {
         var _a;
@@ -64,7 +110,7 @@ let AuthService = AuthService_1 = class AuthService {
             throw new Error('Cognito Client ID or Secret is not defined.');
         }
         const secretHash = this.computeSecretHash(username, clientId, clientSecret);
-        const params = {
+        const authParams = {
             AuthFlow: 'USER_PASSWORD_AUTH',
             ClientId: clientId,
             AuthParameters: {
@@ -74,7 +120,7 @@ let AuthService = AuthService_1 = class AuthService {
             },
         };
         try {
-            const response = await this.cognito.initiateAuth(params).promise();
+            const response = await this.cognito.initiateAuth(authParams).promise();
             this.logger.debug(`Cognito Response: ${JSON.stringify(response, null, 2)}`);
             if (response.ChallengeName === 'NEW_PASSWORD_REQUIRED') {
                 this.logger.warn(`ChallengeName: ${response.ChallengeName}`);
@@ -83,15 +129,60 @@ let AuthService = AuthService_1 = class AuthService {
                     challenge: 'NEW_PASSWORD_REQUIRED',
                     session: response.Session,
                     requiredAttributes,
-                    username, // Add username here
+                    username,
                 };
             }
-            if (!response.AuthenticationResult || !response.AuthenticationResult.IdToken) {
-                this.logger.error('Authentication failed: Missing IdToken');
-                throw new Error('Authentication failed: Missing IdToken');
+            if (!response.AuthenticationResult ||
+                !response.AuthenticationResult.IdToken ||
+                !response.AuthenticationResult.AccessToken) {
+                this.logger.error('Authentication failed: Missing IdToken or AccessToken');
+                throw new Error('Authentication failed: Missing IdToken or AccessToken');
             }
-            const token = response.AuthenticationResult.IdToken;
-            return { access_token: token };
+            const idToken = response.AuthenticationResult.IdToken;
+            const accessToken = response.AuthenticationResult.AccessToken;
+            // Retrieve user's email using getUser if AccessToken is valid
+            if (!accessToken) {
+                throw new Error('Access token is undefined.');
+            }
+            const getUserResponse = await this.cognito
+                .getUser({ AccessToken: accessToken })
+                .promise();
+            let email;
+            for (const attribute of getUserResponse.UserAttributes) {
+                if (attribute.Name === 'email') {
+                    email = attribute.Value;
+                    break;
+                }
+            }
+            if (!email) {
+                throw new Error('Failed to retrieve user email from Cognito.');
+            }
+            // Fetch user data from DynamoDB
+            const tableName = process.env.DYNAMODB_TABLE_NAME || 'BCANBeings';
+            const params = {
+                TableName: tableName,
+                Key: {
+                    userId: username, // Ensure this matches the DynamoDB table's partition key (adjust if necessary)
+                },
+            };
+            const userResult = await this.dynamoDb.get(params).promise();
+            let user = userResult.Item;
+            if (!user) {
+                // User not found, create a new user record
+                const newUser = {
+                    userId: username,
+                    email: email,
+                    biography: '', // Initialize biography as empty
+                };
+                await this.dynamoDb
+                    .put({
+                    TableName: tableName,
+                    Item: newUser,
+                })
+                    .promise();
+                user = newUser;
+            }
+            return { access_token: idToken, user };
         }
         catch (error) {
             if (error instanceof Error) {
@@ -115,7 +206,7 @@ let AuthService = AuthService_1 = class AuthService {
             SECRET_HASH: secretHash,
         };
         if (email) {
-            challengeResponses.email = email; // Add email only if it's provided
+            challengeResponses.email = email;
         }
         const params = {
             ChallengeName: 'NEW_PASSWORD_REQUIRED',
@@ -124,8 +215,11 @@ let AuthService = AuthService_1 = class AuthService {
             Session: session,
         };
         try {
-            const response = await this.cognito.respondToAuthChallenge(params).promise();
-            if (!response.AuthenticationResult || !response.AuthenticationResult.IdToken) {
+            const response = await this.cognito
+                .respondToAuthChallenge(params)
+                .promise();
+            if (!response.AuthenticationResult ||
+                !response.AuthenticationResult.IdToken) {
                 throw new Error('Failed to set new password');
             }
             const token = response.AuthenticationResult.IdToken;
@@ -141,7 +235,6 @@ let AuthService = AuthService_1 = class AuthService {
     }
 };
 AuthService = AuthService_1 = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [jwt_1.JwtService])
+    (0, common_1.Injectable)()
 ], AuthService);
 exports.AuthService = AuthService;

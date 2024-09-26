@@ -1,12 +1,15 @@
-import { useState, useContext, createContext, ReactNode } from 'react';
+// src/authContext.tsx
+
+import { useContext, createContext, ReactNode } from 'react';
+import { getStore } from './store';
+import { setAuthentication } from './actions';
 
 interface AuthContextProps {
   isAuthenticated: boolean;
   login: (username: string, password: string) => Promise<void>;
-  user: string | null;
-  session?: string | null;
-  requiredAttributes?: string[] | null;
-  setNewPassword: (newPassword: string, email?: string) => Promise<void>;  // Add setNewPassword here
+  register: (username: string, password: string, email: string) => Promise<void>;
+  logout: () => void;
+  user: any | null;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -20,10 +23,7 @@ export const useAuthContext = () => {
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [session, setSession] = useState<string | null>(null);
-  const [requiredAttributes, setRequiredAttributes] = useState<string[] | null>(null);
-  const [user, setUser] = useState<string | null>(null);
+  const store = getStore();
 
   const login = async (username: string, password: string) => {
     const response = await fetch('http://localhost:3001/auth/login', {
@@ -34,37 +34,45 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const data = await response.json();
 
-    if (data.challenge === 'NEW_PASSWORD_REQUIRED') {
-      setSession(data.session);
-      setRequiredAttributes(data.requiredAttributes);
-      setUser(username);
-    } else if (data.access_token) {
-      setIsAuthenticated(true);
-      setUser(username);
+    if (data.access_token) {
+      setAuthentication(true, data.user, data.access_token);
+    } else {
+      alert('Login failed. Please check your credentials.');
     }
   };
 
-  const setNewPassword = async (newPassword: string, email?: string) => {
-    if (!session || !user) {
-      alert('Session or username missing. Please try logging in again.');
-      return;
-    }
-
-    const response = await fetch('http://localhost:3001/auth/set-password', {
+  const register = async (username: string, password: string, email: string) => {
+    const response = await fetch('http://localhost:3001/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ newPassword, session, username: user, email }),
+      body: JSON.stringify({ username, password, email }),
     });
 
     const data = await response.json();
-    if (data.access_token) {
-      setIsAuthenticated(true);
-      setSession(null);
+
+    if (response.ok) {
+      // Automatically log in the user
+      await login(username, password);
+    } else {
+      alert(data.message || 'Registration failed');
     }
   };
 
+  const logout = () => {
+    // Clear the store
+    setAuthentication(false, null, null);
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, session, login, setNewPassword, user, requiredAttributes }}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated: store.isAuthenticated,
+        user: store.user,
+        login,
+        register,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

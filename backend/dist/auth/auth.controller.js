@@ -1,4 +1,5 @@
 "use strict";
+// src/auth/auth.controller.ts
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -19,51 +20,44 @@ let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
     }
-    async setNewPassword(body) {
-        try {
-            // Check incoming parameters
-            console.log('New Password:', body.newPassword);
-            console.log('Session:', body.session);
-            console.log('Username:', body.username);
-            return await this.authService.setNewPassword(body.newPassword, body.session, body.username);
-        }
-        catch (error) {
-            if (error instanceof Error) {
-                throw new common_1.HttpException({ status: common_1.HttpStatus.INTERNAL_SERVER_ERROR, error: error.message || 'Failed to set new password' }, common_1.HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-            throw new common_1.HttpException({ status: common_1.HttpStatus.INTERNAL_SERVER_ERROR, error: 'An unknown error occurred' }, common_1.HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    async register(username, password, email) {
+        await this.authService.register(username, password, email);
+        return { message: 'User registered successfully' };
     }
-    async login(body) {
-        try {
-            // Return the result from AuthService, which could include a challenge
-            return await this.authService.login(body.username, body.password);
-        }
-        catch (error) {
-            // Handle errors safely
-            if (error instanceof Error) {
-                throw new common_1.HttpException({ status: common_1.HttpStatus.INTERNAL_SERVER_ERROR, error: error.message || 'Login failed' }, common_1.HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-            else {
-                throw new common_1.HttpException({ status: common_1.HttpStatus.INTERNAL_SERVER_ERROR, error: 'An unknown error occurred' }, common_1.HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+    async login(username, password) {
+        return await this.authService.login(username, password);
+    }
+    async setNewPassword(newPassword, session, username, email) {
+        return await this.authService.setNewPassword(newPassword, session, username, email);
     }
 };
 __decorate([
-    (0, common_1.Post)('set-password'),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.Post)('register'),
+    __param(0, (0, common_1.Body)('username')),
+    __param(1, (0, common_1.Body)('password')),
+    __param(2, (0, common_1.Body)('email')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [String, String, String]),
     __metadata("design:returntype", Promise)
-], AuthController.prototype, "setNewPassword", null);
+], AuthController.prototype, "register", null);
 __decorate([
     (0, common_1.Post)('login'),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Body)('username')),
+    __param(1, (0, common_1.Body)('password')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "login", null);
+__decorate([
+    (0, common_1.Post)('set-password'),
+    __param(0, (0, common_1.Body)('newPassword')),
+    __param(1, (0, common_1.Body)('session')),
+    __param(2, (0, common_1.Body)('username')),
+    __param(3, (0, common_1.Body)('email')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String, String]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "setNewPassword", null);
 AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])
