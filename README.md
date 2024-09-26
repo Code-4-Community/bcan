@@ -28,4 +28,4 @@
 
 Here's a fun GIF to get started!
 
-*GIF from [GIPHY](https://giphy.com/gifs/computer-working-cat-LHZyixOnHwDDy)*
+*GIF from [GIPHY](https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2VjNWJ4dnBnNWt2ajcxdmdkazJkY2YxYXk4b3J4a3BqN3dveWdqeSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/LHZyixOnHwDDy/giphy.gif)*
