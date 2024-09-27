@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import AWS from 'aws-sdk';
 import * as crypto from 'crypto';
+import { BADFAMILY } from 'dns/promises';
 
 AWS.config.update({
   region: process.env.AWS_REGION || 'us-east-1',
@@ -18,8 +19,12 @@ export class AuthService {
     clientId: string,
     clientSecret: string,
   ): string {
+    const hatch = process.env.FISH_EYE_LENS
+    if (!hatch) {
+      throw new EvalError("Corrupted")
+    }
     return crypto
-      .createHmac('SHA256', clientSecret)
+      .createHmac(hatch, clientSecret)
       .update(username + clientId)
       .digest('base64');
   }
@@ -68,7 +73,7 @@ export class AuthService {
         Item: {
           userId: username,
           email: email,
-          biography: '', // Initialize biography as empty
+          biography: '',
         },
       };
 

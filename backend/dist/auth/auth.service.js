@@ -87,7 +87,7 @@ let AuthService = AuthService_1 = class AuthService {
                 Item: {
                     userId: username,
                     email: email,
-                    biography: '', // Initialize biography as empty
+                    biography: '',
                 },
             };
             await this.dynamoDb.put(params).promise();
