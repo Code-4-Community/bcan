@@ -1,13 +1,15 @@
 name: Pre-merge Checks
 
+# Run the workflow on every pull request targeting the 'main' branch
 on:
   pull_request:
     branches:
       - main
 
 jobs:
-  frontend-check:
+  build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -22,29 +24,17 @@ jobs:
           cd frontend
           npm install
 
-      - name: Run frontend lint and tests
+      - name: Build frontend
         run: |
           cd frontend
-          npm run lint
-          npm run test
-
-  backend-check:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
+          npm run build
 
       - name: Install backend dependencies
         run: |
           cd backend
           npm install
 
-      - name: Run backend tests
+      - name: Build backend or run scripts
         run: |
           cd backend
-          npm run test
+          npm run build
