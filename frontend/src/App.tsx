@@ -5,6 +5,7 @@ import { observer } from 'mobx-react-lite';
 import Login from './Login';
 import Register from './Register';
 import Dashboard from './Dashboard';
+import { setAuthentication } from './actions';
 
 // Import mutators to ensure they are registered
 import './mutators';
@@ -12,6 +13,7 @@ import { getStore } from './store';
 
 const App = observer(() => {
   const store = getStore();
+  const vari = 0;
 
   return (
     <Router>
