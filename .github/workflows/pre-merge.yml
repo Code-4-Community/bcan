@@ -1,6 +1,7 @@
 name: Pre-merge Checks
 
 # Run the workflow on every pull request targeting the 'main' branch
+
 on:
   pull_request:
     branches:
@@ -34,7 +35,15 @@ jobs:
           cd backend
           npm install
 
-      - name: Build backend or run scripts
+      - name: Build backend
         run: |
           cd backend
           npm run build
+
+      - name: Install pre-merge check dependencies
+        run: |
+          npm install typescript ts-morph
+
+      - name: Run Circular Dependency Check
+        run: |
+          node canIMerge.js --check-circular

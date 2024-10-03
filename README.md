@@ -1,3 +1,9 @@
+# Usable in most browsers
+
+# Commands
+
+node canIMerge.js --> Will your code pass on code style check
+=======
 ## 🚀 C4C BCAN
 
 # 🌐 Boston Climate Action Network

@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "ts-morph": "^23.0.0",
+    "typescript": "^5.6.2"
+  },
+  "name": "bcan",
+  "version": "1.0.0",
+  "description": "# Commands",
+  "main": "customBuildScripts.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
