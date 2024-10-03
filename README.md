@@ -1,9 +1,5 @@
 # Usable in most browsers
 
-# Commands
-
-node canIMerge.js --> Will your code pass on code style check
-=======
 ## 🚀 C4C BCAN
 
 # 🌐 Boston Climate Action Network
@@ -15,16 +11,12 @@ node canIMerge.js --> Will your code pass on code style check
 - [Usage](#usage)
 
 ## Introduction
-
-
 ![]
 
 ## Features
-
-
+- You can login.
 
 ## Installation
-
 1. **Clone the repository**
 
    ```bash
@@ -32,6 +24,11 @@ node canIMerge.js --> Will your code pass on code style check
 
    # Welcome to BCAN..
 
+
+## Commands
+node canIMerge.js --> Will your code pass on code style check
+
+### Extra
 Here's a fun GIF to get started!
 
 *GIF from [GIPHY](https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2VjNWJ4dnBnNWt2ajcxdmdkazJkY2YxYXk4b3J4a3BqN3dveWdqeSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/LHZyixOnHwDDy/giphy.gif)*
