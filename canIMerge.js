@@ -202,7 +202,6 @@ function identifyUnusedVariables() {
 function visualizeDependencies() {
   console.log('\n--- Module Dependency Tree ---\n');
 
-  // Find root modules (modules that are not dependencies of any other modules)
   const allModules = new Set(Object.keys(moduleDependencies));
   Object.values(moduleDependencies).forEach((deps) => {
     deps.forEach((dep) => allModules.delete(dep));
@@ -268,7 +267,6 @@ function parseArguments() {
         flags.help = true;
         break;
       default:
-        // You can handle directory arguments here if needed
         break;
     }
   });
