@@ -16,7 +16,7 @@ const dynamodb = new aws_sdk_1.default.DynamoDB.DocumentClient();
 let UserService = class UserService {
     async getAllUsers() {
         const params = {
-            TableName: process.env.DYNAMODB_USERS_TABLE || 'UsersTable',
+            TableName: process.env.DYNAMODB_USER_TABLE_NAME || 'TABLE_FAILURE',
         };
         try {
             const data = await dynamodb.scan(params).promise();
@@ -28,7 +28,7 @@ let UserService = class UserService {
     }
     async getUserById(userId) {
         const params = {
-            TableName: process.env.DYNAMODB_USERS_TABLE || 'UsersTable',
+            TableName: process.env.DYNAMODB_USER_TABLE_NAME || 'TABLE_FAILURE',
             Key: {
                 userId,
             },

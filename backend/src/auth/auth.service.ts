@@ -155,6 +155,7 @@ export class AuthService {
         throw new Error('Access token is undefined.');
       }
 
+
       const getUserResponse = await this.cognito
         .getUser({ AccessToken: accessToken })
         .promise();
@@ -173,7 +174,9 @@ export class AuthService {
         throw new Error('Failed to retrieve user email from Cognito.');
       }
 
-      const tableName = process.env.DYNAMODB_TABLE_NAME || 'TABLE_FAILURE';
+      const tableName = process.env.DYNAMODB_USER_TABLE_NAME || 'TABLE_FAILURE';
+
+      this.logger.debug('user response..?' + tableName)
   
       const params = {
         TableName: tableName,

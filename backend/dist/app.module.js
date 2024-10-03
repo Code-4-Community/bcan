@@ -14,7 +14,7 @@ let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [auth_module_1.AuthModule, user_module_1.UserModule], // Add any other modules here
+        imports: [auth_module_1.AuthModule, user_module_1.UserModule],
     })
 ], AppModule);
 exports.AppModule = AppModule;
