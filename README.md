@@ -9,7 +9,7 @@
 - [Usage](#usage)
 
 ## Introduction
-This repository holds code for BCAN. We are developing a tabular-focused website for assiting the grant application process!
+This repository holds code for BCAN. We are developing a tabular-focused website for helping the grant application process!
 
 ## Features
 - You can login at localhost:5173.
