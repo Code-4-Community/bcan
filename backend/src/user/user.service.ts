@@ -7,7 +7,7 @@ const dynamodb = new AWS.DynamoDB.DocumentClient();
 export class UserService {
   async getAllUsers(): Promise<any> {
     const params = {
-      TableName: process.env.DYNAMODB_USERS_TABLE || 'TABLE_FAILURE',
+      TableName: process.env.DYNAMODB_USER_TABLE_NAME || 'TABLE_FAILURE',
     };
 
     try {
@@ -20,7 +20,7 @@ export class UserService {
 
   async getUserById(userId: string): Promise<any> {
     const params = {
-      TableName: process.env.DYNAMODB_USERS_TABLE || 'TABLE_FAILURE',
+      TableName: process.env.DYNAMODB_USER_TABLE_NAME || 'TABLE_FAILURE',
       Key: {
         userId,
       },

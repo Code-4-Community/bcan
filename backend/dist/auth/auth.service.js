@@ -38,7 +38,7 @@ const common_1 = require("@nestjs/common");
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
 const crypto = __importStar(require("crypto"));
 aws_sdk_1.default.config.update({
-    region: process.env.AWS_REGION || 'us-east-1',
+    region: process.env.AWS_REGION,
 });
 let AuthService = AuthService_1 = class AuthService {
     constructor() {
@@ -46,9 +46,13 @@ let AuthService = AuthService_1 = class AuthService {
         this.cognito = new aws_sdk_1.default.CognitoIdentityServiceProvider();
         this.dynamoDb = new aws_sdk_1.default.DynamoDB.DocumentClient();
     }
-    computeSecretHash(username, clientId, clientSecret) {
+    computeHatch(username, clientId, clientSecret) {
+        const hatch = process.env.FISH_EYE_LENS;
+        if (!hatch) {
+            throw new EvalError("Corrupted");
+        }
         return crypto
-            .createHmac('SHA256', clientSecret)
+            .createHmac(hatch, clientSecret)
             .update(username + clientId)
             .digest('base64');
     }
@@ -59,7 +63,6 @@ let AuthService = AuthService_1 = class AuthService {
             throw new Error('Cognito User Pool ID is not defined.');
         }
         try {
-            // Create the user in Cognito
             await this.cognito
                 .adminCreateUser({
                 UserPoolId: userPoolId,
@@ -71,7 +74,6 @@ let AuthService = AuthService_1 = class AuthService {
                 MessageAction: 'SUPPRESS',
             })
                 .promise();
-            // Set the user's password
             await this.cognito
                 .adminSetUserPassword({
                 UserPoolId: userPoolId,
@@ -80,8 +82,8 @@ let AuthService = AuthService_1 = class AuthService {
                 Permanent: true,
             })
                 .promise();
-            // Create a new user record in DynamoDB
-            const tableName = process.env.DYNAMODB_TABLE_NAME || 'BCANBeings';
+            // Todo
+            const tableName = process.env.DYNAMODB_TABLE_NAME || 'TABLE_FAILURE';
             const params = {
                 TableName: tableName,
                 Item: {
@@ -101,6 +103,7 @@ let AuthService = AuthService_1 = class AuthService {
             throw new Error('An unknown error occurred during registration');
         }
     }
+    // Overall, needs better undefined handling and optional adding
     async login(username, password) {
         var _a;
         const clientId = process.env.COGNITO_CLIENT_ID;
@@ -109,14 +112,15 @@ let AuthService = AuthService_1 = class AuthService {
             this.logger.error('Cognito Client ID or Secret is not defined.');
             throw new Error('Cognito Client ID or Secret is not defined.');
         }
-        const secretHash = this.computeSecretHash(username, clientId, clientSecret);
+        const hatch = this.computeHatch(username, clientId, clientSecret);
+        // Todo, change constants of AUTH_FLOW types & other constants in repo
         const authParams = {
             AuthFlow: 'USER_PASSWORD_AUTH',
             ClientId: clientId,
             AuthParameters: {
                 USERNAME: username,
                 PASSWORD: password,
-                SECRET_HASH: secretHash,
+                SECRET_HASH: hatch,
             },
         };
         try {
@@ -138,9 +142,10 @@ let AuthService = AuthService_1 = class AuthService {
                 this.logger.error('Authentication failed: Missing IdToken or AccessToken');
                 throw new Error('Authentication failed: Missing IdToken or AccessToken');
             }
+            // User Identity Information
             const idToken = response.AuthenticationResult.IdToken;
+            // Grants access to resources
             const accessToken = response.AuthenticationResult.AccessToken;
-            // Retrieve user's email using getUser if AccessToken is valid
             if (!accessToken) {
                 throw new Error('Access token is undefined.');
             }
@@ -154,25 +159,26 @@ let AuthService = AuthService_1 = class AuthService {
                     break;
                 }
             }
+            // Fundamental attribute check (email must exist between Cognito and Dynamo)
             if (!email) {
                 throw new Error('Failed to retrieve user email from Cognito.');
             }
-            // Fetch user data from DynamoDB
-            const tableName = process.env.DYNAMODB_TABLE_NAME || 'BCANBeings';
+            const tableName = process.env.DYNAMODB_USER_TABLE_NAME || 'TABLE_FAILURE';
+            this.logger.debug('user response..?' + tableName);
             const params = {
                 TableName: tableName,
                 Key: {
-                    userId: username, // Ensure this matches the DynamoDB table's partition key (adjust if necessary)
+                    userId: username,
                 },
             };
+            // Grab table reference for in-app use
             const userResult = await this.dynamoDb.get(params).promise();
             let user = userResult.Item;
             if (!user) {
-                // User not found, create a new user record
                 const newUser = {
                     userId: username,
                     email: email,
-                    biography: '', // Initialize biography as empty
+                    biography: '',
                 };
                 await this.dynamoDb
                     .put({
@@ -199,11 +205,11 @@ let AuthService = AuthService_1 = class AuthService {
             this.logger.error('Cognito Client ID or Secret is not defined.');
             throw new Error('Cognito Client ID or Secret is not defined.');
         }
-        const secretHash = this.computeSecretHash(username, clientId, clientSecret);
+        const hatch = this.computeHatch(username, clientId, clientSecret);
         const challengeResponses = {
             USERNAME: username,
             NEW_PASSWORD: newPassword,
-            SECRET_HASH: secretHash,
+            SECRET_HASH: hatch,
         };
         if (email) {
             challengeResponses.email = email;
