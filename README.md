@@ -6,7 +6,6 @@
 - [Introduction](#introduction)
 - [Features](#features)
 - [Installation](#installation)
-- [Usage](#usage)
 
 ## Introduction
 This repository holds code for BCAN. We are developing a tabular-focused website for helping the grant application process!
