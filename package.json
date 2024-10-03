@@ -6,7 +6,7 @@
   "name": "bcan",
   "version": "1.0.0",
   "description": "# Commands",
-  "main": "customBuildScripts.js",
+  "main": "canIMerge.js",
   "directories": {
     "test": "test"
   },
