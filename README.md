@@ -1,8 +1,6 @@
 # Usable in most browsers
 
-## 🚀 C4C BCAN
-
-# 🌐 Boston Climate Action Network
+## 🚀 C4C x 🌐 Boston Climate Action Network
 
 ## 📖 Table of Contents
 - [Introduction](#introduction)
@@ -28,7 +26,7 @@
 ## Commands
 node canIMerge.js --> Will your code pass on code style check
 
-### Extra
+## Misc
 Here's a fun GIF to get started!
 
 *GIF from [GIPHY](https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2VjNWJ4dnBnNWt2ajcxdmdkazJkY2YxYXk4b3J4a3BqN3dveWdqeSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/LHZyixOnHwDDy/giphy.gif)*
