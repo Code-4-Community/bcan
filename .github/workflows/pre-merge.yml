@@ -1,5 +1,7 @@
 name: Pre-merge Checks
 
+# Run the workflow on every pull request targeting the 'main' branch
+
 on:
   pull_request:
     branches:
