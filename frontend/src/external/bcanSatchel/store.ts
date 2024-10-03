@@ -1,7 +1,7 @@
 // src/store.ts
 
 import { createStore } from 'satcheljs';
-import { ObservableMap } from 'mobx'; // will use for complex type
+// import { ObservableMap } from 'mobx'; --> will use for complex type
 
 export interface User {
   userId: string;

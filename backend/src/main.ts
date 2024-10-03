@@ -9,8 +9,8 @@ async function bootstrap() {
         region: process.env.AWS_REGION
       });
   const app = await NestFactory.create(AppModule);
-  app.enableCors();  // Enable CORS if needed
-  await app.listen(3001);  // Port where the server listens
+  app.enableCors();
+  await app.listen(3001);
 }
 dotenv.config();
 bootstrap();

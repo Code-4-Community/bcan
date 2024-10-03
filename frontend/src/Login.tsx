@@ -1,7 +1,7 @@
 // src/Login.tsx
 
 import React, { useState } from 'react';
-import { setAuthentication } from './actions'; // Corrected import path
+import { setAuthentication } from './external/bcanSatchel/actions'; // Corrected import path
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 

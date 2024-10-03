@@ -1,8 +1,8 @@
 // src/authContext.tsx
 
 import { useContext, createContext, ReactNode } from 'react';
-import { getStore } from './store';
-import { setAuthentication } from './actions';
+import { getStore } from '../../external/bcanSatchel/store';
+import { setAuthentication } from '../../external/bcanSatchel/actions';
 
 interface AuthContextProps {
   isAuthenticated: boolean;

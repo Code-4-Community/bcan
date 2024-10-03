@@ -2,4 +2,4 @@
 
 # Commands
 
-node profiler.js
+node canIMerge.js --> Will your code pass on code style check

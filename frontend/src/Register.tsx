@@ -1,7 +1,7 @@
 // src/Register.tsx
 
 import React, { useState } from 'react';
-import { setAuthentication } from './actions';
+import { setAuthentication } from './external/bcanSatchel/actions';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 

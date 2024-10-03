@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuthContext } from './authContext';
+import { useAuthContext } from './context/auth/authContext';
 
 const NewPasswordForm = () => {
     const [newPassword, changePasswordState] = useState('');

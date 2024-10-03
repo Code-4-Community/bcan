@@ -10,7 +10,6 @@
 const path = require('path');
 const { spawn } = require('child_process');
 
-// Define test directories relative to the project root
 const TEST_DIRECTORIES = [
   path.join('test', 'backend', 'src'),
   path.join('test', 'frontend', 'src'),
@@ -25,7 +24,7 @@ function executeBuildScript(directories) {
   return new Promise((resolve, reject) => {
     const buildScriptPath = path.resolve(__dirname, '..', 'customBuildScripts.js');
     const buildProcess = spawn('node', [buildScriptPath, ...directories], {
-      cwd: path.resolve(__dirname, '..'), // Ensure the working directory is the project root
+      cwd: path.resolve(__dirname, '..'),
     });
 
     let stdout = '';
@@ -45,13 +44,11 @@ function executeBuildScript(directories) {
   });
 }
 
-// In testRunner.js
-
 /**
  * Run the tests
  */
 async function runTests() {
-  console.log('Running Custom Build Scripts Test Suite...\n');
+  console.log('Running Sanitization..\n');
 
   const result = await executeBuildScript(TEST_DIRECTORIES);
 
@@ -85,7 +82,6 @@ async function runTests() {
     { module: 'Unused.ts', variable: 'temp' },
   ];
 
-  // Check for Circular Dependencies
   let circularDepDetected = true;
   expectedCircularDependencies.forEach((cycle) => {
     const cyclePatternBasename = cycle.join(' -> ');
@@ -100,7 +96,6 @@ async function runTests() {
     console.error('❌ Some expected circular dependencies were not detected.');
   }
 
-  // Check for Unused Variables
   let unusedVarsDetected = true;
   expectedUnusedVariables.forEach((item) => {
     const expectedVarPattern = `${item.module}: ${item.variable}`;
@@ -115,7 +110,6 @@ async function runTests() {
     console.error('❌ Some expected unused variables were not detected.');
   }
 
-  // Final Test Result
   if (result.code !== 0) {
     console.log('\n🔴 Build script exited with errors as expected.');
   } else {
@@ -125,5 +119,4 @@ async function runTests() {
   console.log('\nTest Suite Completed.');
 }
 
-// Run the tests
 runTests();

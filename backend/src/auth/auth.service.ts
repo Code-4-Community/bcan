@@ -1,10 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import AWS from 'aws-sdk';
 import * as crypto from 'crypto';
-import { BADFAMILY } from 'dns/promises';
 
 AWS.config.update({
-  region: process.env.AWS_REGION || 'us-east-1',
+  region: process.env.AWS_REGION,
 });
 
 @Injectable()
@@ -14,7 +13,7 @@ export class AuthService {
   private cognito = new AWS.CognitoIdentityServiceProvider();
   private dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-  private computeSecretHash(
+  private computeHatch(
     username: string,
     clientId: string,
     clientSecret: string,
@@ -42,7 +41,6 @@ export class AuthService {
     }
 
     try {
-      // Create the user in Cognito
       await this.cognito
         .adminCreateUser({
           UserPoolId: userPoolId,
@@ -55,7 +53,6 @@ export class AuthService {
         })
         .promise();
 
-      // Set the user's password
       await this.cognito
         .adminSetUserPassword({
           UserPoolId: userPoolId,
@@ -65,8 +62,8 @@ export class AuthService {
         })
         .promise();
 
-      // Create a new user record in DynamoDB
-      const tableName = process.env.DYNAMODB_TABLE_NAME || 'BCANBeings';
+        // Todo
+      const tableName = process.env.DYNAMODB_TABLE_NAME || 'TABLE_FAILURE';
 
       const params = {
         TableName: tableName,
@@ -91,6 +88,7 @@ export class AuthService {
     }
   }
 
+  // Overall, needs better undefined handling and optional adding
   async login(username: string, password: string): Promise<{
     access_token?: string;
     user?: any;
@@ -107,15 +105,16 @@ export class AuthService {
       throw new Error('Cognito Client ID or Secret is not defined.');
     }
   
-    const secretHash = this.computeSecretHash(username, clientId, clientSecret);
+    const hatch = this.computeHatch(username, clientId, clientSecret);
   
+    // Todo, change constants of AUTH_FLOW types & other constants in repo
     const authParams = {
       AuthFlow: 'USER_PASSWORD_AUTH',
       ClientId: clientId,
       AuthParameters: {
         USERNAME: username,
         PASSWORD: password,
-        SECRET_HASH: secretHash,
+        SECRET_HASH: hatch,
       },
     };
   
@@ -147,10 +146,11 @@ export class AuthService {
         throw new Error('Authentication failed: Missing IdToken or AccessToken');
       }
   
+      // User Identity Information
       const idToken = response.AuthenticationResult.IdToken;
+      // Grants access to resources
       const accessToken = response.AuthenticationResult.AccessToken;
 
-      // Retrieve user's email using getUser if AccessToken is valid
       if (!accessToken) {
         throw new Error('Access token is undefined.');
       }
@@ -167,30 +167,30 @@ export class AuthService {
           break;
         }
       }
-  
+      
+      // Fundamental attribute check (email must exist between Cognito and Dynamo)
       if (!email) {
         throw new Error('Failed to retrieve user email from Cognito.');
       }
-  
-      // Fetch user data from DynamoDB
-      const tableName = process.env.DYNAMODB_TABLE_NAME || 'BCANBeings';
+
+      const tableName = process.env.DYNAMODB_TABLE_NAME || 'TABLE_FAILURE';
   
       const params = {
         TableName: tableName,
         Key: {
-          userId: username, // Ensure this matches the DynamoDB table's partition key (adjust if necessary)
+          userId: username,
         },
       };
   
+      // Grab table reference for in-app use
       const userResult = await this.dynamoDb.get(params).promise();
       let user = userResult.Item;
   
       if (!user) {
-        // User not found, create a new user record
         const newUser = {
-          userId: username, // Ensure this matches the partition key name in your DynamoDB schema
-          email: email,     // Store email as well
-          biography: '',    // Initialize biography as empty
+          userId: username,
+          email: email,
+          biography: '',
         };
   
         await this.dynamoDb
@@ -227,12 +227,12 @@ export class AuthService {
       throw new Error('Cognito Client ID or Secret is not defined.');
     }
 
-    const secretHash = this.computeSecretHash(username, clientId, clientSecret);
+    const hatch = this.computeHatch(username, clientId, clientSecret);
 
     const challengeResponses: any = {
       USERNAME: username,
       NEW_PASSWORD: newPassword,
-      SECRET_HASH: secretHash,
+      SECRET_HASH: hatch,
     };
 
     if (email) {
