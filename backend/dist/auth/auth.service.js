@@ -82,8 +82,7 @@ let AuthService = AuthService_1 = class AuthService {
                 Permanent: true,
             })
                 .promise();
-            // Todo
-            const tableName = process.env.DYNAMODB_TABLE_NAME || 'TABLE_FAILURE';
+            const tableName = process.env.DYNAMODB_USER_TABLE_NAME || 'TABLE_FAILURE';
             const params = {
                 TableName: tableName,
                 Item: {

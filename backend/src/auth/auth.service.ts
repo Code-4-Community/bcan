@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import AWS from 'aws-sdk';
+import { table } from 'console';
 import * as crypto from 'crypto';
 
 AWS.config.update({
@@ -62,8 +63,7 @@ export class AuthService {
         })
         .promise();
 
-        // Todo
-      const tableName = process.env.DYNAMODB_TABLE_NAME || 'TABLE_FAILURE';
+      const tableName = process.env.DYNAMODB_USER_TABLE_NAME || 'TABLE_FAILURE';
 
       const params = {
         TableName: tableName,
