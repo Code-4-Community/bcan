@@ -24,7 +24,7 @@
 
 
 ## Commands
-node canIMerge.js --> Will your code pass on code style check
+node canIMerge.js --> Will your code pass on code style check, run node canIMerge.js --help for options
 
 ## Misc
 Here's a fun GIF to get started!
