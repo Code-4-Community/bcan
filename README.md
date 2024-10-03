@@ -9,10 +9,10 @@
 - [Usage](#usage)
 
 ## Introduction
-![]
+This repository holds code for BCAN. We are developing a tabular-focused website for assiting the grant application process!
 
 ## Features
-- You can login.
+- You can login at localhost:5173.
 
 ## Installation
 1. **Clone the repository**
@@ -21,10 +21,12 @@
    git clone
 
    # Welcome to BCAN..
+2. cd backend, npm install, init environment, npm run dev
+3. cd frontend, npm install, init environment, npm run dev
 
 
 ## Commands
-node canIMerge.js --> Will your code pass on code style check, run node canIMerge.js --help for options
+1. node canIMerge.js --> Will your code pass on code style check, run node canIMerge.js --help for options
 
 ## Misc
 Here's a fun GIF to get started!
