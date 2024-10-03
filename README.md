@@ -21,7 +21,7 @@ This repository holds code for BCAN. We are developing a tabular-focused website
    git clone
 
    # Welcome to BCAN..
-2. cd backend, npm install, init environment, npm run dev
+2. cd backend, npm install, init environment, npm run start
 3. cd frontend, npm install, init environment, npm run dev
 
 
