@@ -23,7 +23,7 @@ let UserService = class UserService {
             return data.Items;
         }
         catch (error) {
-            throw new Error('Could not retrieve users');
+            throw new Error('Could not retrieve users.');
         }
     }
     async getUserById(userId) {
@@ -38,7 +38,7 @@ let UserService = class UserService {
             return data.Item;
         }
         catch (error) {
-            throw new Error('Could not retrieve user');
+            throw new Error('Could not retrieve user.');
         }
     }
 };
