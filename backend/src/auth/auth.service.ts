@@ -271,4 +271,30 @@ export class AuthService {
       throw new Error('An unknown error occurred');
     }
   }
+
+  async updateProfile(
+    username: string,
+    displayName : string,
+    session : string,
+  ) {
+    try {
+      const tableName = process.env.DYNAMODB_USER_TABLE_NAME || 'TABLE_FAILURE';
+
+    const params = {
+      TableName: tableName,
+      Item: {
+        userId: username,
+        displayName : displayName
+      },
+    };
+
+    await this.dynamoDb.put(params).promise();
+
+    this.logger.log(
+      `User ${username} updated user profile.`,
+    );
+    } catch (error) {
+      
+    }
+  }
 }
