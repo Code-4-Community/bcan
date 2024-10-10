@@ -5,6 +5,7 @@ import { observer } from 'mobx-react-lite';
 import Login from './Login';
 import Register from './Register';
 import Dashboard from './Dashboard';
+import './App.css';
 
 // Register store and mutators
 import './external/bcanSatchel/mutators';
@@ -15,6 +16,7 @@ const App = observer(() => {
 
   return (
     <Router>
+      < div className="app-container">
       <Routes>
         <Route
           path="/login"
@@ -33,6 +35,7 @@ const App = observer(() => {
           element={<Navigate to={store.isAuthenticated ? '/dashboard' : '/login'} />}
         />
       </Routes>
+      </div>
     </Router>
   );
 });

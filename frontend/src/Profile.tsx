@@ -40,10 +40,15 @@ const Profile = observer(() => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ maxWidth: '600px', margin: '0 auto' }}>
+    <form onSubmit={handleSubmit} style={{maxWidth: '600px', 
+                                          margin: '0 auto',
+                                          border: '1px solid #ccc', 
+                                          borderRadius: '8px', 
+                                          padding: '20px 30px'  }}>
       <h2>Profile</h2>
-      <div>
-        <label>Username:</label>
+      <div style = {{padding: '5px'}} >
+        
+        <label >Username: </label>
         <span>{store.user?.userId}</span>
       </div>
       <div>

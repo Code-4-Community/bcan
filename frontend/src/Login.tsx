@@ -42,30 +42,46 @@ const Login = observer(() => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ maxWidth: '400px', margin: '0 auto' }}>
+    <form onSubmit={handleSubmit} style={{ maxWidth: '400px', 
+                                           margin: '0 auto', 
+                                           justifyContent: 'center', 
+                                           alignItems: 'center', 
+                                           border: '1px solid #ccc', 
+                                           borderRadius: '8px', 
+                                           padding: '20px 30px'}}>
       <h2>Login</h2>
       <div>
-        <label>Username:</label>
+        <label style={{ display: 'block', textAlign: 'left' }}>Username</label>
         <input
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
-          style={{ width: '100%', padding: '8px', margin: '8px 0' }}
+          style={{width: '90%', 
+                  padding: '8px', 
+                  margin: '8px 0'}}
         />
       </div>
       <div>
-        <label>Password:</label>
+        <label style={{ display: 'block', textAlign: 'left' }} >Password</label>
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          style={{ width: '100%', padding: '8px', margin: '8px 0' }}
+          style={{ width: '90%', padding: '8px', margin: '8px 0'}}
         />
+    
       </div>
-      <button type="submit" style={{ padding: '10px', width: '100%' }}>
-        Login
+      <button 
+          type="submit" 
+          style={{ padding: '8px', width :'100%', margin: '8px 0', backgroundColor: 'black', color: 'white'}}>
+          Login
+      </button>
+      <button 
+          type="submit" 
+          style={{ padding: '8px', width :'100%', margin: '8px 0', backgroundColor: 'white', color: 'black'}}>
+          Forgot Password?
       </button>
     </form>
   );

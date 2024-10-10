@@ -44,39 +44,46 @@ const Register = observer(() => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ maxWidth: '400px', margin: '0 auto' }}>
+    <form onSubmit={handleSubmit} style={{maxWidth: '400px',
+                                          margin: '0 auto',
+                                          justifyContent: 'center', 
+                                          alignItems: 'center', 
+                                          border: '1px solid #ccc', 
+                                          borderRadius: '8px', 
+                                          padding: '20px 30px' 
+       }}>
       <h2>Register</h2>
       <div>
-        <label>Username:</label>
+        <label style={{display: 'block', textAlign: 'left'}}>Username:</label>
         <input
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
-          style={{ width: '100%', padding: '8px', margin: '8px 0' }}
+          style={{ width: '90%', padding: '8px', margin: '8px 0' }}
         />
       </div>
       <div>
-        <label>Email:</label>
+        <label style={{display: 'block', textAlign: 'left'}} >Email:</label>
         <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          style={{ width: '100%', padding: '8px', margin: '8px 0' }}
+          style={{ width: '90%', padding: '8px', margin: '8px 0' }}
         />
       </div>
       <div>
-        <label>Password:</label>
+        <label style={{display: 'block', textAlign: 'left'}} >Password:</label>
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          style={{ width: '100%', padding: '8px', margin: '8px 0' }}
+          style={{ width: '90%', padding: '8px', margin: '8px 0' }}
         />
       </div>
-      <button type="submit" style={{ padding: '10px', width: '100%' }}>
+      <button type="submit" style={{ padding: '8px 0', margin: '8px 0', width: '100%', backgroundColor: 'black', color: 'white'}}>
         Register
       </button>
     </form>

@@ -13,11 +13,14 @@ const Dashboard = observer(() => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Welcome, {store.user?.userId}</h1>
-      <button onClick={handleLogout} style={{ padding: '10px', fontSize: '16px' }}>
+    <div style={{ padding: '20px'}}>
+      <button onClick={handleLogout} style={{ 
+        padding: '10px', 
+        fontSize: '16px',}}>
         Logout
       </button>
+      <h1>Welcome, {store.user?.userId}</h1>
+      
       <Profile />
     </div>
   );
