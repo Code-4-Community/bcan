@@ -45,10 +45,9 @@ export class AuthController {
   @Post('update-profile')
   async updateProfile(
     @Body('username') username: string,
-    @Body('displayName') displayName : string,
-    @Body('session') session : string 
+    @Body('displayName') displayName : string
   ): Promise<{message: string}> {
-    await this.authService.updateProfile(username,displayName,session)
+    await this.authService.updateProfile(username,displayName)
     return { message: 'Profile has been updated' };
 
   } 
