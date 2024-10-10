@@ -7,36 +7,46 @@ AWS.config.update({ region: 'us-east-2' });
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 
-// TODO: make return type a Grant object
 @Injectable()
 export class GrantService {
-    async getAllGrants(): Promise<any> {
+
+    // function to retrieve all grants in our database
+    async getAllGrants(): Promise<Grant[]> {
         const params = {
             TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
         };
 
         try {
             const data = await dynamodb.scan(params).promise();
-            return data.Items;
+
+            return data.Items as Grant[] || [];
         } catch (error) {
             console.log(error)
             throw new Error('Could not retrieve grants.');
         }
     }
 
-    async getGrantById(userId: string): Promise<any> {
+    // function to retrieve a grant by its ID
+    async getGrantById(grantId: number): Promise<Grant> {
+
         const params = {
             TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
             Key: {
-                userId,
+                grantId: grantId,
             },
         };
 
         try {
             const data = await dynamodb.get(params).promise();
-            return data.Item;
+
+            if (!data.Item) {
+                throw new Error('No grant with id ' + grantId + ' found.');
+            }
+
+            return data.Item as Grant;
         } catch (error) {
-            throw new Error('Could not retrieve grant.');
+            console.log(error)
+            throw new Error('Failed to retrieve grant.');
         }
     }
 }

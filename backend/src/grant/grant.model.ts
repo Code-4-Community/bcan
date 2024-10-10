@@ -6,11 +6,11 @@ export interface Grant {
     is_bcan_qualifying: boolean;
     status: string;
     amount: number;
-    deadline: Date; 
+    deadline: string;       // dynamo does not have a built-in Date type 
     notifications_on_for_user: boolean;
     reporting_requirements: string;
     restrictions: string;
     point_of_contacts: string[];
     attached_resources: string[];
-    comments: string;
+    comments: string[];
 }

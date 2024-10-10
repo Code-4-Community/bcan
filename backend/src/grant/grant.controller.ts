@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { GrantService } from './grant.service';
 
 @Controller('grant')
@@ -11,8 +11,8 @@ export class GrantController {
     }
 
     @Get(':id')
-    async getGrantById(@Param('id') grantId: string) {
-        return await this.grantService.getGrantById(grantId);
+    async getGrantById(@Param('id') GrantId: string) {
+        return await this.grantService.getGrantById(parseInt(GrantId, 10));
     }
 
 }
