@@ -14,7 +14,7 @@ export class UserService {
       const data = await dynamodb.scan(params).promise();
       return data.Items;
     } catch (error) {
-      throw new Error('Could not retrieve users');
+      throw new Error('Could not retrieve users.');
     }
   }
 
@@ -30,7 +30,7 @@ export class UserService {
       const data = await dynamodb.get(params).promise();
       return data.Item;
     } catch (error) {
-      throw new Error('Could not retrieve user');
+      throw new Error('Could not retrieve user.');
     }
   }
 }
