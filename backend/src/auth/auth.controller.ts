@@ -41,4 +41,14 @@ export class AuthController {
   ): Promise<{ access_token: string }> {
     return await this.authService.setNewPassword(newPassword, session, username, email);
   }
+
+  @Post('update-profile')
+  async updateProfile(
+    @Body('username') username: string,
+    @Body('displayName') displayName : string
+  ): Promise<{message: string}> {
+    await this.authService.updateProfile(username,displayName)
+    return { message: 'Profile has been updated' };
+
+  } 
 }
