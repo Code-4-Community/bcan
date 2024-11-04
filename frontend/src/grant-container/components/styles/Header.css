@@ -1,0 +1,30 @@
+.header {
+    background-color: #F26624;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 3rem;
+    margin: 0;
+}
+
+.header-right-comp {
+    display: flex;
+    justify-content: space-between;
+}
+
+.header-left-comp {
+    display: flex;
+    list-style-type: none; /* this is a placeholder */
+    padding: 0 1rem; /* keep padding vs margin here */
+}
+
+.grant-buttons {
+    display: flex;
+    margin: 0;
+    color: black;
+    list-style-type: none;
+}
+
+.grant-buttons li {
+    padding: 0 1rem;
+}

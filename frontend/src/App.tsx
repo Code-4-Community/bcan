@@ -5,6 +5,7 @@ import { observer } from 'mobx-react-lite';
 import Login from './Login';
 import Register from './Register';
 import Dashboard from './Dashboard';
+import GrantContainer from './grant-container/components/GrantContainer';
 import './App.css';
 
 // Register store and mutators
@@ -29,6 +30,10 @@ const App = observer(() => {
         <Route
           path="/dashboard"
           element={store.isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/grant-info"
+          element={<GrantContainer/>}
         />
         <Route
           path="*"
