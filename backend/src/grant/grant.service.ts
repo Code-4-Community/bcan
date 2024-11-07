@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable,Logger } from '@nestjs/common';
 import AWS from 'aws-sdk';
 import { Grant } from './grant.model'
 
@@ -9,6 +9,7 @@ const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 @Injectable()
 export class GrantService {
+    private readonly logger = new Logger(GrantService.name);
 
     // function to retrieve all grants in our database
     async getAllGrants(): Promise<Grant[]> {
@@ -49,4 +50,71 @@ export class GrantService {
             throw new Error('Failed to retrieve grant.');
         }
     }
+
+    // Method to archive grants takes in array 
+    async archiveGrants(grantIds :number[]) : Promise<number[]> {
+        let successfulUpdates: number[] = [];
+        for (const grantId of grantIds) {
+            const params = {
+                TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
+                Key: {
+                    grantId: grantId,
+                },
+                UpdateExpression: "set isArchived = :archived",
+                ExpressionAttributeValues: { ":archived": true },
+                ReturnValues: "UPDATED_NEW",
+              };
+
+              try{
+                const res = await dynamodb.update(params).promise();
+                console.log(res)
+
+                if (res.Attributes && res.Attributes.isArchived === true) {
+                    console.log(`Grant ${grantId} successfully archived.`);
+                    successfulUpdates.push(grantId);
+                } else {
+                    console.log(`Grant ${grantId} update failed or no change in status.`);
+                }
+              }
+              catch(err){
+                console.log(err);
+                throw new Error(`Failed to update Grant ${grantId} status.`);
+              }
+        };
+        return successfulUpdates;
+    }
+
+     // Method to archive grants takes in array 
+    async archiveGrants(grantIds :number[]) : Promise<number[]> {
+        let successfulUpdates: number[] = [];
+        for (const grantId of grantIds) {
+            const params = {
+                TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
+                Key: {
+                    grantId: grantId,
+                },
+                UpdateExpression: "set isArchived = :archived",
+                ExpressionAttributeValues: { ":archived": true },
+                ReturnValues: "UPDATED_NEW",
+              };
+
+              try{
+                const res = await dynamodb.update(params).promise();
+                console.log(res)
+
+                if (res.Attributes && res.Attributes.isArchived === true) {
+                    console.log(`Grant ${grantId} successfully archived.`);
+                    successfulUpdates.push(grantId);
+                } else {
+                    console.log(`Grant ${grantId} update failed or no change in status.`);
+                }
+              }
+              catch(err){
+                console.log(err);
+                throw new Error(`Failed to update Grant ${grantId} status.`);
+              }
+        };
+        return successfulUpdates;
+    }
+
 }
