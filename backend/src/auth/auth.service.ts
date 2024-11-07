@@ -1,11 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger, UnauthorizedException } from '@nestjs/common';
 import AWS from 'aws-sdk';
 import { table } from 'console';
 import * as crypto from 'crypto';
-
-AWS.config.update({
-  region: process.env.AWS_REGION,
-});
 
 @Injectable()
 export class AuthService {
@@ -96,6 +92,7 @@ export class AuthService {
     challenge?: string;
     requiredAttributes?: string[];
     username?: string;
+    message?: string;
   }> {
     const clientId = process.env.COGNITO_CLIENT_ID;
     const clientSecret = process.env.COGNITO_CLIENT_SECRET;
@@ -206,13 +203,36 @@ export class AuthService {
         user = newUser;
       }
   
-      return { access_token: idToken, user };
+      return { access_token: idToken, user, message: "Login Successful!" };
     } catch (error: unknown) {
-      if (error instanceof Error) {
+      /* Login Failures */
+      const cognitoError = error as AwsCognitoError;
+
+      if (cognitoError.code) {
+        switch (cognitoError.code) {
+          case 'NotAuthorizedException':
+            this.logger.warn(`Login failed: ${cognitoError.message}`);
+            throw new UnauthorizedException('Incorrect username or password.');
+          default:
+            this.logger.error(
+              `Login failed: ${cognitoError.message}`,
+              cognitoError.stack,
+            );
+            throw new InternalServerErrorException(
+              'An error occurred during login.',
+            );
+        }
+      } else if (error instanceof Error) {
+        // Handle non-AWS errors
         this.logger.error('Login failed', error.stack);
-        throw new Error(error.message || 'Login failed');
+        throw new InternalServerErrorException(
+          error.message || 'Login failed.',
+        );
       }
-      throw new Error('An unknown error occurred during login');
+      // Handle unknown errors
+      throw new InternalServerErrorException(
+        'An unknown error occurred during login.',
+      );
     }
   }
 
