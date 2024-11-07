@@ -30,6 +30,10 @@ let AuthController = class AuthController {
     async setNewPassword(newPassword, session, username, email) {
         return await this.authService.setNewPassword(newPassword, session, username, email);
     }
+    async updateProfile(username, displayName) {
+        await this.authService.updateProfile(username, displayName);
+        return { message: 'Profile has been updated' };
+    }
 };
 __decorate([
     (0, common_1.Post)('register'),
@@ -58,6 +62,14 @@ __decorate([
     __metadata("design:paramtypes", [String, String, String, String]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "setNewPassword", null);
+__decorate([
+    (0, common_1.Post)('update-profile'),
+    __param(0, (0, common_1.Body)('username')),
+    __param(1, (0, common_1.Body)('displayName')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "updateProfile", null);
 AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])
