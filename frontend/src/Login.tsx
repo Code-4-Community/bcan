@@ -32,6 +32,7 @@ const Login = observer(() => {
       if (data.access_token) {
         setAuthentication(true, data.user, data.access_token);
         navigate('/dashboard');
+        alert(data.message); // Alert with message from backend indicating success
       } else {
         alert('Login failed. Please check your credentials.');
       }
