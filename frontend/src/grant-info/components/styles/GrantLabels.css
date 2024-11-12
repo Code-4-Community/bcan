@@ -1,0 +1,10 @@
+.grant-labels {
+    display: flex;
+    list-style-type: none;
+    justify-content: space-between;
+    margin: 0 1rem;
+}
+
+.grant-labels li {
+    padding: 1rem;
+}

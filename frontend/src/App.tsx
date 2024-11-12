@@ -10,6 +10,7 @@ import './App.css';
 // Register store and mutators
 import './external/bcanSatchel/mutators';
 import { getStore } from './external/bcanSatchel/store';
+import GrantPage from "./grant-info/components/GrantPage.tsx";
 
 const App = observer(() => {
   const store = getStore();
@@ -30,7 +31,11 @@ const App = observer(() => {
           path="/dashboard"
           element={store.isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
         />
-        <Route
+          <Route
+              path='/grant-info'
+              element={<GrantPage/>}
+          />
+          <Route
           path="*"
           element={<Navigate to={store.isAuthenticated ? '/dashboard' : '/login'} />}
         />

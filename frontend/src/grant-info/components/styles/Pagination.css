@@ -1,0 +1,15 @@
+.pagination {
+
+}
+
+.add-grant-button {
+    background: #F26624; /* Removes the default background */
+    display: flex; /* centering the + */
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 1rem;
+    font-size: 3rem;
+    height: 3rem;
+    width: 5rem;
+}
