@@ -33,7 +33,9 @@ const aws_sdk_1 = __importDefault(require("aws-sdk"));
 /* ! */
 async function bootstrap() {
     aws_sdk_1.default.config.update({
-        region: process.env.AWS_REGION
+        region: process.env.AWS_REGION,
+        accessKeyId: process.env.OPEN_HATCH,
+        secretAccessKey: process.env.CLOSED_HATCH
     });
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.enableCors();
