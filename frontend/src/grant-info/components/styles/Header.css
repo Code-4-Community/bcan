@@ -1,0 +1,31 @@
+.header {
+    background-color: #F26624;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%; /* Fill up entire container */
+    margin: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.header-right-comp {
+    display: flex;
+    justify-content: space-between;
+}
+
+.header-left-comp {
+    display: flex;
+    align-items: center;
+    list-style-type: none; /* this is a placeholder */
+}
+
+.grant-buttons {
+    display: flex;
+    margin: 0;
+    color: black;
+    list-style-type: none;
+}
+
+.grant-buttons li {
+    padding: 0 1rem;
+}

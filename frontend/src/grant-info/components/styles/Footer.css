@@ -1,0 +1,12 @@
+.footer {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+.pagination-wrapper {
+    margin: 0 auto
+}
+
+.add-grant-button {
+}

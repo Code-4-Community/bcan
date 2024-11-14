@@ -1,0 +1,20 @@
+/* Main container styling */
+.grant-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    justify-content: space-between;
+}
+
+/* Top half only takes up as much space as it needs */
+.top-half {
+    height: 5vh;
+    margin-bottom: 20%;
+}
+
+/* Bottom half to stack grant-list and footer */
+.bot-half {
+    display: flex;
+    flex-direction: column;
+    margin: 0 1rem;
+}
