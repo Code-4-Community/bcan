@@ -37,9 +37,6 @@ exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
 const crypto = __importStar(require("crypto"));
-aws_sdk_1.default.config.update({
-    region: process.env.AWS_REGION,
-});
 let AuthService = AuthService_1 = class AuthService {
     constructor() {
         this.logger = new common_1.Logger(AuthService_1.name);
@@ -187,14 +184,28 @@ let AuthService = AuthService_1 = class AuthService {
                     .promise();
                 user = newUser;
             }
-            return { access_token: idToken, user };
+            return { access_token: idToken, user, message: "Login Successful!" };
         }
         catch (error) {
-            if (error instanceof Error) {
-                this.logger.error('Login failed', error.stack);
-                throw new Error(error.message || 'Login failed');
+            /* Login Failures */
+            const cognitoError = error;
+            if (cognitoError.code) {
+                switch (cognitoError.code) {
+                    case 'NotAuthorizedException':
+                        this.logger.warn(`Login failed: ${cognitoError.message}`);
+                        throw new common_1.UnauthorizedException('Incorrect username or password.');
+                    default:
+                        this.logger.error(`Login failed: ${cognitoError.message}`, cognitoError.stack);
+                        throw new common_1.InternalServerErrorException('An error occurred during login.');
+                }
             }
-            throw new Error('An unknown error occurred during login');
+            else if (error instanceof Error) {
+                // Handle non-AWS errors
+                this.logger.error('Login failed', error.stack);
+                throw new common_1.InternalServerErrorException(error.message || 'Login failed.');
+            }
+            // Handle unknown errors
+            throw new common_1.InternalServerErrorException('An unknown error occurred during login.');
         }
     }
     async setNewPassword(newPassword, session, username, email) {
