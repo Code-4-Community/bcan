@@ -26,6 +26,7 @@ This repository holds code for BCAN. We are developing a tabular-focused website
 
 ## Commands
 1. node canIMerge.js --> Will your code pass on code style check, run node canIMerge.js --help for options
+2. node bcan-doctor.js --> Will pop out relevant functions, classes, etc. documentation for the backend in 'architecture.md'
 
 ## Misc
 Here's a fun GIF to get started!
