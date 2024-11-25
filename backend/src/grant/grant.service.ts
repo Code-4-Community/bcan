@@ -52,7 +52,7 @@ export class GrantService {
     }
 
     // Method to archive grants takes in array 
-    async archiveGrants(grantIds :number[]) : Promise<number[]> {
+    async unarchiveGrants(grantIds :number[]) : Promise<number[]> {
         let successfulUpdates: number[] = [];
         for (const grantId of grantIds) {
             const params = {
@@ -61,7 +61,7 @@ export class GrantService {
                     grantId: grantId,
                 },
                 UpdateExpression: "set isArchived = :archived",
-                ExpressionAttributeValues: { ":archived": true },
+                ExpressionAttributeValues: { ":archived": false },
                 ReturnValues: "UPDATED_NEW",
               };
 
@@ -69,7 +69,7 @@ export class GrantService {
                 const res = await dynamodb.update(params).promise();
                 console.log(res)
 
-                if (res.Attributes && res.Attributes.isArchived === true) {
+                if (res.Attributes && res.Attributes.isArchived === false) {
                     console.log(`Grant ${grantId} successfully archived.`);
                     successfulUpdates.push(grantId);
                 } else {
@@ -83,38 +83,4 @@ export class GrantService {
         };
         return successfulUpdates;
     }
-
-     // Method to archive grants takes in array 
-    async archiveGrants(grantIds :number[]) : Promise<number[]> {
-        let successfulUpdates: number[] = [];
-        for (const grantId of grantIds) {
-            const params = {
-                TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
-                Key: {
-                    grantId: grantId,
-                },
-                UpdateExpression: "set isArchived = :archived",
-                ExpressionAttributeValues: { ":archived": true },
-                ReturnValues: "UPDATED_NEW",
-              };
-
-              try{
-                const res = await dynamodb.update(params).promise();
-                console.log(res)
-
-                if (res.Attributes && res.Attributes.isArchived === true) {
-                    console.log(`Grant ${grantId} successfully archived.`);
-                    successfulUpdates.push(grantId);
-                } else {
-                    console.log(`Grant ${grantId} update failed or no change in status.`);
-                }
-              }
-              catch(err){
-                console.log(err);
-                throw new Error(`Failed to update Grant ${grantId} status.`);
-              }
-        };
-        return successfulUpdates;
-    }
-
 }

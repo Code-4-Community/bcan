@@ -19,7 +19,14 @@ export class GrantController {
     async archive(
         @Body('grantIds') grantIds: number[]
     ): Promise<number[]> {
-        return await this.grantService.archiveGrants(grantIds)
+        return await this.grantService.unarchiveGrants(grantIds)
+    }
+
+    @Put('unarchive')
+    async unarchive(
+        @Body('grantIds') grantIds: number[]
+    ): Promise<number[]> {
+        return await this.grantService.unarchiveGrants(grantIds)
     }
 
 }
