@@ -1,0 +1,50 @@
+
+.login-form {
+    max-width: 400px;
+    margin: 0 auto;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px 30px;
+}
+
+.login-heading {
+    text-align: center;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+.login-label {
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+}
+
+.login-input {
+    width: 90%;
+    padding: 8px;
+    margin: 8px 0;
+}
+
+.login-button {
+    padding: 8px;
+    width: 100%;
+    margin: 8px 0;
+    background-color: black;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.login-button-forgot {
+    padding: 8px;
+    width: 100%;
+    margin: 8px 0;
+    background-color: white;
+    color: black;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
