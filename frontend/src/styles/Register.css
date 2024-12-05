@@ -1,0 +1,34 @@
+
+.register-form {
+    max-width: 400px;
+    margin: 0 auto;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px 30px;
+}
+
+.register-heading {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+.register-label {
+    display: block;
+    text-align: left;
+}
+
+.register-input {
+    width: 90%;
+    padding: 8px;
+    margin: 8px 0;
+}
+
+.register-button {
+    padding: 8px 0;
+    margin: 8px 0;
+    width: 100%;
+    background-color: black;
+    color: white;
+}
