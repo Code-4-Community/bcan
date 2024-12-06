@@ -30,7 +30,7 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({ grants }) => {
     return (
         <div className="paginationView">
             {/* pagination controls */}
-            <Pagination count={pageCount} onChange={handlePageChange}/>
+            <Pagination count={pageCount} onChange={handlePageChange} color="primary"/>
             {/* render grants based on actual indices */}
             {(() => {
                 const renderedGrants = [];
