@@ -26,3 +26,13 @@
 .dashboard-button:hover {
     background-color: #535bf2;
 }
+
+.dashboard-gotoBCAN {
+    color: #F26624;
+}
+
+.dashboard-actions {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}

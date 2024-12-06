@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Pagination } from '@mui/material';
 import GrantItem, { GrantItemProps } from './GrantItem';
+import '../../grant-info/components/styles/Pagination.css';
 
 interface CustomPaginationProps {
     grants: GrantItemProps[];
@@ -27,7 +28,9 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({ grants }) => {
     console.log(`Current grant indices from: ${pagination.idxFrom} to ${pagination.idxTo}`);
 
     return (
-        <div>
+        <div className="paginationView">
+            {/* pagination controls */}
+            <Pagination count={pageCount} onChange={handlePageChange}/>
             {/* render grants based on actual indices */}
             {(() => {
                 const renderedGrants = [];
@@ -36,6 +39,7 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({ grants }) => {
                         <GrantItem
                             key={i}
                             grantName={grants[i].grantName}
+                            grantBlurb={grants[i].grantBlurb}
                             applicationDate={grants[i].applicationDate}
                             generalStatus={grants[i].generalStatus}
                             amount={grants[i].amount}
@@ -45,9 +49,6 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({ grants }) => {
                 }
                 return renderedGrants;
             })()}
-
-            {/* pagination controls */}
-            <Pagination count={pageCount} onChange={handlePageChange}/>
         </div>
     );
 };

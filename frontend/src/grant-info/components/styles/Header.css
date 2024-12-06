@@ -1,9 +1,9 @@
 .header {
     background-color: #F26624;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
     align-items: center;
-    height: 100%; /* Fill up entire container */
+    border-radius: 25px;
     margin: 0;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
