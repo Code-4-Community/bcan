@@ -4,6 +4,8 @@
     flex-direction: column;
     min-height: 100vh;
     justify-content: flex-start;
+    background-color: #F2EBE4;
+    width: 100%;
 }
 
 /* Top half only takes up as much space as it needs */
@@ -18,3 +20,4 @@
     flex-direction: column;
     margin: 0 1rem;
 }
+

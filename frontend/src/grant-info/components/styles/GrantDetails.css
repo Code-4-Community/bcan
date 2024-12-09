@@ -1,0 +1,23 @@
+.grant-details {
+    display: flex;
+    flex-direction: column; /* Stack the elements vertically */
+    gap: 1rem; /* Add spacing between each section */
+  }
+  
+  .grant-details h3 {
+    margin-left: 0; 
+    text-align: left;
+    padding-left: 1rem; 
+    margin-bottom: 0.1rem;
+  }
+  
+  .grant-details p {
+    border: 1px solid black; 
+    border-radius: 8px; 
+    padding: 1rem; 
+    margin-bottom: 1rem; 
+    transition: border-color 0.3s ease; 
+    overflow-y: auto;
+    margin-top: 0;
+  }
+  
