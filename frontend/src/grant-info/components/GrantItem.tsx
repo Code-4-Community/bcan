@@ -14,10 +14,12 @@ const GrantItem: React.FC<GrantItemProps> = (props) => {
    const { grantName, applicationDate, generalStatus, amount, restrictionStatus } = props;
 
    const [isExpanded, setIsExpanded] = useState(false);
+   const [isEditing, setIsEditing] = useState(false);
 
     const toggleExpand = () => {
         setIsExpanded(!isExpanded);
     };
+    const toggleEdit = () => setIsEditing((prev) => !prev);
 
     return (
 
@@ -35,12 +37,13 @@ const GrantItem: React.FC<GrantItemProps> = (props) => {
                     <div className="grant-description">
                         <h2>Community Development Initiative Grant</h2>
                         <div className = 'grant-content'>
-                                <GrantAttributes/>
-                                <GrantDetails/>
-
+                        <GrantAttributes isEditing={isEditing} />
+                        <GrantDetails/>
                         </div>
                         <div className="bottom-buttons">
-                        <button className="done-button" onClick={toggleExpand}>DONE</button>
+                        <button className="done-button" onClick={toggleEdit}>
+                                {isEditing ? 'SAVE' : 'EDIT'}
+                            </button>
                     </div>
                         </div>
                         

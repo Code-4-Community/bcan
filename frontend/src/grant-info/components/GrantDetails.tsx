@@ -1,7 +1,7 @@
 import React from 'react';
 import './styles/GrantDetails.css';
 
-const GrantDetails: React.FC = () => {
+const GrantDetails: React.FC = ()  => {
   return (
     <div className="grant-details">
       <h3>Description</h3>
