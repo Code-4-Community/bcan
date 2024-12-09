@@ -19,6 +19,17 @@ export const GrantAttributes: React.FC<GrantAttributesProps> = ({isEditing}) => 
         )}
       </div>
       <div className="attribute-row">
+        <div className="attribute-label">Does BCAN qualify?</div>
+        {isEditing ? (
+          <input
+            type="text"
+            className="attribute-value"
+          />
+        ) : (
+          <span className="attribute-value"></span>
+        )}
+      </div>
+      <div className="attribute-row">
         <div className="attribute-label">Deadline</div>
         {isEditing ? (
           <input
@@ -37,6 +48,61 @@ export const GrantAttributes: React.FC<GrantAttributesProps> = ({isEditing}) => 
             type="text"
             className="attribute-value"
             name="notificationDate"
+          />
+        ) : (
+          <span className="attribute-value"></span>
+        )}
+      </div>
+      <div className="attribute-row">
+        <div className="attribute-label">Report Due:</div>
+        {isEditing ? (
+          <input
+            type="text"
+            className="attribute-value"
+          />
+        ) : (
+          <span className="attribute-value"></span>
+        )}
+      </div>
+      <div className="attribute-row">
+        <div className="attribute-label">Estimated Completion Time:</div>
+        {isEditing ? (
+          <input
+            type="text"
+            className="attribute-value"
+          />
+        ) : (
+          <span className="attribute-value"></span>
+        )}
+      </div>
+      <div className="attribute-row">
+        <div className="attribute-label">Scope Document:</div>
+        {isEditing ? (
+          <input
+            type="text"
+            className="attribute-value"
+          />
+        ) : (
+          <span className="attribute-value"></span>
+        )}
+      </div>
+      <div className="attribute-row">
+        <div className="attribute-label">Grantmaker POC:</div>
+        {isEditing ? (
+          <input
+            type="text"
+            className="attribute-value"
+          />
+        ) : (
+          <span className="attribute-value"></span>
+        )}
+      </div>
+      <div className="attribute-row">
+        <div className="attribute-label">Timeline:</div>
+        {isEditing ? (
+          <input
+            type="text"
+            className="attribute-value"
           />
         ) : (
           <span className="attribute-value"></span>
