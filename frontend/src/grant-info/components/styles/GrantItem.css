@@ -1,5 +1,6 @@
 .grant-item-wrapper {
     margin: 2rem 0;
+    transition: all 0.3s ease-in-out;
 }
 
 .grant-summary {
@@ -24,6 +25,7 @@
     padding: 0 1rem; /* internal to the actual data */
     color: black;
     margin: 0; /* Remove margin */
+    
 
 }
 
@@ -38,8 +40,9 @@
 }
 
 .grant-body.expanded {
-    max-height: 20rem;
+    max-height: 100vh;
     background-color: #F58D5C;
+    padding: 1rem;
 }
 
 .grant-item.expanded {
@@ -52,6 +55,20 @@
     margin: 0 1rem;
 }
 
+.grant-description p {
+    border: 1px solid black; 
+    border-radius: 8px; 
+    padding: 1rem; 
+    margin-bottom: 1rem; 
+    transition: border-color 0.3s ease; 
+}
+
+.grant-description h3 {
+    margin-left: 0; 
+    text-align: left;
+    margin-bottom: 0.5rem; 
+    padding-left: 1rem; 
+}
 
 
 

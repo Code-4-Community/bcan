@@ -30,7 +30,8 @@ const GrantItem: React.FC<GrantItemProps> = (props) => {
             <div className={`grant-body ${isExpanded ? 'expanded' : ''}`}>
                 {isExpanded && (
                     <div className="grant-description">
-                        <h2>Grant Description:</h2>
+                        <h2>Community Development Initiative Grant</h2>
+                                <h3>Description</h3>
                                 <p>
                                     The Community Development Initiative Grant is designed to empower
                                     local organizations in implementing impactful projects that address
@@ -41,6 +42,7 @@ const GrantItem: React.FC<GrantItemProps> = (props) => {
                                     outline how their proposed projects will contribute to sustainable
                                     growth, promote equity, and engage local stakeholders.
                                 </p>
+                                <h3>Application Requirements</h3>
                                 <p>
                                     Eligible programs include those that offer job training and
                                     workforce development, youth mentorship, health and wellness
@@ -51,6 +53,7 @@ const GrantItem: React.FC<GrantItemProps> = (props) => {
                                     partnerships with other local organizations will be prioritized for
                                     funding.
                                 </p>
+                                <h3>Additional Notes</h3>
                                 <p>
                                     Funding for this grant may cover program expenses such as staffing,
                                     equipment, training materials, and outreach activities. The review
