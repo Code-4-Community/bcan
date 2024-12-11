@@ -6,7 +6,8 @@ import { Notification } from './notification.model'; // Adjust the path as neede
 
 
 
-AWS.config.update({ region: 'us-east-1' });     
+AWS.config.update({ region: 'us-east-1' });  
+// AWS.config.update({ region: 'us-east-2' });   
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 

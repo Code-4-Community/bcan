@@ -3,8 +3,8 @@ import 'react-app-polyfill/stable'; // For stable polyfills for older browsers
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
-import { AuthProvider } from './context/auth/authContext';
+import App from './App.js';
+import { AuthProvider } from './context/auth/authContext.js';
 
 ReactDOM.render(
   <React.StrictMode>

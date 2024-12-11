@@ -1,9 +1,9 @@
 // src/Dashboard.tsx
 
 import { observer } from 'mobx-react-lite';
-import { getStore } from './external/bcanSatchel/store';
-import { logout } from './external/bcanSatchel/actions';
-import Profile from './Profile';
+import { getStore } from './external/bcanSatchel/store.js';
+import { logout } from './external/bcanSatchel/actions.js';
+import Profile from './Profile.js';
 
 const Dashboard = observer(() => {
   const store = getStore();

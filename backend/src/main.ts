@@ -3,6 +3,8 @@ import { AppModule } from './app.module';
 import * as dotenv from 'dotenv'
 import AWS from 'aws-sdk';
 
+AWS.config.update({ region: 'us-east-2' });
+
 /* ! */
 async function bootstrap() {
   AWS.config.update({

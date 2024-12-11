@@ -1,9 +1,7 @@
-// src/Register.tsx
-
-import React, { useState } from 'react';
-import { setAuthentication } from './external/bcanSatchel/actions';
+import { useState } from 'react';
+import { setAuthentication } from './external/bcanSatchel/actions.js';
 import { observer } from 'mobx-react-lite';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '../node_modules/react-router-dom/dist/index.js';
 
 const Register = observer(() => {
   const [username, setUsername] = useState('');
@@ -45,12 +43,12 @@ const Register = observer(() => {
 
   return (
     <form onSubmit={handleSubmit} style={{maxWidth: '400px',
-                                          margin: '0 auto',
-                                          justifyContent: 'center', 
-                                          alignItems: 'center', 
-                                          border: '1px solid #ccc', 
-                                          borderRadius: '8px', 
-                                          padding: '20px 30px' 
+              margin: '0 auto',
+              justifyContent: 'center', 
+              alignItems: 'center', 
+              border: '1px solid #ccc', 
+              borderRadius: '8px', 
+              padding: '20px 30px' 
        }}>
       <h2>Register</h2>
       <div>

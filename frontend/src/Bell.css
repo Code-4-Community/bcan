@@ -1,0 +1,20 @@
+.bell-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 100;
+}
+
+.bell-container button {
+    background-color: transparent;
+    border: none;
+    border-radius: 5%;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.bell-container:hover {
+    background-color: #f39c12;
+    border-radius: 5%;
+    color: white;
+}

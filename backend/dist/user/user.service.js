@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
+aws_sdk_1.default.config.update({ region: 'us-east-2' }); // need to explicitly mention the region here otherwise an error is thrown for some reason
 const dynamodb = new aws_sdk_1.default.DynamoDB.DocumentClient();
 let UserService = class UserService {
     async getAllUsers() {
@@ -23,6 +24,7 @@ let UserService = class UserService {
             return data.Items;
         }
         catch (error) {
+            console.log(error);
             throw new Error('Could not retrieve users.');
         }
     }
@@ -38,6 +40,7 @@ let UserService = class UserService {
             return data.Item;
         }
         catch (error) {
+            console.log(error);
             throw new Error('Could not retrieve user.');
         }
     }
