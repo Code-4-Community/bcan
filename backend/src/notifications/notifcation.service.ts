@@ -1,14 +1,11 @@
 // src/notifications/notifications.service.ts
 import { Injectable } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
-import { Notification } from './notification.model'; // Adjust the path as needed
+import { Notification } from './notification.model'; 
 
 
 
-
-AWS.config.update({ region: 'us-east-1' });  
-// AWS.config.update({ region: 'us-east-2' });   
-// const dynamodb = new AWS.DynamoDB.DocumentClient();
+AWS.config.update({ region: 'us-east-1' });       
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 
@@ -16,10 +13,10 @@ const dynamodb = new AWS.DynamoDB.DocumentClient();
 export class NotificationService {
 
 
- // Function to create a notification
+ // function to create a notification
  async createNotification(notification: Notification): Promise<Notification> {
  
-   const alertTime = new Date(notification.alertTime); // Ensures a Date can be created from the given alertTime
+   const alertTime = new Date(notification.alertTime); // ensures a Date can be created from the given alertTime
 
 
    const params = {
@@ -34,7 +31,7 @@ export class NotificationService {
  }
 
 
- // function to find notifications by user id (sorted by most recent notifications first)
+ // function that returns array of notifications by user id (sorted by most recent notifications first)
   async getNotificationByUserId(userId: string): Promise<Notification[]> {
 
     console.log("USER ID", userId)
@@ -71,7 +68,7 @@ export class NotificationService {
 }
 
 
-  // function to find notifications by notification id
+  // function that returns array of notifications by notification id
   async getNotificationByNotificationId(notificationId: string): Promise<Notification[]> {
 
     console.log("NOTIF ID", notificationId)
