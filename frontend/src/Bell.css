@@ -3,7 +3,6 @@
     display: inline-block;
     top: 10px;
     right: 10px;
-    z-index: 100;
 }
 
 .bell-container button {
@@ -20,8 +19,20 @@
     color: white;
 }
 
+.bell-button.hovered {
+    background-color: #f39c12;
+    /* Hover color */
+    color: white;
+}
+
+.bell-button:hover {
+    background-color: #f39c12;
+    color: white;
+}
+
 
 .notification-modal {
+    pointer-events: auto;
     position: absolute;
     top: 50px;
     right: 0;
@@ -35,29 +46,48 @@
     padding: 16px;
     overflow-x: auto;
     overflow-y: auto;
+    z-index: 2000;
+}
+
+.notification-modal-content ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.notification-item {
+    list-style-type: none;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f38e12;
+    color: rgb(255, 255, 255);
+    text-align: center;
+    font-size: 1rem;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .notification-modal-content {
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
+    gap: 12px;
 }
 
-.notification-item {
-    list-style-type: none;
-    margin-bottom: 8px;
-    font-size: 0.9rem;
-    text-align: left;
-    width: 100%;
-}
-
-.notification-close-button {
+div.notification-modal-content .notification-close-button {
     margin-top: 12px;
     padding: 6px 12px;
-    background-color: #f44336;
     color: white;
+    border: 2px solid #ccc;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 1rem;
+    text-align: center;
 }
 
 .notification-close-button:hover {

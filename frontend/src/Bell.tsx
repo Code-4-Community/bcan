@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 // get current user id
 const currUserID = sessionStorage.getItem('userId');
+// const currUserID = null
 
 const BellButton = () => {
 
@@ -34,21 +35,27 @@ const BellButton = () => {
 
     return (
         <>
-        <button className="bell-button" onClick={handleClick}>
+            <button className={`bell-button ${isClicked ? 'hovered' : ''}`} onClick={handleClick}>
             <FontAwesomeIcon icon={faBell} />
         </button>
         {isClicked && 
                 <div className="notification-modal">
                     <div className="notification-modal-content">
-                        <h4>Notifications for {currUserID}</h4>
-                        <ul>
-                            {notifications.map((notification, index) => (
-                                <li key={index} className="notification-item">
-                                    {notification.message} <br />
-                                    <small>Alert Time: {notification.alertTime}</small>
-                                </li>
-                            ))}
-                        </ul>
+                        <h4>
+                            {currUserID ? `Notifications for ${currUserID}` : "Notifications"}
+                        </h4>
+                        {notifications.length > 0 ? (
+                            <ul>
+                                {notifications.map((notification, index) => (
+                                    <li key={index} className="notification-item">
+                                        {notification.message} <br />
+                                        <small>Alert Time: {notification.alertTime}</small>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p>No new notifications</p>
+                        )}
                         <button
                             onClick={() => setClicked(false)}
                             className="notification-close-button"
