@@ -1,9 +1,11 @@
 // src/Login.tsx
 
 import React, { useState } from 'react';
-import { setAuthentication } from './external/bcanSatchel/actions'; // Corrected import path
+import { setAuthentication } from './external/bcanSatchel/actions.js'; // Corrected import path
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
+
+console.log("user id before logging in: " , sessionStorage.getItem('userId'))
 
 const Login = observer(() => {
   const [username, setUsername] = useState('');
@@ -30,6 +32,13 @@ const Login = observer(() => {
       console.log('Login response data:', data);
 
       if (data.access_token) {
+        // store the username in session storage for use by other functions
+        sessionStorage.setItem('userId', data.user.userId);
+
+        // console.log(data.user)
+
+        console.log('Username stored:', sessionStorage.getItem('userId'));
+
         setAuthentication(true, data.user, data.access_token);
         navigate('/dashboard');
         alert(data.message); // Alert wit message from backend indicating success

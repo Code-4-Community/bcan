@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import { getStore } from './external/bcanSatchel/store';
-import { updateUserProfile } from './external/bcanSatchel/actions';
+import { getStore } from './external/bcanSatchel/store.js';
+import { updateUserProfile } from './external/bcanSatchel/actions.js';
 
 const Profile = observer(() => {
   const store = getStore();

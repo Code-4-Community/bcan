@@ -1,5 +1,5 @@
 import React from 'react';
-import GrantItem from './GrantItem';
+import GrantItem from './GrantItem.js';
 import './styles/GrantList.css'
 
 const GrantList: React.FC = () => {
