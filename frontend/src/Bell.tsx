@@ -3,7 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 
-const currUserID = "bcanuser33"   // test
+// get current user id
+const currUserID = sessionStorage.getItem('userId');
 
 const BellButton = () => {
 
@@ -39,7 +40,7 @@ const BellButton = () => {
         {isClicked && 
                 <div className="notification-modal">
                     <div className="notification-modal-content">
-                        <h4>Notifications</h4>
+                        <h4>Notifications for {currUserID}</h4>
                         <ul>
                             {notifications.map((notification, index) => (
                                 <li key={index} className="notification-item">

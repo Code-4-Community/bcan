@@ -9,6 +9,7 @@ const Dashboard = observer(() => {
   const store = getStore();
 
   const handleLogout = () => {
+    sessionStorage.clear()     // clear session storage while logging out to remove user data
     logout();
   };
 
