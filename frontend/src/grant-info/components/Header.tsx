@@ -5,7 +5,10 @@ const Header: React.FC = () => {
     return (
         <header className="header">
             <header className="header-left-comp">
-                <li className="logo">LOGO</li>
+            <li className="logo">
+            <img src={"../../images/bcan_logo.png"} alt="BCAN Logo" />
+            </li>
+
             </header>
             <header className="header-right-comp">
                 <ul className="grant-buttons">

@@ -1,5 +1,6 @@
 .grant-item-wrapper {
     margin: 2rem 0;
+    transition: all 0.3s ease-in-out;
 }
 
 .grant-summary {
@@ -24,7 +25,13 @@
     padding: 0 1rem; /* internal to the actual data */
     color: black;
     margin: 0; /* Remove margin */
+    
 
+}
+
+.grant-content {
+    display: flex;
+    gap: 2rem; /* Adds space between the two sections */
 }
 
 .grant-body {
@@ -38,8 +45,9 @@
 }
 
 .grant-body.expanded {
-    max-height: 20rem;
+    max-height: 100vh;
     background-color: #F58D5C;
+    padding: 1rem;
 }
 
 .grant-item.expanded {
@@ -48,10 +56,24 @@
     background-color: #F58D5C;
 }
 
-.grant-description {
-    margin: 0 1rem;
+.bottom-buttons {
+    display: flex;  /* Use flexbox to position the button */
+    justify-content: flex-end;  /* Align the button to the right */
+    padding-top: 1rem;  /* Optional: Add some space above the button */
 }
 
+.done-button {
+    bottom: 1rem; 
+    right: 1rem; 
+    padding: 0.5rem 1rem;
+    background-color: 3191CF;
+    color: back; 
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
 
 
 
