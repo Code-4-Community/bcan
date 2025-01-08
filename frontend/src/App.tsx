@@ -6,17 +6,20 @@ import Login from './Login';
 import Register from './Register';
 import Dashboard from './Dashboard';
 import './App.css';
+import { ChakraProvider, defaultSystem } from "@chakra-ui/react"
 
 // Register store and mutators
 import './external/bcanSatchel/mutators';
 import { getStore } from './external/bcanSatchel/store';
 import GrantPage from "./grant-info/components/GrantPage.tsx";
 
+
 const App = observer(() => {
   const store = getStore();
 
   return (
     <Router>
+      <ChakraProvider value={defaultSystem}>
       < div className="app-container">
       <Routes>
         <Route
@@ -41,6 +44,7 @@ const App = observer(() => {
         />
       </Routes>
       </div>
+      </ChakraProvider>
     </Router>
   );
 });

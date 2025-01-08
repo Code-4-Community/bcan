@@ -12,7 +12,6 @@ function GrantPage() {
             </div>
             <div className="bot-half">
                 <div className="grant-list">
-                    <Footer/>
                     <GrantList/>
                 </div>
             </div>
