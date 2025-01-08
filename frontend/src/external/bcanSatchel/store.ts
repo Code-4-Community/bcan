@@ -21,4 +21,10 @@ const initialState: AppState = {
   accessToken: null,
 };
 
-export const getStore = createStore<AppState>('appStore', initialState);
+
+const store = createStore<AppState>('appStore', initialState);
+
+export function getStore() {
+  return store();
+}
+export default store;
