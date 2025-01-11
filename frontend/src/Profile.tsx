@@ -2,13 +2,13 @@
 
 import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import { getStore } from './external/bcanSatchel/store';
+import { useAuthContext } from './context/auth/authContext';
 import { updateUserProfile } from './external/bcanSatchel/actions';
 
 const Profile = observer(() => {
-  const store = getStore();
-  const [email, setEmail] = useState(store.user?.email || '');
-  const [biography, setBiography] = useState(store.user?.biography || '');
+  const { user, isAuthenticated } = useAuthContext();
+  const [email, setEmail] = useState(user?.email || '');
+  const [biography, setBiography] = useState(user?.biography || '');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,7 +18,7 @@ const Profile = observer(() => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${store.accessToken}`,
+          Authorization: `Bearer ${user?.accessToken ?? ''}`,
         },
         body: JSON.stringify({ email, biography }),
       });
@@ -49,7 +49,7 @@ const Profile = observer(() => {
       <div style = {{padding: '5px'}} >
         
         <label >Username: </label>
-        <span>{store.user?.userId}</span>
+        <span>{user?.userId}</span>
       </div>
       <div>
         <label>Email:</label>

@@ -1,7 +1,7 @@
 // src/Register.tsx
 
 import React, { useState } from 'react';
-import { setAuthentication } from './external/bcanSatchel/actions';
+import { setAuthState } from './external/bcanSatchel/actions';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 
@@ -33,7 +33,7 @@ const Register = observer(() => {
       const loginData = await loginResponse.json();
 
       if (loginResponse.ok && loginData.access_token) {
-        setAuthentication(true, loginData.user, loginData.access_token);
+        setAuthState(true, loginData.user, loginData.access_token);
         navigate('/dashboard');
       } else {
         alert(loginData.message || 'Login after registration failed.');

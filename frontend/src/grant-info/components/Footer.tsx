@@ -1,16 +1,15 @@
 import React from 'react';
-import Pagination from "./Pagination";
 import './styles/Footer.css'
 
-const Footer: React.FC = () => {
+const ArchivedFooter: React.FC = () => {
     return (
         <div className="footer">
             <div className="pagination-wrapper">
-                <Pagination/>
+                { /* Content here */}
             </div>
             <button className="add-grant-button">+</button>
         </div>
     )
 }
 
-export default Footer;
+export default ArchivedFooter;

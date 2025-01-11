@@ -1,18 +1,22 @@
-// src/mutators.ts
-
 import { mutator } from 'satcheljs';
-import { setAuthentication, updateUserProfile, logout } from './actions';
-import { getStore } from './store';
+import { setAuthState, updateUserProfile, logoutUser } from './actions';
+import { getAppStore } from './store';
 
-mutator(setAuthentication, (actionMessage) => {
-  const store = getStore();
+/**
+ * setAuthState mutator
+ */
+mutator(setAuthState, (actionMessage) => {
+  const store = getAppStore();
   store.isAuthenticated = actionMessage.isAuthenticated;
   store.user = actionMessage.user;
   store.accessToken = actionMessage.accessToken;
 });
 
+/**
+ * updateUserProfile mutator
+ */
 mutator(updateUserProfile, (actionMessage) => {
-  const store = getStore();
+  const store = getAppStore();
   if (store.user) {
     store.user = {
       ...store.user,
@@ -21,8 +25,11 @@ mutator(updateUserProfile, (actionMessage) => {
   }
 });
 
-mutator(logout, () => {
-  const store = getStore();
+/**
+ * logoutUser mutator
+ */
+mutator(logoutUser, () => {
+  const store = getAppStore();
   store.isAuthenticated = false;
   store.user = null;
   store.accessToken = null;

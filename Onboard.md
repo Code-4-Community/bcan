@@ -6,7 +6,7 @@
 
 **SatchelJS**: [Satchel Documentation](https://microsoft.github.io/satcheljs/book/)
 
-   Satchel is the dataflow framework we use in this repository. It builds on top of the Flux architecture and uses **MobX** under the hood for reactive state management.
+   Satchel is the dataflow framework we use in this repository. It builds on top of the Flux architecture and uses **MobX** under the hood for reactive state management. More info on designing reactive frontend components with Satchel/MobX is in the **/frontend/README.md**
 
 **NestJS**: [NestJS Documentation](https://docs.nestjs.com/)
 
