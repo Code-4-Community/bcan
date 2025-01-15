@@ -4,6 +4,8 @@ import { describe, it, expect, vi, type Mock } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 
 import Dashboard from '../src/Dashboard';
+import { AuthProvider } from '../src/context/auth/authContext';
+
 
 // Import the modules we'll mock:
 import * as storeModule from '../src/external/bcanSatchel/store';
@@ -11,11 +13,11 @@ import * as actionsModule from '../src/external/bcanSatchel/actions';
 
 // “flips the switch” and says “don’t use real code from this path.”
 vi.mock('../src/external/bcanSatchel/store', () => ({
-  getStore: vi.fn(),
+  getAppStore: vi.fn(),
 }));
 
 vi.mock('../src/external/bcanSatchel/actions', () => ({
-  logout: vi.fn(),
+  logoutUser: vi.fn(),
 }));
 
 /* You could do:
@@ -35,7 +37,7 @@ describe('Dashboard component', () => {
   it('renders user info from store and calls logout on click', () => {
 
     // Setup
-    const getStoreMock = storeModule.getStore as Mock;
+    const getStoreMock = storeModule.getAppStore as Mock;
     getStoreMock.mockReturnValue({
       // simulate store content:
       isAuthenticated: true,
@@ -44,7 +46,9 @@ describe('Dashboard component', () => {
     });
 
     // Act 1
-    render(<Dashboard />);
+    render(<AuthProvider>
+              <Dashboard />
+                </AuthProvider>);
 
     // Eval 1
     expect(screen.getByText('Welcome, TestUser123')).toBeInTheDocument();
@@ -53,6 +57,6 @@ describe('Dashboard component', () => {
     fireEvent.click(screen.getByRole('button', { name: /logout/i }));
 
     // Eval 2
-    expect(actionsModule.logout).toHaveBeenCalledTimes(1);
+    expect(actionsModule.logoutUser).toHaveBeenCalledTimes(1);
   });
 });
