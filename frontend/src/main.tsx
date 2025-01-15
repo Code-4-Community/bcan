@@ -1,6 +1,6 @@
 import 'react-app-polyfill/ie11';  // For Internet Explorer 11 support
 import 'react-app-polyfill/stable'; // For stable polyfills for older browsers
-import * as React from 'react'
+// Ideally Import React
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App'
