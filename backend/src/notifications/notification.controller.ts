@@ -1,4 +1,3 @@
-// src/notifications/notifications.controller.ts
 import { Controller, Post, Body, Get, Query } from '@nestjs/common';
 import { NotificationService } from './notifcation.service';
 import { Notification } from './notification.model';

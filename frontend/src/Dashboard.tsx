@@ -1,15 +1,13 @@
-// src/Dashboard.tsx
-
 import { observer } from 'mobx-react-lite';
-import { getStore } from './external/bcanSatchel/store';
-import { logout } from './external/bcanSatchel/actions';
+import { useAuthContext } from './context/auth/authContext';
+import { logoutUser } from './external/bcanSatchel/actions';
 import Profile from './Profile';
 
 const Dashboard = observer(() => {
-  const store = getStore();
+  const { user } = useAuthContext();
 
   const handleLogout = () => {
-    logout();
+    logoutUser();
   };
 
   return (
@@ -17,14 +15,14 @@ const Dashboard = observer(() => {
     <button onClick={handleLogout} style={{ 
       padding: '10px', 
       fontSize: '16px', 
-      marginBottom: '10px', // Add space below the button
+      marginBottom: '10px', // Adds space below the button
       backgroundColor: 'black',
       color: 'white'
     }}>
       Logout
     </button>
     
-    <h1>Welcome, {store.user?.userId}</h1>
+    <h1>Welcome, {user?.userId}</h1>
     
     <Profile />
   </div>

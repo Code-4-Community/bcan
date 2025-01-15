@@ -1,7 +1,4 @@
-// src/store.ts
-
 import { createStore } from 'satcheljs';
-// import { ObservableMap } from 'mobx'; --> will use for complex type
 
 export interface User {
   userId: string;
@@ -15,10 +12,18 @@ export interface AppState {
   accessToken: string | null;
 }
 
+// Define initial state
 const initialState: AppState = {
   isAuthenticated: false,
   user: null,
   accessToken: null,
 };
 
-export const getStore = createStore<AppState>('appStore', initialState);
+const store = createStore<AppState>('appStore', initialState);
+
+/**
+ * Getter function for the store
+ */
+export function getAppStore() {
+  return store();
+}

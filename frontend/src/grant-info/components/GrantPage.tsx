@@ -1,8 +1,11 @@
 import './styles/GrantPage.css'
 import Header from './Header';
 import GrantList from './GrantList';
-import Footer from './Footer';
 
+/**
+ * Grant Page
+ * @returns Header & GrantList mixed with <div>, <div/> html tags
+ */
 function GrantPage() {
 
     return (
@@ -12,7 +15,6 @@ function GrantPage() {
             </div>
             <div className="bot-half">
                 <div className="grant-list">
-                    <Footer/>
                     <GrantList/>
                 </div>
             </div>

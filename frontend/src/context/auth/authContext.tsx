@@ -1,8 +1,7 @@
-// src/authContext.tsx
-
 import { useContext, createContext, ReactNode } from 'react';
-import { getStore } from '../../external/bcanSatchel/store';
-import { setAuthentication } from '../../external/bcanSatchel/actions';
+import { getAppStore } from '../../external/bcanSatchel/store';
+import { setAuthState, logoutUser } from '../../external/bcanSatchel/actions'
+import { observer } from 'mobx-react-lite';
 
 interface AuthContextProps {
   isAuthenticated: boolean;
@@ -22,9 +21,12 @@ export const useAuthContext = () => {
   return context;
 };
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const store = getStore();
+export const AuthProvider = observer(({ children }: { children: ReactNode }) => {
+  const store = getAppStore();
 
+  /**
+   * Attempt to log in the user
+   */
   const login = async (username: string, password: string) => {
     const response = await fetch('http://localhost:3001/auth/login', {
       method: 'POST',
@@ -33,14 +35,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     const data = await response.json();
-
     if (data.access_token) {
-      setAuthentication(true, data.user, data.access_token);
+      setAuthState(true, data.user, data.access_token);
     } else {
       alert('Login failed. Please check your credentials.');
     }
   };
 
+  /**
+   * Register a new user and automatically log them in
+   */
   const register = async (username: string, password: string, email: string) => {
     const response = await fetch('http://localhost:3001/auth/register', {
       method: 'POST',
@@ -49,18 +53,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     const data = await response.json();
-
     if (response.ok) {
-      // Automatically log in the user
+      // log the user in after registration
       await login(username, password);
     } else {
       alert(data.message || 'Registration failed');
     }
   };
 
+  /**
+   * Log out the user
+   */
   const logout = () => {
-    // Clear the store
-    setAuthentication(false, null, null);
+    logoutUser(); // Satchel action that clears state
   };
 
   return (
@@ -76,4 +81,4 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </AuthContext.Provider>
   );
-};
+});

@@ -6,30 +6,43 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "test": "vitest",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@chakra-ui/react": "^3.2.5",
+    "@emotion/react": "^11.14.0",
+    "@testing-library/dom": "^10.4.0",
     "@types/react-router-dom": "^5.3.3",
     "core-js": "^3.38.1",
+    "framer-motion": "^11.16.0",
     "mobx": "^6.13.2",
+    "mobx-react-lite": "^4.1.0",
     "react": "^18.3.1",
     "react-app-polyfill": "^3.0.0",
     "react-dom": "^18.3.1",
+    "react-icons": "^5.4.0",
     "react-router-dom": "^6.26.2",
     "satcheljs": "^4.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.1",
     "eslint": "^9.9.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
+    "jsdom": "^25.0.1",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.8"
+    "vite": "^5.4.8",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^2.1.8"
   }
 }

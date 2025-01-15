@@ -6,7 +6,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "build": "tsc",
-    "test": "jest"
+    "test": "vitest"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
@@ -26,9 +26,10 @@
   "devDependencies": {
     "@nestjs/testing": "^8.4.7",
     "@types/jest": "^27.0.0",
-    "@types/node": "^16.0.0",
+    "@types/node": "^20.0.0",
     "jest": "^27.0.0",
     "ts-jest": "^27.0.0",
-    "typescript": "^4.9.5"
+    "typescript": "^4.9.5",
+    "vitest": "^2.1.8"
   }
 }
