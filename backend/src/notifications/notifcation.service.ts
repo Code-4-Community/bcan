@@ -1,4 +1,3 @@
-// src/notifications/notifications.service.ts
 import { Injectable } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
 import { Notification } from './notification.model'; // Adjust the path as needed
