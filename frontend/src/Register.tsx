@@ -1,5 +1,3 @@
-// src/Register.tsx
-
 import React, { useState } from 'react';
 import { setAuthState } from './external/bcanSatchel/actions';
 import { observer } from 'mobx-react-lite';

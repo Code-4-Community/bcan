@@ -15,17 +15,28 @@ import {
 } from "react-icons/hi2"
 import { LinkButton } from "./LinkButton"
 
+/**
+ * Button variant types used across different pagination states.
+ */
 interface ButtonVariantMap {
+  /** The variant of the pagination button when it is the current page. */
   current: ButtonProps["variant"]
+  /** The default variant of the pagination button. */
   default: ButtonProps["variant"]
+  /** The variant of the pagination button used to show an ellipsis. */
   ellipsis: ButtonProps["variant"]
 }
 
 type PaginationVariant = "outline" | "solid" | "subtle"
 
+/**
+ * Defines the context properties shared by all pagination components.
+ */
 interface ButtonVariantContext {
   size: ButtonProps["size"]
+   /** The mapping of pagination button states to Chakra UI variants. */
   variantMap: ButtonVariantMap
+  /** Optional function to generate an `href` for link-based pagination. */
   getHref?: (page: number) => string
 }
 
@@ -35,15 +46,36 @@ const [RootPropsProvider, useRootProps] = createContext<ButtonVariantContext>({
 
 export interface PaginationRootProps
   extends Omit<ChakraPagination.RootProps, "type"> {
+    /** The size of the pagination buttons. Defaults to "sm". */
   size?: ButtonProps["size"]
+  /**
+   * The visual variant for the pagination. Could be "outline", "solid", or "subtle".
+   * Defaults to "outline".
+   */
   variant?: PaginationVariant
+    /** Optional to generate an `href` for link-based pagination. */
   getHref?: (page: number) => string
 }
 
+/**
+ * Maps Pagination Variant to Chakra button variants,
+ *  used in default, current, elipsis pagination states. */
 const variantMap: Record<PaginationVariant, ButtonVariantMap> = {
-  outline: { default: "ghost", ellipsis: "plain", current: "outline" },
-  solid: { default: "outline", ellipsis: "outline", current: "solid" },
-  subtle: { default: "ghost", ellipsis: "plain", current: "subtle" },
+  outline: { 
+    default: "ghost", 
+    ellipsis: "plain", 
+    current: "outline" 
+  },
+  solid: { 
+    default: "outline", 
+    ellipsis: "outline", 
+    current: "solid" 
+  },
+  subtle: { 
+    default: "ghost", 
+    ellipsis: "plain", 
+    current: "subtle" 
+  },
 }
 
 export const PaginationRoot = React.forwardRef<
@@ -64,6 +96,10 @@ export const PaginationRoot = React.forwardRef<
   )
 })
 
+/**
+ * Represents an ellipsis item in the pagination, rendered whenever
+ * there are pages omitted between visible ranges.
+ */
 export const PaginationEllipsis = React.forwardRef<
   HTMLDivElement,
   ChakraPagination.EllipsisProps
@@ -78,6 +114,9 @@ export const PaginationEllipsis = React.forwardRef<
   )
 })
 
+/**
+ * Represents a single page item in the pagination.
+ */
 export const PaginationItem = React.forwardRef<
   HTMLButtonElement,
   ChakraPagination.ItemProps
@@ -105,6 +144,9 @@ export const PaginationItem = React.forwardRef<
   )
 })
 
+/**
+ * The "Previous" button for pagination.
+ */
 export const PaginationPrevTrigger = React.forwardRef<
   HTMLButtonElement,
   ChakraPagination.PrevTriggerProps
@@ -186,6 +228,13 @@ interface PageTextProps extends TextProps {
   format?: "short" | "compact" | "long"
 }
 
+/**
+ * Renders the current page text in multiple possible formats:
+ *
+ * - **short**: e.g. `5 / 10`
+ * - **compact**: e.g. `5 of 10`
+ * - **long**: e.g. `41 - 50 of 100`
+ */
 export const PaginationPageText = React.forwardRef<
   HTMLParagraphElement,
   PageTextProps

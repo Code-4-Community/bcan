@@ -2,6 +2,10 @@ import './styles/GrantPage.css'
 import Header from './Header';
 import GrantList from './GrantList';
 
+/**
+ * Grant Page
+ * @returns Header & GrantList mixed with <div>, <div/> html tags
+ */
 function GrantPage() {
 
     return (

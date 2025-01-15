@@ -1,12 +1,10 @@
-// src/Profile.tsx
-
 import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useAuthContext } from './context/auth/authContext';
 import { updateUserProfile } from './external/bcanSatchel/actions';
 
 const Profile = observer(() => {
-  const { user, isAuthenticated } = useAuthContext();
+  const { user } = useAuthContext();
   const [email, setEmail] = useState(user?.email || '');
   const [biography, setBiography] = useState(user?.biography || '');
 

@@ -1,5 +1,3 @@
-// src/Dashboard.tsx
-
 import { observer } from 'mobx-react-lite';
 import { useAuthContext } from './context/auth/authContext';
 import { logoutUser } from './external/bcanSatchel/actions';
@@ -17,7 +15,7 @@ const Dashboard = observer(() => {
     <button onClick={handleLogout} style={{ 
       padding: '10px', 
       fontSize: '16px', 
-      marginBottom: '10px', // Add space below the button
+      marginBottom: '10px', // Adds space below the button
       backgroundColor: 'black',
       color: 'white'
     }}>

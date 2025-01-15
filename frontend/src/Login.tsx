@@ -1,5 +1,3 @@
-// src/Login.tsx
-
 import React, { useState } from 'react';
 import { useAuthContext } from './context/auth/authContext'
 import { observer } from 'mobx-react-lite';

@@ -1,8 +1,6 @@
 import GrantItem from "./GrantItem"
 import "./styles/GrantList.css"
 
-// 1) Import all your custom Pagination pieces.
-//    Adjust the import path as needed to point to your Chakra-based pagination.
 import {
   PaginationRoot,
   PaginationPrevTrigger,
@@ -13,7 +11,7 @@ import {
 
 import { usePaginationContext } from "@chakra-ui/react"
 
-// Just to simulate a bigger list:
+// simulate a big list:
 const ALL_GRANTS = Array.from({ length: 11 }).map((_, i) => ({
   grantName: `Community Development Grant #${i + 1}`,
   applicationDate: `2024-09-${(i % 30) + 1}`,
@@ -25,7 +23,7 @@ const ALL_GRANTS = Array.from({ length: 11 }).map((_, i) => ({
 // How many items to show per page
 const ITEMS_PER_PAGE = 3
 
-// This sub-component will read the current page from our custom pagination context
+// Read the current page from our custom pagination context
 // and figure out which items to display.
 function GrantListView() {
   const { page } = usePaginationContext()
@@ -57,7 +55,7 @@ const GrantList: React.FC = () => {
       */}
       <PaginationRoot defaultPage={1} count={totalPages}>
         {/* 
-          Render the paging controls:
+           Paging Controls:
             - Prev / Next triggers
             - Individual page items
             - PageText for "X of Y" or "X / Y"
