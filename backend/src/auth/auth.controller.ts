@@ -39,12 +39,11 @@ export class AuthController {
       return res.status(200).json(result);
     }
 
-    const oneHourMs = 60 * 60 * 1000;
     res.cookie('app_idToken', result.access_token, {
       httpOnly: true,
       secure: false, // TODO: true in production (HTTPS)
       sameSite: 'strict',
-      maxAge: oneHourMs,
+      maxAge: 60 * 60 * 1000,
     });
 
     return res.json({
@@ -56,16 +55,9 @@ export class AuthController {
   @Post('me')
   @HttpCode(200)
   async me(@Req() req: Request) {
-    // 1) Retrieve the token from the cookie
     const token = req.cookies['app_idToken'];
-    if (!token) {
-      throw new UnauthorizedException('No token found');
-    }
-    // 2) Verify the token. 
-    //    - If you're using the Cognito ID token directly, you can skip "jwt.verify()"
+    if (!token) throw new UnauthorizedException('No token found');
     const payload = this.authService.verifyToken(token);
-
-    // 3) Optionally fetch the user and other side effects
     return { user: payload };
   }
 

@@ -28,6 +28,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -36,9 +39,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
+const jwt_1 = require("@nestjs/jwt");
 const crypto = __importStar(require("crypto"));
 let AuthService = AuthService_1 = class AuthService {
-    constructor() {
+    constructor(jwtService) {
+        this.jwtService = jwtService;
         this.logger = new common_1.Logger(AuthService_1.name);
         this.cognito = new aws_sdk_1.default.CognitoIdentityServiceProvider();
         this.dynamoDb = new aws_sdk_1.default.DynamoDB.DocumentClient();
@@ -138,9 +143,7 @@ let AuthService = AuthService_1 = class AuthService {
                 this.logger.error('Authentication failed: Missing IdToken or AccessToken');
                 throw new Error('Authentication failed: Missing IdToken or AccessToken');
             }
-            // User Identity Information
-            const idToken = response.AuthenticationResult.IdToken;
-            // Grants access to resources
+            /**  User Identity Information */
             const accessToken = response.AuthenticationResult.AccessToken;
             if (!accessToken) {
                 throw new Error('Access token is undefined.');
@@ -184,7 +187,12 @@ let AuthService = AuthService_1 = class AuthService {
                     .promise();
                 user = newUser;
             }
-            return { access_token: idToken, user, message: "Login Successful!" };
+            const localToken = this.signToken({
+                sub: user.userId,
+                userId: user.userId,
+                email: user.email,
+            });
+            return { access_token: localToken, user, message: "Login Successful!" };
         }
         catch (error) {
             /* Login Failures */
@@ -238,8 +246,8 @@ let AuthService = AuthService_1 = class AuthService {
                 !response.AuthenticationResult.IdToken) {
                 throw new Error('Failed to set new password');
             }
-            const token = response.AuthenticationResult.IdToken;
-            return { access_token: token };
+            const localToken = this.signToken({ sub: username });
+            return { access_token: localToken };
         }
         catch (error) {
             if (error instanceof Error) {
@@ -247,6 +255,23 @@ let AuthService = AuthService_1 = class AuthService {
                 throw new Error(error.message || 'Setting new password failed');
             }
             throw new Error('An unknown error occurred');
+        }
+    }
+    /**
+     * Issue a JWT with 1-hour expiration
+     */
+    signToken(payload) {
+        return this.jwtService.sign(payload);
+    }
+    /**
+     * Verify a JWT and return its payload if valid
+     */
+    verifyToken(token) {
+        try {
+            return this.jwtService.verify(token);
+        }
+        catch (err) {
+            throw new common_1.UnauthorizedException('Invalid or expired token');
         }
     }
     async updateProfile(username, displayName) {
@@ -273,6 +298,7 @@ let AuthService = AuthService_1 = class AuthService {
     }
 };
 AuthService = AuthService_1 = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [jwt_1.JwtService])
 ], AuthService);
 exports.AuthService = AuthService;

@@ -23,8 +23,36 @@ let AuthController = class AuthController {
         await this.authService.register(username, password, email);
         return { message: 'User registered successfully' };
     }
-    async login(username, password) {
-        return await this.authService.login(username, password);
+    /**
+     * Logs a user in, maintaining their authstate for
+     */
+    async login(username, password, res) {
+        const result = await this.authService.login(username, password);
+        if (!result.access_token) {
+            return res.status(200).json(result);
+        }
+        res.cookie('app_idToken', result.access_token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'strict',
+            maxAge: 60 * 60 * 1000,
+        });
+        return res.json({
+            message: result.message || 'Login Successful!',
+            user: result.user,
+        });
+    }
+    async me(req) {
+        const token = req.cookies['app_idToken'];
+        if (!token)
+            throw new common_1.UnauthorizedException('No token found');
+        const payload = this.authService.verifyToken(token);
+        return { user: payload };
+    }
+    async logout(res) {
+        // Clear the token cookie
+        res.clearCookie('app_idToken');
+        return res.json({ message: 'Logged out' });
     }
     async setNewPassword(newPassword, session, username, email) {
         return await this.authService.setNewPassword(newPassword, session, username, email);
@@ -47,10 +75,26 @@ __decorate([
     (0, common_1.Post)('login'),
     __param(0, (0, common_1.Body)('username')),
     __param(1, (0, common_1.Body)('password')),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String, String, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "login", null);
+__decorate([
+    (0, common_1.Post)('me'),
+    (0, common_1.HttpCode)(200),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "me", null);
+__decorate([
+    (0, common_1.Post)('logout'),
+    __param(0, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "logout", null);
 __decorate([
     (0, common_1.Post)('set-password'),
     __param(0, (0, common_1.Body)('newPassword')),

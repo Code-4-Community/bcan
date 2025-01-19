@@ -52,6 +52,7 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
+      credentials: 'include',
     });
 
     const data = await response.json();
@@ -84,8 +85,15 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
   /**
    * Log out the user
    */
-  const logout = () => {
-    logoutUser(); // Satchel action that clears state
+  const logout = async () => {
+  // 1) Clear server backed credentials
+  await fetch('http://localhost:3001/auth/logout', {
+    method: 'POST',
+    credentials: 'include',
+  });
+
+  // 2) Clear local store
+  logoutUser(); 
   };
 
   return (

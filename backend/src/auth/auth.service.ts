@@ -1,23 +1,17 @@
 import { Injectable, InternalServerErrorException, Logger, UnauthorizedException } from '@nestjs/common';
 import AWS from 'aws-sdk';
 import { table } from 'console';
+import { JwtService } from '@nestjs/jwt';
 import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
-  private readonly privateKey: Buffer;
-  private readonly publicKey: Buffer;
-
-  constructor() {
-    // Load keys (sync for brevity; production might do better)
-    this.privateKey = process.env.NOT_AS_SECRET_VAR;
-    this.publicKey = process.env.SECRET_VAR
-  }
-
   private readonly logger = new Logger(AuthService.name);
 
   private cognito = new AWS.CognitoIdentityServiceProvider();
   private dynamoDb = new AWS.DynamoDB.DocumentClient();
+
+  constructor(private readonly jwtService: JwtService) {}
 
   private computeHatch(
     username: string,
@@ -152,15 +146,11 @@ export class AuthService {
         throw new Error('Authentication failed: Missing IdToken or AccessToken');
       }
   
-      // User Identity Information
-      const idToken = response.AuthenticationResult.IdToken;
-      // Grants access to resources
+      /**  User Identity Information */
       const accessToken = response.AuthenticationResult.AccessToken;
-
       if (!accessToken) {
         throw new Error('Access token is undefined.');
       }
-
 
       const getUserResponse = await this.cognito
         .getUser({ AccessToken: accessToken })
@@ -211,8 +201,14 @@ export class AuthService {
   
         user = newUser;
       }
+
+      const localToken = this.signToken({
+        sub: user.userId,
+        userId: user.userId,
+        email: user.email,
+      });
   
-      return { access_token: idToken, user, message: "Login Successful!" };
+      return { access_token: localToken, user, message: "Login Successful!" };
     } catch (error: unknown) {
       /* Login Failures */
       const cognitoError = error as AwsCognitoError;
@@ -290,8 +286,9 @@ export class AuthService {
         throw new Error('Failed to set new password');
       }
 
-      const token = response.AuthenticationResult.IdToken;
-      return { access_token: token };
+      const localToken = this.signToken({ sub: username });
+      return { access_token: localToken };
+      
     } catch (error: unknown) {
       if (error instanceof Error) {
         this.logger.error('Setting new password failed', error.stack);
@@ -302,21 +299,18 @@ export class AuthService {
   }
 
   /**
-   * Issue a JWT (RS256) with 1-hour expiration
+   * Issue a JWT with 1-hour expiration
    */
    signToken(payload: any): string {
-    return jwt.sign(payload, this.privateKey, {
-      algorithm: 'RS256',
-      expiresIn: '1h',
-    });
+    return this.jwtService.sign(payload);
   }
 
   /**
-   * Verify a JWT (RS256) and return its payload if valid
+   * Verify a JWT and return its payload if valid
    */
   verifyToken(token: string): any {
     try {
-      return jwt.verify(token, this.publicKey, { algorithms: ['RS256'] });
+      return this.jwtService.verify(token);
     } catch (err) {
       throw new UnauthorizedException('Invalid or expired token');
     }
