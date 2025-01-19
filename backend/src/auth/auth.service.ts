@@ -5,6 +5,15 @@ import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
+  private readonly privateKey: Buffer;
+  private readonly publicKey: Buffer;
+
+  constructor() {
+    // Load keys (sync for brevity; production might do better)
+    this.privateKey = process.env.NOT_AS_SECRET_VAR;
+    this.publicKey = process.env.SECRET_VAR
+  }
+
   private readonly logger = new Logger(AuthService.name);
 
   private cognito = new AWS.CognitoIdentityServiceProvider();
@@ -289,6 +298,27 @@ export class AuthService {
         throw new Error(error.message || 'Setting new password failed');
       }
       throw new Error('An unknown error occurred');
+    }
+  }
+
+  /**
+   * Issue a JWT (RS256) with 1-hour expiration
+   */
+   signToken(payload: any): string {
+    return jwt.sign(payload, this.privateKey, {
+      algorithm: 'RS256',
+      expiresIn: '1h',
+    });
+  }
+
+  /**
+   * Verify a JWT (RS256) and return its payload if valid
+   */
+  verifyToken(token: string): any {
+    try {
+      return jwt.verify(token, this.publicKey, { algorithms: ['RS256'] });
+    } catch (err) {
+      throw new UnauthorizedException('Invalid or expired token');
     }
   }
 

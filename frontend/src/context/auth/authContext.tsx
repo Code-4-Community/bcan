@@ -1,4 +1,4 @@
-import { useContext, createContext, ReactNode } from 'react';
+import { useContext, createContext, ReactNode, useEffect } from 'react';
 import { getAppStore } from '../../external/bcanSatchel/store';
 import { setAuthState, logoutUser } from '../../external/bcanSatchel/actions'
 import { observer } from 'mobx-react-lite';
@@ -24,6 +24,26 @@ export const useAuthContext = () => {
 export const AuthProvider = observer(({ children }: { children: ReactNode }) => {
   const store = getAppStore();
 
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/auth/me', {
+          method: 'POST',
+          credentials: 'include',
+        });
+        if (!response.ok) {
+          throw new Error('Not authenticated');
+        }
+        const data = await response.json();
+        setAuthState(true, data.user, null); 
+      } catch (err) {
+        // Not logged in or token invalid
+        logoutUser();
+      }
+    };
+    checkSession();
+  }, []);
+
   /**
    * Attempt to log in the user
    */
@@ -35,8 +55,8 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
     });
 
     const data = await response.json();
-    if (data.access_token) {
-      setAuthState(true, data.user, data.access_token);
+    if (data.user) {
+      setAuthState(true, data.user, null);
     } else {
       alert('Login failed. Please check your credentials.');
     }
