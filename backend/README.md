@@ -24,7 +24,7 @@ Here we have an example module for authentication:
 @Module({
   imports: [
     JwtModule.register({
-      secret: process.env.JWT_SECRET,
+      secret: process.env.SECRET_VAR,
       signOptions: { expiresIn: '1h' },
     }),
   ],

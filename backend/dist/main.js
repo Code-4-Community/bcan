@@ -30,6 +30,7 @@ const core_1 = require("@nestjs/core");
 const app_module_1 = require("./app.module");
 const dotenv = __importStar(require("dotenv"));
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 /* ! */
 async function bootstrap() {
     aws_sdk_1.default.config.update({
@@ -38,8 +39,13 @@ async function bootstrap() {
         secretAccessKey: process.env.CLOSED_HATCH
     });
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
-    app.enableCors();
+    app.enableCors({
+        origin: process.env.SCREEN,
+        credentials: true,
+    });
+    app.use((0, cookie_parser_1.default)());
     await app.listen(3001);
 }
 dotenv.config();
+console.log('PRIVATE KEY from env:', process.env.SECRET_VAR); // or entire string
 bootstrap();
