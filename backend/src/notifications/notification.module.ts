@@ -4,8 +4,11 @@ import { NotificationService } from './notifcation.service';
 
 
 @Module({
- providers: [NotificationService],
- controllers: [NotificationController],
- exports: [NotificationService],
+ providers: [NotificationService], // providers perform business logic
+ controllers: [NotificationController], // controllers directly take in http requests
+ // and are the starting point for anything happening
+ exports: [NotificationService], // by putting it under exports, this service is available
+ // to other modules outside of this
 })
 export class NotificationsModule {}
+

@@ -32,6 +32,7 @@ function GrantListView() {
   const startIndex = (page - 1) * ITEMS_PER_PAGE
   const endIndex = startIndex + ITEMS_PER_PAGE
   const currentGrants = ALL_GRANTS.slice(startIndex, endIndex)
+  console.log(`start index: ${startIndex}, current grants: ${currentGrants}`);
 
   return (
     <div className="grant-list">
@@ -54,7 +55,7 @@ const GrantList: React.FC = () => {
           - totalPages is calculated
       */}
       <PaginationRoot defaultPage={1} count={totalPages}>
-        {/* 
+        {/*
            Paging Controls:
             - Prev / Next triggers
             - Individual page items
