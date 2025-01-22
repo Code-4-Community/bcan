@@ -14,9 +14,9 @@ const grant_module_1 = require("./grant/grant.module");
 const notification_module_1 = require("./notifications/notification.module");
 let AppModule = class AppModule {
 };
-AppModule = __decorate([
+exports.AppModule = AppModule;
+exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [auth_module_1.AuthModule, user_module_1.UserModule, grant_module_1.GrantModule, notification_module_1.NotificationsModule],
     })
 ], AppModule);
-exports.AppModule = AppModule;

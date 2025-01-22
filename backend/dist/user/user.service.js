@@ -42,7 +42,7 @@ let UserService = class UserService {
         }
     }
 };
-UserService = __decorate([
+exports.UserService = UserService;
+exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)()
 ], UserService);
-exports.UserService = UserService;

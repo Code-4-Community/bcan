@@ -13,7 +13,8 @@ const auth_controller_1 = require("./auth.controller");
 const auth_service_1 = require("./auth.service");
 let AuthModule = class AuthModule {
 };
-AuthModule = __decorate([
+exports.AuthModule = AuthModule;
+exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [
             jwt_1.JwtModule.register({
@@ -25,4 +26,3 @@ AuthModule = __decorate([
         providers: [auth_service_1.AuthService],
     })
 ], AuthModule);
-exports.AuthModule = AuthModule;

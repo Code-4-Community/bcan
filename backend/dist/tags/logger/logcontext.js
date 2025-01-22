@@ -6,4 +6,4 @@ var LogContext;
     LogContext["Error"] = "Error";
     LogContext["UserAction"] = "UserAction";
     LogContext["GrantActivity"] = "GrantActivity";
-})(LogContext = exports.LogContext || (exports.LogContext = {}));
+})(LogContext || (exports.LogContext = LogContext = {}));

@@ -7,4 +7,4 @@ var ErrorType;
     ErrorType["Validation"] = "ValidationError";
     ErrorType["Unknown"] = "UnknownError";
     ErrorType["InternalServer"] = "InternalServerError";
-})(ErrorType = exports.ErrorType || (exports.ErrorType = {}));
+})(ErrorType || (exports.ErrorType = ErrorType = {}));

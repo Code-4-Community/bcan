@@ -20,7 +20,7 @@ let LoggerService = LoggerService_1 = class LoggerService {
         this.logger.error(message, trace, context);
     }
 };
-LoggerService = LoggerService_1 = __decorate([
+exports.LoggerService = LoggerService;
+exports.LoggerService = LoggerService = LoggerService_1 = __decorate([
     (0, common_1.Injectable)()
 ], LoggerService);
-exports.LoggerService = LoggerService;

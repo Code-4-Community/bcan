@@ -26,6 +26,7 @@ let UserController = class UserController {
         return await this.userService.getUserById(userId);
     }
 };
+exports.UserController = UserController;
 __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
@@ -39,8 +40,7 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getUserById", null);
-UserController = __decorate([
+exports.UserController = UserController = __decorate([
     (0, common_1.Controller)('user'),
     __metadata("design:paramtypes", [user_service_1.UserService])
 ], UserController);
-exports.UserController = UserController;

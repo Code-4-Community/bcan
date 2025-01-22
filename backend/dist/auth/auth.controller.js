@@ -1,5 +1,4 @@
 "use strict";
-// src/auth/auth.controller.ts
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -35,6 +34,7 @@ let AuthController = class AuthController {
         return { message: 'Profile has been updated' };
     }
 };
+exports.AuthController = AuthController;
 __decorate([
     (0, common_1.Post)('register'),
     __param(0, (0, common_1.Body)('username')),
@@ -70,8 +70,7 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "updateProfile", null);
-AuthController = __decorate([
+exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])
 ], AuthController);
-exports.AuthController = AuthController;

@@ -12,10 +12,10 @@ const user_service_1 = require("./user.service");
 const user_controller_1 = require("./user.controller");
 let UserModule = class UserModule {
 };
-UserModule = __decorate([
+exports.UserModule = UserModule;
+exports.UserModule = UserModule = __decorate([
     (0, common_1.Module)({
         controllers: [user_controller_1.UserController],
         providers: [user_service_1.UserService],
     })
 ], UserModule);
-exports.UserModule = UserModule;
