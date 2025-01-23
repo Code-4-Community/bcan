@@ -36,7 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
-const crypto = __importStar(require("crypto"));
+const crypto = __importStar(require("node:crypto"));
 let AuthService = AuthService_1 = class AuthService {
     constructor() {
         this.logger = new common_1.Logger(AuthService_1.name);

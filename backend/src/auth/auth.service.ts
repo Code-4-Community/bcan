@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException, Logger, UnauthorizedException } from '@nestjs/common';
 import AWS from 'aws-sdk';
 import { table } from 'console';
-import * as crypto from 'crypto';
+import * as crypto from 'node:crypto';
 
 @Injectable()
 export class AuthService {

@@ -32,22 +32,14 @@ const dotenv = __importStar(require("dotenv"));
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
 /* ! */
 async function bootstrap() {
-    // actually opens the link for us to use the AWS services
     aws_sdk_1.default.config.update({
         region: process.env.AWS_REGION,
         accessKeyId: process.env.OPEN_HATCH,
         secretAccessKey: process.env.CLOSED_HATCH
     });
-    // and then actually launches the app by bundling all of the modules that make up the backend
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
-    // this enables the API to be accessed
     app.enableCors();
-    // and this is the port that it goes to
     await app.listen(3001);
 }
-// actually load in the values of the .env
 dotenv.config();
-// call our defined function
 bootstrap();
-// for my notes only
-// crud endpoints, Create, Read, Update Delete

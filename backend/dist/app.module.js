@@ -12,9 +12,6 @@ const auth_module_1 = require("./auth/auth.module");
 const user_module_1 = require("./user/user.module");
 const grant_module_1 = require("./grant/grant.module");
 const notification_module_1 = require("./notifications/notification.module");
-// this does an ascethic, modular grouping of all the sub-modules, encapsulating all
-// of the different functions, such as authentication actions, notification actions, user actions,
-// and actual grant operations
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
