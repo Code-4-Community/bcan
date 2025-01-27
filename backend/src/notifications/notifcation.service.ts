@@ -1,23 +1,16 @@
-// src/notifications/notifications.service.ts
 import { Injectable } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
 import { Notification } from './notification.model';
 
-
-
-AWS.config.update({ region: 'us-east-2' });
-const dynamodb = new AWS.DynamoDB.DocumentClient();
-
-
 @Injectable()
 export class NotificationService {
 
+  private dynamoDb = new AWS.DynamoDB.DocumentClient();
 
   // function to create a notification
   async createNotification(notification: Notification): Promise<Notification> {
 
     const alertTime = new Date(notification.alertTime); // ensures a Date can be created from the given alertTime
-
 
     const params = {
       TableName: process.env.DYNAMODB_NOTIFICATION_TABLE_NAME || 'TABLE_FAILURE',
@@ -26,15 +19,13 @@ export class NotificationService {
         alertTime: alertTime.toISOString(),
       },
     };
-    await dynamodb.put(params).promise();
+    await this.dynamoDb.put(params).promise();
     return notification;
   }
 
 
   // function that returns array of notifications by user id (sorted by most recent notifications first)
   async getNotificationByUserId(userId: string): Promise<Notification[]> {
-
-    console.log("USER ID", userId)
 
     // KeyConditionExpression specifies the query condition
     // ExpressionAttributeValues specifies the actual value of the key
@@ -50,17 +41,12 @@ export class NotificationService {
       ScanIndexForward: false // sort in descending order
     };
 
-
     try {
-      console.log("HERE1")
-      const data = await dynamodb.query(params).promise();
-      console.log("HERE2")
-
+      const data = await this.dynamoDb.query(params).promise();
 
       if (!data.Items) {
         throw new Error('No notifications with user id ' + userId + ' found.');
       }
-
 
       return data.Items as Notification[];
     } catch (error) {
@@ -72,8 +58,6 @@ export class NotificationService {
 
   // function that returns array of notifications by notification id
   async getNotificationByNotificationId(notificationId: string): Promise<Notification[]> {
-
-    console.log("NOTIF ID", notificationId)
 
     // key condition expression specifies the query condition
     // expression attribute values specifies the actual value of the key
@@ -87,7 +71,7 @@ export class NotificationService {
 
 
     try {
-      const data = await dynamodb.query(params).promise();
+      const data = await this.dynamoDb.query(params).promise();
 
 
       if (!data.Items) {
