@@ -49,10 +49,10 @@ describe("Account component", () => {
     // Act 1
     render(
       <MemoryRouter>
-      <AuthProvider>
-        <Account />
-      </AuthProvider>
-    </MemoryRouter>
+        <AuthProvider>
+          <Account />
+        </AuthProvider>
+      </MemoryRouter>
     );
 
     // Eval 1
