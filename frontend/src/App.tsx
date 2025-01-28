@@ -5,7 +5,9 @@ import { observer } from 'mobx-react-lite';
 import Login from './Login';
 import Register from './Register';
 import Dashboard from './Dashboard';
+import NewGrant from './NewGrant'
 import './App.css';
+
 
 // Register store and mutators
 import './external/bcanSatchel/mutators';
@@ -29,6 +31,11 @@ const App = observer(() => {
         <Route
           path="/dashboard"
           element={store.isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
+        />
+         <Route
+          path="/new-grant"
+          // will change to login for second branch
+          element={<NewGrant/>}
         />
         <Route
           path="*"
