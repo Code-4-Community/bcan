@@ -3,6 +3,9 @@
 /frontend/node_modules/
 /node_modules/
 
+# Ignore frontend build files
+/frontend/tsconfig.*.tsbuildinfo
+
 # Ignore NestJS dist files
 /backend/dist/
 
