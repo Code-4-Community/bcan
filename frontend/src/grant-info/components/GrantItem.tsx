@@ -2,6 +2,8 @@ import React, {useState} from 'react';
 import './styles/GrantItem.css';
 import { GrantAttributes } from './GrantAttributes';
 import GrantDetails from './GrantDetails';
+import { isActiveStatus } from './GrantStatus';
+import { StatusBadge } from './StatusBadge';
 
 interface GrantItemProps {
     grantName: string;
@@ -11,8 +13,7 @@ interface GrantItemProps {
     restrictionStatus: string;
 }
 const GrantItem: React.FC<GrantItemProps> = (props) => {
-   const { grantName, applicationDate, generalStatus, amount, restrictionStatus } = props;
-
+   const { grantName, applicationDate, generalStatus, amount, restrictionStatus } = props; 
    const [isExpanded, setIsExpanded] = useState(false);
    const [isEditing, setIsEditing] = useState(false);
 
@@ -31,6 +32,10 @@ const GrantItem: React.FC<GrantItemProps> = (props) => {
                 <li className="status">{generalStatus}</li>
                 <li className="amount">${amount}</li>
                 <li className="restriction-status">{restrictionStatus}</li>
+
+                <li>
+                <StatusBadge status={generalStatus} />
+                </li>
             </ul>
             <div className={`grant-body ${isExpanded ? 'expanded' : ''}`}>
                 {isExpanded && (
