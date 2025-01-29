@@ -5,9 +5,6 @@ node_modules/
 dist/
 build/
 
-# Ignore TypeScript build artifacts
-tsconfig.*.tsbuildinfo
-
 # Environment files
 .env
 
