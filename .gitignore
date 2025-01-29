@@ -1,7 +1,19 @@
 # Ignore node_modules in subdirectories
-/backend/node_modules
-/frontend/node_modules
-/node_modules
+/backend/node_modules/
+/frontend/node_modules/
+/node_modules/
+
+# Ignore frontend build files
+/frontend/tsconfig.*.tsbuildinfo
+
+# Ignore NestJS dist files
+/backend/dist/
+
+# Ignore .env in subdirectories
+/backend/.env
+
+# Ignore backend keys
+/backend/keys/
 
 # Ignore OS-specific files
 .DS_Store
