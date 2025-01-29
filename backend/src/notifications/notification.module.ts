@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { NotificationController } from './notification.controller';
 import { NotificationService } from './notifcation.service';
 
-
 @Module({
  providers: [NotificationService], // providers perform business logic
  controllers: [NotificationController], // controllers directly take in http requests
@@ -11,4 +10,3 @@ import { NotificationService } from './notifcation.service';
  // to other modules outside of this
 })
 export class NotificationsModule {}
-

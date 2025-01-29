@@ -10,6 +10,7 @@ async function bootstrap() {
     accessKeyId: process.env.OPEN_HATCH,
     secretAccessKey: process.env.CLOSED_HATCH
   });
+  
   const app = await NestFactory.create(AppModule);
   app.enableCors();
   await app.listen(3001);
