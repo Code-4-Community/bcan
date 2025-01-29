@@ -2,14 +2,10 @@ import { Injectable,Logger } from '@nestjs/common';
 import AWS from 'aws-sdk';
 import { Grant } from './grant.model'
 
-// TODO: set up the region elsewhere - code does not work without the line below
-AWS.config.update({ region: 'us-east-2' });      
-const dynamodb = new AWS.DynamoDB.DocumentClient();
-
-
 @Injectable()
 export class GrantService {
     private readonly logger = new Logger(GrantService.name);
+      private dynamoDb = new AWS.DynamoDB.DocumentClient();
 
     // function to retrieve all grants in our database
     async getAllGrants(): Promise<Grant[]> {
@@ -18,7 +14,7 @@ export class GrantService {
         };
 
         try {
-            const data = await dynamodb.scan(params).promise();
+            const data = await this.dynamoDb.scan(params).promise();
 
             return data.Items as Grant[] || [];
         } catch (error) {
@@ -38,7 +34,7 @@ export class GrantService {
         };
 
         try {
-            const data = await dynamodb.get(params).promise();
+            const data = await this.dynamoDb.get(params).promise();
 
             if (!data.Item) {
                 throw new Error('No grant with id ' + grantId + ' found.');
@@ -66,7 +62,7 @@ export class GrantService {
               };
 
               try{
-                const res = await dynamodb.update(params).promise();
+                const res = await this.dynamoDb.update(params).promise();
                 console.log(res)
 
                 if (res.Attributes && res.Attributes.isArchived === false) {

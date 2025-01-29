@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "ts-morph": "^23.0.0",
-    "typescript": "^5.6.2"
+    "typescript": "^5.7.3"
   },
   "name": "bcan",
   "version": "1.0.0",
