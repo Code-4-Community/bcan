@@ -33,39 +33,52 @@ export class AuthController {
     @Body('password') password: string,
     @Res() res: Response,
   ) {
-
     const result = await this.authService.login(username, password);
+    
     if (!result.access_token) {
       return res.status(200).json(result);
     }
 
-    res.cookie('app_idToken', result.access_token, {
-      httpOnly: true,
-      secure: false, // TODO: true in production (HTTPS)
-      sameSite: 'strict',
-      maxAge: 60 * 60 * 1000,
-    });
+    if (result.access_token) {
+      // Set HTTP-secure session cookies to expire only in the context of our website
+      // Cookie age is calculated in terms of milliseconds
+      res.cookie('app_idToken', result.access_token, {
+        httpOnly: true,
+        secure: false, // TODO: true in production (HTTPS)
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 1000,
+      });
 
-    return res.json({
-      message: result.message || 'Login Successful!',
-      user: result.user,
-    });
+      return res.json({
+        message: result.message || 'Login Successful!',
+        user: result.user,
+      });
+    }
   }
 
-  @Post('me')
+  /**
+   * Verify active authentication sessions
+   * @param req Express request object containing the session token authenticating a user
+   * @returns JWT claims (e.g. authenticated session tokens)
+   * @throws If the user does not have a valid session token (malicious or errenous attempt)
+   */
+  @Post('verify-session')
   @HttpCode(200)
-  async me(@Req() req: Request) {
+  async verifySession(@Req() req: Request) {
     const token = req.cookies['app_idToken'];
+    console.log(token)
     if (!token) throw new UnauthorizedException('No token found');
-    const payload = this.authService.verifyToken(token);
-    return { user: payload };
+    try {
+      const payload = this.authService.verifyToken(token);
+      return { authenticatedUserData: { userId: payload.userId, email: payload.email } };
+    } catch (err) {
+      throw new UnauthorizedException('Invalid or expired token');
+    }
   }
 
   @Post('logout')
   async logout(@Res() res: Response) {
-    // Clear the token cookie
-    res.clearCookie('app_idToken');
-    return res.json({ message: 'Logged out' });
+    res.cookie('app_idToken', '');
   }
 
   @Post('set-password')
@@ -73,11 +86,27 @@ export class AuthController {
     @Body('newPassword') newPassword: string,
     @Body('session') session: string,
     @Body('username') username: string,
+    @Res() res: Response,
     @Body('email') email?: string,
-  ): Promise<{ access_token: string }> {
-    return await this.authService.setNewPassword(newPassword, session, username, email);
+  ) {
+    const result = await this.authService.setNewPassword(newPassword, session, username, email);
+  
+    // If there's an access_token, set it in an HTTP-only cookie 
+    if (result.access_token) {
+      res.cookie('app_idToken', result.access_token, {
+        httpOnly: true,
+        secure: false, // set to true in production with HTTPS
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 1000,
+      });
+      return res.json({
+        message: result.message,
+      });
+    }
   }
+  
 
+  // TODO: Better security
   @Post('update-profile')
   async updateProfile(
     @Body('username') username: string,

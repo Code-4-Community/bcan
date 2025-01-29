@@ -246,7 +246,7 @@ export class AuthService {
     session: string,
     username: string,
     email?: string,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ access_token: string, message: string }> {
     const clientId = process.env.COGNITO_CLIENT_ID;
     const clientSecret = process.env.COGNITO_CLIENT_SECRET;
 
@@ -287,7 +287,7 @@ export class AuthService {
       }
 
       const localToken = this.signToken({ sub: username });
-      return { access_token: localToken };
+      return { access_token: localToken, message: "Password Reset!" };
       
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -299,7 +299,7 @@ export class AuthService {
   }
 
   /**
-   * Issue a JWT with 1-hour expiration
+   * Issue a JWT claim with 1-hour expiration
    */
    signToken(payload: any): string {
     return this.jwtService.sign(payload);
