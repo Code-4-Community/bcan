@@ -54,7 +54,7 @@ const GrantList: React.FC = () => {
           - totalPages is calculated
       */}
       <PaginationRoot defaultPage={1} count={totalPages}>
-        {/* 
+        {/*
            Paging Controls:
             - Prev / Next triggers
             - Individual page items
