@@ -5,6 +5,9 @@ import { render, screen, fireEvent } from "@testing-library/react";
 
 import Account from "../src/Account";
 import { AuthProvider } from "../src/context/auth/authContext";
+// Since JSDOM (used by Vitest) does not provide a real browser environment,
+// we wrap tests that check navigation with <MemoryRouter>, which acts as a mock router.
+import { MemoryRouter } from "react-router-dom";
 
 // Import the modules we'll mock:
 import * as storeModule from "../src/external/bcanSatchel/store";
@@ -45,9 +48,11 @@ describe("Account component", () => {
 
     // Act 1
     render(
+      <MemoryRouter>
       <AuthProvider>
         <Account />
       </AuthProvider>
+    </MemoryRouter>
     );
 
     // Eval 1
