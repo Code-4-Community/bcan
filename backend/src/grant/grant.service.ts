@@ -9,7 +9,6 @@ export class GrantService {
 
     // function to retrieve all grants in our database
     async getAllGrants(): Promise<Grant[]> {
-        // loads in the environment variable for the table now
         const params = {
             TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
         };
@@ -79,39 +78,5 @@ export class GrantService {
               }
         };
         return successfulUpdates;
-    }
-
-    /**
-     * Given primary key, attribute name, and the content to update, queries database to update
-     * that info. Returns true if operation was successful. Assumes inputs are valid.
-     * @param grantId
-     * @param attributeName
-     * @param newValue
-     */
-    async updateGrant(grantId: number, attributeName: string, newValue: string): Promise<void> {
-        const params = {
-            TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
-            Key: {
-                grantId: grantId
-            },
-            UpdateExpression: `set #s = :newValue`,
-            ExpressionAttributeNames: {
-                '#s': attributeName,
-            },
-            ExpressionAttributeValues: {
-                ":newValue": newValue,
-            },
-            ReturnValues: "UPDATED_NEW",
-        }
-        console.log(params);
-
-        try {
-            const result = await this.dynamoDb.update(params).promise();
-            console.log(result);
-        } catch(err) {
-            console.log(err);
-            throw new Error(`Failed to update Grant ${grantId} attribute 
-                ${attributeName} with ${newValue}`);
-        }
     }
 }

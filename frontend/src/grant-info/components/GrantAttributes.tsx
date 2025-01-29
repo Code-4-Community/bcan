@@ -1,29 +1,18 @@
-import React, { useContext} from 'react';
+import React from 'react';
 import './styles/GrantAttributes.css';
-import {StatusContext} from './StatusContext.tsx';
 interface GrantAttributesProps {
   isEditing: boolean;
 }
 
 export const GrantAttributes: React.FC<GrantAttributesProps> = ({isEditing}) => {
-
-    // placeholder for now  before reworking, will remove redundant useState()
-    const { curStatus, setCurStatus } = useContext(StatusContext);
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setCurStatus(event.target.value);
-    };
-
   return (
     <div className="grant-attributes">
       <div className="attribute-row">
         <div className="attribute-label">Status</div>
         {isEditing ? (
           <input
-            type="text" /*This is also a place holder for updating the status*/
+            type="text"
             className="attribute-value"
-            value={curStatus}
-            onChange={handleChange}
           />
         ) : (
           <span className="attribute-value"></span>

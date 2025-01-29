@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Put, Body, Patch } from '@nestjs/common';
+import { Controller, Get, Param, Put, Body } from '@nestjs/common';
 import { GrantService } from './grant.service';
 
 @Controller('grant')
@@ -10,8 +10,6 @@ export class GrantController {
         return await this.grantService.getAllGrants();
     }
 
-    // the @Param looks for arguments, in the decorator above the function definition, and
-    // then uses it as a parameter
     @Get(':id')
     async getGrantById(@Param('id') GrantId: string) {
         return await this.grantService.getGrantById(parseInt(GrantId, 10));
@@ -30,16 +28,5 @@ export class GrantController {
     ): Promise<number[]> {
         return await this.grantService.unarchiveGrants(grantIds)
     }
-
-    @Put('save/status')
-    async saveStatus(
-        @Body('status') status: string
-    ) {
-        await this.grantService.updateGrant(1, 'status', status)
-        return { message: 'Status has been updated' };
-    }
-
-
-
 
 }
