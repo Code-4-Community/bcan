@@ -13,5 +13,4 @@ export interface Grant {
     point_of_contacts: string[];
     attached_resources: string[];
     comments: string[];
-    isArchived : boolean;
 }
