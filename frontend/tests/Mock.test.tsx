@@ -48,7 +48,7 @@ describe("Account component", () => {
 
     // Act 1
     render(
-      <MemoryRouter>
+    <MemoryRouter>
       <AuthProvider>
         <Account />
       </AuthProvider>
