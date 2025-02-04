@@ -6,6 +6,8 @@ const POCEntry = forwardRef((props, ref) => {
     const [poc, changePOC] = useState("")
     const [pocType, changePOCType] = useState("")
     const [inputType, changeInputType] = useState("text")
+    // This is from chat so idk what this will always do
+    // TODO: make it so has to be type and then colon then value 
     useImperativeHandle(ref, () => ({
         getPOC: () => {
             return `${pocType}: ${poc}`
@@ -18,8 +20,10 @@ const POCEntry = forwardRef((props, ref) => {
 
         if (val === "Email") {
             changeInputType("text")
+            changePOC("")
         } else if (val === "Phone Number") {
             changeInputType("number")
+            changePOC("0")
         }
         else {
             changeInputType("text")

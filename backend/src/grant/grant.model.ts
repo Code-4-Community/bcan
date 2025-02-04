@@ -1,5 +1,5 @@
 // model for Grant objects
-export interface Grant {
+export default interface Grant {
     grantId: number;
     organization_name: string;
     description: string;
@@ -14,3 +14,4 @@ export interface Grant {
     attached_resources: string[];
     comments: string[];
 }
+

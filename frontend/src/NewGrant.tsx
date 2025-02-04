@@ -7,7 +7,7 @@ type POCEntryRef = {
 };
 
 
-const NewGrant = () => {
+const NewGrant = (): JSX.Element => {
     const [orgName, changeOrgName] = useState<string>("")
     const [desc, changeDesc] = useState<string>("")
     // On submission make sure that you check if its yes or no
@@ -141,7 +141,7 @@ const NewGrant = () => {
                 <textarea
                     onChange={(e) => changeComments(e.target.value)}>
                 </textarea>
-                <p>POCs</p>
+                <p>Points of Contact</p>
                 {pocComponents.map(entry => (
                     entry
                 ))}

@@ -1,6 +1,7 @@
 import { Injectable,Logger } from '@nestjs/common';
 import AWS from 'aws-sdk';
-import { Grant } from './grant.model'
+import Grant from './grant.model'
+import { CreateGrantDto } from './dto/grant.dto';
 
 // TODO: set up the region elsewhere - code does not work without the line below
 AWS.config.update({ region: 'us-east-2' });      
@@ -82,5 +83,47 @@ export class GrantService {
               }
         };
         return successfulUpdates;
+    }
+
+
+    async addGrant(grant : CreateGrantDto) : Promise<number> {
+        // When it comes to processing the resources I need a custom decorator
+        // Did it hoe
+        // TODO Could possibly do more validation like theres a grant with that name already and such
+        // Check if date is before th current date
+        console.log(grant)
+        const params = {
+            TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
+            Item: {
+                grantId: 1000,
+                organization_name: grant.organization_name,
+                description: grant.description,
+                is_bcan_qualifying : grant.is_bcan_qualifying,
+                status : grant.status,
+                amount: grant.amount,
+                deadline : grant.deadline,
+                notifications_on_for_user: grant.notifications_on_for_user,
+                reporting_requirements: grant.reporting_requirements,
+                restrictions: grant.restrictions,
+                point_of_contacts: grant.point_of_contacts,
+                attached_resources: grant.attached_resources,
+                comments:grant.comments
+            }
+        };
+
+        try {
+            const res = await dynamodb.put(params).promise();
+            console.log(`Uploaded grant from ${grant.organization_name}`)
+            // Check if the operation was succesful
+        } catch (error) {
+            console.log(error)
+            throw new Error(`Failed to upload new grant from ${grant.organization_name}`)
+        }
+
+
+
+        
+        
+        return 0
     }
 }
