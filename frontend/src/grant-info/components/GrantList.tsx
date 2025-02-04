@@ -2,7 +2,7 @@ import GrantItem from "./GrantItem"
 import "./styles/GrantList.css"
 import {useEffect, useState} from "react"
 import { fetchAllGrants} from "../../external/bcanSatchel/actions.ts";
-import { Grant } from "../../external/bcanSatchel/actions.ts";
+import { Grant } from "../../external/bcanSatchel/store.ts";
 import { getAppStore } from "../../external/bcanSatchel/store.ts";
 
 import {
