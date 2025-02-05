@@ -2,8 +2,12 @@ import React, {useState} from 'react';
 import './styles/GrantItem.css';
 import { GrantAttributes } from './GrantAttributes';
 import GrantDetails from './GrantDetails';
-import { isActiveStatus } from './GrantStatus';
-import { StatusBadge } from './StatusBadge';
+import StatusIndicator from "./StatusIndicator";  // import the new component
+
+
+function isActiveStatus(status: string) {
+    return ["Pending", "In Review", "Awaiting Submission"].includes(status);
+  }
 
 interface GrantItemProps {
     grantName: string;
@@ -21,6 +25,8 @@ const GrantItem: React.FC<GrantItemProps> = (props) => {
         setIsExpanded(!isExpanded);
     };
     const toggleEdit = () => setIsEditing((prev) => !prev);
+    const active = isActiveStatus(generalStatus);
+
 
     return (
 
@@ -32,10 +38,7 @@ const GrantItem: React.FC<GrantItemProps> = (props) => {
                 <li className="status">{generalStatus}</li>
                 <li className="amount">${amount}</li>
                 <li className="restriction-status">{restrictionStatus}</li>
-
-                <li>
-                <StatusBadge status={generalStatus} />
-                </li>
+                <li><StatusIndicator isActive={active} /></li>
             </ul>
             <div className={`grant-body ${isExpanded ? 'expanded' : ''}`}>
                 {isExpanded && (

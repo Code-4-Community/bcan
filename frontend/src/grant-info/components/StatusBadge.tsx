@@ -1,8 +1,7 @@
-import { Badge } from "@chakra-ui/react";
+import { Badge, Box } from "@chakra-ui/react";
 import { isActiveStatus } from "./GrantStatus";
 
 export function StatusBadge({ status }: { status: string }) {
-  // For more granular control:
   let colorScheme: string;
   switch (status) {
     case "Pending":
@@ -18,6 +17,8 @@ export function StatusBadge({ status }: { status: string }) {
       colorScheme = "green";
       break;
     case "Rejected":
+      colorScheme = "red";
+      break;
     case "Cancelled":
       colorScheme = "red";
       break;
@@ -26,7 +27,15 @@ export function StatusBadge({ status }: { status: string }) {
   }
 
   return (
-    <Badge colorScheme={colorScheme} variant="subtle" borderRadius="md" ml={2}>
+    <Badge colorPalette={colorScheme} variant="solid" borderRadius="md" ml={2}>
+      <Box
+        as="span"
+        w="6px"
+        h="6px"
+        borderRadius="full"
+        bg={isActiveStatus(status) ? "green.600" : "red.600"}
+        mr={2}
+      />
       {isActiveStatus(status) ? "Active" : "Inactive"}
     </Badge>
   );
