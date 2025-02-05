@@ -16,7 +16,6 @@ const GrantItem: React.FC<GrantItemProps> = ({grant}) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [curStatus, setCurStatus] = useState(grant.status);
-   // NOTE: ^^this is also a placeholder for generalStatus
 
 
     const toggleExpand = () => {
@@ -28,6 +27,7 @@ const GrantItem: React.FC<GrantItemProps> = ({grant}) => {
     const toggleEdit = async () => {
         if(isEditing) { // if you are saving
             try {
+
                 const response = await fetch('http://localhost:3001/grant/save/status', {
                     method: 'PUT',
                     headers: {
