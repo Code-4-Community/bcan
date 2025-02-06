@@ -1,12 +1,13 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import './NewGrant.css'
 import POCEntry from './POCEntry';
+import { useNavigate } from 'react-router-dom';
 
 type POCEntryRef = {
     getPOC: () => string;
 };
 
-
+// TODO need to change the string[] fields to have multiple inputs to make the array
 const NewGrant = (): JSX.Element => {
     const [orgName, changeOrgName] = useState<string>("")
     const [desc, changeDesc] = useState<string>("")
@@ -14,7 +15,7 @@ const NewGrant = (): JSX.Element => {
     const [qual, changeIsQualifying] = useState<string>("")
     const [status, changeStatus] = useState<string>("")
     const [amt, changeGrantAmount] = useState<number>(0)
-    // const [deadline, changeDeadline] = useState(new Date())
+    const [deadline, changeDeadline] = useState("")
     const [notifactions, changeNotificationStatus] = useState<string>("")
     const [restrictions, changeRestrictions] = useState<string>("")
     // // poc = point of contact
@@ -24,6 +25,9 @@ const NewGrant = (): JSX.Element => {
     const [comments, changeComments] = useState<string>("")
     const [errMessage, changeErrorMessage] = useState<string>("")
     const [showErr, changeShowError] = useState<boolean>(false)
+    // const [grantUploaded, changeGrantUploaded] = useState<boolean>(false)
+    const [repReq, changeReportingReqs] = useState<string>("")
+    const navigate = useNavigate();
 
     const addPOC = () => {
         console.log("added component")
@@ -33,6 +37,8 @@ const NewGrant = (): JSX.Element => {
         setPOCComponentList([...pocComponents, pocComp])
         setPOCRefs([...pocRefs, curRef])
     }
+
+
     function validInputs(): boolean {
         if (!orgName) {
             changeErrorMessage("Please enter an organization name")
@@ -59,11 +65,15 @@ const NewGrant = (): JSX.Element => {
             changeErrorMessage("Please a non zero amount for the grant")
             changeShowError(true)
             return false
-        }
+        }else if (!deadline) {
+            changeErrorMessage("Please enter a date")
+            changeShowError(true)
+            return false
+        } 
 
         return true
     }
-    const convertYNToBoolean = (val: string, changeFunc: Function) => {
+    const convertYNToBoolean = (val: string, changeFunc:  ((a: boolean ) => unknown)) => {
         if (val.toLowerCase() === "yes") {
             changeFunc(true)
         }
@@ -72,26 +82,55 @@ const NewGrant = (): JSX.Element => {
         }
     }
 
-    const submitGrant = () => {
+    const handleDeadlineChange = (event: { target: { value: React.SetStateAction<string>; }; }) => {
+        changeDeadline(event.target.value)
+        console.log(deadline)
+    }
+
+    const submitGrant =  async () => {
         if (!validInputs()) {
             return
         }
-        const grantStatus = (status === "Unarchived") ? true : false;
         const pocList : string[] = []
         pocRefs.forEach(ref => {
             pocList.push(ref.current.getPOC())
         })
+        const resourcesArr = Array.of(resources.trim())
         const grantJson = {
             orgName: orgName.trim(),
             description: desc.trim(),
-            resources: resources.trim(),
-            status: grantStatus,
-            grantQualify: convertYNToBoolean(qual, changeIsQualifying),
+            attached_resources: resourcesArr,
+            status: status,
+            is_bcan_qualifying: convertYNToBoolean(qual, changeIsQualifying),
             amount : amt,
-            notifactions : convertYNToBoolean(notifactions,changeNotificationStatus),
+            notifications_on_for_user : convertYNToBoolean(notifactions,changeNotificationStatus),
             restrictions : restrictions.trim(),
             comments : comments.trim(),
-            pocs: pocList
+            point_of_contacts: pocList,
+            deadline: deadline,
+            reporting_requirements: repReq
+        }
+
+        try {
+            const response = await fetch('http://localhost:3001/grant/new-grant',{
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(grantJson)
+            })
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                alert(errorData.message || 'Grant upload failed.');
+                return;
+              }
+            navigate('/upload-success');
+
+
+        } catch (error) {
+            changeShowError(true)
+            changeErrorMessage("Server Error")
+            console.log(error)
+            return
         }
 
     } 
@@ -109,6 +148,10 @@ const NewGrant = (): JSX.Element => {
                 <p>Description</p>
                 <textarea
                     onChange={(e) => changeDesc(e.target.value)}>
+                </textarea>
+                <p>Reporting Requirements</p>
+                <textarea
+                    onChange={(e) => changeReportingReqs(e.target.value)}>
                 </textarea>
                 <p>Resources</p>
                 <textarea
@@ -128,6 +171,8 @@ const NewGrant = (): JSX.Element => {
                 <input type="number"
                     onChange={(e) => changeGrantAmount(Number(e.target.value))}>
                 </input>
+                <p>Deadline</p>
+                <input type='date' value={deadline} onChange={handleDeadlineChange}></input>
                 <label htmlFor="yesNo">Turn on Notifications? </label>
                 <select id="yesNo" value={notifactions} onChange={(e) => changeNotificationStatus(e.target.value)}>
                     <option value="yes">Yes</option>

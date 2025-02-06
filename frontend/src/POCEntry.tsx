@@ -19,7 +19,7 @@ const POCEntry = forwardRef((props, ref) => {
         changePOCType(val)
 
         if (val === "Email") {
-            changeInputType("text")
+            changeInputType("email")
             changePOC("")
         } else if (val === "Phone Number") {
             changeInputType("number")

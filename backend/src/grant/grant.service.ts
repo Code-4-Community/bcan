@@ -90,7 +90,6 @@ export class GrantService {
         // When it comes to processing the resources I need a custom decorator
         // Did it hoe
         // TODO Could possibly do more validation like theres a grant with that name already and such
-        // Check if date is before th current date
         console.log(grant)
         const params = {
             TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
@@ -120,10 +119,12 @@ export class GrantService {
             throw new Error(`Failed to upload new grant from ${grant.organization_name}`)
         }
 
+        const grantId = res
+
 
 
         
         
-        return 0
+        return 
     }
 }
