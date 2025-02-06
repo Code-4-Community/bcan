@@ -7,7 +7,7 @@ const UploadSucess = (): JSX.Element => {
     return(
         <div className="center_screen">
             <p>Grant has been uploaded</p>
-            <button onClick={() => {navigate('/upload-success'); console.log("bruh")}}>Return To Dashboard</button>
+            <button onClick={() => {navigate('/dashboard')}}>Return To Dashboard</button>
         </div>
     )
 }
