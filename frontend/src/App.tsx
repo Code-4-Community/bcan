@@ -12,6 +12,7 @@ import './App.css';
 // Register store and mutators
 import './external/bcanSatchel/mutators';
 import { getStore } from './external/bcanSatchel/store';
+import UploadSucess from './UploadSucess';
 
 const App = observer(() => {
   const store = getStore();
@@ -32,10 +33,13 @@ const App = observer(() => {
           path="/dashboard"
           element={store.isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
         />
-         <Route
+        <Route
           path="/new-grant"
-          // will change to login for second branch
-          element={<NewGrant/>}
+          element={<NewGrant />}
+        />
+        <Route
+          path="/upload-success"
+          element={<UploadSucess />}
         />
         <Route
           path="*"

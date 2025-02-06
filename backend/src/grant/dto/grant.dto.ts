@@ -5,6 +5,7 @@ import {
   IsArray,
   IsISO8601,
   IsNotEmpty,
+  IsDefined,
 } from "class-validator";
 import { IsPointOfContact } from "../customValidators";
 
@@ -13,49 +14,61 @@ import { IsPointOfContact } from "../customValidators";
 export class CreateGrantDto {
   @IsString()
   @IsNotEmpty()
+  @IsDefined()
   organization_name!: string;
 
   @IsString()
   @IsNotEmpty()
+  @IsDefined()
   description!: string;
 
   @IsBoolean()
   @IsNotEmpty()
+  @IsDefined()
   is_bcan_qualifying!: boolean;
 
   @IsString()
   @IsNotEmpty()
-  status!: string;
+  @IsDefined()
+  status!: boolean;
 
   @IsNumber()
   @IsNotEmpty()
+  @IsDefined()
   amount!: number;
 
   @IsISO8601()
   @IsNotEmpty()
+  @IsDefined()
   deadline!: string;
 
   @IsBoolean()
   @IsNotEmpty()
+  @IsDefined()
   notifications_on_for_user!: boolean;
 
   @IsString()
-  @IsNotEmpty()
+  @IsDefined()
   reporting_requirements!: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsDefined()
   restrictions!: string;
 
   @IsArray()
+  @IsDefined()
+  @IsDefined({each: true})
   @IsPointOfContact({ each: true })
   point_of_contacts!: string[];
 
   @IsArray()
   @IsString({ each: true })
+  @IsDefined()
+  @IsNotEmpty({each: true})
   attached_resources!: string[];
 
   @IsString()
   @IsNotEmpty()
+  @IsDefined()
   comments!: string;
 }

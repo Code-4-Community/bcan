@@ -14,5 +14,9 @@ Thumbs.db
 # Enviroment 
 .env
 
+# Build output
+dist/
+build/
+
 # Logs
 *.log

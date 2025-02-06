@@ -25,6 +25,10 @@ import {
     }
   
     async validate(value: string, args: ValidationArguments) {
+      if(!value || value == undefined){
+        return false
+      }
+
       if (value.startsWith('Email: ')) {
         return this.isEmail(value);
       } else if (value.startsWith('Phone Number: ')) {
@@ -34,7 +38,7 @@ import {
     }
   
     defaultMessage(args: ValidationArguments) {
-      return `The value must be in the format "Email: <email>" or "Phone Number: <phone number>"`;
+      return `The point of contact value must be in the format "Email: <email>" or "Phone Number: <phone number>"`;
     }
   }
   

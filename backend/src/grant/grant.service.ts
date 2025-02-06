@@ -91,6 +91,7 @@ export class GrantService {
         // Did it hoe
         // TODO Could possibly do more validation like theres a grant with that name already and such
         console.log(grant)
+        // TODO unique grantId
         const params = {
             TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
             Item: {
@@ -119,12 +120,6 @@ export class GrantService {
             throw new Error(`Failed to upload new grant from ${grant.organization_name}`)
         }
 
-        const grantId = res
-
-
-
-        
-        
-        return 
+        return 0
     }
 }
