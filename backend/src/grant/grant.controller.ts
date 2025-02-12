@@ -10,8 +10,6 @@ export class GrantController {
         return await this.grantService.getAllGrants();
     }
 
-    // the @Param looks for arguments, in the decorator above the function definition, and
-    // then uses it as a parameter
     @Get(':id')
     async getGrantById(@Param('id') GrantId: string) {
         return await this.grantService.getGrantById(parseInt(GrantId, 10));
@@ -38,7 +36,6 @@ export class GrantController {
         await this.grantService.updateGrant(1, 'status', status)
         return { message: 'Status has been updated' };
     }
-
 
 
 
