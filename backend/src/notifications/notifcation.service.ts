@@ -98,8 +98,10 @@ export class NotificationService {
     subject: string,
     body: string
   ): Promise<AWS.SES.SendEmailResponse> {
-    const fromEmail = process.env.NOTIFICATION_EMAIL_SENDER
-     || 'bcanEMAILMANE';
+    // Default to an invalid email to prevent non-verified sender mails
+    // if BCAN's is not defined in the environment
+    const fromEmail = process.env.NOTIFICATION_EMAIL_SENDER ||
+     'u&@nveR1ified-failure@dont-send.com';
 
     const params: AWS.SES.SendEmailRequest = {
       Source: fromEmail,
