@@ -14,6 +14,7 @@ export interface Grant {
     attached_resources: string[];
     comments: string[];
     isArchived : boolean;
+    updates: JSON[];
 }
 
 // TODO: [JAN-13} Switch deadline to Proper "Date Time"

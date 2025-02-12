@@ -89,6 +89,7 @@ export class GrantService {
      * @param newValue
      */
     async updateGrant(grantId: number, attributeName: string, newValue: string): Promise<void> {
+        // TODO when new grant is added in the updates field needs to be put in as well and init as just emnpty array
         const params = {
             TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
             Key: {
@@ -105,9 +106,50 @@ export class GrantService {
         }
         console.log(params);
 
+        const updateJSONparams = {
+            TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
+            Key: {
+                grantId: grantId
+            },
+            AttributesToGet: [
+                'updates'
+            ]
+        }
+
+
+
         try {
             const result = await this.dynamoDb.update(params).promise();
-            console.log(result);
+            console.log("Attribute update result:", result);
+    
+            const updateJSON = await this.dynamoDb.get(updateJSONparams).promise();
+            let updatesArray = updateJSON.Item?.updates || [];
+    
+            const newUpdate = {
+                date: new Date().toISOString(),
+                updates: [
+                    {
+                        attribute: attributeName,
+                        new_value: newValue,
+                    },
+                ],
+            };
+            updatesArray.push(newUpdate);
+    
+            const updateUpdatesParams = {
+                TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
+                Key: {
+                    grantId: grantId,
+                },
+                UpdateExpression: `set updates = :updatesArray`,
+                ExpressionAttributeValues: {
+                    ":updatesArray": updatesArray,
+                },
+                ReturnValues: "UPDATED_NEW",
+            };
+    
+            const updateResult = await this.dynamoDb.update(updateUpdatesParams).promise();
+            console.log("Updates field update result:", updateResult);
         } catch(err) {
             console.log(err);
             throw new Error(`Failed to update Grant ${grantId} attribute 
