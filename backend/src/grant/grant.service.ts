@@ -90,6 +90,7 @@ export class GrantService {
      */
     async updateGrant(grantId: number, attributeName: string, newValue: string): Promise<void> {
         // TODO when new grant is added in the updates field needs to be put in as well and init as just emnpty array
+        // Params for updating the desired field
         const params = {
             TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
             Key: {
@@ -106,6 +107,7 @@ export class GrantService {
         }
         console.log(params);
 
+        // Params to get the updates field for modification
         const updateJSONparams = {
             TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
             Key: {
@@ -119,12 +121,16 @@ export class GrantService {
 
 
         try {
+            // Update the field with the new value
             const result = await this.dynamoDb.update(params).promise();
             console.log("Attribute update result:", result);
     
+            // Get updates Json array
             const updateJSON = await this.dynamoDb.get(updateJSONparams).promise();
             let updatesArray = updateJSON.Item?.updates || [];
     
+            // Create entry for the current update
+            // In the future could add in multiple entries for each update if that functionality was made
             const newUpdate = {
                 date: new Date().toISOString(),
                 updates: [
@@ -136,6 +142,7 @@ export class GrantService {
             };
             updatesArray.push(newUpdate);
     
+            // Params for updating the updates field
             const updateUpdatesParams = {
                 TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
                 Key: {
@@ -148,6 +155,7 @@ export class GrantService {
                 ReturnValues: "UPDATED_NEW",
             };
     
+            // Update the updates field with new entry
             const updateResult = await this.dynamoDb.update(updateUpdatesParams).promise();
             console.log("Updates field update result:", updateResult);
         } catch(err) {
