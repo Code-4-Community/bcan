@@ -84,17 +84,27 @@ const GrantList: React.FC = observer(() => {
   // }
 
   function HandleHeaderClick(header: keyof Grant, asc: boolean) {
+    const handleNullOrUndefined = (a: Grant, b: Grant, header: keyof Grant) => {
+      if (a[header] === null || a[header] === undefined) return 1;
+      if (b[header] === null || b[header] === undefined) return -1;
+      return 0;
+    };
+
     const newdata = [...grants].sort((a, b) => {
+      // Handle null or undefined values first for all types
+      const nullCheck = handleNullOrUndefined(a, b, header);
+      if (nullCheck !== 0) return nullCheck;
+
       // Handle 'deadline' field (date sorting)
       if (header === "deadline") {
         const dateA = new Date(a[header]);
         const dateB = new Date(b[header]);
 
-        // If either of the dates is invalid (null, undefined, or invalid date string), push to the bottom
-        if (isNaN(dateA.getTime())) return 1; // `a` is invalid, put it at the bottom
-        if (isNaN(dateB.getTime())) return -1; // `b` is invalid, put it at the bottom
+        // If either of the dates is invalid, push to the bottom
+        if (isNaN(dateA.getTime())) return 1;
+        if (isNaN(dateB.getTime())) return -1;
 
-        // Compare valid dates
+        // Compare dates
         return asc
           ? dateA.getTime() - dateB.getTime()
           : dateB.getTime() - dateA.getTime();
@@ -102,11 +112,6 @@ const GrantList: React.FC = observer(() => {
 
       // Handle string sorting
       if (typeof a[header] === "string" && typeof b[header] === "string") {
-        // Check for null or undefined and push them to the bottom
-        if (a[header] === null || a[header] === undefined) return 1;
-        if (b[header] === null || b[header] === undefined) return -1;
-
-        // Compare strings using localeCompare
         return asc
           ? a[header].localeCompare(b[header])
           : b[header].localeCompare(a[header]);
@@ -114,19 +119,10 @@ const GrantList: React.FC = observer(() => {
 
       // Handle number sorting
       if (typeof a[header] === "number" && typeof b[header] === "number") {
-        // Check for null or undefined and push them to the bottom
-        if (a[header] === null || a[header] === undefined) return 1;
-        if (b[header] === null || b[header] === undefined) return -1;
-
-        // Compare numbers
         return asc ? a[header] - b[header] : b[header] - a[header];
       }
 
-      // Handle other cases where values could be null/undefined
-      if (a[header] === null || a[header] === undefined) return 1;
-      if (b[header] === null || b[header] === undefined) return -1;
-
-      // Default sorting for other cases (e.g., booleans, etc.)
+      // Default case: handle other data types (e.g., booleans, objects)
       return 0;
     });
 
