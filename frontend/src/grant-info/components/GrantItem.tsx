@@ -17,6 +17,7 @@ const GrantItem: React.FC<GrantItemProps> = ({grant}) => {
     const [curGrant,setCurGrant] = useState(grant);
 
 
+
     const toggleExpand = () => {
         setIsExpanded(!isExpanded);
     };
