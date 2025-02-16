@@ -1,5 +1,5 @@
 .grant-item-wrapper {
-    margin: 2rem 0;
+    margin: 0.25rem 0rem;
     transition: all 0.3s ease-in-out;
 }
 
@@ -8,11 +8,12 @@
     align-items: center;
     list-style-type: none;
     justify-content: space-between;
-    border-radius: 1.2rem;
+    border-radius: 0.8rem;
     height: 4rem;
-    background-color: #F26624;
+    background-color: #F2EBE4;
     margin: 0; /* Remove margin */
     transition: background-color 0.2s ease;
+    border: 0.1rem solid #F26624;
 }
 
 .grant-summary.expanded {
@@ -42,6 +43,7 @@
     transition: max-height 1s ease, background-color 0.2s ease;
     border-bottom-right-radius: 1.2rem;
     border-bottom-left-radius: 1.2rem;
+    
 }
 
 .grant-body.expanded {
