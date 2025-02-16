@@ -1,5 +1,6 @@
 import { Controller, Get, Param, Put, Body, Patch } from '@nestjs/common';
 import { GrantService } from './grant.service';
+import {Grant} from "./grant.model";
 
 @Controller('grant')
 export class GrantController {
@@ -29,12 +30,9 @@ export class GrantController {
         return await this.grantService.unarchiveGrants(grantIds)
     }
 
-    @Put('save/status')
-    async saveStatus(
-        @Body('status') status: string
-    ) {
-        await this.grantService.updateGrant(1, 'status', status)
-        return { message: 'Status has been updated' };
+    @Put('save')
+    async saveGrant(@Body() grantData: Grant) {
+        return await this.grantService.updateGrant(grantData)
     }
 
 

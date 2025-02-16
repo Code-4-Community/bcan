@@ -82,36 +82,37 @@ export class GrantService {
     }
 
     /**
-     * Given primary key, attribute name, and the content to update, queries database to update
-     * that info. Returns true if operation was successful. Assumes inputs are valid.
-     * @param grantId
-     * @param attributeName
-     * @param newValue
+     * Will push or overwrite new grant data to database
+     * @param grantData
      */
-    async updateGrant(grantId: number, attributeName: string, newValue: string): Promise<void> {
+    async updateGrant(grantData: Grant): Promise<string> {
+        // dynamically creates the update expression/attribute names based on names of grant interface
+        // assumption: grant interface field names are exactly the same as db storage naming
+
+        const updateKeys = Object.keys(grantData).filter(
+            key => key != 'grantId'
+        );
+        const UpdateExpression = "SET " + updateKeys.map((key) => `#${key} = :${key}`).join(", ");
+        const ExpressionAttributeNames = updateKeys.reduce((acc, key) =>
+            ({ ...acc, [`#${key}`]: key }), {});
+        const ExpressionAttributeValues = updateKeys.reduce((acc, key) =>
+            ({ ...acc, [`:${key}`]: grantData[key as keyof typeof grantData] }), {});
+
         const params = {
-            TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
-            Key: {
-                grantId: grantId
-            },
-            UpdateExpression: `set #s = :newValue`,
-            ExpressionAttributeNames: {
-                '#s': attributeName,
-            },
-            ExpressionAttributeValues: {
-                ":newValue": newValue,
-            },
+            TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || "TABLE_FAILURE",
+            Key: { grantId: grantData.grantId },
+            UpdateExpression,
+            ExpressionAttributeNames,
+            ExpressionAttributeValues,
             ReturnValues: "UPDATED_NEW",
-        }
-        console.log(params);
+        };
 
         try {
             const result = await this.dynamoDb.update(params).promise();
-            console.log(result);
+            return JSON.stringify(result); // returns the changed attributes stored in db
         } catch(err) {
             console.log(err);
-            throw new Error(`Failed to update Grant ${grantId} attribute 
-                ${attributeName} with ${newValue}`);
+            throw new Error(`Failed to update Grant ${grantData.grantId}`)
         }
     }
 }
