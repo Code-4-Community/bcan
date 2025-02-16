@@ -1,17 +1,17 @@
 import React from "react";
 import "./styles/GrantLabels.css";
-import { GrantItemProps } from "./GrantItem";
+import { Grant } from "../../external/bcanSatchel/store.ts";
 import { useState } from "react";
 
 const GrantLabels: React.FC<{
-  onSort: (header: keyof GrantItemProps, asc: boolean) => void;
+  onSort: (header: keyof Grant, asc: boolean) => void;
 }> = ({ onSort }) => {
   const [labels, setLabels] = useState({
     header: "applicationDate",
     asc: true,
   });
 
-  function buttonHandler(header: keyof GrantItemProps) {
+  function buttonHandler(header: keyof Grant) {
     const isAsc = labels.header == header ? !labels.asc : true;
     onSort(header, isAsc);
     setLabels({ header: header, asc: isAsc });
@@ -22,7 +22,7 @@ const GrantLabels: React.FC<{
       <li>
         <button
           className="grant-name"
-          onClick={() => buttonHandler("grantName")}
+          onClick={() => buttonHandler("organization_name")}
         >
           Grant Name
         </button>
@@ -30,16 +30,13 @@ const GrantLabels: React.FC<{
       <li>
         <button
           className="application-date"
-          onClick={() => buttonHandler("applicationDate")}
+          onClick={() => buttonHandler("deadline")}
         >
           Application Date
         </button>
       </li>
       <li>
-        <button
-          className="status"
-          onClick={() => buttonHandler("generalStatus")}
-        >
+        <button className="status" onClick={() => buttonHandler("status")}>
           Status
         </button>
       </li>
@@ -51,7 +48,7 @@ const GrantLabels: React.FC<{
       <li>
         <button
           className="restriction-status"
-          onClick={() => buttonHandler("restrictionStatus")}
+          onClick={() => buttonHandler("restrictions")}
         >
           Restricted vs. Unrestricted
         </button>

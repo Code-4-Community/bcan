@@ -55,16 +55,21 @@ const ITEMS_PER_PAGE = 3;
 // }
 
 const GrantList: React.FC = observer(() => {
-  // fetch grant immedietely upon loading the page
+  // Use MobX store for live updates to allGrants
+  const { allGrants } = getAppStore(); // Access store directly
+
   useEffect(() => {
     fetchGrants();
   }, []);
 
-  const ALL_GRANTS = getAppStore().allGrants;
+  // Total pages calculated from the store
+  const totalPages = Math.ceil(allGrants.length / ITEMS_PER_PAGE);
 
-  // total number of pages
-  const totalPages = Math.ceil(ALL_GRANTS.length / ITEMS_PER_PAGE);
-  const [grants, setGrants] = useState<Grant[]>(ALL_GRANTS);
+  const [grants, setGrants] = useState<Grant[]>(allGrants);
+
+  useEffect(() => {
+    setGrants(allGrants); // Update local state when store data changes
+  }, [allGrants]); // Dependency on allGrants to react to changes
 
   // // Read the current page from our custom pagination context
   // // and figure out which items to display.
@@ -80,21 +85,49 @@ const GrantList: React.FC = observer(() => {
 
   function HandleHeaderClick(header: keyof Grant, asc: boolean) {
     const newdata = [...grants].sort((a, b) => {
+      // Handle 'deadline' field (date sorting)
       if (header === "deadline") {
-        // Sorting dates
-        const dateA = a[header].getTime();
-        const dateB = b[header].getTime();
-        return asc ? dateA - dateB : dateB - dateA;
+        const dateA = new Date(a[header]);
+        const dateB = new Date(b[header]);
+
+        // If either of the dates is invalid (null, undefined, or invalid date string), push to the bottom
+        if (isNaN(dateA.getTime())) return 1; // `a` is invalid, put it at the bottom
+        if (isNaN(dateB.getTime())) return -1; // `b` is invalid, put it at the bottom
+
+        // Compare valid dates
+        return asc
+          ? dateA.getTime() - dateB.getTime()
+          : dateB.getTime() - dateA.getTime();
       }
 
-      // Sorting other fields
-      return asc
-        ? a[header] > b[header]
-          ? 1
-          : -1
-        : a[header] < b[header]
-        ? 1
-        : -1;
+      // Handle string sorting
+      if (typeof a[header] === "string" && typeof b[header] === "string") {
+        // Check for null or undefined and push them to the bottom
+        if (a[header] === null || a[header] === undefined) return 1;
+        if (b[header] === null || b[header] === undefined) return -1;
+
+        // Compare strings using localeCompare
+        return asc
+          ? a[header].localeCompare(b[header])
+          : b[header].localeCompare(a[header]);
+      }
+
+      // Handle number sorting
+      if (typeof a[header] === "number" && typeof b[header] === "number") {
+        // Check for null or undefined and push them to the bottom
+        if (a[header] === null || a[header] === undefined) return 1;
+        if (b[header] === null || b[header] === undefined) return -1;
+
+        // Compare numbers
+        return asc ? a[header] - b[header] : b[header] - a[header];
+      }
+
+      // Handle other cases where values could be null/undefined
+      if (a[header] === null || a[header] === undefined) return 1;
+      if (b[header] === null || b[header] === undefined) return -1;
+
+      // Default sorting for other cases (e.g., booleans, etc.)
+      return 0;
     });
 
     setGrants(newdata);

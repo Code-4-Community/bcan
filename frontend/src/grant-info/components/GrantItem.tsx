@@ -53,10 +53,9 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
         onClick={toggleExpand}
       >
         <li className="grant-name">{grant.organization_name}</li>
-        <li className="application-date">{"no attribute for app-date"}</li>
-        //.toISOString().split("T")[0]
+        <li className="application-date">{grant.deadline}</li>
         <li className="status">{grant.status}</li>
-        <li className="amount">${grant.amount}</li>
+        <li className="amount">{grant.amount && "$" + grant.amount}</li>
         <li className="restriction-status">{grant.restrictions}</li>
       </ul>
       <div className={`grant-body ${isExpanded ? "expanded" : ""}`}>
