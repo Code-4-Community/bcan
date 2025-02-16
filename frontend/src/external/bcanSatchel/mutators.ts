@@ -1,5 +1,5 @@
 import { mutator } from 'satcheljs';
-import { setAuthState, updateUserProfile, logoutUser } from './actions';
+import { setAuthState, updateUserProfile, logoutUser, fetchAllGrants } from './actions';
 import { getAppStore } from './store';
 
 /**
@@ -33,4 +33,13 @@ mutator(logoutUser, () => {
   store.isAuthenticated = false;
   store.user = null;
   store.accessToken = null;
+});
+
+
+/**
+ * Reassigns all grants to new grants from the backend.
+ */
+mutator(fetchAllGrants, (actionMessage) => {
+  const store = getAppStore();
+  store.allGrants = actionMessage.grants;
 });

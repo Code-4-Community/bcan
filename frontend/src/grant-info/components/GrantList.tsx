@@ -1,7 +1,11 @@
-import GrantItem from "./GrantItem";
 import "./styles/GrantList.css";
 import { useState } from "react";
-import { GrantItemProps } from "./GrantItem";
+import { useEffect } from "react";
+import { fetchAllGrants } from "../../external/bcanSatchel/actions.ts";
+import { Grant } from "../../external/bcanSatchel/store.ts";
+import { getAppStore } from "../../external/bcanSatchel/store.ts";
+import { observer } from "mobx-react-lite";
+import GrantItem from "./GrantItem";
 
 import {
   PaginationRoot,
@@ -14,22 +18,53 @@ import {
 //import { usePaginationContext } from "@chakra-ui/react";
 import GrantLabels from "./GrantLabels";
 
-// simulate a big list:
-const ALL_GRANTS = Array.from({ length: 11 }).map((_, i) => ({
-  grantName: `Community Development Grant #${i + 1}`,
-  applicationDate: new Date(`2024-09-${(i % 30) + 1}`),
-  generalStatus: i % 2 === 0 ? "Approved" : "Pending",
-  amount: (i + 1) * 1000,
-  restrictionStatus: i % 3 === 0 ? "Restricted" : "Unrestricted",
-}));
-
 // How many items to show per page
+
+const fetchGrants = async () => {
+  try {
+    const response = await fetch("http://localhost:3001/grant");
+    if (!response.ok) {
+      throw new Error(`HTTP Error, Status: ${response.status}`);
+    }
+    const updatedGrants: Grant[] = await response.json();
+    // satchel store updated
+    fetchAllGrants(updatedGrants);
+  } catch (error) {
+    console.error("Error fetching grants:", error);
+  }
+};
 const ITEMS_PER_PAGE = 3;
 
-const GrantList: React.FC = () => {
+// // Read the current page from our custom pagination context
+// // and figure out which items to display.
+// const GrantListView: React.FC<GrantListViewProps> = ({ALL_GRANTS}) => {
+//   const { page } = usePaginationContext()
+
+//   // figure out which grants to slice for the current page
+//   const startIndex = (page - 1) * ITEMS_PER_PAGE
+//   const endIndex = startIndex + ITEMS_PER_PAGE
+//   const currentGrants = ALL_GRANTS.slice(startIndex, endIndex)
+
+//   return (
+//     <div className="grant-list">
+//       {currentGrants.map((grant, index) => (
+//         <GrantItem key={index} grant={grant} />
+//       ))}
+//     </div>
+//   )
+// }
+
+const GrantList: React.FC = observer(() => {
+  // fetch grant immedietely upon loading the page
+  useEffect(() => {
+    fetchGrants();
+  }, []);
+
+  const ALL_GRANTS = getAppStore().allGrants;
+
   // total number of pages
   const totalPages = Math.ceil(ALL_GRANTS.length / ITEMS_PER_PAGE);
-  const [grants, setGrants] = useState<GrantItemProps[]>(ALL_GRANTS);
+  const [grants, setGrants] = useState<Grant[]>(ALL_GRANTS);
 
   // // Read the current page from our custom pagination context
   // // and figure out which items to display.
@@ -43,9 +78,9 @@ const GrantList: React.FC = () => {
   //   setGrants(currentGrants);
   // }
 
-  function HandleHeaderClick(header: keyof GrantItemProps, asc: boolean) {
+  function HandleHeaderClick(header: keyof Grant, asc: boolean) {
     const newdata = [...grants].sort((a, b) => {
-      if (header === "applicationDate") {
+      if (header === "deadline") {
         // Sorting dates
         const dateA = a[header].getTime();
         const dateB = b[header].getTime();
@@ -67,7 +102,7 @@ const GrantList: React.FC = () => {
 
   return (
     <div className="paginated-grant-list">
-      {/* 
+      {/*
         Wrap everything in PaginationRoot:
           - defaultPage can be 1
           - totalPages is calculated
@@ -77,9 +112,10 @@ const GrantList: React.FC = () => {
         <GrantLabels onSort={HandleHeaderClick} />
         <div className="grant-list">
           {grants.map((grant, index) => (
-            <GrantItem key={index} {...grant} />
+            <GrantItem key={index} grant={grant} />
           ))}
         </div>
+
         {/* 
            Paging Controls:
             - Prev / Next triggers
@@ -95,6 +131,6 @@ const GrantList: React.FC = () => {
       </PaginationRoot>
     </div>
   );
-};
+});
 
 export default GrantList;
