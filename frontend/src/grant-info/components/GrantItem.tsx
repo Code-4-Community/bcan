@@ -5,12 +5,20 @@ import GrantDetails from './GrantDetails';
 import {Grant} from "@/external/bcanSatchel/store.ts";
 
 interface GrantItemProps {
-    grant: Grant;
+  grant: Grant;
 }
 
 // TODO: [JAN-14] Make uneditable field editable (ex: Description, Application Reqs, Additional Notes)
-const GrantItem: React.FC<GrantItemProps> = ({grant}) => {
+const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [curStatus, setCurStatus] = useState(grant.status);
 
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+  // when toggleEdit gets saved, then updates the backend to update itself with whatever
+  // is shown in the front-end
 
     const [isExpanded, setIsExpanded] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -73,10 +81,16 @@ const GrantItem: React.FC<GrantItemProps> = ({grant}) => {
                         
                     )}
             </div>
-
-        </div>
-
-    )
-}
+            <div className="bottom-buttons">
+              <button className="done-button" onClick={toggleEdit}>
+                {isEditing ? "SAVE" : "EDIT"}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default GrantItem;
