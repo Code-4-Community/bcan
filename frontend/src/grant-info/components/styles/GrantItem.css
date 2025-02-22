@@ -1,6 +1,7 @@
 .grant-item-wrapper {
     margin: 0.25rem 0rem;
     transition: all 0.3s ease-in-out;
+    width: 100%;
 }
 
 .grant-summary {
@@ -20,6 +21,8 @@
     background-color: #F58D5C;
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
+    width: 100%;
+
 }
 
 .grant-summary li {
@@ -33,6 +36,14 @@
 .grant-content {
     display: flex;
     gap: 2rem; /* Adds space between the two sections */
+    width: 100%;
+    margin: 0;
+    align-items: stretch;
+}
+
+.grant-content .grant-details {
+    flex: 1;          /* this child takes up leftover horizontal space */
+    min-width: 0;     /* prevent overflow from long content */
 }
 
 .grant-body {
@@ -68,8 +79,8 @@
     bottom: 1rem; 
     right: 1rem; 
     padding: 0.5rem 1rem;
-    background-color: 3191CF;
-    color: back; 
+    background-color: #3191CF;
+    color: black;
     border: none;
     border-radius: 5px;
     cursor: pointer;

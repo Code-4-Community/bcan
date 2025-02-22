@@ -20,4 +20,19 @@
     overflow-y: auto;
     margin-top: 0;
   }
+
+.grant-details textarea {
+  width: 100%;        /* Ensures full width */
+  min-height: 100px;  /* Sets a reasonable height */
+  min-width: 100%;
+  padding: 1rem;      /* Matches <p> padding */
+  border: 1px solid black;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
+  overflow-y: auto;
+  resize: vertical;   /* Allows resizing */
+  box-sizing: border-box; /* Prevents width issues due to padding */
+}
+
+
   

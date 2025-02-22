@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-import "./styles/GrantItem.css";
-import { GrantAttributes } from "./GrantAttributes";
-import GrantDetails from "./GrantDetails";
-import { StatusContext } from "./StatusContext";
-import { Grant } from "@/external/bcanSatchel/store.ts";
+import React, {useState } from 'react';
+import './styles/GrantItem.css';
+import { GrantAttributes } from './GrantAttributes';
+import GrantDetails from './GrantDetails';
+import {Grant} from "@/external/bcanSatchel/store.ts";
 
 interface GrantItemProps {
   grant: Grant;
@@ -11,62 +10,67 @@ interface GrantItemProps {
 
 // TODO: [JAN-14] Make uneditable field editable (ex: Description, Application Reqs, Additional Notes)
 const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [curStatus, setCurStatus] = useState(grant.status);
-
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
-  };
+  
   // when toggleEdit gets saved, then updates the backend to update itself with whatever
   // is shown in the front-end
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [curGrant,setCurGrant] = useState(grant);
 
-  const toggleEdit = async () => {
-    if (isEditing) {
-      // if you are saving
-      try {
-        const response = await fetch(
-          "http://localhost:3001/grant/save/status",
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ status: curStatus }),
-          }
-        );
-        const result = await response.json();
-        console.log(result);
-      } catch (err) {
-        console.error("Error saving data:", err);
-      }
-      // holding result for now
-    }
-    setIsEditing(!isEditing);
-  };
+    const toggleExpand = () => {
+        setIsExpanded(!isExpanded);
+    };
 
-  return (
-    // class name with either be grant-item or grant-item-expanded
-    <div className="grant-item-wrapper">
-      <ul
-        className={`grant-summary ${isExpanded ? "expanded" : ""}`}
-        onClick={toggleExpand}
-      >
-        <li className="grant-name">{grant.organization_name}</li>
-        <li className="application-date">{grant.deadline}</li>
-        <li className="status">{grant.status}</li>
-        <li className="amount">{grant.amount && "$" + grant.amount}</li>
-        <li className="restriction-status">{grant.restrictions}</li>
-      </ul>
-      <div className={`grant-body ${isExpanded ? "expanded" : ""}`}>
-        {isExpanded && (
-          <div className="grant-description">
-            <h2>Community Development Initiative Grant</h2>
-            <div className="grant-content">
-              <StatusContext.Provider value={{ curStatus, setCurStatus }}>
-                <GrantAttributes isEditing={isEditing} />
-                <GrantDetails />
-              </StatusContext.Provider>
+    // when toggle edit turns off, sends curGrant to backend to be saved
+    const toggleEdit = async () => {
+        if(isEditing) { // if you are saving
+            try {
+                console.log("Saving grant!");
+                console.log(curGrant);
+                const response = await fetch('http://localhost:3001/grant/save', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(curGrant),
+                });
+                const result = await response.json();
+                console.log(result);
+            } catch(err) {
+                console.error('Error saving data:', err);
+            }
+        }
+        setIsEditing(!isEditing);
+    };
+
+    // temporary buffer
+
+    return (
+        // class name with either be grant-item or grant-item-expanded
+        <div className='grant-item-wrapper'>
+            <ul className={`grant-summary ${isExpanded ? 'expanded' : ''}`} onClick={toggleExpand}>
+                <li className="grant-name">{curGrant.organization_name}</li>
+                <li className="application-date">{"no attribute for app-date"}</li>
+                <li className="status">{curGrant.status}</li>
+                <li className="amount">${curGrant.amount}</li>
+                <li className="restriction-status">{curGrant.restrictions}</li>
+            </ul>
+            <div className={`grant-body ${isExpanded ? 'expanded' : ''}`}>
+                {isExpanded && (
+                    <div className="grant-description">
+                        <h2>Community Development Initiative Grant</h2>
+                        <div className = 'grant-content'>
+                                <GrantAttributes curGrant={curGrant} setCurGrant={setCurGrant} isEditing={isEditing} />
+                                <GrantDetails curGrant={curGrant} setCurGrant={setCurGrant} isEditing={isEditing} />
+                        </div>
+                        <div className="bottom-buttons">
+                        <button className="done-button" onClick={toggleEdit}>
+                                {isEditing ? 'SAVE' : 'EDIT'}
+                            </button>
+                    </div>
+                        </div>
+                        
+                    )}
             </div>
             <div className="bottom-buttons">
               <button className="done-button" onClick={toggleEdit}>
@@ -74,10 +78,6 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
               </button>
             </div>
           </div>
-        )}
-      </div>
-    </div>
-  );
-};
+    )};
 
 export default GrantItem;
