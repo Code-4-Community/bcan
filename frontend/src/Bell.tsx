@@ -40,7 +40,7 @@ const BellButton = () => {
         className={`bell-button ${isClicked ? "hovered" : ""}`}
         onClick={handleClick}
       >
-        <FontAwesomeIcon icon={faBell} />
+        <FontAwesomeIcon icon={faBell} style={{ color: "black" }} />
       </button>
       {isClicked && (
         <div className="notification-modal">

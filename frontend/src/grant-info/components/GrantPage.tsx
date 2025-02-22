@@ -1,5 +1,5 @@
 import "./styles/GrantPage.css";
-import Header from "./Header.js";
+import Header from "../../Header.js";
 import GrantList from "./GrantList.js";
 import Footer from "./Footer.js";
 import BellButton from "../../Bell.js";
