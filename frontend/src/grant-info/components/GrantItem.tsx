@@ -10,21 +10,12 @@ interface GrantItemProps {
 
 // TODO: [JAN-14] Make uneditable field editable (ex: Description, Application Reqs, Additional Notes)
 const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [curStatus, setCurStatus] = useState(grant.status);
-
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
-  };
+  
   // when toggleEdit gets saved, then updates the backend to update itself with whatever
   // is shown in the front-end
-
     const [isExpanded, setIsExpanded] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [curGrant,setCurGrant] = useState(grant);
-
-
 
     const toggleExpand = () => {
         setIsExpanded(!isExpanded);
@@ -87,10 +78,6 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
               </button>
             </div>
           </div>
-        )}
-      </div>
-    </div>
-  );
-};
+    )};
 
 export default GrantItem;
