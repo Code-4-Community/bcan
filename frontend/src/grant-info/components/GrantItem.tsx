@@ -27,7 +27,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
         setIsExpanded(!isExpanded);
     };
   
-    const active = isActiveStatus(generalStatus);
+    const active = isActiveStatus(curGrant.status);
 
     // when toggle edit turns off, sends curGrant to backend to be saved
     const toggleEdit = async () => {
