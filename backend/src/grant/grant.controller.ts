@@ -1,5 +1,6 @@
-import { Controller, Get, Param, Put, Body } from '@nestjs/common';
+import { Controller, Get, Param, Put, Body, Patch } from '@nestjs/common';
 import { GrantService } from './grant.service';
+import {Grant} from "./grant.model";
 
 @Controller('grant')
 export class GrantController {
@@ -28,5 +29,12 @@ export class GrantController {
     ): Promise<number[]> {
         return await this.grantService.unarchiveGrants(grantIds)
     }
+
+    @Put('save')
+    async saveGrant(@Body() grantData: Grant) {
+        return await this.grantService.updateGrant(grantData)
+    }
+
+
 
 }

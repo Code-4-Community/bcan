@@ -2,23 +2,20 @@ import { Injectable,Logger } from '@nestjs/common';
 import AWS from 'aws-sdk';
 import { Grant } from './grant.model'
 
-// TODO: set up the region elsewhere - code does not work without the line below
-AWS.config.update({ region: 'us-east-2' });      
-const dynamodb = new AWS.DynamoDB.DocumentClient();
-
-
 @Injectable()
 export class GrantService {
     private readonly logger = new Logger(GrantService.name);
+      private dynamoDb = new AWS.DynamoDB.DocumentClient();
 
     // function to retrieve all grants in our database
     async getAllGrants(): Promise<Grant[]> {
+        // loads in the environment variable for the table now
         const params = {
             TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
         };
 
         try {
-            const data = await dynamodb.scan(params).promise();
+            const data = await this.dynamoDb.scan(params).promise();
 
             return data.Items as Grant[] || [];
         } catch (error) {
@@ -38,7 +35,7 @@ export class GrantService {
         };
 
         try {
-            const data = await dynamodb.get(params).promise();
+            const data = await this.dynamoDb.get(params).promise();
 
             if (!data.Item) {
                 throw new Error('No grant with id ' + grantId + ' found.');
@@ -66,7 +63,7 @@ export class GrantService {
               };
 
               try{
-                const res = await dynamodb.update(params).promise();
+                const res = await this.dynamoDb.update(params).promise();
                 console.log(res)
 
                 if (res.Attributes && res.Attributes.isArchived === false) {
@@ -82,5 +79,40 @@ export class GrantService {
               }
         };
         return successfulUpdates;
+    }
+
+    /**
+     * Will push or overwrite new grant data to database
+     * @param grantData
+     */
+    async updateGrant(grantData: Grant): Promise<string> {
+        // dynamically creates the update expression/attribute names based on names of grant interface
+        // assumption: grant interface field names are exactly the same as db storage naming
+
+        const updateKeys = Object.keys(grantData).filter(
+            key => key != 'grantId'
+        );
+        const UpdateExpression = "SET " + updateKeys.map((key) => `#${key} = :${key}`).join(", ");
+        const ExpressionAttributeNames = updateKeys.reduce((acc, key) =>
+            ({ ...acc, [`#${key}`]: key }), {});
+        const ExpressionAttributeValues = updateKeys.reduce((acc, key) =>
+            ({ ...acc, [`:${key}`]: grantData[key as keyof typeof grantData] }), {});
+
+        const params = {
+            TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || "TABLE_FAILURE",
+            Key: { grantId: grantData.grantId },
+            UpdateExpression,
+            ExpressionAttributeNames,
+            ExpressionAttributeValues,
+            ReturnValues: "UPDATED_NEW",
+        };
+
+        try {
+            const result = await this.dynamoDb.update(params).promise();
+            return JSON.stringify(result); // returns the changed attributes stored in db
+        } catch(err) {
+            console.log(err);
+            throw new Error(`Failed to update Grant ${grantData.grantId}`)
+        }
     }
 }

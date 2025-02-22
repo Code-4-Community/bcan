@@ -1,6 +1,7 @@
 .grant-item-wrapper {
-    margin: 2rem 0;
+    margin: 0.25rem 0rem;
     transition: all 0.3s ease-in-out;
+    width: 100%;
 }
 
 .grant-summary {
@@ -8,17 +9,20 @@
     align-items: center;
     list-style-type: none;
     justify-content: space-between;
-    border-radius: 1.2rem;
+    border-radius: 0.8rem;
     height: 4rem;
-    background-color: #F26624;
+    background-color: #F2EBE4;
     margin: 0; /* Remove margin */
     transition: background-color 0.2s ease;
+    border: 0.1rem solid #F26624;
 }
 
 .grant-summary.expanded {
     background-color: #F58D5C;
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
+    width: 100%;
+
 }
 
 .grant-summary li {
@@ -32,6 +36,14 @@
 .grant-content {
     display: flex;
     gap: 2rem; /* Adds space between the two sections */
+    width: 100%;
+    margin: 0;
+    align-items: stretch;
+}
+
+.grant-content .grant-details {
+    flex: 1;          /* this child takes up leftover horizontal space */
+    min-width: 0;     /* prevent overflow from long content */
 }
 
 .grant-body {
@@ -42,6 +54,7 @@
     transition: max-height 1s ease, background-color 0.2s ease;
     border-bottom-right-radius: 1.2rem;
     border-bottom-left-radius: 1.2rem;
+    
 }
 
 .grant-body.expanded {
@@ -66,8 +79,8 @@
     bottom: 1rem; 
     right: 1rem; 
     padding: 0.5rem 1rem;
-    background-color: 3191CF;
-    color: back; 
+    background-color: #3191CF;
+    color: black;
     border: none;
     border-radius: 5px;
     cursor: pointer;

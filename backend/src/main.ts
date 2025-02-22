@@ -9,10 +9,13 @@ async function bootstrap() {
     region: process.env.AWS_REGION,
     accessKeyId: process.env.OPEN_HATCH,
     secretAccessKey: process.env.CLOSED_HATCH
-  });  
+  });
+  
   const app = await NestFactory.create(AppModule);
   app.enableCors();
   await app.listen(3001);
 }
 dotenv.config();
 bootstrap();
+
+

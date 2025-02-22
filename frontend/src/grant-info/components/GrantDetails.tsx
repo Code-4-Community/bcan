@@ -1,41 +1,55 @@
 import React from 'react';
 import './styles/GrantDetails.css';
+import {Grant} from "@/external/bcanSatchel/store.ts";
 
-const GrantDetails: React.FC = ()  => {
-  return (
-    <div className="grant-details">
-      <h3>Description</h3>
-      <p>
-        The Community Development Initiative Grant is designed to empower
-        local organizations in implementing impactful projects that address
-        critical social and economic issues. This grant focuses on fostering
-        community-led programs that aim to improve educational opportunities, 
-        enhance public health services, and support economic development within 
-        underserved areas. Applicants are encouraged to outline how their proposed 
-        projects will contribute to sustainable growth, promote equity, and engage 
-        local stakeholders.
-      </p>
+interface GrantDetailsProps {
+    isEditing: boolean;
+    curGrant: Grant;
+    setCurGrant: React.Dispatch<React.SetStateAction<Grant>>;
+}
 
-      <h3>Application Requirements</h3>
-      <p>
-        Eligible programs include those that offer job training and workforce development, 
-        youth mentorship, health and wellness programs, and initiatives aimed at reducing 
-        environmental impacts. Each application should include a detailed plan that highlights 
-        the project’s goals, implementation strategies, and measurable outcomes. Projects that 
-        demonstrate strong community involvement and partnerships with other local organizations 
-        will be prioritized for funding.
-      </p>
+const GrantDetails: React.FC<GrantDetailsProps> = ({isEditing, curGrant, setCurGrant})  => {
 
-      <h3>Additional Notes</h3>
-      <p>
-        Funding for this grant may cover program expenses such as staffing, equipment, training 
-        materials, and outreach activities. The review committee seeks innovative and sustainable 
-        approaches that align with the mission of strengthening communities and fostering long-term 
-        positive change. Grant recipients will also be expected to submit periodic reports outlining 
-        the progress and achievements of their projects over the funding period.
-      </p>
-    </div>
-  );
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const {name, value} = event.target;
+
+        // only modifies the changed field
+        setCurGrant(curGrant =>({
+            ...curGrant,
+            [name]: value
+        }));
+    };
+
+
+    return (
+        <div className="grant-details">
+            <h3>Description</h3>
+            <textarea
+                className="attribute-value large-textarea"
+                name="description"
+                value={curGrant.description}
+                onChange={handleChange}
+                readOnly={!isEditing}
+            />
+            <h3>Application Requirements</h3>
+            <textarea
+                className="attribute-value large-textarea"
+                name="reporting_requirements"
+                value={curGrant.reporting_requirements}
+                onChange={handleChange}
+                readOnly={!isEditing}
+            />
+            <h3>Additional Notes</h3>
+            <textarea
+                className="attribute-value large-textarea"
+                name="attached_resources"
+                value={curGrant.attached_resources}
+                onChange={handleChange}
+                readOnly={!isEditing}
+            />
+        </div>
+    );
 }
 
 export default GrantDetails;
