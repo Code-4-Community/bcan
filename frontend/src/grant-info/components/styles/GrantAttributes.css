@@ -1,5 +1,4 @@
 .grant-attributes {
-    background-color: #F26624; 
     padding: 1rem;
     border-radius: 8px; 
     margin-top: 4rem;
@@ -21,7 +20,7 @@
 }
 
 .attribute-value {
-    background-color: #F26624; 
+    background-color: white; 
     padding: 0.5rem;
     border: 1px solid black;
     border-radius: 4px;

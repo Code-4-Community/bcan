@@ -8,12 +8,6 @@
     width: 100%;
 }
 
-/* Top half only takes up as much space as it needs */
-.top-half {
-    height: 5vh;
-    margin-bottom: 20%;
-}
-
 /* Bottom half to stack grant-list and footer */
 .bot-half {
     display: flex;

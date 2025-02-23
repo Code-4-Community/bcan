@@ -18,41 +18,42 @@ const GrantLabels: React.FC<{
   }
 
   return (
-    <ul className="grant-labels">
-      <li>
+    <ul className="grant-labels grid grid-cols-4 justify-stretch font-semibold p-4">
+      <li className="text-center">
         <button
           className="grant-name"
           onClick={() => buttonHandler("organization_name")}
         >
-          Grant Name
+          Organization Name {labels.header == "organization_name" ? (labels.asc ? "▲" : "▼") : ""}
         </button>
       </li>
-      <li>
+      <li className="text-center">
         <button
           className="application-date"
           onClick={() => buttonHandler("deadline")}
         >
-          Application Date
+          Application Date {labels.header == "deadline" ? (labels.asc ? "▲" : "▼") : ""}
         </button>
       </li>
-      <li>
-        <button className="status" onClick={() => buttonHandler("status")}>
-          Status
-        </button>
-      </li>
-      <li>
+      <li className="text-center">
         <button className="amount" onClick={() => buttonHandler("amount")}>
-          Amount
+          Amount {labels.header == "amount" ? (labels.asc ? "▲" : "▼") : ""}
         </button>
       </li>
-      <li>
+      <li className="text-center">
+        <button className="status" onClick={() => buttonHandler("status")}>
+          Status {labels.header == "status" ? (labels.asc ? "▲" : "▼") : ""}
+        </button>
+      </li>
+      
+      {/* <li>
         <button
           className="restriction-status"
           onClick={() => buttonHandler("restrictions")}
         >
           Restricted vs. Unrestricted
         </button>
-      </li>
+      </li> */}
     </ul>
   );
 };

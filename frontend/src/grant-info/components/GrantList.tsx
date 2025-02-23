@@ -139,7 +139,7 @@ const GrantList: React.FC = observer(() => {
       <PaginationRoot defaultPage={1} count={totalPages}>
         {/* Actual grants for the current page */}
         <GrantLabels onSort={HandleHeaderClick} />
-        <div className="grant-list">
+        <div className="grant-list p-4">
           {grants.map((grant, index) => (
             <GrantItem key={index} grant={grant} />
           ))}
@@ -151,7 +151,7 @@ const GrantList: React.FC = observer(() => {
             - Individual page items
             - PageText for "X of Y" or "X / Y"
         */}
-        <div className="pagination-controls">
+        <div className="pagination-controls m-4">
           <PaginationPrevTrigger />
           <PaginationItems />
           <PaginationNextTrigger />
