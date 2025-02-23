@@ -10,7 +10,7 @@
 }
 
 .bell-container button {
-    background-color: '';
+    background-color: 'transparent';
     border: none;
     border-radius: 5%;
     cursor: pointer;
