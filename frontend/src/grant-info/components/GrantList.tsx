@@ -140,9 +140,9 @@ const GrantList: React.FC = observer(() => {
         {/* Actual grants for the current page */}
         <GrantLabels onSort={HandleHeaderClick} />
         <div className="grant-list p-4">
-          {grants.map((grant, index) => (
-            <GrantItem key={index} grant={grant} />
-          ))}
+        {grants.map(grant => (
+          <GrantItem key={grant.grantId} grant={grant} />
+        ))}
         </div>
 
         {/* 

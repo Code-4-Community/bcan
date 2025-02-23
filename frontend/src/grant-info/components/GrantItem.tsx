@@ -67,7 +67,11 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
           {isExpanded ? <FaChevronDown /> : <FaChevronRight />}
           <span className="ml-2 truncate">{curGrant.organization_name}</span>
         </li>
-        <li className="application-date">{"XX/XX/XXXX"}</li>
+        <li className="application-date">
+          {curGrant.deadline 
+            ? new Date(curGrant.deadline).toLocaleDateString() 
+            : "No date"}
+        </li>
         <li className="amount">
           {curGrant.amount ? "$" + curGrant.amount : ""}
         </li>
