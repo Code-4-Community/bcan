@@ -22,64 +22,100 @@ const Login = observer(() => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
+    // Outer container that covers the entire viewport
+    <div
       style={{
-        maxWidth: "400px",
-        margin: "0 auto",
+        display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        border: "1px solid #ccc",
-        borderRadius: "8px",
-        padding: "20px 30px",
+        width: "100vw",
+        height: "100vh",
+        backgroundColor: "#121212",
+        margin: 0,
+        padding: 0,
       }}
     >
-      <h2>Login</h2>
-      <div>
-        <label style={{ display: "block", textAlign: "left" }}>Username</label>
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-          style={{ width: "90%", padding: "8px", margin: "8px 0" }}
-        />
-      </div>
-      <div>
-        <label style={{ display: "block", textAlign: "left" }}>Password</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          style={{ width: "90%", padding: "8px", margin: "8px 0" }}
-        />
-      </div>
-      <button
-        type="submit"
+      <form
+        onSubmit={handleSubmit}
         style={{
-          padding: "8px",
-          width: "100%",
-          margin: "8px 0",
-          backgroundColor: "black",
-          color: "white",
+          maxWidth: "600px",            // Increased width for better visibility
+          width: "90%",                 // Ensures responsiveness
+          border: "2px solid #ccc",
+          borderRadius: "12px",
+          padding: "40px",
+          backgroundColor: "#fff",
+          color: "#ff5370",             // Pinkish-red text
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+          fontSize: "1.1rem",           // Larger font size
         }}
       >
-        Login
-      </button>
-      <button
-        type="submit"
-        style={{
-          padding: "8px",
-          width: "100%",
-          margin: "8px 0",
-          backgroundColor: "white",
-          color: "black",
-        }}
-      >
-        Forgot Password?
-      </button>
-    </form>
+        <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Login</h2>
+
+        <div>
+          <label style={{ display: "block", marginBottom: "4px" }}>
+            Username
+          </label>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            style={{
+              width: "100%",
+              padding: "10px",
+              margin: "8px 0 20px 0",
+              fontSize: "1rem",
+            }}
+          />
+        </div>
+
+        <div>
+          <label style={{ display: "block", marginBottom: "4px" }}>
+            Password
+          </label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            style={{
+              width: "100%",
+              padding: "10px",
+              margin: "8px 0 20px 0",
+              fontSize: "1rem",
+            }}
+          />
+        </div>
+
+        <button
+          type="submit"
+          style={{
+            padding: "12px",
+            width: "100%",
+            margin: "8px 0",
+            backgroundColor: "black",
+            color: "white",
+            fontSize: "1rem",
+          }}
+        >
+          Login
+        </button>
+        <button
+          type="button"
+          style={{
+            padding: "12px",
+            width: "100%",
+            margin: "8px 0",
+            backgroundColor: "white",
+            color: "black",
+            fontSize: "1rem",
+          }}
+          onClick={() => alert("Forgot Password clicked!")}
+        >
+          Forgot Password?
+        </button>
+      </form>
+    </div>
   );
 });
 

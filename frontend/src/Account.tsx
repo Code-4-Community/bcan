@@ -12,44 +12,73 @@ const Account = observer(() => {
   };
 
   return (
+    // Outer container to center everything and cover the viewport
     <div
       style={{
-        padding: "20px",
         display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-end",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100vw",
+        height: "100vh",
+        backgroundColor: "#121212", // Dark background
+        margin: 0,
+        padding: 0,
       }}
     >
-      <div>
-        <Link style={{ color: "white" }} to="/grant-info">
+      {/* Inner container for the account page content */}
+      <div
+        style={{
+          maxWidth: "600px",           // Larger width for visibility
+          width: "90%",                // Responsive
+          border: "2px solid #ccc",
+          borderRadius: "12px",
+          padding: "40px",
+          backgroundColor: "#fff",     // White background for contrast
+          color: "#ff5370",            // Pinkish‐red text
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+          fontSize: "1.1rem",          // Slightly larger font
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-end",      // Buttons and text to the right by default
+        }}
+      >
+        <div>
+          <Link to="/grant-info" style={{ textDecoration: "none" }}>
+            <button
+              style={{
+                padding: "10px",
+                fontSize: "16px",
+                marginRight: "5px",
+                backgroundColor: "black",
+                color: "white",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              Home
+            </button>
+          </Link>
           <button
+            onClick={handleLogout}
             style={{
               padding: "10px",
               fontSize: "16px",
-              marginRight: "5px",
+              marginBottom: "10px",
               backgroundColor: "black",
               color: "white",
+              border: "none",
+              cursor: "pointer",
             }}
           >
-            Home
+            Logout
           </button>
-        </Link>
-        <button
-          onClick={handleLogout}
-          style={{
-            padding: "10px",
-            fontSize: "16px",
-            marginBottom: "10px", // Adds space below the button
-            backgroundColor: "black",
-            color: "white",
-          }}
-        >
-          Logout
-        </button>
-      </div>
-      <h1>Welcome, {user?.userId}</h1>
+        </div>
 
-      <Profile />
+        <h1 style={{ alignSelf: "flex-start" }}>Welcome, {user?.userId}</h1>
+
+        {/* Include your profile info here */}
+        <Profile />
+      </div>
     </div>
   );
 });
