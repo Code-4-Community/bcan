@@ -130,7 +130,7 @@ const GrantList: React.FC = observer(() => {
   }
 
   return (
-    <div className="paginated-grant-list">
+    <div className="paginated-grant-list max-w-8xl mx-auto">
       {/*
         Wrap everything in PaginationRoot:
           - defaultPage can be 1
@@ -138,8 +138,8 @@ const GrantList: React.FC = observer(() => {
       */}
       <PaginationRoot defaultPage={1} count={totalPages}>
         {/* Actual grants for the current page */}
+        <div className="grant-list p-4">
         <GrantLabels onSort={HandleHeaderClick} />
-        <div className="grant-list">
           {grants.map((grant, index) => (
             <GrantItem key={index} grant={grant} />
           ))}
@@ -151,7 +151,7 @@ const GrantList: React.FC = observer(() => {
             - Individual page items
             - PageText for "X of Y" or "X / Y"
         */}
-        <div className="pagination-controls">
+        <div className="pagination-controls m-4">
           <PaginationPrevTrigger />
           <PaginationItems />
           <PaginationNextTrigger />

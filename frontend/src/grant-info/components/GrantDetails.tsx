@@ -26,7 +26,7 @@ const GrantDetails: React.FC<GrantDetailsProps> = ({isEditing, curGrant, setCurG
         <div className="grant-details">
             <h3>Description</h3>
             <textarea
-                className="attribute-value large-textarea"
+                className="attribute-value large-textarea bg-white"
                 name="description"
                 value={curGrant.description}
                 onChange={handleChange}

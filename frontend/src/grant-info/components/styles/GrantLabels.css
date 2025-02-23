@@ -1,13 +1,12 @@
 .grant-labels {
-    display: flex;
-    list-style-type: none;
-    justify-content: space-between;
-    margin: 0 1rem;
+    /* display: flex; */
+    /* list-style-type: none; */
+    /* justify-content: space-between; */
     color: black;
 }
 
 .grant-labels li {
-    padding: 1rem;
+    /* padding: 0.5rem; */
 }
 
 .grant-labels button {

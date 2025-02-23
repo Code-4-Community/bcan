@@ -1,0 +1,20 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%; /* Fill up entire container */
+    font-size: 1.2rem;
+}
+
+
+.header-left-comp {
+    display: flex;
+    align-items: center;
+    list-style-type: none; /* this is a placeholder */
+}
+
+
+.logo {
+    max-width: 100%;
+    height: 100px;
+}
