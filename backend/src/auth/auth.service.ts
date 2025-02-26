@@ -292,19 +292,29 @@ export class AuthService {
     }
   }
 
+  /**
+   * Updates user profile with display name/biography
+   * @param username the key
+   * @param email param to update
+   * @param biography param to update
+   */
   async updateProfile(
     username: string,
-    displayName : string,
+    email: string,
+    biography: string,
   ) {
     try {
       const tableName = process.env.DYNAMODB_USER_TABLE_NAME || 'TABLE_FAILURE';
+      console.log(username);
+      console.log(tableName);
 
       const params = {
         TableName: tableName,
         Key: { userId: username },
-        UpdateExpression: 'set displayName = :displayName',
+        UpdateExpression: 'set biography = :biography, email = :email',
         ExpressionAttributeValues: {
-          ':displayName': displayName
+          ':biography': biography,
+          ':email': email,
         },
       };
 
