@@ -1,16 +1,18 @@
 .header {
-    background-color: #F26624;
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: 100%; /* Fill up entire container */
-    margin: 0;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    margin: 4rem 2.5rem;
+    font-size: 1.2rem;
 }
 
 .header-right-comp {
     display: flex;
+    width:100%;
     justify-content: space-between;
+    align-items: center;
+    text-align: center;
 }
 
 .header-left-comp {
@@ -21,11 +23,23 @@
 
 .grant-buttons {
     display: flex;
+    width:100%;
     margin: 0;
+    padding: 0 0 0 5rem;
     color: black;
     list-style-type: none;
 }
 
+.grant-buttons a {
+    color: black;
+}
+
 .grant-buttons li {
-    padding: 0 1rem;
+    flex-basis: 20%;
+}
+
+
+.logo {
+    max-width: 100%;
+    height: 100px;
 }

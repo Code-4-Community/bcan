@@ -3,8 +3,13 @@
     list-style-type: none;
     justify-content: space-between;
     margin: 0 1rem;
+    color: black;
 }
 
 .grant-labels li {
     padding: 1rem;
+}
+
+.grant-labels button {
+    background-color: transparent;
 }

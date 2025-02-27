@@ -6,7 +6,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "build": "tsc",
-    "test": "vitest"
+    "test": "vitest --config vitest.config.ts"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",

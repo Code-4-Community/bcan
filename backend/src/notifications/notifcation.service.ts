@@ -6,6 +6,7 @@ import { Notification } from './notification.model';
 export class NotificationService {
 
   private dynamoDb = new AWS.DynamoDB.DocumentClient();
+  private ses = new AWS.SES({ region: process.env.AWS_REGION });
 
   // function to create a notification
   async createNotification(notification: Notification): Promise<Notification> {
@@ -83,6 +84,45 @@ export class NotificationService {
     } catch (error) {
       console.log(error)
       throw new Error('Failed to retrieve notification.');
+    }
+  }
+
+  /**
+   * Send an email using AWS SES
+   * @param to The recipient email address
+   * @param subject The email subject
+   * @param body The email body
+   */
+  async sendEmailNotification(
+    to: string,
+    subject: string,
+    body: string
+  ): Promise<AWS.SES.SendEmailResponse> {
+    // Default to an invalid email to prevent non-verified sender mails
+    // if BCAN's is not defined in the environment
+    const fromEmail = process.env.NOTIFICATION_EMAIL_SENDER ||
+     'u&@nveR1ified-failure@dont-send.com';
+
+    const params: AWS.SES.SendEmailRequest = {
+      Source: fromEmail,
+      Destination: {
+        ToAddresses: [to],
+      },
+      Message: {
+        // UTF-8 is a top reliable way to define special characters and symbols in emails
+        Subject: { Charset: 'UTF-8', Data: subject },
+        Body: {
+          Text: { Charset: 'UTF-8', Data: body },
+        },
+      },
+    };
+
+    try {
+      return await this.ses.sendEmail(params).promise();
+    } catch (err: unknown) {
+      console.error('Error sending email: ', err);
+      const errMessage = (err instanceof Error) ? err.message : 'Generic'; 
+      throw new Error(`Failed to send email: ${errMessage}`);
     }
   }
 
