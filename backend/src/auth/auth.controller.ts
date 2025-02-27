@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import {Controller, Post, Body, Put} from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -40,13 +40,13 @@ export class AuthController {
     return await this.authService.setNewPassword(newPassword, session, username, email);
   }
 
-  @Post('update-profile')
+  @Put('update-profile')
   async updateProfile(
     @Body('username') username: string,
-    @Body('displayName') displayName : string
+    @Body('email') email : string,
+    @Body('biography') biography: string
   ): Promise<{message: string}> {
-    await this.authService.updateProfile(username,displayName)
+    await this.authService.updateProfile(username,email, biography);
     return { message: 'Profile has been updated' };
-
   } 
 }

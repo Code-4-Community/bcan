@@ -2,6 +2,7 @@ import React, {useState } from 'react';
 import './styles/GrantItem.css';
 import { GrantAttributes } from './GrantAttributes';
 import GrantDetails from './GrantDetails';
+
 import StatusIndicator from "./StatusIndicator";  // import the new component
 
 function isActiveStatus(status: string) {
@@ -26,7 +27,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
     const toggleExpand = () => {
         setIsExpanded(!isExpanded);
     };
-  
+
     const active = isActiveStatus(curGrant.status);
 
     // when toggle edit turns off, sends curGrant to backend to be saved
@@ -62,6 +63,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
                 <li className="status">{curGrant.status}</li>
                 <li className="amount">${curGrant.amount}</li>
                 <li className="restriction-status">{curGrant.restrictions}</li>
+
                 <li><StatusIndicator isActive={active} /></li>
             </ul>
             <div className={`grant-body ${isExpanded ? 'expanded' : ''}`}>

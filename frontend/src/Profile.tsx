@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useAuthContext } from "./context/auth/authContext";
 import { updateUserProfile } from "./external/bcanSatchel/actions";
+import { toJS } from 'mobx';
 
 const Profile = observer(() => {
   const { user } = useAuthContext();
+
   const [email, setEmail] = useState(user?.email || "");
   const [biography, setBiography] = useState(user?.biography || "");
 
@@ -12,13 +14,16 @@ const Profile = observer(() => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3001/user/me", {
+      // unwrapping mobx decorator to regular dict
+      const jsUser = toJS(user);
+      const username = jsUser.userId;
+      // unwraps mobx decorator to become string literal
+      const response = await fetch("http://localhost:3001/auth/update-profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user?.accessToken ?? ""}`,
         },
-        body: JSON.stringify({ email, biography }),
+        body: JSON.stringify({username, email, biography }),
       });
 
       if (!response.ok) {
