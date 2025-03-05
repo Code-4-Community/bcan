@@ -22,97 +22,49 @@ const Login = observer(() => {
   };
 
   return (
-    // Outer container that covers the entire viewport
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100vw",
-        height: "100vh",
-        backgroundColor: "#121212",
-        margin: 0,
-        padding: 0,
-      }}
-    >
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          maxWidth: "600px",            // Increased width for better visibility
-          width: "90%",                 // Ensures responsiveness
-          border: "2px solid #ccc",
-          borderRadius: "12px",
-          padding: "40px",
-          backgroundColor: "#fff",
-          color: "#ff5370",             // Pinkish-red text
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-          fontSize: "1.1rem",           // Larger font size
-        }}
-      >
-        <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Login</h2>
+    <div style={styles.pageContainer}>
+      {/* Logo area (top) */}
+      <div style={styles.logoContainer}>
+        <div style={styles.logoSquare}></div>
+        {/* Updated text */}
+        <div style={styles.logoText}>Boston Climate Action Network x Code4Community</div>
+      </div>
 
-        <div>
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Username
-          </label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            style={{
-              width: "100%",
-              padding: "10px",
-              margin: "8px 0 20px 0",
-              fontSize: "1rem",
-            }}
-          />
-        </div>
+      {/* Form container */}
+      <form onSubmit={handleSubmit} style={styles.formContainer}>
+        <h2 style={styles.heading}>Sign In</h2>
 
-        <div>
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Password
-          </label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{
-              width: "100%",
-              padding: "10px",
-              margin: "8px 0 20px 0",
-              fontSize: "1rem",
-            }}
-          />
-        </div>
+        {/* "Email, phone or Skype" field */}
+        <label htmlFor="username" style={styles.label}>
+          User Id
+        </label>
+        <input
+          id="username"
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+          style={styles.input}
+          placeholder="Enter your username (e.g., bcanuser33)"
+        />
 
-        <button
-          type="submit"
-          style={{
-            padding: "12px",
-            width: "100%",
-            margin: "8px 0",
-            backgroundColor: "black",
-            color: "white",
-            fontSize: "1rem",
-          }}
-        >
-          Login
-        </button>
-        <button
-          type="button"
-          style={{
-            padding: "12px",
-            width: "100%",
-            margin: "8px 0",
-            backgroundColor: "white",
-            color: "black",
-            fontSize: "1rem",
-          }}
-          onClick={() => alert("Forgot Password clicked!")}
-        >
-          Forgot Password?
+        {/* "Password" field */}
+        <label htmlFor="password" style={styles.label}>
+          Password
+        </label>
+        <input
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          style={styles.input}
+          placeholder="Enter your password"
+        />
+
+        {/* Sign In button */}
+        <button type="submit" style={{ ...styles.button, ...styles.helloButton }}>
+          Sign In
         </button>
       </form>
     </div>
@@ -120,3 +72,94 @@ const Login = observer(() => {
 });
 
 export default Login;
+
+/* Inline style objects */
+const styles: { [key: string]: React.CSSProperties } = {
+  pageContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100vw",
+    height: "100vh",
+    margin: 0,
+    padding: 0,
+    /* 
+      Below is an example of a multi-stop gradient using greens, blues, pinks, browns.
+      We also layer a texture image for a “grainy” look. Adjust colors and stops as needed.
+    */
+    background: `
+      linear-gradient(
+        120deg,
+        rgba(159, 189, 165, 0.75) 0%,   /* greenish */
+        rgba(143, 170, 189, 0.75) 25%,  /* blueish */
+        rgba(240, 165, 193, 0.75) 50%,  /* pinkish */
+        rgba(192, 160, 128, 0.75) 75%,  /* brownish */
+        rgba(159, 189, 165, 0.75) 100%  /* greenish */
+      ),
+      url("/path/to/grain-texture.png") 
+    `,
+    backgroundSize: "cover",
+    backgroundBlendMode: "overlay", // blends gradient over texture
+  },
+  logoContainer: {
+    display: "flex",
+    alignItems: "center",
+    marginBottom: "2rem", // increased spacing for visibility
+  },
+  logoSquare: {
+    width: "28px",
+    height: "28px",
+    backgroundColor: "#f25022", // approximate "red" tile
+    marginRight: "10px",
+  },
+  logoText: {
+    fontSize: "1.6rem", // slightly larger text
+    fontWeight: "bold",
+  },
+  formContainer: {
+    width: "500px", // widened further for magnification
+    padding: "3rem", // more padding for clarity
+    backgroundColor: "#ffffff",
+    borderRadius: "8px",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.15)",
+    display: "flex",
+    flexDirection: "column",
+  },
+  heading: {
+    marginBottom: "2rem",
+    fontSize: "2.2rem", // larger heading
+    fontWeight: 500,
+    textAlign: "center",
+  },
+  label: {
+    marginBottom: "0.75rem",
+    fontSize: "1.2rem", // larger label text
+  },
+  input: {
+    marginBottom: "1.75rem",
+    padding: "1rem",
+    fontSize: "1.2rem", // increased font size
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+    width: "100%",
+    boxSizing: "border-box",
+    color: "lightgray",
+  },
+  button: {
+    marginBottom: "1.2rem",
+    padding: "1.2rem",
+    fontSize: "1.2rem", // bigger button text
+    borderRadius: "4px",
+    cursor: "pointer",
+  },
+  helloButton: {
+    backgroundColor: "#f3f3f3",
+    border: "1px solid #ccc",
+  },
+  signInButton: {
+    backgroundColor: "#0078d4",
+    color: "#fff",
+    border: "none",
+  },
+};

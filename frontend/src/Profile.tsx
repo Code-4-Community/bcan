@@ -28,7 +28,6 @@ const Profile = observer(() => {
       }
 
       const data = await response.json();
-
       updateUserProfile(data);
       alert("Profile updated successfully.");
     } catch (error) {
@@ -38,40 +37,39 @@ const Profile = observer(() => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{
-        maxWidth: "600px",
-        margin: "0 auto",
-        border: "1px solid #ccc",
-        borderRadius: "8px",
-        padding: "20px 30px",
-      }}
-    >
-      <h2>Profile</h2>
-      <div style={{ padding: "5px" }}>
-        <label>Username: </label>
-        <span>{user?.userId}</span>
+    <form onSubmit={handleSubmit} style={styles.formContainer}>
+      <h2 style={styles.heading}>Profile</h2>
+
+      {/* Username (read-only) */}
+      <div style={styles.field}>
+        <label style={styles.label}>Username:</label>
+        <span style={styles.readonlyValue}>{user?.userId}</span>
       </div>
-      <div>
-        <label>Email:</label>
+
+      {/* Email */}
+      <div style={styles.field}>
+        <label style={styles.label}>Email:</label>
         <input
           type="email"
-          style={{ width: "100%", padding: "8px", margin: "8px 0" }}
+          style={styles.input}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
       </div>
-      <div>
-        <label>Biography:</label>
+
+      {/* Biography */}
+      <div style={styles.field}>
+        <label style={styles.label}>Biography:</label>
         <textarea
-          style={{ width: "100%", padding: "8px", margin: "8px 0" }}
+          style={styles.textarea}
           value={biography}
           onChange={(e) => setBiography(e.target.value)}
-        ></textarea>
+        />
       </div>
-      <button type="submit" style={{ padding: "10px", fontSize: "16px" }}>
+
+      {/* Save Changes button */}
+      <button type="submit" style={styles.button}>
         Save Changes
       </button>
     </form>
@@ -79,3 +77,65 @@ const Profile = observer(() => {
 });
 
 export default Profile;
+
+// Style objects for a cohesive look with your Login and Account pages
+const styles: { [key: string]: React.CSSProperties } = {
+  formContainer: {
+    width: "500px",
+    padding: "2rem",
+    backgroundColor: "#ffffff",
+    borderRadius: "8px",
+    boxShadow: "0 2px 10px rgba(0,0,0,0.15)",
+    display: "flex",
+    flexDirection: "column",
+    margin: "0 auto", // center within the parent
+  },
+  heading: {
+    marginBottom: "1.5rem",
+    fontSize: "2rem",
+    fontWeight: 500,
+    textAlign: "center",
+  },
+  field: {
+    marginBottom: "1.5rem",
+  },
+  label: {
+    display: "block",
+    marginBottom: "0.5rem",
+    fontSize: "1.2rem",
+    fontWeight: 500,
+  },
+  readonlyValue: {
+    marginLeft: "0.5rem",
+    fontSize: "1.2rem",
+  },
+  input: {
+    width: "100%",
+    padding: "1rem",
+    fontSize: "1.2rem",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+    boxSizing: "border-box",
+    color: "lightgray",
+  },
+  textarea: {
+    width: "100%",
+    padding: "1rem",
+    fontSize: "1.2rem",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+    boxSizing: "border-box",
+    minHeight: "120px",
+    color: 'lightgray',
+  },
+  button: {
+    padding: "1rem",
+    fontSize: "1.1rem",
+    backgroundColor: "#0078d4",
+    color: "#fff",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+    alignSelf: "flex-start", // keep button left-aligned
+  },
+};

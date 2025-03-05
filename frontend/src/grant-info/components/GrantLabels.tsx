@@ -32,7 +32,7 @@ const GrantLabels: React.FC<{
           className="application-date"
           onClick={() => buttonHandler("deadline")}
         >
-          Application Date {labels.header == "deadline" ? (labels.asc ? "▲" : "▼") : ""}
+          Application Deadline {labels.header == "deadline" ? (labels.asc ? "▲" : "▼") : ""}
         </button>
       </li>
       <li className="text-center">

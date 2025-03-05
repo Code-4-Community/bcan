@@ -35,6 +35,9 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
     });
 
     const data = await response.json();
+
+    // TODO: Need to either completely remove access_token
+    // or verify it in each action
     if (data.access_token) {
       setAuthState(true, data.user, data.access_token);
     } else {
