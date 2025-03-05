@@ -4,6 +4,9 @@ import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
 import "./external/bcanSatchel/mutators";
 
+/**
+ * (1) Login Component that handles standard user log ins
+ */
 const Login = observer(() => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -26,7 +29,6 @@ const Login = observer(() => {
       {/* Logo area (top) */}
       <div style={styles.logoContainer}>
         <div style={styles.logoSquare}></div>
-        {/* Updated text */}
         <div style={styles.logoText}>Boston Climate Action Network x Code4Community</div>
       </div>
 
@@ -34,7 +36,7 @@ const Login = observer(() => {
       <form onSubmit={handleSubmit} style={styles.formContainer}>
         <h2 style={styles.heading}>Sign In</h2>
 
-        {/* "Email, phone or Skype" field */}
+        {/* UserID field */}
         <label htmlFor="username" style={styles.label}>
           User Id
         </label>
@@ -85,8 +87,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     margin: 0,
     padding: 0,
     /* 
-      Below is an example of a multi-stop gradient using greens, blues, pinks, browns.
-      We also layer a texture image for a “grainy” look. Adjust colors and stops as needed.
+      TODO: Replace with actual grainy texture background image
     */
     background: `
       linear-gradient(
@@ -105,21 +106,21 @@ const styles: { [key: string]: React.CSSProperties } = {
   logoContainer: {
     display: "flex",
     alignItems: "center",
-    marginBottom: "2rem", // increased spacing for visibility
+    marginBottom: "2rem",
   },
   logoSquare: {
     width: "28px",
     height: "28px",
-    backgroundColor: "#f25022", // approximate "red" tile
+    backgroundColor: "#f25022",
     marginRight: "10px",
   },
   logoText: {
-    fontSize: "1.6rem", // slightly larger text
+    fontSize: "1.6rem",
     fontWeight: "bold",
   },
   formContainer: {
-    width: "500px", // widened further for magnification
-    padding: "3rem", // more padding for clarity
+    width: "500px", // for magnification
+    padding: "3rem", // for clarity
     backgroundColor: "#ffffff",
     borderRadius: "8px",
     boxShadow: "0 2px 10px rgba(0,0,0,0.15)",
@@ -128,18 +129,18 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   heading: {
     marginBottom: "2rem",
-    fontSize: "2.2rem", // larger heading
+    fontSize: "2.2rem",
     fontWeight: 500,
     textAlign: "center",
   },
   label: {
     marginBottom: "0.75rem",
-    fontSize: "1.2rem", // larger label text
+    fontSize: "1.2rem",
   },
   input: {
     marginBottom: "1.75rem",
     padding: "1rem",
-    fontSize: "1.2rem", // increased font size
+    fontSize: "1.2rem",
     border: "1px solid #ccc",
     borderRadius: "4px",
     width: "100%",
@@ -149,7 +150,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   button: {
     marginBottom: "1.2rem",
     padding: "1.2rem",
-    fontSize: "1.2rem", // bigger button text
+    fontSize: "1.2rem",
     borderRadius: "4px",
     cursor: "pointer",
   },

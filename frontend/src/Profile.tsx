@@ -3,6 +3,9 @@ import { observer } from "mobx-react-lite";
 import { useAuthContext } from "./context/auth/authContext";
 import { updateUserProfile } from "./external/bcanSatchel/actions";
 
+/**
+ * (1) Profile component that handles user profile display and updates
+ */
 const Profile = observer(() => {
   const { user } = useAuthContext();
   const [email, setEmail] = useState(user?.email || "");
@@ -78,7 +81,7 @@ const Profile = observer(() => {
 
 export default Profile;
 
-// Style objects for a cohesive look with your Login and Account pages
+// Style objects
 const styles: { [key: string]: React.CSSProperties } = {
   formContainer: {
     width: "500px",

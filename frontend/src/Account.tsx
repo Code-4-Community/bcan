@@ -5,6 +5,10 @@ import { logoutUser } from "./external/bcanSatchel/actions";
 import Profile from "./Profile";
 import { Link } from "react-router-dom";
 
+/**
+ * (1) Account Page container that holds the Profile object where user info is stored too.
+ * (2) Handles Logout and Navigation to the main App (Grant List)
+ */
 const Account = observer(() => {
   const { user } = useAuthContext();
 
@@ -36,7 +40,7 @@ const Account = observer(() => {
 
 export default Account;
 
-/* Style objects for a consistent "grainy, multi-color gradient" look. */
+/* Style objects */
 const styles: { [key: string]: React.CSSProperties } = {
   pageContainer: {
     display: "flex",
@@ -49,8 +53,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: 0,
     /* 
       Multi-stop gradient (greens, blues, pinks, browns) + 
-      optional grainy texture overlay for the background.
-      Replace '/path/to/grain-texture.png' with your actual texture file or remove if not needed.
+      grainy texture overlay for the background.
+      TODO: replace '/path/to/grain-texture.png' with actual file.
     */
     background: `
       linear-gradient(
