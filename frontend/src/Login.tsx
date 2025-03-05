@@ -4,9 +4,6 @@ import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
 import "./external/bcanSatchel/mutators";
 
-/**
- * (1) Login Component that handles standard user log ins
- */
 const Login = observer(() => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -26,69 +23,81 @@ const Login = observer(() => {
 
   return (
     <div style={styles.pageContainer}>
-      {/* Logo area (top) */}
-      <div style={styles.logoContainer}>
-        <div style={styles.logoSquare}></div>
-        <div style={styles.logoText}>Boston Climate Action Network x Code4Community</div>
+      {/* Blurred background layer */}
+      <div style={styles.backgroundLayer} />
+
+      {/* Foreground content (not blurred) */}
+      <div style={styles.foregroundContent}>
+        {/* Logo area */}
+        <div style={styles.logoContainer}>
+          <div style={styles.logoSquare}></div>
+          <div style={styles.logoText}>Boston Climate Action Network x Code4Community</div>
+        </div>
+
+        {/* Form container with partial transparency */}
+        <form onSubmit={handleSubmit} style={styles.formContainer}>
+          <h2 style={styles.heading}>Sign In</h2>
+
+          {/* UserID field */}
+          <label htmlFor="username" style={styles.label}>
+            User Id
+          </label>
+          <input
+            id="username"
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            style={styles.input}
+            placeholder="Enter your username (e.g., bcanuser33)"
+          />
+
+          {/* Password field */}
+          <label htmlFor="password" style={styles.label}>
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            style={styles.input}
+            placeholder="Enter your password"
+          />
+
+          {/* Sign In button */}
+          <button type="submit" style={{ ...styles.button, ...styles.helloButton }}>
+            Sign In
+          </button>
+        </form>
       </div>
-
-      {/* Form container */}
-      <form onSubmit={handleSubmit} style={styles.formContainer}>
-        <h2 style={styles.heading}>Sign In</h2>
-
-        {/* UserID field */}
-        <label htmlFor="username" style={styles.label}>
-          User Id
-        </label>
-        <input
-          id="username"
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-          style={styles.input}
-          placeholder="Enter your username (e.g., bcanuser33)"
-        />
-
-        {/* "Password" field */}
-        <label htmlFor="password" style={styles.label}>
-          Password
-        </label>
-        <input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          style={styles.input}
-          placeholder="Enter your password"
-        />
-
-        {/* Sign In button */}
-        <button type="submit" style={{ ...styles.button, ...styles.helloButton }}>
-          Sign In
-        </button>
-      </form>
     </div>
   );
 });
 
 export default Login;
 
-/* Inline style objects */
+// Inline style objects
 const styles: { [key: string]: React.CSSProperties } = {
   pageContainer: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
+    position: "relative",
     width: "100vw",
     height: "100vh",
     margin: 0,
     padding: 0,
-    /* 
-      TODO: Replace with actual grainy texture background image
-    */
+    overflow: "hidden",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  backgroundLayer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    zIndex: 0, // behind everything
     background: `
       linear-gradient(
         120deg,
@@ -98,10 +107,18 @@ const styles: { [key: string]: React.CSSProperties } = {
         rgba(192, 160, 128, 0.75) 75%,  /* brownish */
         rgba(159, 189, 165, 0.75) 100%  /* greenish */
       ),
-      url("/path/to/grain-texture.png") 
+      url("../assets/images/boston_snow.jpg")
     `,
     backgroundSize: "cover",
-    backgroundBlendMode: "overlay", // blends gradient over texture
+    backgroundBlendMode: "overlay",
+    filter: "blur(7px)", // blur only the background
+  },
+  foregroundContent: {
+    position: "relative",
+    zIndex: 1, // on top of the background layer
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
   logoContainer: {
     display: "flex",
@@ -119,9 +136,11 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontWeight: "bold",
   },
   formContainer: {
-    width: "500px", // for magnification
-    padding: "3rem", // for clarity
-    backgroundColor: "#ffffff",
+    width: "500px",
+    padding: "3rem",
+    // Partially transparent background
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    color: "#000", // ensure text is dark enough to stand out
     borderRadius: "8px",
     boxShadow: "0 2px 10px rgba(0,0,0,0.15)",
     display: "flex",
@@ -155,12 +174,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     cursor: "pointer",
   },
   helloButton: {
-    backgroundColor: "#f3f3f3",
+    backgroundColor: "#00a2ed",
     border: "1px solid #ccc",
-  },
-  signInButton: {
-    backgroundColor: "#0078d4",
-    color: "#fff",
-    border: "none",
   },
 };

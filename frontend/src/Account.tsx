@@ -5,10 +5,6 @@ import { logoutUser } from "./external/bcanSatchel/actions";
 import Profile from "./Profile";
 import { Link } from "react-router-dom";
 
-/**
- * (1) Account Page container that holds the Profile object where user info is stored too.
- * (2) Handles Logout and Navigation to the main App (Grant List)
- */
 const Account = observer(() => {
   const { user } = useAuthContext();
 
@@ -18,21 +14,25 @@ const Account = observer(() => {
 
   return (
     <div style={styles.pageContainer}>
-      <div style={styles.contentContainer}>
-        {/* Top row with Home and Logout buttons */}
-        <div style={styles.topRow}>
-          <Link to="/grant-info" style={{ textDecoration: "none" }}>
-            <button style={styles.navButton}>Home</button>
-          </Link>
-          <button onClick={handleLogout} style={styles.navButton}>
-            Logout
-          </button>
+      {/* Blurred background layer */}
+      <div style={styles.backgroundLayer} />
+
+      {/* Foreground container */}
+      <div style={styles.foregroundContent}>
+        <div style={styles.accountContainer}>
+          {/* Top row with navigation buttons */}
+          <div style={styles.topRow}>
+            <Link to="/grant-info" style={{ textDecoration: "none" }}>
+              <button style={styles.navButton}>Home</button>
+            </Link>
+            <button onClick={handleLogout} style={styles.navButton}>
+              Logout
+            </button>
+          </div>
+
+          <h1 style={styles.heading}>Welcome, {user?.userId}</h1>
+          <Profile />
         </div>
-
-        <h1 style={styles.heading}>Welcome, {user?.userId}</h1>
-
-        {/* Profile section */}
-        <Profile />
       </div>
     </div>
   );
@@ -40,66 +40,76 @@ const Account = observer(() => {
 
 export default Account;
 
-/* Style objects */
 const styles: { [key: string]: React.CSSProperties } = {
   pageContainer: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
+    position: "relative",
     width: "100vw",
     height: "100vh",
     margin: 0,
     padding: 0,
-    /* 
-      Multi-stop gradient (greens, blues, pinks, browns) + 
-      grainy texture overlay for the background.
-      TODO: replace '/path/to/grain-texture.png' with actual file.
-    */
+    overflow: "hidden",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  backgroundLayer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    zIndex: 0,
     background: `
       linear-gradient(
         120deg,
-        rgba(159, 189, 165, 0.75) 0%,   /* greenish */
-        rgba(143, 170, 189, 0.75) 25%,  /* blueish */
-        rgba(240, 165, 193, 0.75) 50%,  /* pinkish */
-        rgba(192, 160, 128, 0.75) 75%,  /* brownish */
-        rgba(159, 189, 165, 0.75) 100%  /* greenish */
+        rgba(159, 189, 165, 0.75) 0%,
+        rgba(143, 170, 189, 0.75) 25%,
+        rgba(240, 165, 193, 0.75) 50%,
+        rgba(192, 160, 128, 0.75) 75%,
+        rgba(159, 189, 165, 0.75) 100%
       ),
-      url("/path/to/grain-texture.png")
+      url("../assets/images/boston_snow.jpg")
     `,
     backgroundSize: "cover",
     backgroundBlendMode: "overlay",
+    filter: "blur(7px)",
   },
-  contentContainer: {
+  foregroundContent: {
+    position: "relative",
+    zIndex: 1,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  accountContainer: {
     width: "100%",
     padding: "3rem",
-    backgroundColor: "#ffffff",
+    backgroundColor: "rgba(255, 255, 255, 0.8)", // partially transparent
     borderRadius: "8px",
     boxShadow: "0 2px 10px rgba(0,0,0,0.15)",
     display: "flex",
     flexDirection: "column",
-    alignItems: "flex-start", // Left-align content by default
   },
   topRow: {
     display: "flex",
     width: "100%",
-    justifyContent: "flex-end", // Keep buttons on the right
+    justifyContent: "flex-end",
     marginBottom: "1.5rem",
   },
   navButton: {
-    padding: "1rem",
-    fontSize: "1.1rem",
     marginLeft: "0.5rem",
-    backgroundColor: "#000",
-    color: "#fff",
-    border: "none",
+    padding: "1.2rem",
+    fontSize: "1.2rem",
     borderRadius: "4px",
     cursor: "pointer",
+    backgroundColor: "#00a2ed",
+    border: "1px solid #ccc",
+    color: "#fff",
   },
   heading: {
-    margin: 0,
-    marginBottom: "1.5rem",
-    fontSize: "2rem",
+    marginBottom: "2rem",
+    fontSize: "2.2rem",
     fontWeight: 500,
+    textAlign: "center",
   },
 };
