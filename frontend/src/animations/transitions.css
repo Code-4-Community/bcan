@@ -1,18 +1,26 @@
-/* Fade-in: when a route enters */
-.fade-enter {
-    opacity: 0;
-  }
-  .fade-enter.fade-enter-active {
-    opacity: 1;
-    transition: opacity 0.8s ease-in-out;
-  }
-  
-  /* Fade-out: when a route exits */
-  .fade-exit {
-    opacity: 1;
-  }
-  .fade-exit.fade-exit-active {
-    opacity: 0;
-    transition: opacity 0.8s ease-in-out;
-  }
-  
+/* Pixelation transition CSS using stepped scaling for a videogame-style effect */
+
+.pixelate-enter {
+  transform: scale(0.2);
+  opacity: 0;
+  image-rendering: pixelated;
+}
+
+.pixelate-enter-active {
+  transform: scale(1);
+  opacity: 1;
+  /* Use steps() to create a discrete, blocky transition over 2s */
+  transition: transform 2s steps(10), opacity 2s ease-out;
+}
+
+.pixelate-exit {
+  transform: scale(1);
+  opacity: 1;
+  image-rendering: pixelated;
+}
+
+.pixelate-exit-active {
+  transform: scale(0.2);
+  opacity: 0;
+  transition: transform 2s steps(10), opacity 2s ease-out;
+}

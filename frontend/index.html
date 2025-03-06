@@ -4,7 +4,20 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    <title>BCAN Lists</title>
+    <!-- Updated SVG Filter for Pixelation Transition -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+      <filter id="pixelate">
+        <!-- Increase blur to create blockiness -->
+        <feGaussianBlur in="SourceGraphic" stdDeviation="1" result="blur" />
+        <!-- Fewer steps produces a more pixelated effect -->
+        <feComponentTransfer in="blur">
+          <feFuncR type="discrete" tableValues="0 0.33 0.66 1" />
+          <feFuncG type="discrete" tableValues="0 0.33 0.66 1" />
+          <feFuncB type="discrete" tableValues="0 0.33 0.66 1" />
+        </feComponentTransfer>
+      </filter>
+    </svg>
   </head>
   <body>
     <div id="root"></div>
