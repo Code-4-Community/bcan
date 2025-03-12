@@ -3,7 +3,7 @@ import { createStore } from 'satcheljs';
 export interface User {
   userId: string;
   email: string;
-  biography: string;
+  position_or_role: string;
 }
 
 export interface AppState {

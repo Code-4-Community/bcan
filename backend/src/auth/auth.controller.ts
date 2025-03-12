@@ -40,13 +40,13 @@ export class AuthController {
     return await this.authService.setNewPassword(newPassword, session, username, email);
   }
 
-  @Post('update-profile')
-  async updateProfile(
-    @Body('username') username: string,
-    @Body('displayName') displayName : string
-  ): Promise<{message: string}> {
-    await this.authService.updateProfile(username,displayName)
-    return { message: 'Profile has been updated' };
-
-  } 
+    @Post('update-profile')
+    async updateProfile(
+      @Body('username') username: string,
+      @Body('email') email: string,
+      @Body('position_or_role') position_or_role: string
+    ): Promise<{ message: string }> {
+      await this.authService.updateProfile(username, email, position_or_role);
+      return { message: 'Profile has been updated' };
+    }  
 }

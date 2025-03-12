@@ -31,10 +31,12 @@ const Login = observer(() => {
         {/* Logo area */}
         <div style={styles.logoContainer}>
           <div style={styles.logoSquare}></div>
-          <div style={styles.logoText}>Boston Climate Action Network x Code4Community</div>
+          <div style={styles.logoText}>
+            Boston Climate Action Network x Code4Community
+          </div>
         </div>
 
-        {/* Form container with partial transparency */}
+        {/* Single form container with both Sign In and Register */}
         <form onSubmit={handleSubmit} style={styles.formContainer}>
           <h2 style={styles.heading}>Sign In</h2>
 
@@ -66,10 +68,26 @@ const Login = observer(() => {
             placeholder="Enter your password"
           />
 
-          {/* Sign In button */}
-          <button type="submit" style={{ ...styles.button, ...styles.helloButton }}>
-            Sign In
-          </button>
+          {/* Buttons row: Sign In, vertical separator, and Register */}
+          <div style={styles.buttonRow}>
+            <button type="submit" style={{ ...styles.button, ...styles.helloButton }}>
+              Sign In
+            </button>
+
+            <div style={styles.verticalSeparator}>
+              <div style={styles.separatorLine} />
+              <div style={styles.separatorOr}>OR</div>
+              <div style={styles.separatorLine} />
+            </div>
+
+            <button
+              type="button"
+              onClick={() => navigate("/register")}
+              style={{ ...styles.button, ...styles.helloButton }}
+            >
+              Register
+            </button>
+          </div>
         </form>
       </div>
     </div>
@@ -97,25 +115,25 @@ const styles: { [key: string]: React.CSSProperties } = {
     left: 0,
     width: "100%",
     height: "100%",
-    zIndex: 0, // behind everything
+    zIndex: 0,
     background: `
       linear-gradient(
         120deg,
-        rgba(159, 189, 165, 0.75) 0%,   /* greenish */
-        rgba(143, 170, 189, 0.75) 25%,  /* blueish */
-        rgba(240, 165, 193, 0.75) 50%,  /* pinkish */
-        rgba(192, 160, 128, 0.75) 75%,  /* brownish */
-        rgba(159, 189, 165, 0.75) 100%  /* greenish */
+        rgba(159, 189, 165, 0.75) 0%,
+        rgba(143, 170, 189, 0.75) 25%,
+        rgba(240, 165, 193, 0.75) 50%,
+        rgba(192, 160, 128, 0.75) 75%,
+        rgba(159, 189, 165, 0.75) 100%
       ),
       url("../assets/images/boston_snow.jpg")
     `,
     backgroundSize: "cover",
     backgroundBlendMode: "overlay",
-    filter: "blur(7px)", // blur only the background
+    filter: "blur(7px)",
   },
   foregroundContent: {
     position: "relative",
-    zIndex: 1, // on top of the background layer
+    zIndex: 1,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -138,9 +156,8 @@ const styles: { [key: string]: React.CSSProperties } = {
   formContainer: {
     width: "500px",
     padding: "3rem",
-    // Partially transparent background
     backgroundColor: "rgba(255, 255, 255, 0.8)",
-    color: "#000", // ensure text is dark enough to stand out
+    color: "#000",
     borderRadius: "8px",
     boxShadow: "0 2px 10px rgba(0,0,0,0.15)",
     display: "flex",
@@ -166,8 +183,29 @@ const styles: { [key: string]: React.CSSProperties } = {
     boxSizing: "border-box",
     color: "lightgray",
   },
+  buttonRow: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  verticalSeparator: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    margin: "0 1rem",
+  },
+  separatorLine: {
+    width: "1px",
+    height: "15px",
+    backgroundColor: "#ccc",
+  },
+  separatorOr: {
+    margin: "0.25rem 0",
+    fontWeight: "bold",
+    color: "#555",
+  },
   button: {
-    marginBottom: "1.2rem",
+    marginBottom: 0,
     padding: "1.2rem",
     fontSize: "1.2rem",
     borderRadius: "4px",

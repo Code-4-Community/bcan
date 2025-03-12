@@ -2,42 +2,55 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useAuthContext } from "./context/auth/authContext";
 import { updateUserProfile } from "./external/bcanSatchel/actions";
+import { toJS } from 'mobx';
 
-/**
- * (1) Profile component that handles user profile display and updates
- */
 const Profile = observer(() => {
   const { user } = useAuthContext();
   const [email, setEmail] = useState(user?.email || "");
-  const [biography, setBiography] = useState(user?.biography || "");
+  const [positionOrRole, setPositionOrRole] = useState(user?.position_or_role || "");
+
+  console.log(toJS(user))
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     try {
-      const response = await fetch("http://localhost:3001/user/me", {
-        method: "PUT",
+      const response = await fetch("http://localhost:3001/auth/update-profile", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
+          // Include Bearer token if your endpoint is guarded by Auth
           Authorization: `Bearer ${user?.accessToken ?? ""}`,
         },
-        body: JSON.stringify({ email, biography }),
+        body: JSON.stringify({
+          username: user?.userId,
+          email,
+          position_or_role: positionOrRole,
+        }),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         alert(errorData.message || "Failed to update profile.");
         return;
       }
-
-      const data = await response.json();
-      updateUserProfile(data);
+  
+      // Optionally parse the updated item returned
+      // const updatedData = await response.json();
+  
+      // Update local store so changes reflect immediately in the UI
+      updateUserProfile({
+        ...user,
+        email,
+        position_or_role: positionOrRole,
+      });
+  
       alert("Profile updated successfully.");
     } catch (error) {
       console.error("Error updating profile:", error);
       alert("An error occurred while updating your profile.");
     }
-  };
+  };  
 
   return (
     <form onSubmit={handleSubmit} style={styles.formContainer}>
@@ -63,11 +76,11 @@ const Profile = observer(() => {
 
       {/* Biography */}
       <div style={styles.field}>
-        <label style={styles.label}>Biography:</label>
+        <label style={styles.label}>Position/Role:</label>
         <textarea
           style={styles.textarea}
-          value={biography}
-          onChange={(e) => setBiography(e.target.value)}
+          value={positionOrRole}
+          onChange={(e) => setPositionOrRole(e.target.value)}
         />
       </div>
 
@@ -91,7 +104,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     boxShadow: "0 2px 10px rgba(0,0,0,0.15)",
     display: "flex",
     flexDirection: "column",
-    margin: "0 auto", // center within the parent
+    margin: "0 auto",
   },
   heading: {
     marginBottom: "1.5rem",
@@ -129,7 +142,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderRadius: "4px",
     boxSizing: "border-box",
     minHeight: "120px",
-    color: 'lightgray',
+    color: "lightgray",
   },
   button: {
     padding: "1rem",
@@ -139,6 +152,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     border: "none",
     borderRadius: "4px",
     cursor: "pointer",
-    alignSelf: "flex-start", // keep button left-aligned
+    alignSelf: "flex-start",
   },
 };

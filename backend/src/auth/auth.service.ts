@@ -292,27 +292,25 @@ export class AuthService {
     }
   }
 
-  async updateProfile(
-    username: string,
-    displayName : string,
-  ) {
+  async updateProfile(username: string, email: string, position_or_role: string) {
+    const tableName = process.env.DYNAMODB_USER_TABLE_NAME || 'TABLE_FAILURE';
+  
+    const params = {
+      TableName: tableName,
+      Key: { userId: username },
+      // Update both fields in one go:
+      UpdateExpression: 'SET email = :email, position_or_role = :position_or_role',
+      ExpressionAttributeValues: {
+        ':email': email,
+        ':position_or_role': position_or_role,
+      },
+      // Optional: return the newly updated item if you want to use it
+      // ReturnValues: 'ALL_NEW',
+    };
+  
     try {
-      const tableName = process.env.DYNAMODB_USER_TABLE_NAME || 'TABLE_FAILURE';
-
-      const params = {
-        TableName: tableName,
-        Key: { userId: username },
-        UpdateExpression: 'set displayName = :displayName',
-        ExpressionAttributeValues: {
-          ':displayName': displayName
-        },
-      };
-
-    await this.dynamoDb.update(params).promise();
-
-    this.logger.log(
-      `User ${username} updated user profile.`,
-    );
+      await this.dynamoDb.update(params).promise();
+      this.logger.log(`User ${username} updated user profile.`);
     } catch (error: unknown) {
       if (error instanceof Error) {
         this.logger.error('Updating the profile failed', error.stack);
@@ -321,4 +319,5 @@ export class AuthService {
       throw new Error('An unknown error occurred');
     }
   }
+  
 }
