@@ -5,6 +5,10 @@ import { logoutUser } from "./external/bcanSatchel/actions";
 import Profile from "./Profile";
 import { Link } from "react-router-dom";
 
+/**
+ * Account page that renders the Profile component as a nested child
+ * Provides navigation options for the user to logout, or continue into the app.
+ */
 const Account = observer(() => {
   const { user } = useAuthContext();
 

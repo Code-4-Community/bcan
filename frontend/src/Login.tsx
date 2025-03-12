@@ -4,6 +4,9 @@ import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
 import "./external/bcanSatchel/mutators";
 
+/**
+ * Registered users can log in here
+ */
 const Login = observer(() => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");

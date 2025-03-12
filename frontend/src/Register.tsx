@@ -3,6 +3,9 @@ import { setAuthState } from "./external/bcanSatchel/actions";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * Register a new BCAN user
+ */
 const Register = observer(() => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");

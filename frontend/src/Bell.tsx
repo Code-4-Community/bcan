@@ -1,4 +1,3 @@
-// BellButton.js
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";

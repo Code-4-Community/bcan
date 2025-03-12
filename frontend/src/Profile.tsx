@@ -4,6 +4,10 @@ import { useAuthContext } from "./context/auth/authContext";
 import { updateUserProfile } from "./external/bcanSatchel/actions";
 import { toJS } from 'mobx';
 
+/**
+ * Current logged in user's profile
+ * Information can be updated for the profile here.
+ */
 const Profile = observer(() => {
   const { user } = useAuthContext();
   const [email, setEmail] = useState(user?.email || "");

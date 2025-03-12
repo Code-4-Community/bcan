@@ -1,7 +1,6 @@
 /**
  * App.tsx
- *
- * Replaces your direct <Routes> usage with <AnimatedRoutes />.
+ * Renders with <AnimatedRoutes />.
  */
 import "./App.css";
 import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
@@ -13,6 +12,9 @@ import "./external/bcanSatchel/mutators";
 import { useAuthContext } from "./context/auth/authContext";
 import AnimatedRoutes from "./animations/AnimatedRoutes";
 
+/**
+ * Main app component that renders animated routes
+ */
 const App = observer(() => {
   const { isAuthenticated } = useAuthContext();
 
@@ -20,7 +22,7 @@ const App = observer(() => {
     <Router>
       <ChakraProvider value={defaultSystem}>
         <div className="app-container">
-          {/* Renders your entire route structure with transitions */}
+          {/* Renders all routes with transitions */}
           <AnimatedRoutes />
         </div>
       </ChakraProvider>
