@@ -19,8 +19,8 @@ const Profile = observer(() => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Include Bearer token if your endpoint is guarded by Auth
-          Authorization: `Bearer ${user?.accessToken ?? ""}`,
+          // TODO: Bearer token guarded by Auth
+          // Authorization: `Bearer ${user?.accessToken ?? ""}`,
         },
         body: JSON.stringify({
           username: user?.userId,
@@ -39,7 +39,8 @@ const Profile = observer(() => {
       // const updatedData = await response.json();
   
       // Update local store so changes reflect immediately in the UI
-      updateUserProfile({
+      // Conditional update semantics based on valid non-null 'User' object available
+      user && updateUserProfile({
         ...user,
         email,
         position_or_role: positionOrRole,

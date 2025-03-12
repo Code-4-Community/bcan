@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Put, Body, Patch } from '@nestjs/common';
 import { GrantService } from './grant.service';
-import {Grant} from "./grant.model";
+import { Grant } from '../../../middle-layer/types/Grant';
 
 @Controller('grant')
 export class GrantController {
