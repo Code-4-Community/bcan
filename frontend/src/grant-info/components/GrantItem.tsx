@@ -4,12 +4,13 @@ import { GrantAttributes } from "./GrantAttributes";
 import GrantDetails from "./GrantDetails";
 import StatusIndicator from "./StatusIndicator"; // import the new component
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
+import { Grant } from "../../../../middle-layer/types/Grant";
+import Status from "../../../../middle-layer/types/Status";
 
-function isActiveStatus(status: string) {
-  return ["Pending", "In Review", "Awaiting Submission"].includes(status);
+function isActiveStatus(status: Status) {
+  return ["Pending", "In Review", "Awaiting Submission"].includes(status.toString());
 }
 
-import { Grant } from "@/external/bcanSatchel/store.ts";
 
 interface GrantItemProps {
   grant: Grant;
@@ -65,11 +66,11 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
       >
         <li className="grant-name text-left flex items-center">
           {isExpanded ? <FaChevronDown /> : <FaChevronRight />}
-          <span className="ml-2 truncate">{curGrant.organization_name}</span>
+          <span className="ml-2 truncate">{curGrant.organization}</span>
         </li>
         <li className="application-date">
-          {curGrant.deadline 
-            ? new Date(curGrant.deadline).toLocaleDateString() 
+          {curGrant.application_deadline 
+            ? new Date(curGrant.application_deadline).toLocaleDateString() 
             : "No date"}
         </li>
         <li className="amount">

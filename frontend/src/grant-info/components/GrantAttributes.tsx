@@ -1,6 +1,7 @@
 import React from 'react';
 import './styles/GrantAttributes.css';
-import {Grant} from "@/external/bcanSatchel/store.ts";
+import { Grant } from '../../../../middle-layer/types/Grant';
+
 interface GrantAttributesProps {
   isEditing: boolean;
   curGrant: Grant;
@@ -40,7 +41,7 @@ export const GrantAttributes: React.FC<GrantAttributesProps> = ({curGrant, setCu
                     type="text"
                     className="attribute-value"
                     name="is_bcan_qualifying"
-                    value={curGrant.is_bcan_qualifying ? "Yes" : "No"}
+                    value={curGrant.does_bcan_qualify ? "Yes" : "No"}
                     onChange={handleChange}
                     readOnly={!isEditing}
                 />
@@ -51,7 +52,7 @@ export const GrantAttributes: React.FC<GrantAttributesProps> = ({curGrant, setCu
                     type="text"
                     className="attribute-value"
                     name="deadline"
-                    value={curGrant.deadline}
+                    value={curGrant.application_deadline}
                     onChange={handleChange}
                     readOnly={!isEditing}
                 />
@@ -95,7 +96,7 @@ export const GrantAttributes: React.FC<GrantAttributesProps> = ({curGrant, setCu
                     type="text"
                     className="attribute-value"
                     name="point_of_contacts"
-                    value={curGrant.point_of_contacts}
+                    value={curGrant.grantmaker_poc}
                     onChange={handleChange}
                     readOnly={!isEditing}
                 />
