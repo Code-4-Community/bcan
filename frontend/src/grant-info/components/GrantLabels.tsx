@@ -1,7 +1,7 @@
 import React from "react";
 import "./styles/GrantLabels.css";
-import { Grant } from "../../external/bcanSatchel/store.ts";
 import { useState } from "react";
+import { Grant } from "../../../../middle-layer/types/Grant";
 
 const GrantLabels: React.FC<{
   onSort: (header: keyof Grant, asc: boolean) => void;
@@ -22,17 +22,17 @@ const GrantLabels: React.FC<{
       <li className="text-center">
         <button
           className="grant-name"
-          onClick={() => buttonHandler("organization_name")}
+          onClick={() => buttonHandler("organization")}
         >
-          Organization Name {labels.header == "organization_name" ? (labels.asc ? "▲" : "▼") : ""}
+          Organization Name {labels.header == "organization" ? (labels.asc ? "▲" : "▼") : ""}
         </button>
       </li>
       <li className="text-center">
         <button
           className="application-date"
-          onClick={() => buttonHandler("deadline")}
+          onClick={() => buttonHandler("application_deadline")}
         >
-          Application Deadline {labels.header == "deadline" ? (labels.asc ? "▲" : "▼") : ""}
+          Application Deadline {labels.header == "application_deadline" ? (labels.asc ? "▲" : "▼") : ""}
         </button>
       </li>
       <li className="text-center">

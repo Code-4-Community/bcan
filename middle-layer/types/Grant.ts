@@ -17,4 +17,5 @@ export interface Grant {
     estimated_completion_time: number,
     grantmaker_poc: string[]; // array of emails
     attachments: Attachment[];
+    GRANT_AWARDED_DATE_FOR_ACTIVE_GRANTS:-1;
 }

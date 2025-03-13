@@ -9,15 +9,12 @@ import { observer } from "mobx-react-lite";
 
 // Register store and mutators
 import "./external/bcanSatchel/mutators";
-import { useAuthContext } from "./context/auth/authContext";
 import AnimatedRoutes from "./animations/AnimatedRoutes";
 
 /**
  * Main app component that renders animated routes
  */
 const App = observer(() => {
-  const { isAuthenticated } = useAuthContext();
-
   return (
     <Router>
       <ChakraProvider value={defaultSystem}>

@@ -2,7 +2,6 @@ import "./styles/GrantList.css";
 import { useState } from "react";
 import { useEffect } from "react";
 import { fetchAllGrants } from "../../external/bcanSatchel/actions.ts";
-import { Grant } from "../../external/bcanSatchel/store.ts";
 import { getAppStore } from "../../external/bcanSatchel/store.ts";
 import { observer } from "mobx-react-lite";
 import GrantItem from "./GrantItem";
@@ -14,12 +13,10 @@ import {
   PaginationItems,
   PaginationPageText,
 } from "./Pagination";
-
-//import { usePaginationContext } from "@chakra-ui/react";
 import GrantLabels from "./GrantLabels";
+import { Grant } from "../../../../middle-layer/types/Grant.ts";
 
 // How many items to show per page
-
 const fetchGrants = async () => {
   try {
     const response = await fetch("http://localhost:3001/grant");
@@ -34,25 +31,6 @@ const fetchGrants = async () => {
   }
 };
 const ITEMS_PER_PAGE = 3;
-
-// // Read the current page from our custom pagination context
-// // and figure out which items to display.
-// const GrantListView: React.FC<GrantListViewProps> = ({ALL_GRANTS}) => {
-//   const { page } = usePaginationContext()
-
-//   // figure out which grants to slice for the current page
-//   const startIndex = (page - 1) * ITEMS_PER_PAGE
-//   const endIndex = startIndex + ITEMS_PER_PAGE
-//   const currentGrants = ALL_GRANTS.slice(startIndex, endIndex)
-
-//   return (
-//     <div className="grant-list">
-//       {currentGrants.map((grant, index) => (
-//         <GrantItem key={index} grant={grant} />
-//       ))}
-//     </div>
-//   )
-// }
 
 const GrantList: React.FC = observer(() => {
   // Use MobX store for live updates to allGrants
@@ -71,18 +49,6 @@ const GrantList: React.FC = observer(() => {
     setGrants(allGrants); // Update local state when store data changes
   }, [allGrants]); // Dependency on allGrants to react to changes
 
-  // // Read the current page from our custom pagination context
-  // // and figure out which items to display.
-  // function GrantListView() {
-  //   const { page } = usePaginationContext();
-  //   // figure out which grants to slice for the current page
-  //   const startIndex = (page - 1) * ITEMS_PER_PAGE;
-  //   const endIndex = startIndex + ITEMS_PER_PAGE;
-  //   const currentGrants = grants.slice(startIndex, endIndex);
-
-  //   setGrants(currentGrants);
-  // }
-
   function HandleHeaderClick(header: keyof Grant, asc: boolean) {
     const handleNullOrUndefined = (a: Grant, b: Grant, header: keyof Grant) => {
       if (a[header] === null || a[header] === undefined) return 1;
@@ -95,8 +61,8 @@ const GrantList: React.FC = observer(() => {
       const nullCheck = handleNullOrUndefined(a, b, header);
       if (nullCheck !== 0) return nullCheck;
 
-      // Handle 'deadline' field (date sorting)
-      if (header === "deadline") {
+      // Handle 'application_deadline' field (date sorting)
+      if (header === "application_deadline") {
         const dateA = new Date(a[header]);
         const dateB = new Date(b[header]);
 
