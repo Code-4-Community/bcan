@@ -2,17 +2,22 @@ import { useContext, createContext, ReactNode } from 'react';
 import { getAppStore } from '../../external/bcanSatchel/store';
 import { setAuthState, logoutUser } from '../../external/bcanSatchel/actions'
 import { observer } from 'mobx-react-lite';
+import { User } from '../../../../middle-layer/types/User'
 
+/**
+ * Available authenticated user options
+ */
 interface AuthContextProps {
   isAuthenticated: boolean;
   login: (username: string, password: string) => Promise<void>;
   register: (username: string, password: string, email: string) => Promise<void>;
   logout: () => void;
-  user: any | null;
+  user: User | null;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
+/** Provides user with authenticated action options based on above props */
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -35,6 +40,9 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
     });
 
     const data = await response.json();
+
+    // TODO: Need to either completely remove access_token
+    // or verify it in each action
     if (data.access_token) {
       setAuthState(true, data.user, data.access_token);
     } else {

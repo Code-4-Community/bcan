@@ -1,6 +1,6 @@
 import { Injectable,Logger } from '@nestjs/common';
 import AWS from 'aws-sdk';
-import { Grant } from './grant.model'
+import { Grant } from '../../../middle-layer/types/Grant';
 
 @Injectable()
 export class GrantService {

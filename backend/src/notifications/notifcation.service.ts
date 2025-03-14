@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
-import { Notification } from './notification.model';
+import { Notification } from '../../../middle-layer/types/Notification';
 
 @Injectable()
 export class NotificationService {

@@ -1,5 +1,6 @@
 import { action } from 'satcheljs';
-import { Grant } from './store.js'
+import { Grant } from '../../../../middle-layer/types/Grant'
+import { User } from '../../../../middle-layer/types/User'
 
 /**
  * Set whether the user is authenticated, update the user object,
@@ -7,7 +8,7 @@ import { Grant } from './store.js'
  */
 export const setAuthState = action(
   'setAuthState',
-  (isAuthenticated: boolean, user: any, accessToken: string | null) => ({
+  (isAuthenticated: boolean, user: User, accessToken: string | null) => ({
     isAuthenticated,
     user,
     accessToken,
@@ -17,7 +18,7 @@ export const setAuthState = action(
 /**
  * Update user's profile data (email, biography, etc.).
  */
-export const updateUserProfile = action('updateUserProfile', (user: any) => ({
+export const updateUserProfile = action('updateUserProfile', (user: User) => ({
   user,
 }));
 

@@ -26,8 +26,8 @@
   min-height: 100px;  /* Sets a reasonable height */
   min-width: 100%;
   padding: 1rem;      /* Matches <p> padding */
-  border: 1px solid black;
-  border-radius: 8px;
+  border: 0.1rem solid #F26624;
+    border-radius: 8px;
   transition: border-color 0.3s ease;
   overflow-y: auto;
   resize: vertical;   /* Allows resizing */

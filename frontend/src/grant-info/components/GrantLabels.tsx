@@ -1,7 +1,7 @@
 import React from "react";
 import "./styles/GrantLabels.css";
-import { Grant } from "../../external/bcanSatchel/store.ts";
 import { useState } from "react";
+import { Grant } from "../../../../middle-layer/types/Grant";
 
 const GrantLabels: React.FC<{
   onSort: (header: keyof Grant, asc: boolean) => void;
@@ -18,41 +18,42 @@ const GrantLabels: React.FC<{
   }
 
   return (
-    <ul className="grant-labels">
-      <li>
+    <ul className="grant-labels grid grid-cols-4 justify-stretch font-semibold p-4">
+      <li className="text-center">
         <button
           className="grant-name"
-          onClick={() => buttonHandler("organization_name")}
+          onClick={() => buttonHandler("organization")}
         >
-          Grant Name
+          Organization Name {labels.header == "organization" ? (labels.asc ? "▲" : "▼") : ""}
         </button>
       </li>
-      <li>
+      <li className="text-center">
         <button
           className="application-date"
-          onClick={() => buttonHandler("deadline")}
+          onClick={() => buttonHandler("application_deadline")}
         >
-          Application Date
+          Application Deadline {labels.header == "application_deadline" ? (labels.asc ? "▲" : "▼") : ""}
         </button>
       </li>
-      <li>
-        <button className="status" onClick={() => buttonHandler("status")}>
-          Status
-        </button>
-      </li>
-      <li>
+      <li className="text-center">
         <button className="amount" onClick={() => buttonHandler("amount")}>
-          Amount
+          Amount {labels.header == "amount" ? (labels.asc ? "▲" : "▼") : ""}
         </button>
       </li>
-      <li>
+      <li className="text-center">
+        <button className="status" onClick={() => buttonHandler("status")}>
+          Status {labels.header == "status" ? (labels.asc ? "▲" : "▼") : ""}
+        </button>
+      </li>
+      
+      {/* <li>
         <button
           className="restriction-status"
           onClick={() => buttonHandler("restrictions")}
         >
           Restricted vs. Unrestricted
         </button>
-      </li>
+      </li> */}
     </ul>
   );
 };

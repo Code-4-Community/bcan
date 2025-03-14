@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import AWS from 'aws-sdk'
 
+/**
+ * File could use safer 'User' typing after grabbing users, verifying type after the scan.
+ */
 @Injectable()
 export class UserService {
   private dynamoDb = new AWS.DynamoDB.DocumentClient();

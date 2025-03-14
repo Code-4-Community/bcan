@@ -1,6 +1,6 @@
 import React from 'react';
 import './styles/GrantDetails.css';
-import {Grant} from "@/external/bcanSatchel/store.ts";
+import { Grant } from '../../../../middle-layer/types/Grant';
 
 interface GrantDetailsProps {
     isEditing: boolean;
@@ -26,7 +26,7 @@ const GrantDetails: React.FC<GrantDetailsProps> = ({isEditing, curGrant, setCurG
         <div className="grant-details">
             <h3>Description</h3>
             <textarea
-                className="attribute-value large-textarea"
+                className="attribute-value large-textarea bg-white"
                 name="description"
                 value={curGrant.description}
                 onChange={handleChange}
@@ -36,7 +36,7 @@ const GrantDetails: React.FC<GrantDetailsProps> = ({isEditing, curGrant, setCurG
             <textarea
                 className="attribute-value large-textarea"
                 name="reporting_requirements"
-                value={curGrant.reporting_requirements}
+                value={curGrant.description}
                 onChange={handleChange}
                 readOnly={!isEditing}
             />
@@ -44,7 +44,7 @@ const GrantDetails: React.FC<GrantDetailsProps> = ({isEditing, curGrant, setCurG
             <textarea
                 className="attribute-value large-textarea"
                 name="attached_resources"
-                value={curGrant.attached_resources}
+                value={curGrant.description}
                 onChange={handleChange}
                 readOnly={!isEditing}
             />

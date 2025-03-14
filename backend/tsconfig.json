@@ -1,7 +1,8 @@
+// Future optimization should only include backend files, this includes all repos right now
 {
     "compilerOptions": {
       "outDir": "./dist",
-      "rootDir": "./src",
+      "rootDir": "../",
       "module": "commonjs",
       "target": "es2017",
       "experimentalDecorators": true,
@@ -11,7 +12,8 @@
       "skipLibCheck": true
     },
     "include": [
-      "src/**/*"
+      "src/**/*",
+      "../middle-layer/**/*"
     ],
     "exclude": [
       "node_modules",

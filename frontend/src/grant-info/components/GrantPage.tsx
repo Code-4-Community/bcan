@@ -15,7 +15,7 @@ function GrantPage() {
         <BellButton />
       </div>
       <div className="bot-half">
-        <div className="grant-list">
+        <div className="">
           <GrantList />
         </div>
         <Footer />
