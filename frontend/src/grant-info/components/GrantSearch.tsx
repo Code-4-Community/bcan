@@ -1,5 +1,5 @@
 import { Button, Input } from "@chakra-ui/react"
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
 import { Grant } from "@/external/bcanSatchel/store";
 
@@ -8,16 +8,18 @@ function GrantSearch() {
 
     const [userInput, setUserInput] = useState("");
     const [grants, setGrants] = useState<Grant[]>([]);
-    const [filteredGrants, setFilteredGrants] = useState<Grant[]>([]);
     const [filter, setFilter] = useState("");
+    const [showDropdown, setShowDropdown] = useState(false);
+    const [dropdownGrants, setDropdownGrants] = useState<Grant[]>([]);
 
-    
 
-    // log user input on change for debugging
+    // intially fetches grants from backend and creates an event listener to handle for clicks outside of the dropdown
     useEffect(() => {
-        
         fetchGrants()
-        // console.log("Filtered", filteredGrants)
+        document.addEventListener("click", handleClickOutside);
+        return () => {
+            document.removeEventListener("click", handleClickOutside);
+        };
 
     }, []);
 
@@ -35,10 +37,6 @@ function GrantSearch() {
 
             console.log("Formatted Grants:", formattedData);
             setGrants(formattedData);
-            setFilteredGrants(formattedData);
-            // console.log("Fetched Grants:", data);
-            // setGrants(data);
-            // setFilteredGrants(data);
         } catch (error) {
             console.error("Error fetching grants:", error);
         }
@@ -58,7 +56,8 @@ function GrantSearch() {
     // searches using fuzzy search
     const performSearch = (query: string) => {
         if (!query) {
-            setFilteredGrants(grants);
+            setDropdownGrants([]);  
+            setShowDropdown(false);
             return;
         }
 
@@ -68,55 +67,91 @@ function GrantSearch() {
         });
 
         const results = fuse.search(query).map(result => result.item);
-        // console.log(results)
-        setFilteredGrants(results);
+        setDropdownGrants(results.slice(0, 5)); 
+        setShowDropdown(results.length > 0); 
     };
 
-    // // searches for a grant
-    // const handleSubmit = async (e: any) => {
-    //     e.preventDefault();
-    //     // search for that grant
-    //     const response = await fetch(`http://localhost:3001/grant`, {
-    //         method: 'GET'
-    //     });
+    // handle selection from dropdown
+    const handleSelectGrant = (selectedGrant: Grant) => {
+        setUserInput(selectedGrant.organization_name);
+        setShowDropdown(false);
+    };
 
-    //     const currGrants = await response.json();
-    //     console.log("HELLO", currGrants)
-    //     setGrants(currGrants)
-    // };
+    // hide dropdown when clicking outside of it
+    const handleClickOutside = (event: MouseEvent) => {
+        const target = event.target as HTMLElement;
+        if (!target.closest(".search-container") && !target.closest(".dropdown-container")) {
+            setShowDropdown(false);
+        }
+    };
+
 
     return (
         <div className="grant-page">
-            <form style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <form className="search-container" style={{ position: "relative", display: "flex", alignItems: "center", gap: "8px" }}>
                 <select onChange={handleFilterChange} value={filter}>
                     <option value="">Filter by</option>
                     <option value="organization">Organization Name</option>
                 </select>
 
-                <Input
-                    placeholder="Search"
-                    variant="subtle"
-                    color="black"
-                    onChange={handleInputChange}
-                    value={userInput}
-                />
+                <div style={{ position: "relative", width: "100%" }}>
+                    <Input
+                        placeholder="Search"
+                        variant="subtle"
+                        color="black"
+                        onChange={handleInputChange}
+                        value={userInput}
+                        onFocus={() => {
+                            if (dropdownGrants.length > 0) setShowDropdown(true)
+                        }}
+                    />
+
+                    {showDropdown && (
+                        <div
+                            className="dropdown-container"
+                            style={{
+                                position: "absolute",
+                                top: "100%",
+                                left: 0,
+                                width: "100%",
+                                background: "black",
+                                border: "1px solid #ddd",
+                                borderRadius: "5px",
+                                boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+                                zIndex: 10,
+                                maxHeight: "200px",
+                                overflowY: "auto",
+                            }}>
+                            {dropdownGrants.map((grant, index) => (
+                                <div
+                                    key={index}
+                                    onClick={() => handleSelectGrant(grant)}
+                                    style={{
+                                        padding: "8px",
+                                        cursor: "pointer",
+                                        borderBottom: "1px solid #eee",
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.background = "#f1f1f1";
+                                        e.currentTarget.style.color = "black"
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.background = "black";
+                                        e.currentTarget.style.color = "white"
+                                    }}
+                                >
+                                    {grant.organization_name}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                </div>
 
                 <Button type="button" colorScheme="blue" onClick={() => performSearch(userInput)}>
                     Search
                 </Button>
             </form>
-
-            <div>
-                {filteredGrants.length > 0 ? (
-                    <ul>
-                        {filteredGrants.map((grant, index) => (
-                            <li key={index}>{grant.organization_name}</li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>No results found.</p>
-                )}
-            </div>
         </div>
     );
 }
