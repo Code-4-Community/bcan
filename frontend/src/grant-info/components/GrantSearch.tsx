@@ -2,6 +2,7 @@ import { Button, Input } from "@chakra-ui/react"
 import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
 import { Grant } from "@/external/bcanSatchel/store";
+import "../../GrantSearch.css"
 
 
 function GrantSearch() {
@@ -88,64 +89,35 @@ function GrantSearch() {
 
     return (
         <div className="grant-page">
-            <form className="search-container" style={{ position: "relative", display: "flex", alignItems: "center", gap: "8px" }}>
+            <form className="search-container">
                 <select onChange={handleFilterChange} value={filter}>
                     <option value="">Filter by</option>
                     <option value="organization">Organization Name</option>
                 </select>
 
-                <div style={{ position: "relative", width: "100%" }}>
+                <div className="search-input-container">
                     <Input
                         placeholder="Search"
                         variant="subtle"
-                        color="black"
+                        className="search-input"
                         onChange={handleInputChange}
                         value={userInput}
-                        onFocus={() => {
-                            if (dropdownGrants.length > 0) setShowDropdown(true)
-                        }}
+                        onFocus={() => setShowDropdown(dropdownGrants.length > 0)}
                     />
 
                     {showDropdown && (
-                        <div
-                            className="dropdown-container"
-                            style={{
-                                position: "absolute",
-                                top: "100%",
-                                left: 0,
-                                width: "100%",
-                                background: "black",
-                                border: "1px solid #ddd",
-                                borderRadius: "5px",
-                                boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
-                                zIndex: 10,
-                                maxHeight: "200px",
-                                overflowY: "auto",
-                            }}>
+                        <div className="dropdown-container">
                             {dropdownGrants.map((grant, index) => (
                                 <div
                                     key={index}
+                                    className="dropdown-item"
                                     onClick={() => handleSelectGrant(grant)}
-                                    style={{
-                                        padding: "8px",
-                                        cursor: "pointer",
-                                        borderBottom: "1px solid #eee",
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.background = "#f1f1f1";
-                                        e.currentTarget.style.color = "black"
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.background = "black";
-                                        e.currentTarget.style.color = "white"
-                                    }}
                                 >
                                     {grant.organization_name}
                                 </div>
                             ))}
                         </div>
                     )}
-
                 </div>
 
                 <Button type="button" colorScheme="blue" onClick={() => performSearch(userInput)}>
