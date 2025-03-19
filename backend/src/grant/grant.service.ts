@@ -4,6 +4,30 @@ import { Grant } from '../../../middle-layer/types/Grant';
 
 @Injectable()
 export class GrantService {
+    async getGrantHistory(grantId: number) {
+        const params = {
+            TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
+            Key: {
+                grantId: grantId,
+            },
+            ProjectionExpression: "grantName"
+        };
+
+        try {
+            const data = await this.dynamoDb.get(params).promise();
+
+            if (!data.Item) {
+                throw new Error('No grant with id ' + grantId + ' found.');
+            }
+
+            if(data.)
+
+            return data.Item as Grant;
+        } catch (error) {
+            console.log(error)
+            throw new Error('Failed to retrieve grant.');
+        }
+    }
     private readonly logger = new Logger(GrantService.name);
       private dynamoDb = new AWS.DynamoDB.DocumentClient();
 
