@@ -16,10 +16,10 @@ export class GrantController {
         return await this.grantService.getGrantById(parseInt(GrantId, 10));
     }
 
-    @Get('/history:id')
-    async getGrantHistory(@Param('id') GrantId: string) {
-        return await this.grantService.getGrantHistory(parseInt(GrantId, 10));
-    }
+    // @Get('/history:id')
+    // async getGrantHistory(@Param('id') GrantId: string) {
+    //     return await this.grantService.getGrantHistory(parseInt(GrantId, 10));
+    // }
 
     @Put('archive')
     async archive(
