@@ -3,6 +3,9 @@ import { AppModule } from './app.module';
 import * as dotenv from 'dotenv'
 import AWS from 'aws-sdk';
 
+dotenv.config();
+
+
 /* ! */
 async function bootstrap() {
   AWS.config.update({
@@ -14,5 +17,4 @@ async function bootstrap() {
   app.enableCors();
   await app.listen(3001);
 }
-dotenv.config();
 bootstrap();

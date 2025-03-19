@@ -30,6 +30,7 @@ const core_1 = require("@nestjs/core");
 const app_module_1 = require("./app.module");
 const dotenv = __importStar(require("dotenv"));
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
+dotenv.config();
 /* ! */
 async function bootstrap() {
     aws_sdk_1.default.config.update({
@@ -41,5 +42,4 @@ async function bootstrap() {
     app.enableCors();
     await app.listen(3001);
 }
-dotenv.config();
 bootstrap();
