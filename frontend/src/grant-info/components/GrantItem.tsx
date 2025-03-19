@@ -3,11 +3,8 @@ import './styles/GrantItem.css';
 import { GrantAttributes } from './GrantAttributes';
 import GrantDetails from './GrantDetails';
 import StatusIndicator from "./StatusIndicator";  // import the new component
+import { isActiveStatus } from './GrantStatus';
 
-
-function isActiveStatus(status: string) {
-    return ["Pending", "In Review", "Awaiting Submission"].includes(status);
-  }
 
 interface GrantItemProps {
     grantName: string;

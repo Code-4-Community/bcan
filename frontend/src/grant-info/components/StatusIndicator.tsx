@@ -1,5 +1,3 @@
-// StatusIndicator.tsx
-
 import React from "react";
 import { Box, Text } from "@chakra-ui/react";
 
@@ -8,7 +6,7 @@ interface StatusIndicatorProps {
 }
 
 const StatusIndicator: React.FC<StatusIndicatorProps> = ({ isActive }) => {
-  const circleColor = isActive ? "#5AB911" : "#A9A9A9"; // #5AB911 = bright green from Figma
+  const circleColor = isActive ? "#5AB911" : "#A9A9A9"; 
   const labelText = isActive ? "Active" : "Inactive";
 
   return (
@@ -28,7 +26,6 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({ isActive }) => {
         />
       </Box>
 
-      {/* The text label: #000, "Helvetica Neue", 28px */}
       <Text
         ml="8px"
         color="#000"
