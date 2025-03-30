@@ -1,12 +1,10 @@
 import { TDateISO } from "../../backend/src/utils/date";
+import { FieldHistory } from "./FieldHistory";
 
 /**
- * Notification Object
+ * History Object
  */
 export interface History {
-    grantId: number; // Partition
-    timestamp: TDateISO
-    field: string;
-    oldValue: any;
-    newValue: any; // Sort
-  }
+  timestamp: TDateISO;
+  updates: FieldHistory[];
+}

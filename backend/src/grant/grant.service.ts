@@ -1,6 +1,8 @@
 import { Injectable,Logger } from '@nestjs/common';
 import AWS from 'aws-sdk';
 import { Grant } from '../../../middle-layer/types/Grant';
+import { History } from '../../../middle-layer/types/History';
+import { FieldHistory } from '../../../middle-layer/types/FieldHistory';
 
 @Injectable()
 export class GrantService {
@@ -87,6 +89,9 @@ export class GrantService {
      * @param grantData
      */
     async updateGrant(grantData: Grant): Promise<string> {
+        const oldGrant = await this.getGrantById(grantData.grantId)
+        const history : History = this.findChanges(oldGrant, grantData)
+        grantData.updates = history
         // dynamically creates the update expression/attribute names based on names of grant interface
         // assumption: grant interface field names are exactly the same as db storage naming
 
@@ -115,6 +120,34 @@ export class GrantService {
             console.log(err);
             throw new Error(`Failed to update Grant ${grantData.grantId}`)
         }
+    }
+
+    findChanges(oldGrant : Grant,newGrant : Grant): History {
+        // Great the history object
+        const history : History = {
+            timestamp: new Date().toISOString(),
+            updates:[]
+        }
+
+        // Go through and find the differences in the grants
+        for(const key in oldGrant){
+            if (oldGrant[key as keyof Grant] != newGrant[key as keyof Grant]){
+                const newUpdate : FieldHistory = {
+                    field : key,
+                    oldValue : oldGrant[key as keyof Grant],
+                    newValue : newGrant[key as keyof Grant]
+                }
+                history.updates.push(newUpdate)
+            }
+            
+        }
+
+
+
+
+
+        return history
+
     }
 
     // async getGrantHistory(grantId: number) : Promise<JSON> {
