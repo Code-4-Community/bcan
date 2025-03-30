@@ -16,7 +16,7 @@ const Register = observer(() => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3001/auth/register", {
+      const response = await fetch(import.meta.env.VITE_SERVER_URL+"/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password, email }),
@@ -30,7 +30,7 @@ const Register = observer(() => {
       }
 
       // If registration succeeded, automatically log in the user
-      const loginResponse = await fetch("http://localhost:3001/auth/login", {
+      const loginResponse = await fetch(import.meta.env.VITE_SERVER_URL+"/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),

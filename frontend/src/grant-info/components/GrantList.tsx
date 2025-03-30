@@ -19,7 +19,7 @@ import { Grant } from "../../../../middle-layer/types/Grant.ts";
 // How many items to show per page
 const fetchGrants = async () => {
   try {
-    const response = await fetch("http://localhost:3001/grant");
+    const response = await fetch(import.meta.env.VITE_SERVER_URL + "/grant");
     if (!response.ok) {
       throw new Error(`HTTP Error, Status: ${response.status}`);
     }

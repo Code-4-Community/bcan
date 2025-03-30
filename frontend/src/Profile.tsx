@@ -19,7 +19,7 @@ const Profile = observer(() => {
     e.preventDefault();
   
     try {
-      const response = await fetch("http://localhost:3001/auth/update-profile", {
+      const response = await fetch(import.meta.env.VITE_SERVER_URL+"/auth/update-profile", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -21,7 +21,7 @@ const BellButton = () => {
   // function that handles when button is clicked and fetches notifications
   const handleClick = async () => {
     const response = await fetch(
-      `http://localhost:3001/notifications/user/${currUserID}`,
+      `${import.meta.env.VITE_SERVER_URL}/notifications/user/${currUserID}`,
       {
         method: "GET",
       }
