@@ -104,13 +104,14 @@ const GrantList: React.FC = observer(() => {
       */}
       <PaginationRoot defaultPage={1} count={totalPages}>
         {/* Actual grants for the current page */}
+        <div className="bg-light-orange rounded-[1.2rem] pt-2">
         <GrantLabels onSort={HandleHeaderClick} />
-        <div className="grant-list p-4">
+        <div className="grant-list p-4 ">
         {grants.map(grant => (
           <GrantItem key={grant.grantId} grant={grant} />
         ))}
         </div>
-
+        </div>
         {/* 
            Paging Controls:
             - Prev / Next triggers
