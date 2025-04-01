@@ -6,9 +6,7 @@ import { Notification } from '../../../middle-layer/types/Notification';
 @Controller('notifications')
 export class NotificationController {
 
-
   constructor(private readonly notificationService: NotificationService) { }
-
 
   // allows to create a new notification
   @Post()
