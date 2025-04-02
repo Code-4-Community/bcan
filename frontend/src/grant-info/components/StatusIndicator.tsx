@@ -2,14 +2,15 @@
 
 import React from "react";
 import { FaCircle } from "react-icons/fa";
+import { Status, getColorStatus } from "../../../../middle-layer/types/Status.ts";
 
 interface StatusIndicatorProps {
-  isActive: boolean;
+  curStatus: Status;
 }
 
-const StatusIndicator: React.FC<StatusIndicatorProps> = ({ isActive }) => {
-  const circleColor = isActive ? "#5AB911" : "#A9A9A9"; // #5AB911 = bright green from Figma
-  const labelText = isActive ? "Active" : "Inactive";
+const StatusIndicator: React.FC<StatusIndicatorProps> = ({ curStatus }) => {
+  const circleColor = getColorStatus(curStatus.toString())
+  const labelText = curStatus; // curStatus from the json is stored as a string, so can directly use
 
   return (
     <div className="justify-self-center">

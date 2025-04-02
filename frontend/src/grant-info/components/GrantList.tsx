@@ -34,7 +34,14 @@ const ITEMS_PER_PAGE = 3;
 
 const GrantList: React.FC = observer(() => {
   // Use MobX store for live updates to allGrants
-  const { allGrants } = getAppStore(); // Access store directly
+  const { allGrants, filterStatus } = getAppStore();
+
+  // will return the filtered grants to display
+  const getFilteredGrants = () => {
+    return filterStatus
+        ? allGrants.filter(grant => grant.status === filterStatus)
+        : allGrants;
+  };
 
   useEffect(() => {
     fetchGrants();
@@ -43,11 +50,14 @@ const GrantList: React.FC = observer(() => {
   // Total pages calculated from the store
   const totalPages = Math.ceil(allGrants.length / ITEMS_PER_PAGE);
 
-  const [grants, setGrants] = useState<Grant[]>(allGrants);
+  const [grants, setGrants] = useState<Grant[]>(getFilteredGrants());
+
+  // null means no filter activated. When filter is changed, grants displayed also changes
+  // note that allGrants is not modified, only decorated.
 
   useEffect(() => {
-    setGrants(allGrants); // Update local state when store data changes
-  }, [allGrants]); // Dependency on allGrants to react to changes
+    setGrants(getFilteredGrants()); // Update local state when store data changes
+  }, [allGrants, filterStatus]); // Dependency on allGrants to react to changes
 
   function HandleHeaderClick(header: keyof Grant, asc: boolean) {
     const handleNullOrUndefined = (a: Grant, b: Grant, header: keyof Grant) => {

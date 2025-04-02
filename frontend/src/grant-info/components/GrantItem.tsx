@@ -5,11 +5,11 @@ import GrantDetails from "./GrantDetails";
 import StatusIndicator from "./StatusIndicator"; // import the new component
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { Grant } from "../../../../middle-layer/types/Grant";
-import Status from "../../../../middle-layer/types/Status";
+import {Status} from "../../../../middle-layer/types/Status.ts";
 
-function isActiveStatus(status: Status) {
-  return ["Pending", "In Review", "Awaiting Submission"].includes(status.toString());
-}
+// function isActiveStatus(status: Status) {
+//   return ["Pending", "In Review", "Awaiting Submission"].includes(status.toString());
+// }
 
 
 interface GrantItemProps {
@@ -28,7 +28,8 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
     setIsExpanded(!isExpanded);
   };
 
-  const active = isActiveStatus(curGrant.status);
+
+  // const active = isActiveStatus(curGrant.status);
 
   // when toggle edit turns off, sends curGrant to backend to be saved
   const toggleEdit = async () => {
@@ -36,6 +37,8 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
       // if you are saving
       try {
         console.log("Saving grant!");
+        console.log(Status.Active);
+        console.log(curGrant.status);
         console.log(curGrant);
         const response = await fetch("http://localhost:3001/grant/save", {
           method: "PUT",
@@ -54,7 +57,6 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
   };
 
   // temporary buffer
-
   return (
     // class name with either be grant-item or grant-item-expanded
     <div className="grant-item-wrapper">
@@ -79,7 +81,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
         {/* <li className="status">{curGrant.status}</li> */}
         {/* <li className="restriction-status">{curGrant.restrictions}</li> */}
         <li className="flex justify-center items-center text-center">
-          <StatusIndicator isActive={active} />
+          <StatusIndicator curStatus={grant.status} />
         </li>
       </div>
       <div className={`grant-body bg-tan ${isExpanded ? "expanded" : ""}`}>

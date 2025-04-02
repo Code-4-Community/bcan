@@ -88,7 +88,7 @@ export class GrantService {
     async updateGrant(grantData: Grant): Promise<string> {
         // dynamically creates the update expression/attribute names based on names of grant interface
         // assumption: grant interface field names are exactly the same as db storage naming
-
+        this.logger.warn('here' + grantData.status);
         const updateKeys = Object.keys(grantData).filter(
             key => key != 'grantId'
         );

@@ -1,5 +1,5 @@
 import { mutator } from 'satcheljs';
-import { setAuthState, updateUserProfile, logoutUser, fetchAllGrants } from './actions';
+import {setAuthState, updateUserProfile, logoutUser, fetchAllGrants, updateFilter} from './actions';
 import { getAppStore } from './store';
 
 /**
@@ -43,3 +43,11 @@ mutator(fetchAllGrants, (actionMessage) => {
   const store = getAppStore();
   store.allGrants = actionMessage.grants;
 });
+
+/**
+ * Modifies satchel store to get updated version of the filter
+ */
+mutator(updateFilter, (actionMessage) => {
+  const store = getAppStore();
+  store.filterStatus = actionMessage.status;
+})
