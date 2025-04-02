@@ -5,16 +5,10 @@ import { fetchAllGrants } from "../../external/bcanSatchel/actions.ts";
 import { getAppStore } from "../../external/bcanSatchel/store.ts";
 import { observer } from "mobx-react-lite";
 import GrantItem from "./GrantItem";
-
-import {
-  PaginationRoot,
-  PaginationPrevTrigger,
-  PaginationNextTrigger,
-  PaginationItems,
-  PaginationPageText,
-} from "./Pagination";
 import GrantLabels from "./GrantLabels";
 import { Grant } from "../../../../middle-layer/types/Grant.ts";
+import { ButtonGroup, IconButton, Pagination } from "@chakra-ui/react";
+import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 
 // How many items to show per page
 const fetchGrants = async () => {
@@ -30,7 +24,7 @@ const fetchGrants = async () => {
     console.error("Error fetching grants:", error);
   }
 };
-const ITEMS_PER_PAGE = 3;
+const ITEMS_PER_PAGE = 5;
 
 const GrantList: React.FC = observer(() => {
   // Use MobX store for live updates to allGrants
@@ -39,9 +33,6 @@ const GrantList: React.FC = observer(() => {
   useEffect(() => {
     fetchGrants();
   }, []);
-
-  // Total pages calculated from the store
-  const totalPages = Math.ceil(allGrants.length / ITEMS_PER_PAGE);
 
   const [grants, setGrants] = useState<Grant[]>(allGrants);
 
@@ -95,6 +86,14 @@ const GrantList: React.FC = observer(() => {
     setGrants(newdata);
   }
 
+  const [currentPage, setPage] = useState(1);
+
+  const count = grants.length;
+  const startRange = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endRange = startRange + ITEMS_PER_PAGE;
+
+  const visibleItems = grants.slice(startRange, endRange);
+
   return (
     <div className="paginated-grant-list">
       {/*
@@ -102,29 +101,61 @@ const GrantList: React.FC = observer(() => {
           - defaultPage can be 1
           - totalPages is calculated
       */}
-      <PaginationRoot defaultPage={1} count={totalPages}>
-        {/* Actual grants for the current page */}
-        <div className="bg-light-orange rounded-[1.2rem] pt-2">
+
+      <div className="bg-light-orange rounded-[1.2rem] pt-2">
         <GrantLabels onSort={HandleHeaderClick} />
         <div className="grant-list p-4 ">
-        {grants.map(grant => (
-          <GrantItem key={grant.grantId} grant={grant} />
-        ))}
+          {visibleItems.map((grant) => (
+            <GrantItem key={grant.grantId} grant={grant} />
+          ))}
         </div>
-        </div>
-        {/* 
+      </div>
+      {/* 
            Paging Controls:
             - Prev / Next triggers
             - Individual page items
             - PageText for "X of Y" or "X / Y"
         */}
-        <div className="pagination-controls m-4">
-          <PaginationPrevTrigger />
-          <PaginationItems />
-          <PaginationNextTrigger />
-          <PaginationPageText format="compact" />
-        </div>
-      </PaginationRoot>
+      <Pagination.Root
+      className="pt-4"
+        count={count}
+        pageSize={ITEMS_PER_PAGE}
+        page={currentPage}
+        onPageChange={(e) => setPage(e.page)}
+      >
+        <ButtonGroup variant="ghost" size="md">
+          <Pagination.PrevTrigger asChild>
+            <IconButton>
+              <HiChevronLeft />
+            </IconButton>
+          </Pagination.PrevTrigger>
+
+          <Pagination.Context>
+          {({ pages }) => 
+            pages.map((page, index) =>
+              page.type === "page" ? (
+                <IconButton
+                  key={index}
+                  className={currentPage === page.value ? "text-dark-blue underline" : "ghost"} // Conditionally set the variant based on selected page                  onClick={() => setPage(page.value)}  // Set current page on click
+                  onClick={() => setPage(page.value)}  // Set current page on click
+                  aria-label={`Go to page ${page.value}`}
+                >
+                  {page.value}
+                </IconButton>
+              ) : (
+                "..."
+              )
+            )
+          }
+        </Pagination.Context>
+
+          <Pagination.NextTrigger asChild>
+            <IconButton>
+              <HiChevronRight />
+            </IconButton>
+          </Pagination.NextTrigger>
+        </ButtonGroup>
+      </Pagination.Root>
     </div>
   );
 });
