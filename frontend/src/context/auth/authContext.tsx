@@ -33,7 +33,7 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
    * Attempt to log in the user
    */
   const login = async (username: string, password: string) => {
-    const response = await fetch('http://localhost:3001/auth/login', {
+    const response = await fetch(import.meta.env.VITE_SERVER_URL+'/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
@@ -54,7 +54,7 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
    * Register a new user and automatically log them in
    */
   const register = async (username: string, password: string, email: string) => {
-    const response = await fetch('http://localhost:3001/auth/register', {
+    const response = await fetch(import.meta.env.VITE_SERVER_URL+'/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password, email }),

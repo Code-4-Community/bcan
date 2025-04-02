@@ -37,7 +37,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
       try {
         console.log("Saving grant!");
         console.log(curGrant);
-        const response = await fetch("http://localhost:3001/grant/save", {
+        const response = await fetch(import.meta.env.VITE_SERVER_URL+"/grant/save", {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
