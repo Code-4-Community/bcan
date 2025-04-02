@@ -40,3 +40,12 @@ export const updateFilter = action (
     'updateFilter',
     (status: Status | null) => ({status})
 )
+
+export const updateStartDateFilter = action (
+    'updateStartDateFilter',
+    (startDateFilter: Date | null) => ({startDateFilter})
+)
+export const updateEndDateFilter = action (
+    'updateEndDateFilter',
+    (endDateFilter: Date | null) => ({endDateFilter})
+)

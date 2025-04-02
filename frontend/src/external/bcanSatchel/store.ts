@@ -9,6 +9,9 @@ export interface AppState {
   accessToken: string | null;
   allGrants: Grant[] | []
   filterStatus: Status | null;
+  // TODO: should this be the ISODate type?
+  startDateFilter: Date | null;
+  endDateFilter: Date | null;
 }
 
 // Define initial state
@@ -17,7 +20,9 @@ const initialState: AppState = {
   user: null,
   accessToken: null,
   allGrants: [],
-  filterStatus: null
+  filterStatus: null,
+  startDateFilter: null,
+  endDateFilter: null,
 };
 
 const store = createStore<AppState>('appStore', initialState);
