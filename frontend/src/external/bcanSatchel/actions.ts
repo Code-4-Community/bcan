@@ -34,3 +34,11 @@ export const fetchAllGrants = action(
     'fetchAllGrants',
     (grants: Grant[]) => ({grants})
 );
+
+/**
+ * Append a new grant to the current list of grants.
+ */
+export const appendGrant = action(
+  'appendGrant',
+  (grant: Grant) => ({ grant })
+);
