@@ -13,6 +13,8 @@ export interface Grant {
     report_deadline: TDateISO;       // when is next report due
     notification_date: TDateISO; // date to hear back
     description: string;
+    application_requirements: string;
+    additional_notes: string;
     timeline: number; // Need to specify
     estimated_completion_time: number,
     grantmaker_poc: string[]; // array of emails
