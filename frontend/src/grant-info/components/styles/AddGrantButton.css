@@ -1,0 +1,19 @@
+.add-grant-button {
+    background-color: #F5B99C;
+    color: #000;
+    
+    /* Shape and layout */
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    
+    transition: opacity 0.2s ease-in-out;
+  }
+  
+  .add-grant-button:hover {
+    opacity: 0.9;
+  }
+  

@@ -1,0 +1,175 @@
+/* NewGrantModal.css */
+
+/* 
+  Modal overlay covers the entire screen with a semi-transparent backdrop.
+  We'll keep it scrollable for tall content.
+*/
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  
+  /* 
+    Container for the modal.
+    We'll use a background color similar to the screenshot's peach tone.
+  */
+  .modal-content {
+    background: #f7bfa6; /* Peach background */
+    border-radius: 8px;
+    width: 90%;
+    max-width: 900px; /* More width to accommodate multiple columns */
+    padding: 2rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #000;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  /* 
+    We'll define a grid layout that lines up labels and inputs
+    in a more horizontal fashion, similar to your screenshot.
+  */
+  .new-grant-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr; /* label-col is narrower, input-col is wider */
+    grid-auto-rows: auto;
+    column-gap: 1rem;
+    row-gap: 1rem;
+  }
+  
+  /* For label columns and input columns specifically */
+  .label-col {
+    align-self: center; /* vertically center label text */
+    font-weight: bold;
+  }
+  
+  .input-col {
+    /* We'll let these fill the space as needed */
+  }
+  
+  /* 
+    If you want certain rows to span the entire width,
+    you can place them outside the grid or use grid-column: span 2;
+  */
+  
+  /* Headline / Title */
+  .modal-content h2 {
+    grid-column: 1 / span 2; /* let the title span across both columns */
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-align: center;
+  }
+  
+  /* Error message styling */
+  .error-message {
+    grid-column: 1 / span 2; /* span across both columns */
+    margin: 0.5rem 0;
+    color: #d9534f;
+    font-weight: bold;
+  }
+  
+  /* For text inputs, selects, textareas */
+  .modal-content input,
+  .modal-content select,
+  .modal-content textarea {
+    width: 100%;
+    padding: 0.6rem;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #fff;
+    color: #000;
+  }
+  
+  /* Make textareas bigger by default */
+  .modal-content textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+  
+  /* 
+    POC boxes
+    We'll place them in the input column, so they have a bit of 
+    internal spacing.
+  */
+  .poc-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  /* Each POC entry row */
+  .poc-entry {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  /* The dropdown for Email/Phone in each POC entry */
+  .poc-entry select {
+    min-width: 120px;
+  }
+  
+  /* Attachments container in the input-col */
+  .attachments-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  /* Each attachment row */
+  .attachment-entry {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  /* 
+    For the row of buttons (Close / Save), 
+    let's let them span the full grid and appear at the bottom.
+  */
+  .button-row {
+    grid-column: 1 / span 2;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  
+  /* 
+    Buttons 
+  */
+  .modal-content button {
+    background-color: #007bff; /* typical “primary” color */
+    border: none;
+    color: #fff;
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  /* Hover effect for buttons */
+  .modal-content button:hover {
+    background-color: #0056b3;
+  }
+  
