@@ -1,22 +1,25 @@
 // Future optimization should only include backend files, this includes all repos right now
 {
-    "compilerOptions": {
-      "outDir": "./dist",
-      "rootDir": "../",
-      "module": "commonjs",
-      "target": "es2017",
-      "experimentalDecorators": true,
-      "emitDecoratorMetadata": true,
-      "strict": true,
-      "esModuleInterop": true,
-      "skipLibCheck": true
-    },
-    "include": [
-      "src/**/*",
-      "../middle-layer/**/*"
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDirs": [
+      "./src",
+      "../middle-layer"
     ],
-    "exclude": [
-      "node_modules",
-      "dist"
-    ]
-  }
+    "module": "commonjs",
+    "target": "es2017",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "src/**/*",
+    "../middle-layer/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

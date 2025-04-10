@@ -24,7 +24,7 @@ export class GrantController {
     return await this.grantService.getGrantById(parseInt(GrantId, 10))
   }
 
-  @Get("history:id") // Add :id to the path
+  @Get("history/:id") // Add :id to the path
   async getGrantHistory(@Param("id") grantId: string) {
     return await this.grantService.getGrantHistory(parseInt(grantId, 10));
   }

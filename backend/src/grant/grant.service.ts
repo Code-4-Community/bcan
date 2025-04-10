@@ -88,7 +88,11 @@ export class GrantService {
   async updateGrant(grantData: Grant): Promise<string> {
     const oldGrant = await this.getGrantById(grantData.grantId);
     const history: History = this.findChanges(oldGrant, grantData);
-    grantData.updates = history;
+    // only push the updates if there was an update made and make sure 
+    if (history.updates.length != 0 ){
+      grantData.history = grantData.history || []
+      grantData.history.push(history)
+    }
     // dynamically creates the update expression/attribute names based on names of grant interface
     // assumption: grant interface field names are exactly the same as db storage naming
 
@@ -118,7 +122,8 @@ export class GrantService {
 
     try {
       const result = await this.dynamoDb.update(params).promise();
-      return JSON.stringify(result); // returns the changed attributes stored in db
+
+      return JSON.stringify(result.Attributes); // returns the changed attributes stored in db
     } catch (err) {
       console.log(err);
       throw new Error(`Failed to update Grant ${grantData.grantId}`);
@@ -134,6 +139,9 @@ export class GrantService {
 
     // Go through and find the differences in the grants
     for (const key in oldGrant) {
+      if (key === "updates"){
+        continue
+      }
       if (oldGrant[key as keyof Grant] != newGrant[key as keyof Grant]) {
         const newUpdate: FieldHistory = {
           field: key,
@@ -147,7 +155,9 @@ export class GrantService {
     return history;
   }
 
-  async getGrantHistory(grantId: number): Promise<History> {
+  // Method to get the grant history 
+  async getGrantHistory(grantId: number): Promise<History[]> {
+    // Params for the query
     const params = {
       TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || "TABLE_FAILURE",
       Key: {
@@ -157,8 +167,10 @@ export class GrantService {
     };
     let grant: Grant;
     try {
+      // Getting the actual grant from the db
       const data = await this.dynamoDb.get(params).promise();
 
+      // Check to see if the grant actually exist
       if (!data.Item) {
         throw new Error("No grant with id " + grantId + " found.");
       }
@@ -167,6 +179,7 @@ export class GrantService {
       console.log(error);
       throw new Error("Failed to retrieve grant.");
     }
-    return grant.updates;
+
+    return grant.history;
   }
 }
