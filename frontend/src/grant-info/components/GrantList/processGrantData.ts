@@ -5,8 +5,6 @@ import { Grant } from "../../../../../middle-layer/types/Grant";
 import {dateRangeFilter, filterGrants, statusFilter} from "./grantFilters";
 import { sortGrants } from "./grantSorter.ts";
 
-const ITEMS_PER_PAGE = 3;
-
 // GET request for all grants
 const fetchGrants = async () => {
     try {
@@ -47,7 +45,5 @@ export const ProcessGrantData = () => {
     };
 
     // calculates total # of pages for pagination
-    const totalPages = Math.ceil(allGrants.length / ITEMS_PER_PAGE);
-
-    return { grants, onSort, totalPages };
+    return { grants, onSort };
 };
