@@ -1,6 +1,7 @@
 import { action } from 'satcheljs';
 import { Grant } from '../../../../middle-layer/types/Grant'
 import { User } from '../../../../middle-layer/types/User'
+import { Status } from '../../../../middle-layer/types/Status'
 
 /**
  * Set whether the user is authenticated, update the user object,
@@ -34,3 +35,17 @@ export const fetchAllGrants = action(
     'fetchAllGrants',
     (grants: Grant[]) => ({grants})
 );
+
+export const updateFilter = action (
+    'updateFilter',
+    (status: Status | null) => ({status})
+)
+
+export const updateStartDateFilter = action (
+    'updateStartDateFilter',
+    (startDateFilter: Date | null) => ({startDateFilter})
+)
+export const updateEndDateFilter = action (
+    'updateEndDateFilter',
+    (endDateFilter: Date | null) => ({endDateFilter})
+)
