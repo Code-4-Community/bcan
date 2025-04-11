@@ -31,61 +31,63 @@ const GrantList: React.FC = observer(() => {
               - defaultPage can be 1
               - totalPages is calculated
           */}
-    
-          <div className="bg-light-orange rounded-[1.2rem] pt-2">
+            <div style={{display: "flex", justifyContent: "flex-start"}}>
+                <CalendarDropdown/>
+            </div>
+            <div className="bg-light-orange rounded-[1.2rem] pt-2">
             <GrantLabels onSort={onSort} />
             <div className="grant-list p-4 ">
-              {visibleItems.map((grant) => (
+                {visibleItems.map((grant) => (
                 <GrantItem key={grant.grantId} grant={grant} />
-              ))}
+                ))}
             </div>
-          </div>
-          {/* 
-               Paging Controls:
+            </div>
+            {/* 
+                Paging Controls:
                 - Prev / Next triggers
                 - Individual page items
                 - PageText for "X of Y" or "X / Y"
             */}
-          <Pagination.Root
-          className="pt-4"
+            <Pagination.Root
+            className="pt-4"
             count={count}
             pageSize={ITEMS_PER_PAGE}
             page={currentPage}
             onPageChange={(e) => setPage(e.page)}
-          >
+            >
             <ButtonGroup variant="ghost" size="md">
-              <Pagination.PrevTrigger asChild>
+                <Pagination.PrevTrigger asChild>
                 <IconButton>
-                  <HiChevronLeft />
+                    <HiChevronLeft />
                 </IconButton>
-              </Pagination.PrevTrigger>
-    
-              <Pagination.Context>
-              {({ pages }) => 
+                </Pagination.PrevTrigger>
+
+                <Pagination.Context>
+                {({ pages }) => 
                 pages.map((page, index) =>
-                  page.type === "page" ? (
+                    page.type === "page" ? (
                     <IconButton
-                      key={index}
-                      className={currentPage === page.value ? "text-dark-blue underline" : "ghost"} // Conditionally set the variant based on selected page                  onClick={() => setPage(page.value)}  // Set current page on click
-                      onClick={() => setPage(page.value)}  // Set current page on click
-                      aria-label={`Go to page ${page.value}`}
+                        key={index}
+                        className={currentPage === page.value ? "text-dark-blue underline" : "ghost"} // Conditionally set the variant based on selected page                  onClick={() => setPage(page.value)}  // Set current page on click
+                        onClick={() => setPage(page.value)}  // Set current page on click
+                        aria-label={`Go to page ${page.value}`}
                     >
-                      {page.value}
+                        {page.value}
                     </IconButton>
-                  ) : (
+                    ) : (
                     "..."
-                  )
+                    )
                 )
-              }
+                }
             </Pagination.Context>
-    
-              <Pagination.NextTrigger asChild>
+
+                <Pagination.NextTrigger asChild>
                 <IconButton>
-                  <HiChevronRight />
+                    <HiChevronRight />
                 </IconButton>
-              </Pagination.NextTrigger>
+                </Pagination.NextTrigger>
             </ButtonGroup>
-          </Pagination.Root>
+            </Pagination.Root>
         </div>
       );
 });
