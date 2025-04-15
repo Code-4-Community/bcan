@@ -24,16 +24,6 @@ const Account = observer(() => {
       {/* Foreground container */}
       <div style={styles.foregroundContent}>
         <div style={styles.accountContainer}>
-          {/* Top row with navigation buttons */}
-          <div style={styles.topRow}>
-            <Link to="/grant-info" style={{ textDecoration: "none" }}>
-              <button style={styles.navButton}>Home</button>
-            </Link>
-            <button onClick={handleLogout} style={styles.navButton}>
-              Logout
-            </button>
-          </div>
-
           <h1 style={styles.heading}>Welcome, {user?.userId}</h1>
           <Profile />
         </div>
@@ -64,15 +54,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     height: "100%",
     zIndex: 0,
     background: `
-      linear-gradient(
-        120deg,
-        rgba(159, 189, 165, 0.75) 0%,
-        rgba(143, 170, 189, 0.75) 25%,
-        rgba(240, 165, 193, 0.75) 50%,
-        rgba(192, 160, 128, 0.75) 75%,
-        rgba(159, 189, 165, 0.75) 100%
-      ),
-      url("../assets/images/boston_snow.jpg")
+    linear-gradient(135deg,
+     rgb(164, 183, 251) 0%,
+      rgb(212, 240, 255) 47%, rgb(111, 147, 237) 96%)
     `,
     backgroundSize: "cover",
     backgroundBlendMode: "overlay",
@@ -106,7 +90,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontSize: "1.2rem",
     borderRadius: "4px",
     cursor: "pointer",
-    backgroundColor: "#00a2ed",
+    backgroundColor: "#0b303b",
     border: "1px solid #ccc",
     color: "#fff",
   },

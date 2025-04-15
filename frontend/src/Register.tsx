@@ -40,7 +40,7 @@ const Register = observer(() => {
 
       if (loginResponse.ok && loginData.access_token) {
         setAuthState(true, loginData.user, loginData.access_token);
-        navigate("/account");
+        navigate("/grant-info");
       } else {
         alert(loginData.message || "Login after registration failed.");
       }
@@ -153,15 +153,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     height: "100%",
     zIndex: 0,
     background: `
-      linear-gradient(
-        120deg,
-        rgba(159, 189, 165, 0.75) 0%,
-        rgba(143, 170, 189, 0.75) 25%,
-        rgba(240, 165, 193, 0.75) 50%,
-        rgba(192, 160, 128, 0.75) 75%,
-        rgba(159, 189, 165, 0.75) 100%
-      ),
-      url("../assets/images/boston_snow.jpg")
+    linear-gradient(135deg,
+     rgb(164, 183, 251) 0%,
+      rgb(212, 240, 255) 47%, rgb(111, 147, 237) 96%)
     `,
     backgroundSize: "cover",
     backgroundBlendMode: "overlay",
@@ -232,10 +226,11 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   button: {
     marginBottom: "1.2rem",
-    padding: "1.2rem",
+    padding: "0.6rem",
     fontSize: "1.2rem",
-    borderRadius: "4px",
     cursor: "pointer",
+    border: "2px solid",
+    borderRadius: "24px",
   },
   helloButton: {
     backgroundColor: "#00a2ed",

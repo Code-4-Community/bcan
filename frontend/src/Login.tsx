@@ -3,6 +3,7 @@ import { useAuthContext } from "./context/auth/authContext";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
 import "./external/bcanSatchel/mutators";
+import "./styles/button.css"
 
 /**
  * Registered users can log in here
@@ -17,7 +18,7 @@ const Login = observer(() => {
     e.preventDefault();
     try {
       await login(username, password);
-      navigate("/account");
+      navigate("/grant-info");
     } catch (error) {
       console.error("Error during login:", error);
       alert("An error occurred while logging in. Please try again later.");
@@ -73,7 +74,10 @@ const Login = observer(() => {
 
           {/* Buttons row: Sign In, vertical separator, and Register */}
           <div style={styles.buttonRow}>
-            <button type="submit" style={{ ...styles.button, ...styles.helloButton }}>
+            <button 
+            type="submit"
+             style={{ ...styles.button, ...styles.helloButton }}
+             >
               Sign In
             </button>
 
@@ -120,15 +124,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     height: "100%",
     zIndex: 0,
     background: `
-      linear-gradient(
-        120deg,
-        rgba(159, 189, 165, 0.75) 0%,
-        rgba(143, 170, 189, 0.75) 25%,
-        rgba(240, 165, 193, 0.75) 50%,
-        rgba(192, 160, 128, 0.75) 75%,
-        rgba(159, 189, 165, 0.75) 100%
-      ),
-      url("../assets/images/boston_snow.jpg")
+    linear-gradient(135deg,
+     rgb(164, 183, 251) 0%,
+      rgb(212, 240, 255) 47%, rgb(111, 147, 237) 96%)
     `,
     backgroundSize: "cover",
     backgroundBlendMode: "overlay",
@@ -208,14 +206,16 @@ const styles: { [key: string]: React.CSSProperties } = {
     color: "#555",
   },
   button: {
-    marginBottom: 0,
-    padding: "1.2rem",
+    marginBottom: "1.2rem",
+    padding: "2rem",
     fontSize: "1.2rem",
-    borderRadius: "4px",
     cursor: "pointer",
+    border: "2px solid",
+    borderRadius: "24px",
   },
   helloButton: {
-    backgroundColor: "#00a2ed",
+    backgroundColor: "#0b303b",
     border: "1px solid #ccc",
+    color: "#fff",
   },
 };
