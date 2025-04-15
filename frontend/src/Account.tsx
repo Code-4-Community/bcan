@@ -1,9 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import { useAuthContext } from "./context/auth/authContext";
-import { logoutUser } from "./external/bcanSatchel/actions";
 import Profile from "./Profile";
-import { Link } from "react-router-dom";
 
 /**
  * Account page that renders the Profile component as a nested child
@@ -11,10 +9,6 @@ import { Link } from "react-router-dom";
  */
 const Account = observer(() => {
   const { user } = useAuthContext();
-
-  const handleLogout = () => {
-    logoutUser();
-  };
 
   return (
     <div style={styles.pageContainer}>

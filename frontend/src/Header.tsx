@@ -4,7 +4,6 @@ import "./styles/Header.css";
 import logo from "./images/bcan_logo.svg";
 import { Status, statusToString } from "../../middle-layer/types/Status";
 import { updateFilter, logoutUser } from "./external/bcanSatchel/actions.ts";
-import { getAppStore } from "./external/bcanSatchel/store.ts";
 import { observer } from "mobx-react-lite";
 import { Menu, Button } from "@chakra-ui/react";
 import { FaCog } from "react-icons/fa";
