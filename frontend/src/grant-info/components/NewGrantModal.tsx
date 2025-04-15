@@ -3,13 +3,9 @@ import React, { useState, createRef, RefObject } from "react";
 import { fetchAllGrants } from "../../external/bcanSatchel/actions";
 import "../components/styles/NewGrantModal.css";
 import POCEntry from "./POCEntry";
-
-/** Status enum from your middle layer */
-enum Status {
-  Potential = 0,
-  Active = 1,
-  Inactive = 2,
-}
+import { Grant } from "../../../../middle-layer/types/Grant";
+import { TDateISO } from "../../../../backend/src/utils/date";
+import { Status } from "../../../../middle-layer/types/Status";
 
 /** Attachment type from your middle layer */
 enum AttachmentType {
@@ -148,25 +144,23 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       type: att.type,
     }));
 
-    // Construct the final object (renaming fields to match your backend)
-    const newGrant = {
+    /* Matches middle layer definition */
+    const newGrant: Grant = {
+      grantId: -1,
       organization,
-      // We can store both POC arrays, or combine them if your backend only expects one
-      bcan_poc: bcanPocList,
-      grant_provider_poc: providerPocList,
-      application_date: applicationDate,
-      grant_start_date: grantStartDate,
-      report_date: reportDate,
-      timeline_in_years: timelineInYears,
-      estimated_completion_time_in_hours: estimatedCompletionTimeInHours,
+      grantmaker_poc: providerPocList,
+      application_deadline: applicationDate as TDateISO,
+      report_deadline: reportDate as TDateISO,
+      timeline: timelineInYears,
+      estimated_completion_time: estimatedCompletionTimeInHours,
       does_bcan_qualify: doesBcanQualify,
-      // Use the numeric enum or a string version - depends on your backend
       status: status, // Potential = 0, Active = 1, Inactive = 2
       amount,
       description,
-      attached_resources: attachmentsArray,
+      attachments: attachmentsArray,
+      notification_date: applicationDate as TDateISO,
     };
-
+    console.log(newGrant);
     try {
       const response = await fetch("http://localhost:3001/grant/new-grant", {
         method: "POST",
@@ -281,7 +275,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         <select
           className="input-col"
           value={status}
-          onChange={(e) => setStatus(Number(e.target.value) as Status)}
+          onChange={(e) => setStatus((e.target.value) as Status)}
         >
           <option value={Status.Potential}>Potential</option>
           <option value={Status.Active}>Active</option>

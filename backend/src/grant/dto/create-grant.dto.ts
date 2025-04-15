@@ -12,6 +12,10 @@ import {
    * DTO for creating a new grant.
    */
   export class CreateGrantDto {
+    @IsNumber()
+    @IsNotEmpty()
+    grantId?: number;
+
     @IsString()
     @IsNotEmpty()
     organization!: string;
@@ -23,41 +27,41 @@ import {
     // BCAN Points of Contact
     @IsArray()
     @IsNotEmpty({ each: true })
-    bcan_poc!: string[];
-  
-    // Grant Provider Points of Contact
-    @IsArray()
-    @IsNotEmpty({ each: true })
-    grant_provider_poc!: string[];
+    grantmaker_poc!: string[];
   
     @IsISO8601()
     @IsNotEmpty()
-    application_date!: string;
+    application_deadline!: string;
   
+    /*
     @IsISO8601()
     @IsNotEmpty()
     grant_start_date!: string;
+    */
   
     @IsISO8601()
     @IsNotEmpty()
-    report_date!: string;
+    report_deadline!: string;
+
+    @IsISO8601()
+    @IsNotEmpty()
+    notification_date!: string;
   
     @IsNumber()
     @IsNotEmpty()
-    timeline_in_years!: number;
+    timeline!: number;
   
     @IsNumber()
     @IsNotEmpty()
-    estimated_completion_time_in_hours!: number;
+    estimated_completion_time!: number;
   
     @IsBoolean()
     @IsNotEmpty()
     does_bcan_qualify!: boolean;
   
-    // New Status enum values: 0 (Potential), 1 (Active), 2 (Inactive)
-    @IsNumber()
+    @IsString()
     @IsNotEmpty()
-    status!: number;
+    status!: string;
   
     @IsNumber()
     @IsNotEmpty()
@@ -66,5 +70,5 @@ import {
     // Array of attachment objects. Here we keep it generic.
     @IsArray()
     @IsDefined({ each: true })
-    attached_resources!: any[];
+    attachments!: any[];
   }

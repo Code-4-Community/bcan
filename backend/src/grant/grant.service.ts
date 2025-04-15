@@ -128,17 +128,17 @@ export class GrantService {
         grantId: newGrantId,
         organization: grant.organization,
         description: grant.description,
-        bcan_poc: grant.bcan_poc,
-        grant_provider_poc: grant.grant_provider_poc,
-        application_date: grant.application_date,
-        grant_start_date: grant.grant_start_date,
-        report_date: grant.report_date,
-        timeline_in_years: grant.timeline_in_years,
-        estimated_completion_time_in_hours: grant.estimated_completion_time_in_hours,
+        /*bcan_poc: grant.bcan_poc,*/
+        grantmaker_poc: grant.grantmaker_poc,
+        application_deadline: grant.application_deadline,
+        notification_date: grant.notification_date,
+        report_deadline: grant.report_deadline,
+        timeline: grant.timeline,
+        estimated_completion_time: grant.estimated_completion_time,
         does_bcan_qualify: grant.does_bcan_qualify,
         status: grant.status, // Expected to be 0 (Potential), 1 (Active), or 2 (Inactive)
         amount: grant.amount,
-        attached_resources: grant.attached_resources,
+        attachments: grant.attachments,
       }
     };
 
