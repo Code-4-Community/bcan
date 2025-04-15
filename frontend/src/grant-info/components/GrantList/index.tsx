@@ -7,6 +7,9 @@ import { ButtonGroup, IconButton, Pagination } from "@chakra-ui/react";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import { ProcessGrantData } from "./processGrantData.ts";
 import CalendarDropdown from "./CalendarDropdown.tsx";
+import AddGrantButton from "../../../AddGrant.tsx";
+import GrantSearch from "../../../GrantSearch.tsx";
+import NewGrantModal from "../NewGrantModal.tsx";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -16,6 +19,7 @@ const GrantList: React.FC = observer(() => {
     const { grants, onSort } = ProcessGrantData();
 
     const [currentPage, setPage] = useState(1);
+    const [showNewGrantModal, setShowNewGrantModal] = useState(false);
 
 
     const count = grants.length;
@@ -31,9 +35,6 @@ const GrantList: React.FC = observer(() => {
               - defaultPage can be 1
               - totalPages is calculated
           */}
-            <div style={{display: "flex", justifyContent: "flex-start"}}>
-                <CalendarDropdown/>
-            </div>
             <div className="bg-light-orange rounded-[1.2rem] pt-2">
             <GrantLabels onSort={onSort} />
             <div className="grant-list p-4 ">
@@ -88,6 +89,9 @@ const GrantList: React.FC = observer(() => {
                 </Pagination.NextTrigger>
             </ButtonGroup>
             </Pagination.Root>
+            {showNewGrantModal && (
+        <NewGrantModal onClose={() => setShowNewGrantModal(false)} />
+      )}
         </div>
       );
 });

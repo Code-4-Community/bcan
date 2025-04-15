@@ -19,7 +19,6 @@ const App = observer(() => {
     <Router>
       <ChakraProvider value={defaultSystem}>
         <div className="app-container">
-          {/* Renders all routes with transitions */}
           <AnimatedRoutes />
         </div>
       </ChakraProvider>

@@ -1,17 +1,32 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow-x: hidden;
+}
+
 /* Main container styling */
 .grant-page {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
     justify-content: flex-start;
     background-color: #F2EBE4;
     width: 100%;
+    height: 100vh;
+    overflow-y: auto;
 }
 
-/* Bottom half to stack grant-list and footer */
+.action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 200px;
+    padding: 8px;
+}
+
 .bot-half {
     display: flex;
     flex-direction: column;
     margin: 0 1rem;
 }
-

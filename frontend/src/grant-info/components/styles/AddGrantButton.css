@@ -9,6 +9,9 @@
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
+
+    width: 168.42px;
+    height: 58px;
     
     transition: opacity 0.2s ease-in-out;
   }

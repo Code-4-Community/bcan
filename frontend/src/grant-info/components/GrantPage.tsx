@@ -4,14 +4,17 @@ import GrantList from "./GrantList/index.tsx";
 import Footer from "./Footer.js";
 import BellButton from "../../Bell.js";
 import "../../Bell.css";
-import AddGrantButton from "../../AddGrant.js";
+import CalendarDropdown from "./GrantList/CalendarDropdown.tsx";
+import AddGrantButton from "../../AddGrant.tsx";
+import GrantSearch from "../../GrantSearch.tsx";
+import NewGrantModal from "./NewGrantModal.tsx";
 import { useState } from "react";
-import NewGrantModal from "./NewGrantModal.js";
-import GrantSearch from "../../GrantSearch.js";
 
 function GrantPage() {
+
   const [showNewGrantModal, setShowNewGrantModal] = useState(false);
   
+
   return (
     <div className="grant-page">
       <div className="top-half">
@@ -20,17 +23,22 @@ function GrantPage() {
       <div className="bell-container">
         <BellButton />
       </div>
+      <div className="action-bar">
+          <CalendarDropdown/>
+          <GrantSearch/>
+          <AddGrantButton onClick={() => setShowNewGrantModal(true)} />
+      </div>
       <div className="bot-half">
-      <AddGrantButton onClick={() => setShowNewGrantModal(true)} />
-      <GrantSearch/>  
-        <div className="">
+        <div className="grant-list-container">
           <GrantList />
         </div>
         <Footer />
       </div>
+      <div className="hidden-features">
       {showNewGrantModal && (
         <NewGrantModal onClose={() => setShowNewGrantModal(false)} />
       )}
+      </div>
     </div>
   );
 }

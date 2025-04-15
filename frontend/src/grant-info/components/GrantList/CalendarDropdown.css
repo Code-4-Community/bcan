@@ -1,6 +1,8 @@
 .calendar-dropdown {
     position: relative;
     display: inline-block;
+    width: 292px;
+    height: 46px;
 }
 
 .calendar-toggle-button {

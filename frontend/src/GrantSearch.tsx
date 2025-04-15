@@ -88,9 +88,9 @@ function GrantSearch() {
 
 
     return (
-        <div className="grant-page">
+        <div className="search-bar-main-container">
             <form className="search-container">
-                <select onChange={handleFilterChange} value={filter}>
+                <select className="filter-state" onChange={handleFilterChange} value={filter}>
                     <option value="">Filter by</option>
                     <option value="organization">Organization Name</option>
                 </select>

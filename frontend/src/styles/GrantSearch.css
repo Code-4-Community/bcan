@@ -19,6 +19,10 @@
     color: black;
 }
 
+.filter-state {
+    color: whitesmoke;
+}
+
 .dropdown-container {
     position: absolute;
     top: 100%;
