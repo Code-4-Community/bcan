@@ -6,6 +6,7 @@ import StatusIndicator from "./StatusIndicator";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { Grant } from "../../../../middle-layer/types/Grant";
 import { DoesBcanQualifyText } from "../../translations/general";
+import RingButton, { ButtonColorOption } from "../../custom/RingButton";
 
 interface GrantItemProps {
   grant: Grant;
@@ -65,7 +66,9 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
           {curGrant.amount ? "$" + curGrant.amount : ""}
         </li>
         <li className="does-bcan-qualify">
-          {curGrant.does_bcan_qualify ? DoesBcanQualifyText.Yes : DoesBcanQualifyText.No}
+          {curGrant.does_bcan_qualify
+           ? <RingButton text={DoesBcanQualifyText.Yes} color={ButtonColorOption.GREEN}/>
+           : <RingButton text={DoesBcanQualifyText.No} color={ButtonColorOption.GRAY}/>}
         </li>
         <li className="flex justify-center items-center text-center">
           <StatusIndicator curStatus={grant.status} />
