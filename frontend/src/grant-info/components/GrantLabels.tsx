@@ -41,6 +41,11 @@ const GrantLabels: React.FC<{
         </button>
       </li>
       <li className="text-center">
+        <button className="does_bcan_qualify" onClick={() => buttonHandler("does_bcan_qualify")}>
+          Does BCAN Qualify? {labels.header == "amount" ? (labels.asc ? "▲" : "▼") : ""}
+        </button>
+      </li>
+      <li className="text-center">
         <button className="status" onClick={() => buttonHandler("status")}>
           Status {labels.header == "status" ? (labels.asc ? "▲" : "▼") : ""}
         </button>
