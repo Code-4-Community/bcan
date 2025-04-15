@@ -27,7 +27,6 @@ const linkList: NavBarProps[] = [
  */
 const Header: React.FC = observer(() => {
   const [selected, setSelected] = useState("All Grants");
-  const navigate = useNavigate();
 
   function categoryClicked(e: React.MouseEvent, category: string, linkTo?: string) {
     if (!linkTo) {
