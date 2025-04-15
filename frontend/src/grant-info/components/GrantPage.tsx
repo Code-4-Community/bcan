@@ -9,12 +9,13 @@ import AddGrantButton from "../../AddGrant.tsx";
 import GrantSearch from "../../GrantSearch.tsx";
 import NewGrantModal from "./NewGrantModal.tsx";
 import { useState } from "react";
+import { Grant } from "../../../../middle-layer/types/Grant.ts";
 
 function GrantPage() {
 
   const [showNewGrantModal, setShowNewGrantModal] = useState(false);
+  const [selectedGrant, setSelectedGrant] = useState<Grant | null>(null);
   
-
   return (
     <div className="grant-page">
       <div className="top-half">
@@ -25,12 +26,14 @@ function GrantPage() {
       </div>
       <div className="action-bar">
           <CalendarDropdown/>
-          <GrantSearch/>
+          <GrantSearch onGrantSelect={setSelectedGrant}/>
           <AddGrantButton onClick={() => setShowNewGrantModal(true)} />
       </div>
       <div className="bot-half">
         <div className="grant-list-container">
-          <GrantList />
+        <GrantList
+         selectedGrantId={selectedGrant ? selectedGrant.grantId : undefined}
+         onClearSelectedGrant={() => setSelectedGrant(null)} />
         </div>
         <Footer />
       </div>

@@ -1,26 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./styles/GrantItem.css";
 import { GrantAttributes } from "./GrantAttributes";
 import GrantDetails from "./GrantDetails";
-import StatusIndicator from "./StatusIndicator"; // import the new component
+import StatusIndicator from "./StatusIndicator";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { Grant } from "../../../../middle-layer/types/Grant";
-import {Status} from "../../../../middle-layer/types/Status.ts";
-
-// function isActiveStatus(status: Status) {
-//   return ["Pending", "In Review", "Awaiting Submission"].includes(status.toString());
-// }
-
 
 interface GrantItemProps {
   grant: Grant;
+  defaultExpanded?: boolean;
 }
 
-// TODO: [JAN-14] Make uneditable field editable (ex: Description, Application Reqs, Additional Notes)
-const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
-  // when toggleEdit gets saved, then updates the backend to update itself with whatever
-  // is shown in the front-end
-  const [isExpanded, setIsExpanded] = useState(false);
+const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false }) => {
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [isEditing, setIsEditing] = useState(false);
   const [curGrant, setCurGrant] = useState(grant);
 
@@ -28,18 +20,15 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
     setIsExpanded(!isExpanded);
   };
 
+// Update isExpanded if defaultExpanded prop changes
+  useEffect(() => {
+    setIsExpanded(defaultExpanded);
+  }, [defaultExpanded]);
 
-  // const active = isActiveStatus(curGrant.status);
-
-  // when toggle edit turns off, sends curGrant to backend to be saved
   const toggleEdit = async () => {
     if (isEditing) {
-      // if you are saving
       try {
         console.log("Saving grant!");
-        console.log(Status.Active);
-        console.log(curGrant.status);
-        console.log(curGrant);
         const response = await fetch("http://localhost:3001/grant/save", {
           method: "PUT",
           headers: {
@@ -56,14 +45,10 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
     setIsEditing(!isEditing);
   };
 
-  // temporary buffer
   return (
-    // class name with either be grant-item or grant-item-expanded
     <div className="grant-item-wrapper">
       <div
-        className={`grant-summary p-4 ${
-          isExpanded ? "expanded rounded-b-none" : ""
-        } grid grid-cols-4 items-center`}
+        className={`grant-summary p-4 ${isExpanded ? "expanded rounded-b-none" : ""} grid grid-cols-4 items-center`}
         onClick={toggleExpand}
       >
         <li className="grant-name text-left flex items-center">
@@ -78,8 +63,6 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
         <li className="amount">
           {curGrant.amount ? "$" + curGrant.amount : ""}
         </li>
-        {/* <li className="status">{curGrant.status}</li> */}
-        {/* <li className="restriction-status">{curGrant.restrictions}</li> */}
         <li className="flex justify-center items-center text-center">
           <StatusIndicator curStatus={grant.status} />
         </li>
