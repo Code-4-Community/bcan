@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Put, Body, Patch, Post, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Param, Put, Body, Patch, Post, ValidationPipe, Logger } from '@nestjs/common';
 import { GrantService } from './grant.service';
 import { Grant } from '../../../middle-layer/types/Grant';
 import { CreateGrantDto } from './dto/create-grant.dto';
@@ -36,7 +36,6 @@ export class GrantController {
       @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
       grant: CreateGrantDto
     ) {
-      console.log(grant);
       return await this.grantService.addGrant(grant);
     }
 

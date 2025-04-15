@@ -7,6 +7,7 @@ import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { Grant } from "../../../../middle-layer/types/Grant";
 import { DoesBcanQualifyText } from "../../translations/general";
 import RingButton, { ButtonColorOption } from "../../custom/RingButton";
+import { Status } from "../../../../middle-layer/types/Status";
 
 interface GrantItemProps {
   grant: Grant;
@@ -22,13 +23,14 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
     setIsExpanded(!isExpanded);
   };
 
-// Update isExpanded if defaultExpanded prop changes
+  // Update isExpanded if defaultExpanded prop changes
   useEffect(() => {
     setIsExpanded(defaultExpanded);
   }, [defaultExpanded]);
 
   const toggleEdit = async () => {
     if (isEditing) {
+      // Save changes when exiting edit mode
       try {
         console.log("Saving grant!");
         const response = await fetch("http://localhost:3001/grant/save", {
@@ -47,10 +49,29 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
     setIsEditing(!isEditing);
   };
 
+  // Handler for Does BCAN Qualify dropdown
+  const handleDoesBcanQualifyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setCurGrant({
+      ...curGrant,
+      does_bcan_qualify: e.target.value === "true",
+    });
+  };
+
+  // Handler for Status dropdown
+  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setCurGrant({
+      ...curGrant,
+      status: e.target.value === 'Active' ? Status.Active
+      : e.target.value === 'Potential' ? Status.Potential : Status.Inactive,
+    });
+  };
+
   return (
     <div className="grant-item-wrapper">
       <div
-        className={`grant-summary p-4 ${isExpanded ? "expanded rounded-b-none" : ""} grid grid-cols-5 items-center`}
+        className={`grant-summary p-4 ${
+          isExpanded ? "expanded rounded-b-none" : ""
+        } grid grid-cols-5 items-center`}
         onClick={toggleExpand}
       >
         <li className="grant-name text-left flex items-center">
@@ -66,12 +87,32 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
           {curGrant.amount ? "$" + curGrant.amount : ""}
         </li>
         <li className="does-bcan-qualify">
-          {curGrant.does_bcan_qualify
-           ? <RingButton text={DoesBcanQualifyText.Yes} color={ButtonColorOption.GREEN}/>
-           : <RingButton text={DoesBcanQualifyText.No} color={ButtonColorOption.GRAY}/>}
+          {isEditing ? (
+            <select
+              value={curGrant.does_bcan_qualify ? "true" : "false"}
+              onChange={handleDoesBcanQualifyChange}
+            >
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </select>
+          ) : (
+            curGrant.does_bcan_qualify ? (
+              <RingButton text={DoesBcanQualifyText.Yes} color={ButtonColorOption.GREEN} />
+            ) : (
+              <RingButton text={DoesBcanQualifyText.No} color={ButtonColorOption.GRAY} />
+            )
+          )}
         </li>
         <li className="flex justify-center items-center text-center">
-          <StatusIndicator curStatus={grant.status} />
+          {isEditing ? (
+            <select value={curGrant.status} onChange={handleStatusChange}>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+              <option value="Potential">Potential</option>
+            </select>
+          ) : (
+            <StatusIndicator curStatus={curGrant.status} />
+          )}
         </li>
       </div>
       <div className={`grant-body bg-tan ${isExpanded ? "expanded" : ""}`}>

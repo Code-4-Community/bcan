@@ -19,10 +19,10 @@ html, body {
 .action-bar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-evenly;
     width: 100%;
-    height: 200px;
-    padding: 8px;
+    height: 125px;
+    margin: 4px;
 }
 
 .bot-half {

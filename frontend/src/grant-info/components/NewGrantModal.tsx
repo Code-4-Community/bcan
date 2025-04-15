@@ -150,7 +150,6 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
     // Construct the final object (renaming fields to match your backend)
     const newGrant = {
-      grantId: Date.now(),
       organization,
       // We can store both POC arrays, or combine them if your backend only expects one
       bcan_poc: bcanPocList,
@@ -165,7 +164,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       status: status, // Potential = 0, Active = 1, Inactive = 2
       amount,
       description,
-      attachments: attachmentsArray,
+      attached_resources: attachmentsArray,
     };
 
     try {

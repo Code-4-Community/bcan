@@ -1,6 +1,6 @@
 import './grant-info/components/styles/AddGrantButton.css';
 
-// Fix 'any' typing here
+// TODO: Fix 'any' typing here
 const AddGrantButton = ({ onClick } : any) => {
 
   return (

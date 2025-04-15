@@ -1,7 +1,6 @@
 import "./styles/GrantPage.css";
 import Header from "../../Header.js";
 import GrantList from "./GrantList/index.tsx";
-import Footer from "./Footer.js";
 import BellButton from "../../Bell.js";
 import "../../Bell.css";
 import CalendarDropdown from "./GrantList/CalendarDropdown.tsx";
