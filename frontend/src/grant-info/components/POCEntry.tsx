@@ -1,7 +1,7 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
 import "./styles/NewGrantModal.css";
 
-const POCEntry = forwardRef((props, ref) => {
+const POCEntry = forwardRef((_props, ref) => {
   const [poc, setPoc] = useState("");
   const [pocType, setPocType] = useState("Email");
   const [inputType, setInputType] = useState("email");

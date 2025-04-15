@@ -6,9 +6,6 @@ import GrantLabels from "../GrantLabels";
 import { ButtonGroup, IconButton, Pagination } from "@chakra-ui/react";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import { ProcessGrantData } from "./processGrantData.ts";
-import CalendarDropdown from "./CalendarDropdown.tsx";
-import AddGrantButton from "../../../AddGrant.tsx";
-import GrantSearch from "../../../GrantSearch.tsx";
 import NewGrantModal from "../NewGrantModal.tsx";
 
 const ITEMS_PER_PAGE = 5;
