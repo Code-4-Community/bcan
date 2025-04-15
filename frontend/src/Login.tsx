@@ -3,6 +3,7 @@ import { useAuthContext } from "./context/auth/authContext";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
 import "./external/bcanSatchel/mutators";
+import Footer from "./grant-info/components/Footer";
 
 /**
  * Registered users can log in here

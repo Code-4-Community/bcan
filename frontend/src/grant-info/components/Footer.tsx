@@ -1,15 +1,18 @@
 import React from 'react';
 import './styles/Footer.css'
+import { Group, Text } from '@chakra-ui/react';
+import { FooterText } from '../../translations/general';
 
-const ArchivedFooter: React.FC = () => {
+const Footer: React.FC = () => {
     return (
         <div className="footer">
-            <div className="pagination-wrapper">
-                { /* Content here */}
+            <Group>
+                <Text>
+                {FooterText.Motto}
+                </Text>
+            </Group>
             </div>
-            <button className="add-grant-button">+</button>
-        </div>
     )
 }
 
-export default ArchivedFooter;
+export default Footer;

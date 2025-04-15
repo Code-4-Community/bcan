@@ -15,7 +15,7 @@ function GrantPage() {
 
   const [showNewGrantModal, setShowNewGrantModal] = useState(false);
   const [selectedGrant, setSelectedGrant] = useState<Grant | null>(null);
-  
+
   return (
     <div className="grant-page">
       <div className="top-half">
@@ -35,7 +35,6 @@ function GrantPage() {
          selectedGrantId={selectedGrant ? selectedGrant.grantId : undefined}
          onClearSelectedGrant={() => setSelectedGrant(null)} />
         </div>
-        <Footer />
       </div>
       <div className="hidden-features">
       {showNewGrantModal && (

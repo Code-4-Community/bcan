@@ -5,6 +5,7 @@ import GrantDetails from "./GrantDetails";
 import StatusIndicator from "./StatusIndicator";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { Grant } from "../../../../middle-layer/types/Grant";
+import { DoesBcanQualifyText } from "../../translations/general";
 
 interface GrantItemProps {
   grant: Grant;
@@ -48,7 +49,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
   return (
     <div className="grant-item-wrapper">
       <div
-        className={`grant-summary p-4 ${isExpanded ? "expanded rounded-b-none" : ""} grid grid-cols-4 items-center`}
+        className={`grant-summary p-4 ${isExpanded ? "expanded rounded-b-none" : ""} grid grid-cols-5 items-center`}
         onClick={toggleExpand}
       >
         <li className="grant-name text-left flex items-center">
@@ -62,6 +63,9 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
         </li>
         <li className="amount">
           {curGrant.amount ? "$" + curGrant.amount : ""}
+        </li>
+        <li className="does-bcan-qualify">
+          {curGrant.does_bcan_qualify ? DoesBcanQualifyText.Yes : DoesBcanQualifyText.No}
         </li>
         <li className="flex justify-center items-center text-center">
           <StatusIndicator curStatus={grant.status} />
