@@ -2,7 +2,6 @@ import { build } from 'esbuild';
 
 // Wildcards aren’t supported, so list explicit roots.
 const externals = [
-  'aws-sdk', // default
   'cache-manager',
   '@nestjs/microservices',
   '@nestjs/websockets',
@@ -11,7 +10,7 @@ const externals = [
 ];
 
  await build({
-   entryPoints: ['src/lambda.ts'],
+   entryPoints: ['dist-ts/backend/src/lambda.js'],
    bundle: true,
    platform: 'node',
    target: 'node20',

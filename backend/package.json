@@ -5,10 +5,9 @@
   "scripts": {
     "start": "nest start",
     "start:dev": "nest start --watch",
-    "build": "node esbuild.mjs",
+    "build": "tsc -p tsconfig.build.json && node esbuild.mjs",
     "test": "vitest --config vitest.config.ts",
-    "zip":   "cd dist && zip -r ../lambda.zip bundle.js node_modules",
-    "deploy": "npm run build && npm run zip && sls deploy --package dist"
+    "zip": "cd dist && zip -r ../lambda.zip bundle.js node_modules"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
@@ -16,6 +15,7 @@
     "@nestjs/jwt": "^8.0.0",
     "@nestjs/passport": "^8.0.0",
     "@nestjs/platform-express": "^8.4.7",
+    "@vendia/serverless-express": "^4.12.6",
     "aws-sdk": "^2.1030.0",
     "aws-serverless-express": "^3.4.0",
     "class-transformer": "^0.5.1",

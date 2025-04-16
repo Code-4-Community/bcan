@@ -1,23 +1,20 @@
-import { Handler } from 'aws-lambda';
-import { createServer, proxy } from 'aws-serverless-express';
+import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { configure } from '@vendia/serverless-express';  // NEW
 
-// Cache between cold starts
-let cachedServer: ReturnType<typeof createServer>;
+let cachedHandler: ReturnType<typeof configure>;
 
-async function bootstrapServer() {
-  if (cachedServer) return cachedServer;
-
-  const app = await NestFactory.create(AppModule);
-  await app.init();
-  const expressApp = app.getHttpAdapter().getInstance();
-  cachedServer = createServer(expressApp);
-  return cachedServer;
-}
-
-// Main Lambda handler
-export const handler: Handler = async (event, context) => {
-  const server = await bootstrapServer();
-  return proxy(server, event, context, 'PROMISE').promise;
+export const handler = async (event: any, context: any) => {
+  // first invocation: boot Nest and create handler
+  if (!cachedHandler) {
+    const app = await NestFactory.create(AppModule);
+    await app.init();
+    cachedHandler = configure({
+      app: app.getHttpAdapter().getInstance(),
+      // optional: logLevel: 'info',
+    });
+  }
+  // Vendia adapter understands both 1.0 and 2.0 events
+  return cachedHandler(event, context, () => console.log('healthy'));
 };
