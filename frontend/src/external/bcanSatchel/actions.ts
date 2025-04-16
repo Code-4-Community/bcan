@@ -49,3 +49,11 @@ export const updateEndDateFilter = action (
     'updateEndDateFilter',
     (endDateFilter: Date | null) => ({endDateFilter})
 )
+
+/**
+ * Append a new grant to the current list of grants.
+ */
+export const appendGrant = action(
+  'appendGrant',
+  (grant: Grant) => ({ grant })
+);

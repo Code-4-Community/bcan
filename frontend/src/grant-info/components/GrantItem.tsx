@@ -1,45 +1,45 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./styles/GrantItem.css";
 import { GrantAttributes } from "./GrantAttributes";
 import GrantDetails from "./GrantDetails";
-import StatusIndicator from "./StatusIndicator"; // import the new component
+import StatusIndicator from "./StatusIndicator";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { Grant } from "../../../../middle-layer/types/Grant";
-import {Status} from "../../../../middle-layer/types/Status.ts";
-
-// function isActiveStatus(status: Status) {
-//   return ["Pending", "In Review", "Awaiting Submission"].includes(status.toString());
-// }
-
+import { DoesBcanQualifyText } from "../../translations/general";
+import RingButton, { ButtonColorOption } from "../../custom/RingButton";
+import { Status } from "../../../../middle-layer/types/Status";
 
 interface GrantItemProps {
   grant: Grant;
+  defaultExpanded?: boolean;
 }
 
-// TODO: [JAN-14] Make uneditable field editable (ex: Description, Application Reqs, Additional Notes)
-const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
-  // when toggleEdit gets saved, then updates the backend to update itself with whatever
-  // is shown in the front-end
-  const [isExpanded, setIsExpanded] = useState(false);
+const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false }) => {
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [isEditing, setIsEditing] = useState(false);
   const [curGrant, setCurGrant] = useState(grant);
 
+  // Track whether each custom dropdown is open.
+  const [qualifyDropdownOpen, setQualifyDropdownOpen] = useState(false);
+  const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
+
   const toggleExpand = () => {
+    // Toggle edit mode off now that we are leaving this specific grant in view
+    if (isExpanded) {
+      toggleEdit();
+    }
     setIsExpanded(!isExpanded);
   };
 
+  // Sync isExpanded with the defaultExpanded prop.
+  useEffect(() => {
+    setIsExpanded(defaultExpanded);
+  }, [defaultExpanded]);
 
-  // const active = isActiveStatus(curGrant.status);
-
-  // when toggle edit turns off, sends curGrant to backend to be saved
   const toggleEdit = async () => {
     if (isEditing) {
-      // if you are saving
+      // Save changes when exiting edit mode.
       try {
-        console.log("Saving grant!");
-        console.log(Status.Active);
-        console.log(curGrant.status);
-        console.log(curGrant);
         const response = await fetch("http://localhost:3001/grant/save", {
           method: "PUT",
           headers: {
@@ -54,16 +54,14 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
       }
     }
     setIsEditing(!isEditing);
+    setQualifyDropdownOpen(false);
+    setStatusDropdownOpen(false);
   };
 
-  // temporary buffer
   return (
-    // class name with either be grant-item or grant-item-expanded
     <div className="grant-item-wrapper">
       <div
-        className={`grant-summary p-4 ${
-          isExpanded ? "expanded rounded-b-none" : ""
-        } grid grid-cols-4 items-center`}
+        className={`grant-summary p-4 ${isExpanded ? "expanded rounded-b-none" : ""} grid grid-cols-5 items-center`}
         onClick={toggleExpand}
       >
         <li className="grant-name text-left flex items-center">
@@ -78,10 +76,94 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
         <li className="amount">
           {curGrant.amount ? "$" + curGrant.amount : ""}
         </li>
-        {/* <li className="status">{curGrant.status}</li> */}
-        {/* <li className="restriction-status">{curGrant.restrictions}</li> */}
+        <li className="does-bcan-qualify">
+          {isEditing ? (
+            <div className="custom-dropdown-wrapper" onClick={(e) => e.stopPropagation()}>
+              <div onClick={() => setQualifyDropdownOpen(!qualifyDropdownOpen)}>
+                <RingButton 
+                  text={curGrant.does_bcan_qualify ? DoesBcanQualifyText.Yes : DoesBcanQualifyText.No}
+                  color={curGrant.does_bcan_qualify ? ButtonColorOption.GREEN : ButtonColorOption.GRAY} 
+                />
+              </div>
+              {qualifyDropdownOpen && (
+                <div className="custom-dropdown">
+                  <div
+                    className="custom-dropdown-option"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurGrant({ ...curGrant, does_bcan_qualify: true });
+                      setQualifyDropdownOpen(false);
+                    }}
+                  >
+                    <RingButton text={DoesBcanQualifyText.Yes} color={ButtonColorOption.GREEN} />
+                  </div>
+                  <div
+                    className="custom-dropdown-option"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurGrant({ ...curGrant, does_bcan_qualify: false });
+                      setQualifyDropdownOpen(false);
+                    }}
+                  >
+                    <RingButton text={DoesBcanQualifyText.No} color={ButtonColorOption.GRAY} />
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            curGrant.does_bcan_qualify ? (
+              <RingButton text={DoesBcanQualifyText.Yes} color={ButtonColorOption.GREEN} />
+            ) : (
+              <RingButton text={DoesBcanQualifyText.No} color={ButtonColorOption.GRAY} />
+            )
+          )}
+        </li>
         <li className="flex justify-center items-center text-center">
-          <StatusIndicator curStatus={grant.status} />
+          {isEditing ? (
+            <div className="custom-dropdown-wrapper" onClick={(e) => e.stopPropagation()}>
+              <div onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}>
+                <div className="status-button-preview">
+                  <StatusIndicator curStatus={curGrant.status} />
+                </div>
+              </div>
+              {statusDropdownOpen && (
+                <div className="custom-dropdown">
+                  <div
+                    className="custom-dropdown-option"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurGrant({ ...curGrant, status: Status.Active });
+                      setStatusDropdownOpen(false);
+                    }}
+                  >
+                    <div className="button-default green-button">Active</div>
+                  </div>
+                  <div
+                    className="custom-dropdown-option"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurGrant({ ...curGrant, status: Status.Inactive });
+                      setStatusDropdownOpen(false);
+                    }}
+                  >
+                    <div className="button-default gray-button">Inactive</div>
+                  </div>
+                  <div
+                    className="custom-dropdown-option"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurGrant({ ...curGrant, status: Status.Potential });
+                      setStatusDropdownOpen(false);
+                    }}
+                  >
+                    <div className="button-default orange-button">Potential</div>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <StatusIndicator curStatus={curGrant.status} />
+          )}
         </li>
       </div>
       <div className={`grant-body bg-tan ${isExpanded ? "expanded" : ""}`}>
@@ -103,7 +185,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant }) => {
               />
             </div>
             <div className="bottom-buttons">
-              <button className="done-button" onClick={toggleEdit}>
+              <button className="done-button" onClick={(e) => { e.stopPropagation(); toggleEdit(); }}>
                 {isEditing ? "SAVE" : "EDIT"}
               </button>
             </div>

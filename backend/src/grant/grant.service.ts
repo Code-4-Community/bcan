@@ -1,6 +1,7 @@
 import { Injectable,Logger } from '@nestjs/common';
 import AWS from 'aws-sdk';
 import { Grant } from '../../../middle-layer/types/Grant';
+import { CreateGrantDto } from './dto/create-grant.dto';
 
 @Injectable()
 export class GrantService {
@@ -115,4 +116,40 @@ export class GrantService {
             throw new Error(`Failed to update Grant ${grantData.grantId}`)
         }
     }
+    
+    // Add a new grant using the new CreateGrantDto.
+  async addGrant(grant: CreateGrantDto): Promise<number> {
+    // Generate a unique grant ID (using Date.now() for simplicity, needs proper UUID)
+    const newGrantId = Date.now();
+
+    const params = {
+      TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
+      Item: {
+        grantId: newGrantId,
+        organization: grant.organization,
+        description: grant.description,
+        /*bcan_poc: grant.bcan_poc,*/
+        grantmaker_poc: grant.grantmaker_poc,
+        application_deadline: grant.application_deadline,
+        notification_date: grant.notification_date,
+        report_deadline: grant.report_deadline,
+        timeline: grant.timeline,
+        estimated_completion_time: grant.estimated_completion_time,
+        does_bcan_qualify: grant.does_bcan_qualify,
+        status: grant.status, // Expected to be 0 (Potential), 1 (Active), or 2 (Inactive)
+        amount: grant.amount,
+        attachments: grant.attachments,
+      }
+    };
+
+    try {
+      await this.dynamoDb.put(params).promise();
+      this.logger.log(`Uploaded grant from ${grant.organization}`);
+    } catch (error: any) {
+      this.logger.error(`Failed to upload new grant from ${grant.organization}`, error.stack);
+      throw new Error(`Failed to upload new grant from ${grant.organization}`);
+    }
+
+    return newGrantId;
+  }
 }

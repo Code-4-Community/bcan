@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useAuthContext } from "./context/auth/authContext";
 import { updateUserProfile } from "./external/bcanSatchel/actions";
 import { toJS } from 'mobx';
+import { Link } from "react-router-dom";
 
 /**
  * Current logged in user's profile
@@ -88,11 +89,15 @@ const Profile = observer(() => {
           onChange={(e) => setPositionOrRole(e.target.value)}
         />
       </div>
-
-      {/* Save Changes button */}
+      {/* Account Page Action Buttons */}
+      <div style={styles.actionButtons}>
       <button type="submit" style={styles.button}>
         Save Changes
       </button>
+      <Link to="/grant-info" style={{ textDecoration: "none" }}>
+        <button style={styles.button}>Home</button>
+      </Link>
+      </div>
     </form>
   );
 });
@@ -152,11 +157,16 @@ const styles: { [key: string]: React.CSSProperties } = {
   button: {
     padding: "1rem",
     fontSize: "1.1rem",
-    backgroundColor: "#0078d4",
+    backgroundColor: "#0b303b",
     color: "#fff",
     border: "none",
     borderRadius: "4px",
     cursor: "pointer",
     alignSelf: "flex-start",
   },
+  actionButtons: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center"
+  }
 };

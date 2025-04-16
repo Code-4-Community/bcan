@@ -29,7 +29,7 @@ export function getColorStatus(status: string) {
     switch (status) {
         case "Active": return "#5AB911"; // green
         case "Inactive": return "#A9A9A9" // gray
-        case "Potential": return "#A9A9A9" // TODO: no color given for potential yet
+        case "Potential": return "#E6CA15" // TODO: no color given for potential yet
         default: return 'Unknown';
     }
 }

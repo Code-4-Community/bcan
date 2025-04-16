@@ -3,7 +3,6 @@
 @import "tailwindcss/utilities";
 
 .bell-container {
-    position: absolute;
     display: inline-block;
     top: 10px;
     right: 10px;

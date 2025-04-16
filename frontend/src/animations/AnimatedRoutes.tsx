@@ -13,7 +13,7 @@ import Register from "../Register";
 
 /**
  * AnimatedRoutes:
- * - Wraps your routes with CSSTransition + TransitionGroup
+ * - Wraps routes with CSSTransition + TransitionGroup
  * - Applies .fade-enter / .fade-exit transitions from transitions.css
  */
 const AnimatedRoutes = observer(() => {

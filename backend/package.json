@@ -15,6 +15,8 @@
     "@nestjs/passport": "^8.0.0",
     "@nestjs/platform-express": "^8.4.7",
     "aws-sdk": "^2.1030.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
     "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "jwt-decode": "^4.0.0",
