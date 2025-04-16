@@ -35,7 +35,7 @@ function Calendar({ onClear }: { onClear?: () => void }) {
                 selectsRange
                 inline
             />
-            <button onClick={clearFilters} style={{marginTop: "0.5rem"}}>
+            <button onClick={clearFilters} style={{marginTop: "0.5rem", marginLeft: "1rem"}}>
                 Clear
             </button>
         </div>

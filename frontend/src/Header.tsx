@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./styles/Header.css";
 import logo from "./images/bcan_logo.svg";
 import { Status, statusToString } from "../../middle-layer/types/Status";
@@ -7,6 +7,7 @@ import { updateFilter, logoutUser } from "./external/bcanSatchel/actions.ts";
 import { observer } from "mobx-react-lite";
 import { Menu, Button } from "@chakra-ui/react";
 import { FaCog } from "react-icons/fa";
+import BellButton from "./Bell.tsx";
 
 interface NavBarProps {
   name: string;
@@ -62,6 +63,9 @@ const Header: React.FC = observer(() => {
             </li>
           ))}
         </ul>
+        <div className="bell-container">
+        <BellButton />
+      </div>
         <Menu.Root>
           <Menu.Trigger asChild>
             <Button variant="ghost" p={1} ml={4}>

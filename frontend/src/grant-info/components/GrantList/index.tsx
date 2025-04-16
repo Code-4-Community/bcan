@@ -8,7 +8,7 @@ import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import { ProcessGrantData } from "./processGrantData.ts";
 import NewGrantModal from "../NewGrantModal.tsx";
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 6;
 
 interface GrantListProps {
     selectedGrantId?: number;

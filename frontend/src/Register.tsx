@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { setAuthState } from "./external/bcanSatchel/actions";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
+import logo from "./images/bcan_logo.svg";
 
 /**
  * Register a new BCAN user
@@ -54,16 +55,17 @@ const Register = observer(() => {
     <div style={styles.pageContainer}>
       {/* Blurred background layer */}
       <div style={styles.backgroundLayer} />
-
       {/* Foreground content (not blurred) */}
       <div style={styles.foregroundContent}>
-        {/* Logo area */}
-        <div style={styles.logoContainer}>
-          <div style={styles.logoSquare}></div>
-          <div style={styles.logoText}>
-            Boston Climate Action Network x Code4Community
-          </div>
-        </div>
+      {/* Crest area */}
+      <div style={styles.logoContainer}>
+        <img className="logo" style={{
+            width: "200px",
+            height: "200px",
+            marginRight: "16px",
+        }} src={logo} alt="BCAN Logo" />
+       <h1 style={styles.appName}>Grant Portal</h1>
+      </div>
 
         {/* Form container with partial transparency */}
         <form onSubmit={handleSubmit} style={styles.formContainer}>
@@ -165,13 +167,19 @@ const styles: { [key: string]: React.CSSProperties } = {
     position: "relative",
     zIndex: 1, // on top of the background layer
     display: "flex",
-    flexDirection: "column",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
     alignItems: "center",
+    width: "100%",
   },
   logoContainer: {
     display: "flex",
     alignItems: "center",
+    justifyContent: "center",
     marginBottom: "2rem",
+    width: "50%",
+    wordSpacing: "4px",
+    flexDirection: "row",
   },
   logoSquare: {
     width: "28px",
@@ -198,12 +206,19 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: "1.2rem",
     fontSize: "2.2rem",
     fontWeight: 500,
-    textAlign: "center",
+    textAlign: "left",
+  },
+  appName: {
+    marginBottom: "0.4rem",
+    fontSize: "2.2rem",
+    fontWeight: 700,
+    textAlign: "left",
+    color: "rgba(255, 105, 0, 1)",
   },
   backButton: {
     background: "none",
     border: "none",
-    color: "#00a2ed",
+    color: "#0b303b",
     cursor: "pointer",
     fontSize: "1.1rem",
     marginBottom: "2rem",
@@ -213,6 +228,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   label: {
     marginBottom: "0.75rem",
     fontSize: "1.2rem",
+    textAlign: "left",
   },
   input: {
     marginBottom: "1.75rem",
@@ -233,7 +249,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderRadius: "24px",
   },
   helloButton: {
-    backgroundColor: "#00a2ed",
+    backgroundColor: "#0b303b",
     border: "1px solid #ccc",
+    color: "#fff",
   },
 };

@@ -24,6 +24,10 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
 
   const toggleExpand = () => {
+    // Toggle edit mode off now that we are leaving this specific grant in view
+    if (isExpanded) {
+      toggleEdit();
+    }
     setIsExpanded(!isExpanded);
   };
 
@@ -36,7 +40,6 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
     if (isEditing) {
       // Save changes when exiting edit mode.
       try {
-        console.log("Saving grant!");
         const response = await fetch("http://localhost:3001/grant/save", {
           method: "PUT",
           headers: {

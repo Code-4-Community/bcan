@@ -8,6 +8,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    padding: 1.2rem;
 }
 
 .search-input-container {
@@ -17,6 +18,7 @@
 
 .search-input {
     color: black;
+    padding: 8px;
 }
 
 .filter-state {

@@ -16,13 +16,21 @@ html, body {
     overflow-y: auto;
 }
 
+/* Main actions on the grant list (SEARCH, FILTER, ADD) */
 .action-bar {
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: space-between;
     width: 100%;
     height: 125px;
     margin: 4px;
+    padding: 2rem;
+}
+
+.right-action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .bot-half {
