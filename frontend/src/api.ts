@@ -1,6 +1,11 @@
-// src/api.ts
-const API = import.meta.env.VITE_API_URL;
+const BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
-export function api(path: string, init?: RequestInit) {
-  return fetch(`${API}${path.startsWith('/') ? '' : '/'}${path}`, init);
+export async function api(
+  path: string,
+  init?: RequestInit
+): Promise<Response> {
+  // Ensure path starts with a single slash
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  const url = `${BASE}${cleanPath}`;
+  return fetch(url, init);
 }
