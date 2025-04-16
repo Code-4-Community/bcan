@@ -4,6 +4,7 @@ import { useAuthContext } from "./context/auth/authContext";
 import { updateUserProfile } from "./external/bcanSatchel/actions";
 import { toJS } from 'mobx';
 import { Link } from "react-router-dom";
+import { api } from "./api";
 
 /**
  * Current logged in user's profile
@@ -20,7 +21,7 @@ const Profile = observer(() => {
     e.preventDefault();
   
     try {
-      const response = await fetch("http://localhost:3001/auth/update-profile", {
+      const response = await api("/auth/update-profile", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

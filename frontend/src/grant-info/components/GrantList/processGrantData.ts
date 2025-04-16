@@ -4,11 +4,12 @@ import { fetchAllGrants } from "../../../external/bcanSatchel/actions";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import {dateRangeFilter, filterGrants, statusFilter} from "./grantFilters";
 import { sortGrants } from "./grantSorter.ts";
+import { api } from "../../../api.ts";
 
 // GET request for all grants
 const fetchGrants = async () => {
     try {
-        const response = await fetch("http://localhost:3001/grant");
+        const response = await api("/grant");
         if (!response.ok) {
             throw new Error(`HTTP Error, Status: ${response.status}`);
         }

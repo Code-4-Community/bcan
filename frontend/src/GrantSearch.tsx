@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
 import "./styles/GrantSearch.css";
 import { Grant } from "../../middle-layer/types/Grant";
+import { api } from "./api";
 
 function GrantSearch({ onGrantSelect }: any) {
   const [userInput, setUserInput] = useState("");
@@ -21,7 +22,7 @@ function GrantSearch({ onGrantSelect }: any) {
 
   const fetchGrants = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/grant`, { method: "GET" });
+      const response = await api(`/grant`, { method: "GET" });
       const data: Grant[] = await response.json();
       const formattedData: Grant[] = data.map((grant: any) => ({
         ...grant,
