@@ -85,8 +85,6 @@ function GrantSearch({ onGrantSelect }: any) {
               // color: "#aaa" // optional styling
             }}
           />
-
-          {/* Your actual input, with extra left padding */}
           <Input
             placeholder="Search"
             variant="subtle"
