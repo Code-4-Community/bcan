@@ -3,6 +3,7 @@ import { getAppStore } from '../../external/bcanSatchel/store';
 import { setAuthState, logoutUser } from '../../external/bcanSatchel/actions'
 import { observer } from 'mobx-react-lite';
 import { User } from '../../../../middle-layer/types/User'
+import { api } from '@/api';
 
 /**
  * Available authenticated user options
@@ -33,7 +34,7 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
    * Attempt to log in the user
    */
   const login = async (username: string, password: string) => {
-    const response = await fetch('http://localhost:3001/auth/login', {
+    const response = await api('/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
@@ -54,7 +55,7 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
    * Register a new user and automatically log them in
    */
   const register = async (username: string, password: string, email: string) => {
-    const response = await fetch('http://localhost:3001/auth/register', {
+    const response = await fetch('/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password, email }),

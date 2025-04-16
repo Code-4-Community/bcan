@@ -3,6 +3,7 @@ import { setAuthState } from "./external/bcanSatchel/actions";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
 import logo from "./images/bcan_logo.svg";
+import { api } from "./api";
 
 /**
  * Register a new BCAN user
@@ -17,7 +18,7 @@ const Register = observer(() => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3001/auth/register", {
+      const response = await api("/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password, email }),
@@ -31,7 +32,7 @@ const Register = observer(() => {
       }
 
       // If registration succeeded, automatically log in the user
-      const loginResponse = await fetch("http://localhost:3001/auth/login", {
+      const loginResponse = await api("/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),

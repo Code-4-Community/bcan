@@ -6,6 +6,7 @@ import POCEntry from "./POCEntry";
 import { Grant } from "../../../../middle-layer/types/Grant";
 import { TDateISO } from "../../../../backend/src/utils/date";
 import { Status } from "../../../../middle-layer/types/Status";
+import { api } from "../../api";
 
 /** Attachment type from your middle layer */
 enum AttachmentType {
@@ -162,7 +163,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     };
     console.log(newGrant);
     try {
-      const response = await fetch("http://localhost:3001/grant/new-grant", {
+      const response = await api("/grant/new-grant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newGrant),
@@ -175,7 +176,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       }
 
       // Re-fetch the full list of grants
-      const grantsResponse = await fetch("http://localhost:3001/grant");
+      const grantsResponse = await api("/grant");
       if (!grantsResponse.ok) {
         throw new Error("Failed to re-fetch grants.");
       }

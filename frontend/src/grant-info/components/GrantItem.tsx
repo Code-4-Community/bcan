@@ -8,6 +8,7 @@ import { Grant } from "../../../../middle-layer/types/Grant";
 import { DoesBcanQualifyText } from "../../translations/general";
 import RingButton, { ButtonColorOption } from "../../custom/RingButton";
 import { Status } from "../../../../middle-layer/types/Status";
+import { api } from "../../api";
 
 interface GrantItemProps {
   grant: Grant;
@@ -40,7 +41,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
     if (isEditing) {
       // Save changes when exiting edit mode.
       try {
-        const response = await fetch("http://localhost:3001/grant/save", {
+        const response = await api("/grant/save", {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
