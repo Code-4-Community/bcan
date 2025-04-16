@@ -55,7 +55,7 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
    * Register a new user and automatically log them in
    */
   const register = async (username: string, password: string, email: string) => {
-    const response = await api('/auth/register', {
+    const response = await fetch('http://localhost:3001/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password, email }),
