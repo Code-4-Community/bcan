@@ -1,0 +1,18 @@
+version: 1
+applications:
+  - appRoot: frontend             # ← path to App
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - npm ci
+        build:
+          commands:
+            - npm run build       # runs "tsc -b && vite build"
+      artifacts:
+        baseDirectory: dist
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
