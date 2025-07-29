@@ -16,3 +16,8 @@ applications:
       cache:
         paths:
           - node_modules/**/*
+      redirects:                  # ← add this whole block
+        - source: "/<*>"          # match any client‑side route
+          target: "/index.html"   # serve SPA shell
+          status: "200"           # rewrite, not redirect
+          condition: null
