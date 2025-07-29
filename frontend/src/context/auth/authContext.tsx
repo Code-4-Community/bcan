@@ -1,4 +1,4 @@
-import { useContext, createContext, ReactNode } from 'react';
+import { useContext, createContext, ReactNode, useEffect } from 'react';
 import { getAppStore } from '../../external/bcanSatchel/store';
 import { setAuthState, logoutUser } from '../../external/bcanSatchel/actions'
 import { observer } from 'mobx-react-lite';
@@ -42,13 +42,12 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
 
     const data = await response.json();
 
-    // TODO: Need to either completely remove access_token
-    // or verify it in each action
-    if (data.access_token) {
-      setAuthState(true, data.user, data.access_token);
-    } else {
+     if (data.user) {
+      // cookie was set by /auth/login
+      setAuthState(true, data.user, null);
+      } else {
       alert('Login failed. Please check your credentials.');
-    }
+      }
   };
 
   /**
@@ -74,9 +73,19 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
   /**
    * Log out the user
    */
-  const logout = () => {
-    logoutUser(); // Satchel action that clears state
-  };
+    const logout = () => {
+        api('/auth/logout', { method: 'POST' });
+        logoutUser();
+    };
+
+  // Session Level 1.1
+  // Restore on page-load / hard-refresh
+  useEffect(() => {
+    api('/auth/session')
+    .then(r => (r.ok ? r.json() : Promise.reject()))
+    .then(({ user }) => setAuthState(true, user, null))
+    .catch(() => logoutUser());
+    }, []);
 
   return (
     <AuthContext.Provider
