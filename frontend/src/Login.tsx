@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { useAuthContext } from "./context/auth/authContext";
 import { observer } from "mobx-react-lite";
+import logo from "./images/bcan_logo.svg";
 import { useNavigate } from "react-router-dom";
 import "./external/bcanSatchel/mutators";
+import "./styles/button.css"
+
 
 /**
  * Registered users can log in here
@@ -11,13 +14,17 @@ const Login = observer(() => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { login } = useAuthContext();
+  const { login,isAuthenticated } = useAuthContext();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await login(username, password);
-      navigate("/account");
+      if (isAuthenticated){
+      navigate("/grant-info");
+      } else {
+        alert('Login failed. Please check your credentials.');
+      }
     } catch (error) {
       console.error("Error during login:", error);
       alert("An error occurred while logging in. Please try again later.");
@@ -31,13 +38,16 @@ const Login = observer(() => {
 
       {/* Foreground content (not blurred) */}
       <div style={styles.foregroundContent}>
-        {/* Logo area */}
+        {/* Crest area */}
         <div style={styles.logoContainer}>
-          <div style={styles.logoSquare}></div>
-          <div style={styles.logoText}>
-            Boston Climate Action Network x Code4Community
-          </div>
+          <img className="logo" style={{
+            width: "175px",
+            height: "175px",
+            marginRight: "16px",
+          }} src={logo} alt="BCAN Logo" />
+          <h1 style={styles.appName}>Grant Portal</h1>
         </div>
+        
 
         {/* Single form container with both Sign In and Register */}
         <form onSubmit={handleSubmit} style={styles.formContainer}>
@@ -45,7 +55,7 @@ const Login = observer(() => {
 
           {/* UserID field */}
           <label htmlFor="username" style={styles.label}>
-            User Id
+            Username
           </label>
           <input
             id="username"
@@ -73,7 +83,10 @@ const Login = observer(() => {
 
           {/* Buttons row: Sign In, vertical separator, and Register */}
           <div style={styles.buttonRow}>
-            <button type="submit" style={{ ...styles.button, ...styles.helloButton }}>
+            <button 
+            type="submit"
+             style={{ ...styles.button, ...styles.helloButton }}
+             >
               Sign In
             </button>
 
@@ -120,15 +133,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     height: "100%",
     zIndex: 0,
     background: `
-      linear-gradient(
-        120deg,
-        rgba(159, 189, 165, 0.75) 0%,
-        rgba(143, 170, 189, 0.75) 25%,
-        rgba(240, 165, 193, 0.75) 50%,
-        rgba(192, 160, 128, 0.75) 75%,
-        rgba(159, 189, 165, 0.75) 100%
-      ),
-      url("../assets/images/boston_snow.jpg")
+    linear-gradient(135deg,
+     rgb(164, 183, 251) 0%,
+      rgb(212, 240, 255) 47%, rgb(111, 147, 237) 96%)
     `,
     backgroundSize: "cover",
     backgroundBlendMode: "overlay",
@@ -138,19 +145,24 @@ const styles: { [key: string]: React.CSSProperties } = {
     position: "relative",
     zIndex: 1,
     display: "flex",
-    flexDirection: "column",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
     alignItems: "center",
+    width: "100%",
   },
   logoContainer: {
     display: "flex",
     alignItems: "center",
+    justifyContent: "center",
+    wordSpacing: "4px",
+    flexDirection: "row",
     marginBottom: "2rem",
+    width: "50%",
   },
   logoSquare: {
     width: "28px",
     height: "28px",
     backgroundColor: "#f25022",
-    marginRight: "10px",
   },
   logoText: {
     fontSize: "1.6rem",
@@ -170,11 +182,19 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: "2rem",
     fontSize: "2.2rem",
     fontWeight: 500,
-    textAlign: "center",
+    textAlign: "left",
+  },
+  appName: {
+    marginBottom: "0.4rem",
+    fontSize: "2.2rem",
+    fontWeight: 700,
+    textAlign: "left",
+    color: "rgba(255, 105, 0, 1)",
   },
   label: {
     marginBottom: "0.75rem",
     fontSize: "1.2rem",
+    textAlign: "left",
   },
   input: {
     marginBottom: "1.75rem",
@@ -208,14 +228,18 @@ const styles: { [key: string]: React.CSSProperties } = {
     color: "#555",
   },
   button: {
-    marginBottom: 0,
+    marginBottom: "1.2rem",
     padding: "1.2rem",
-    fontSize: "1.2rem",
-    borderRadius: "4px",
+    fontSize: "1.4rem",
     cursor: "pointer",
+    border: "2px solid",
+    borderRadius: "24px",
   },
   helloButton: {
-    backgroundColor: "#00a2ed",
+    backgroundColor: "#0b303b",
     border: "1px solid #ccc",
+    borderWidth: 0,
+    borderRadius: "100px",
+    color: "#fff",
   },
 };

@@ -1,8 +1,9 @@
-import { useContext, createContext, ReactNode } from 'react';
+import { useContext, createContext, ReactNode, useEffect } from 'react';
 import { getAppStore } from '../../external/bcanSatchel/store';
 import { setAuthState, logoutUser } from '../../external/bcanSatchel/actions'
 import { observer } from 'mobx-react-lite';
 import { User } from '../../../../middle-layer/types/User'
+import { api } from '../../api';
 
 /**
  * Available authenticated user options
@@ -33,7 +34,7 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
    * Attempt to log in the user
    */
   const login = async (username: string, password: string) => {
-    const response = await fetch('http://localhost:3001/auth/login', {
+    const response = await api('/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
@@ -41,20 +42,20 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
 
     const data = await response.json();
 
-    // TODO: Need to either completely remove access_token
-    // or verify it in each action
-    if (data.access_token) {
-      setAuthState(true, data.user, data.access_token);
-    } else {
+     if (data.user) {
+      // cookie was set by /auth/login
+      setAuthState(true, data.user, null);
+      } else {
       alert('Login failed. Please check your credentials.');
-    }
+      }
   };
 
   /**
    * Register a new user and automatically log them in
    */
   const register = async (username: string, password: string, email: string) => {
-    const response = await fetch('http://localhost:3001/auth/register', {
+    
+    const response = await api('/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password, email }),
@@ -72,9 +73,19 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
   /**
    * Log out the user
    */
-  const logout = () => {
-    logoutUser(); // Satchel action that clears state
-  };
+    const logout = () => {
+        api('/auth/logout', { method: 'POST' });
+        logoutUser();
+    };
+
+  // Session Level 1.1
+  // Restore on page-load / hard-refresh
+  useEffect(() => {
+    api('/auth/session')
+    .then(r => (r.ok ? r.json() : Promise.reject()))
+    .then(({ user }) => setAuthState(true, user, null))
+    .catch(() => logoutUser());
+    }, []);
 
   return (
     <AuthContext.Provider

@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
+import { api } from "./api";
 
 // get current user id
 // const currUserID = sessionStorage.getItem('userId');
@@ -20,8 +21,8 @@ const BellButton = () => {
 
   // function that handles when button is clicked and fetches notifications
   const handleClick = async () => {
-    const response = await fetch(
-      `http://localhost:3001/notifications/user/${currUserID}`,
+    const response = await api(
+      `/notifications/user/${currUserID}`,
       {
         method: "GET",
       }

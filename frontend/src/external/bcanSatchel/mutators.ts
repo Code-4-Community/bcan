@@ -1,5 +1,12 @@
 import { mutator } from 'satcheljs';
-import { setAuthState, updateUserProfile, logoutUser, fetchAllGrants } from './actions';
+import {
+  setAuthState,
+  updateUserProfile,
+  logoutUser,
+  fetchAllGrants,
+  updateFilter,
+  updateStartDateFilter, updateEndDateFilter
+} from './actions';
 import { getAppStore } from './store';
 
 /**
@@ -43,3 +50,21 @@ mutator(fetchAllGrants, (actionMessage) => {
   const store = getAppStore();
   store.allGrants = actionMessage.grants;
 });
+
+/**
+ * Modifies satchel store to get updated version of the filter
+ */
+mutator(updateFilter, (actionMessage) => {
+  const store = getAppStore();
+  store.filterStatus = actionMessage.status;
+})
+
+mutator(updateStartDateFilter, (actionMessage) => {
+  const store = getAppStore();
+  store.startDateFilter = actionMessage.startDateFilter;
+})
+
+mutator(updateEndDateFilter, (actionMessage) => {
+  const store = getAppStore();
+  store.endDateFilter = actionMessage.endDateFilter;
+})

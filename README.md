@@ -22,6 +22,7 @@ This repository holds code for BCAN. We are developing a tabular-focused website
    # Welcome to BCAN..
 2. cd backend, npm install, init environment, npm run start
 3. cd frontend, npm install, init environment, npm run dev
+4. Make sure the fill out the template env for the frontend and backend.
 
 
 ## Commands
@@ -29,6 +30,10 @@ This repository holds code for BCAN. We are developing a tabular-focused website
 2. node bcan-doctor.js --> Will pop out relevant functions, classes, etc. documentation for the backend in 'architecture.md'
 
 ## Misc
+
+Frontend should run on localhost:5173 and localhost:3001
+
+
 Here's a fun GIF to get started!
 
 *GIF from [GIPHY](https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2VjNWJ4dnBnNWt2ajcxdmdkazJkY2YxYXk4b3J4a3BqN3dveWdqeSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/LHZyixOnHwDDy/giphy.gif)*

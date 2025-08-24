@@ -1,15 +1,32 @@
 import React from 'react';
 import './styles/Footer.css'
+import { Group, Text } from '@chakra-ui/react';
+import { FooterText } from '../../translations/general';
 
-const ArchivedFooter: React.FC = () => {
+const Footer: React.FC = () => {
     return (
         <div className="footer">
-            <div className="pagination-wrapper">
-                { /* Content here */}
+{
+    /* TODO: Add BCAN Quick Links
+            <div className="bcan-link">
+            <Text>
+                <a href="https://bostonclimateaction.org/">
+                bostonclimateaction website
+                </a>
+            </Text>
             </div>
-            <button className="add-grant-button">+</button>
-        </div>
+    */
+}
+            <Group className="text-block">
+                <Text>
+                {FooterText.Motto}
+                </Text>
+                <Text className="northeastern-uni-caption">
+                {FooterText.NEU}
+                </Text>
+            </Group>
+            </div>
     )
 }
 
-export default ArchivedFooter;
+export default Footer;
