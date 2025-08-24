@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import "./external/bcanSatchel/mutators";
 import "./styles/button.css"
 
+
 /**
  * Registered users can log in here
  */
@@ -13,13 +14,17 @@ const Login = observer(() => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { login } = useAuthContext();
+  const { login,isAuthenticated } = useAuthContext();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await login(username, password);
+      if (isAuthenticated){
       navigate("/grant-info");
+      } else {
+        alert('Login failed. Please check your credentials.');
+      }
     } catch (error) {
       console.error("Error during login:", error);
       alert("An error occurred while logging in. Please try again later.");
