@@ -1,6 +1,6 @@
 import { TDateISO } from "../../backend/src/utils/date";
 import Attachment from "./Attachment";
-import Status from "./Status";
+import { Status } from "./Status";
 
 // model for Grant objects
 export interface Grant {
@@ -19,5 +19,4 @@ export interface Grant {
     estimated_completion_time: number,
     grantmaker_poc: string[]; // array of emails
     attachments: Attachment[];
-    GRANT_AWARDED_DATE_FOR_ACTIVE_GRANTS:-1;
 }

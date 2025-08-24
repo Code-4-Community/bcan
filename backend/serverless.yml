@@ -1,0 +1,21 @@
+service: bcan-backend
+frameworkVersion: '>=3'
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  environment:
+    NODE_ENV: production
+
+functions:
+  api:
+    handler: dist/bundle.handler     # <folder>/<file>.<exportedName>
+    events:
+      - httpApi:                     # API Gateway v2 (cheaper/faster)
+          path: /{proxy+}
+          method: ANY
+
+package:
+  individually: false
+  artifact: lambda.zip               # created by "npm run zip"

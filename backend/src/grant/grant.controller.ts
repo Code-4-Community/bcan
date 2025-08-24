@@ -1,6 +1,7 @@
-import { Controller, Get, Param, Put, Body, Patch } from '@nestjs/common';
+import { Controller, Get, Param, Put, Body, Patch, Post, ValidationPipe, Logger } from '@nestjs/common';
 import { GrantService } from './grant.service';
 import { Grant } from '../../../middle-layer/types/Grant';
+import { CreateGrantDto } from './dto/create-grant.dto';
 
 @Controller('grant')
 export class GrantController {
@@ -30,11 +31,17 @@ export class GrantController {
         return await this.grantService.unarchiveGrants(grantIds)
     }
 
+    @Post('new-grant')
+    async addGrant(
+      @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+      grant: CreateGrantDto
+    ) {
+      return await this.grantService.addGrant(grant);
+    }
+
     @Put('save')
     async saveGrant(@Body() grantData: Grant) {
         return await this.grantService.updateGrant(grantData)
     }
-
-
 
 }

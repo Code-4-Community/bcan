@@ -18,7 +18,7 @@ const GrantLabels: React.FC<{
   }
 
   return (
-    <ul className="grant-labels grid grid-cols-4 justify-stretch font-semibold pt-4">
+    <ul className="grant-labels grid grid-cols-5 justify-stretch font-semibold pt-4 px-4">
       <li className="text-center">
         <button
           className="grant-name"
@@ -38,6 +38,11 @@ const GrantLabels: React.FC<{
       <li className="text-center">
         <button className="amount" onClick={() => buttonHandler("amount")}>
           Amount {labels.header == "amount" ? (labels.asc ? "▲" : "▼") : ""}
+        </button>
+      </li>
+      <li className="text-center">
+        <button className="does_bcan_qualify" onClick={() => buttonHandler("does_bcan_qualify")}>
+          Does BCAN Qualify? {labels.header == "amount" ? (labels.asc ? "▲" : "▼") : ""}
         </button>
       </li>
       <li className="text-center">
