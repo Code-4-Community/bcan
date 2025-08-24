@@ -160,6 +160,8 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       description,
       attachments: attachmentsArray,
       notification_date: applicationDate as TDateISO,
+      application_requirements : "",
+    additional_notes : "",
     };
     console.log(newGrant);
     try {
