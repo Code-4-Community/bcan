@@ -13,7 +13,7 @@ import { api } from "./api";
 const Profile = observer(() => {
   const { user } = useAuthContext();
   const [email, setEmail] = useState(user?.email || "");
-  const [positionOrRole, setPositionOrRole] = useState(user?.position_or_role || "");
+  const [position, setPosition] = useState(user?.position || "");
 
   console.log(toJS(user))
 
@@ -31,7 +31,7 @@ const Profile = observer(() => {
         body: JSON.stringify({
           username: user?.userId,
           email,
-          position_or_role: positionOrRole,
+          position: position,
         }),
       });
   
@@ -46,10 +46,11 @@ const Profile = observer(() => {
   
       // Update local store so changes reflect immediately in the UI
       // Conditional update semantics based on valid non-null 'User' object available
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       user && updateUserProfile({
         ...user,
         email,
-        position_or_role: positionOrRole,
+        position: position,
       });
   
       alert("Profile updated successfully.");
@@ -86,8 +87,8 @@ const Profile = observer(() => {
         <label style={styles.label}>Position/Role:</label>
         <textarea
           style={styles.textarea}
-          value={positionOrRole}
-          onChange={(e) => setPositionOrRole(e.target.value)}
+          value={position}
+          onChange={(e) => setPosition(e.target.value)}
         />
       </div>
       {/* Account Page Action Buttons */}

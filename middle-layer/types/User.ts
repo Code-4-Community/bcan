@@ -5,6 +5,7 @@
  */
 export interface User {
     userId: string,
-    position_or_role: string,
-    email: string
+    position: string,
+    email: string,
+    name: string,
 }

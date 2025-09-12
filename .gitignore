@@ -25,3 +25,13 @@ Thumbs.db
 
 # Logs
 *.log
+
+# General ignores
+dist/
+build/
+coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.env

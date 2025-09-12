@@ -44,6 +44,11 @@ jobs:
         run: |
           npm install typescript ts-morph
 
+      - name: Run test
+        run: |
+            cd backend
+            npm run test
+
       - name: Run Circular Dependency Check
         run: |
           node canIMerge.js --check-circular

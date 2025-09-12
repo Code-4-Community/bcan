@@ -7,7 +7,9 @@
 export enum Status {
     Potential= "Potential",
     Active = "Active",
-    Inactive = "Inactive"
+    Inactive = "Inactive",
+    Rejected = "Rejected",
+    Pending = "Pending"
 }
 
 // TODO: 1) override stringify behavior of status enum 2) stringify, and then go back and modify enum (create helper function to generalize)
@@ -20,6 +22,8 @@ export function statusToString(status: string): Status | null{
         case 'Active Grants': return Status.Active;
         case 'Inactive Grants': return Status.Inactive;
         case 'Potential Grants': return Status.Potential;
+        case 'Rejected Grants': return Status.Rejected;
+        case 'Pending Grants': return Status.Pending;
         default: throw new Error(`Unknown status: ${status}`);
     }
 }
@@ -30,6 +34,9 @@ export function getColorStatus(status: string) {
         case "Active": return "#5AB911"; // green
         case "Inactive": return "#A9A9A9" // gray
         case "Potential": return "#E6CA15" // TODO: no color given for potential yet
+        // TODO add colors for rejected and pending
+        case "Rejected": return "#FF0000" // red
+        case "Pending": return "#FFA500" // orange
         default: return 'Unknown';
     }
 }
