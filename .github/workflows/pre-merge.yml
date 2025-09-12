@@ -46,6 +46,7 @@ jobs:
 
       - name: Run test
         run: |
+            cd backend
             npm run test
 
       - name: Run Circular Dependency Check
