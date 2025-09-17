@@ -3,6 +3,7 @@ import { GrantController } from "../grant.controller";
 import { GrantService } from "../grant.service";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { Grant } from "../../types/Grant";
+import { NotFoundException } from "@nestjs/common";
 
 enum Status {
   Potential = "Potential",
@@ -118,7 +119,22 @@ describe("GrantService", () => {
     });
   });
 
-  it("Test", async () => {
-    expect(true).toBe(true);
+  describe("getGrantById()", () => {
+    it("should return the correct grant given a valid id", async () => {
+      mockPromise.mockResolvedValue({ Item: mockGrants[0] });
+
+      const data = await grantService.getGrantById(1);
+
+      expect(data).toEqual(mockGrants[0]);
+    });
+
+    it("should throw an error if given an invalid id", async () => {
+      const noGrantFoundError = new NotFoundException("No grant with id 5 found.");
+      mockPromise.mockRejectedValue(noGrantFoundError);
+
+      expect(grantService.getGrantById(5)).rejects.toThrow(
+        "No grant with id 5 found."
+      );
+    });
   });
 });

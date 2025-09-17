@@ -1,4 +1,4 @@
-import { Injectable,Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import AWS from 'aws-sdk';
 import { Grant } from '../../../middle-layer/types/Grant';
 import { CreateGrantDto } from './dto/create-grant.dto';
@@ -39,11 +39,13 @@ export class GrantService {
             const data = await this.dynamoDb.get(params).promise();
 
             if (!data.Item) {
-                throw new Error('No grant with id ' + grantId + ' found.');
+                throw new NotFoundException('No grant with id ' + grantId + ' found.');
             }
 
             return data.Item as Grant;
         } catch (error) {
+            if (error instanceof NotFoundException) throw error;
+            
             console.log(error)
             throw new Error('Failed to retrieve grant.');
         }
