@@ -4,6 +4,7 @@ import { GrantService } from "../grant.service";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { Grant } from "../../types/Grant";
 import { NotFoundException } from "@nestjs/common";
+import { UpdateExpression } from "ts-morph";
 
 enum Status {
   Potential = "Potential",
@@ -55,11 +56,11 @@ const mockPromise = vi.fn();
 const mockScan = vi.fn().mockReturnThis();
 const mockGet = vi.fn().mockReturnThis();
 const mockUpdate = vi.fn().mockReturnThis();
-const mockPut = vi.fn().mockReturnThis();
 
 const mockDocumentClient = {
   scan: mockScan,
   get: mockGet,
+  update: mockUpdate,
   update: mockUpdate,
   promise: mockPromise,
   put: mockPut,
@@ -136,11 +137,63 @@ describe("GrantService", () => {
     });
 
     it("should throw an error if given an invalid id", async () => {
-      const noGrantFoundError = new NotFoundException("No grant with id 5 found.");
+      const noGrantFoundError = new NotFoundException(
+        "No grant with id 5 found."
+      );
       mockPromise.mockRejectedValue(noGrantFoundError);
 
       expect(grantService.getGrantById(5)).rejects.toThrow(
         "No grant with id 5 found."
+      );
+    });
+  });
+
+  describe("unarchiveGrants()", () => {
+    it("should unarchive multiple grants and return their ids", async () => {
+      mockPromise
+        .mockResolvedValueOnce({ Attributes: { isArchived: false } })
+        .mockResolvedValueOnce({ Attributes: { isArchived: false } });
+
+      const data = await grantService.unarchiveGrants([1, 2]);
+
+      expect(data).toEqual([1, 2]);
+      expect(mockUpdate).toHaveBeenCalledTimes(2);
+
+      const firstCallArgs = mockUpdate.mock.calls[0][0];
+      const secondCallArgs = mockUpdate.mock.calls[1][0];
+
+      expect(firstCallArgs).toMatchObject({
+        TableName: "Grants",
+        Key: { grantId: 1 },
+        UpdateExpression: "set isArchived = :archived",
+        ExpressionAttributeValues: { ":archived": false },
+        ReturnValues: "UPDATED_NEW",
+      });
+      expect(secondCallArgs).toMatchObject({
+        TableName: "Grants",
+        Key: { grantId: 2 },
+        UpdateExpression: "set isArchived = :archived",
+        ExpressionAttributeValues: { ":archived": false },
+        ReturnValues: "UPDATED_NEW",
+      });
+    });
+
+    it("should skip over grants that are already ", async () => {
+      mockPromise
+        .mockResolvedValueOnce({ Attributes: { isArchived: true } })
+        .mockResolvedValueOnce({ Attributes: { isArchived: false } });
+
+      const data = await grantService.unarchiveGrants([1, 2]);
+
+      expect(data).toEqual([2]);
+      expect(mockUpdate).toHaveBeenCalledTimes(2);
+    });
+
+    it("should throw an error if any update call fails", async () => {
+      mockPromise.mockRejectedValueOnce(new Error("DB Error"));
+
+      await expect(grantService.unarchiveGrants([90])).rejects.toThrow(
+        "Failed to update Grant 90 status."
       );
     });
   });
