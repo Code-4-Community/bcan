@@ -51,7 +51,7 @@ export class GrantService {
         }
     }
 
-    // Method to archive grants takes in array 
+    // Method to unarchive grants takes in array 
     async unarchiveGrants(grantIds :number[]) : Promise<number[]> {
         let successfulUpdates: number[] = [];
         for (const grantId of grantIds) {
@@ -70,7 +70,7 @@ export class GrantService {
                 console.log(res)
 
                 if (res.Attributes && res.Attributes.isArchived === false) {
-                    console.log(`Grant ${grantId} successfully archived.`);
+                    console.log(`Grant ${grantId} successfully un-archived.`);
                     successfulUpdates.push(grantId);
                 } else {
                     console.log(`Grant ${grantId} update failed or no change in status.`);
