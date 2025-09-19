@@ -4,7 +4,6 @@ import { GrantService } from "../grant.service";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { Grant } from "../../types/Grant";
 import { NotFoundException } from "@nestjs/common";
-import { UpdateExpression } from "ts-morph";
 
 enum Status {
   Potential = "Potential",
@@ -195,6 +194,45 @@ describe("GrantService", () => {
       await expect(grantService.unarchiveGrants([90])).rejects.toThrow(
         "Failed to update Grant 90 status."
       );
+    });
+  });
+
+  describe("updateGrant()", () => {
+    it("should update the correct grant and return a stringified JSON with the updated grant", async () => {
+      const mockUpdatedGrant: Grant = {
+        grantId: 2,
+        organization: mockGrants[1].organization,
+        does_bcan_qualify: true, // UPDATED
+        status: Status.Active, // UPDATED
+        amount: mockGrants[1].amount,
+        application_deadline: mockGrants[1].application_deadline,
+        report_deadline: mockGrants[1].report_deadline,
+        notification_date: mockGrants[1].notification_date,
+        description: mockGrants[1].description,
+        application_requirements: mockGrants[1].application_requirements,
+        additional_notes: "Even MORE notes", // UPDATED
+        timeline: mockGrants[1].timeline,
+        estimated_completion_time: 400, // UPDATED
+        grantmaker_poc: mockGrants[1].grantmaker_poc,
+        attachments: mockGrants[1].attachments,
+      };
+      const updatedAttributes = {
+        does_bcan_qualify: mockUpdatedGrant.does_bcan_qualify,
+        status: mockUpdatedGrant.status,
+        additional_notes: mockUpdatedGrant.additional_notes,
+        estimated_completion_time: mockUpdatedGrant.estimated_completion_time,
+      };
+
+      mockUpdate.mockReturnValue({
+        promise: vi.fn().mockResolvedValue({ Attributes: updatedAttributes })
+      });
+
+      const data = await grantService.updateGrant(mockUpdatedGrant);
+
+      expect(data).toEqual(JSON.stringify({
+        Attributes: updatedAttributes
+      }));
+      expect(mockGrants[0]).toEqual(mockGrants[0]);
     });
   });
 });
