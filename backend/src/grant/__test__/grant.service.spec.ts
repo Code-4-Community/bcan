@@ -4,6 +4,7 @@ import { GrantService } from "../grant.service";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { Grant } from "../../types/Grant";
 import { NotFoundException } from "@nestjs/common";
+import { CreateGrantDto } from "../dto/create-grant.dto";
 
 enum Status {
   Potential = "Potential",
@@ -55,6 +56,7 @@ const mockPromise = vi.fn();
 const mockScan = vi.fn().mockReturnThis();
 const mockGet = vi.fn().mockReturnThis();
 const mockUpdate = vi.fn().mockReturnThis();
+const mockPut = vi.fn().mockReturnThis();
 
 const mockDocumentClient = {
   scan: mockScan,
@@ -224,14 +226,16 @@ describe("GrantService", () => {
       };
 
       mockUpdate.mockReturnValue({
-        promise: vi.fn().mockResolvedValue({ Attributes: updatedAttributes })
+        promise: vi.fn().mockResolvedValue({ Attributes: updatedAttributes }),
       });
 
       const data = await grantService.updateGrant(mockUpdatedGrant);
 
-      expect(data).toEqual(JSON.stringify({
-        Attributes: updatedAttributes
-      }));
+      expect(data).toEqual(
+        JSON.stringify({
+          Attributes: updatedAttributes,
+        })
+      );
       expect(mockGrants[0]).toEqual(mockGrants[0]);
     });
 
@@ -255,10 +259,69 @@ describe("GrantService", () => {
       };
 
       mockUpdate.mockRejectedValue({
-        promise: vi.fn().mockRejectedValue(new Error())
+        promise: vi.fn().mockRejectedValue(new Error()),
       });
 
-      await expect(grantService.updateGrant(mockUpdatedGrant)).rejects.toThrow(new Error("Failed to update Grant 90"))
-    })
+      await expect(grantService.updateGrant(mockUpdatedGrant)).rejects.toThrow(
+        new Error("Failed to update Grant 90")
+      );
+    });
   });
+
+  describe("addGrant()", () => {
+    it("should successfully add a grant and return the new grant id", async () => {
+      const mockCreateGrantDto: CreateGrantDto = {
+        organization: "New test organization",
+        description: "This is a new organization that does organizational things",
+        grantmaker_poc: ["newtestorg@test.com"],
+        application_deadline: "2026-02-14",
+        report_deadline: "2026-11-05",
+        notification_date: "2026-10-07",
+        timeline: 200,
+        estimated_completion_time: 200,
+        does_bcan_qualify: true,
+        status: Status.Potential,
+        amount: 35000,
+        attachments: [],
+      }
+
+      mockPut.mockReturnValue({
+        promise: vi.fn().mockResolvedValue(Date.now())
+      });
+
+      const data = await grantService.addGrant(mockCreateGrantDto);
+
+      expect(data).toEqual(Date.now());
+      expect(mockDocumentClient.put).toHaveBeenCalledWith({
+        TableName: expect.any(String),
+        Item: {
+          grantId: expect.any(Number),
+          ...mockCreateGrantDto
+        }
+      })
+    })
+
+    it("should throw an error if the database put operation fails", async () => {
+      const mockCreateGrantDto = {
+        organization: "New Org",
+        description: "New Desc",
+        grantmaker_poc: ["new@test.com"],
+        application_deadline: "2025-04-01",
+        notification_date: "2025-04-10",
+        report_deadline: "2025-05-01",
+        timeline: 3,
+        estimated_completion_time: 200,
+        does_bcan_qualify: true,
+        status: Status.Active,
+        amount: 1500,
+        attachments: [],
+      };
+
+      mockPut.mockRejectedValue(new Error("DB Error"));
+
+      await expect(grantService.addGrant(mockCreateGrantDto)).rejects.toThrow(
+        "Failed to upload new grant from New Org"
+      );
+    })
+  })
 });
