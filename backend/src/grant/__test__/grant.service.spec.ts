@@ -83,6 +83,9 @@ describe("GrantService", () => {
     // Clear all mocks before each test
     vi.clearAllMocks();
 
+    // Set the environment variable for the table name
+    process.env.DYNAMODB_GRANT_TABLE_NAME = 'Grants';
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [GrantController],
       providers: [GrantService],
