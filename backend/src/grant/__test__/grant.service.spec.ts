@@ -108,6 +108,9 @@ describe("GrantService", () => {
       const data = await grantService.getAllGrants();
 
       expect(data).toEqual(mockGrants);
+      expect(mockDocumentClient.scan).toHaveBeenCalledWith({
+        TableName: expect.any(String)
+      })
     });
 
     it("should return an empty list of grants if no grants exist in the database", async () => {
@@ -135,6 +138,12 @@ describe("GrantService", () => {
       const data = await grantService.getGrantById(1);
 
       expect(data).toEqual(mockGrants[0]);
+      expect(mockDocumentClient.get).toHaveBeenCalledWith({
+        TableName: expect.any(String),
+        Key: {
+          grantId: 1
+        }
+      })
     });
 
     it("should throw an error if given an invalid id", async () => {
@@ -237,6 +246,14 @@ describe("GrantService", () => {
         })
       );
       expect(mockGrants[0]).toEqual(mockGrants[0]);
+      expect(mockDocumentClient.update).toHaveBeenCalledWith({
+        TableName: expect.any(String),
+        Key: { grantId: 2 },
+        UpdateExpression: expect.any(String),
+        ExpressionAttributeNames: expect.any(Object),
+        ExpressionAttributeValues: expect.any(Object),
+        ReturnValues: "UPDATED_NEW"
+      })
     });
 
     it("should throw an error if the updated grant has an invalid id", async () => {
@@ -272,7 +289,8 @@ describe("GrantService", () => {
     it("should successfully add a grant and return the new grant id", async () => {
       const mockCreateGrantDto: CreateGrantDto = {
         organization: "New test organization",
-        description: "This is a new organization that does organizational things",
+        description:
+          "This is a new organization that does organizational things",
         grantmaker_poc: ["newtestorg@test.com"],
         application_deadline: "2026-02-14",
         report_deadline: "2026-11-05",
@@ -283,10 +301,10 @@ describe("GrantService", () => {
         status: Status.Potential,
         amount: 35000,
         attachments: [],
-      }
+      };
 
       mockPut.mockReturnValue({
-        promise: vi.fn().mockResolvedValue(Date.now())
+        promise: vi.fn().mockResolvedValue(Date.now()),
       });
 
       const data = await grantService.addGrant(mockCreateGrantDto);
@@ -296,10 +314,10 @@ describe("GrantService", () => {
         TableName: expect.any(String),
         Item: {
           grantId: expect.any(Number),
-          ...mockCreateGrantDto
-        }
-      })
-    })
+          ...mockCreateGrantDto,
+        },
+      });
+    });
 
     it("should throw an error if the database put operation fails", async () => {
       const mockCreateGrantDto = {
@@ -322,6 +340,6 @@ describe("GrantService", () => {
       await expect(grantService.addGrant(mockCreateGrantDto)).rejects.toThrow(
         "Failed to upload new grant from New Org"
       );
-    })
-  })
+    });
+  });
 });
