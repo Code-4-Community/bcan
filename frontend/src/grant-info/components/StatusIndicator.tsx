@@ -15,9 +15,9 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({ curStatus }) => {
   return (
     <div className="justify-self-center">
     <span className="flex items-center">
-      <FaCircle style={{ color: circleColor}} className="mr-8" />
+      <FaCircle style={{ color: circleColor}} className="mr-4" />
       {/* The text label: #000, "Helvetica Neue", 28px */}
-      <span className="w-16 text-left">{labelText}</span>
+      <span className="w-20 text-left">{labelText}</span>
     </span>
     </div>
   );
