@@ -11,8 +11,9 @@
 .app-container {
   display: flex;
   justify-content: center; /* Centers horizontally */
-  align-items: center; /* Centers vertically */
+  align-items:baseline; /* Centers vertically */
   text-align: center; /* Optional: centers text inside */
   width: 100%;
+  min-height:100vh;
 }
 
