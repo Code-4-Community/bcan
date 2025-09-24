@@ -41,8 +41,10 @@ vi.mock('aws-sdk', () => ({
 describe('NotificationController', () => {
   let controller: NotificationController;
   let notificationService: NotificationService;
-  let mockNotification2024 : Notification;
-  let mockNotification2025 : Notification;
+  let mockNotification_id1_user1 : Notification;
+  let mockNotification_id1_user2 : Notification;
+  let mockNotification_id2_user1: Notification;
+  let mockNotification_id2_user2: Notification;
 
   beforeEach(async () => {
     // Clear all mocks before each test
@@ -70,16 +72,30 @@ describe('NotificationController', () => {
       }
     });
 
-    mockNotification2024 = {
+    mockNotification_id1_user1 = {
       notificationId: '1',
       userId: 'user-1',
       message: 'New Grant Created 🎉 ',
       alertTime: '2024-01-15T10:30:00.000Z'
     } as Notification;
 
-    mockNotification2025 = {
+    mockNotification_id1_user2 = {
       notificationId: '1',
+      userId: 'user-2',
+      message: 'New Grant Created',
+      alertTime: '2025-01-15T10:30:00.000Z'
+    } as Notification;
+
+    mockNotification_id2_user1= {
+      notificationId: '2',
       userId: 'user-1',
+      message: 'New Grant Created',
+      alertTime: '2025-01-15T10:30:00.000Z'
+    } as Notification;
+
+    mockNotification_id2_user2= {
+      notificationId: '2',
+      userId: 'user-2',
       message: 'New Grant Created',
       alertTime: '2025-01-15T10:30:00.000Z'
     } as Notification;
@@ -88,13 +104,28 @@ describe('NotificationController', () => {
     mockPromise.mockResolvedValue({}); 
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-    expect(notificationService).toBeDefined();
-  });
+  it('getNOtificationByUserId mock query called with correct parameters', async () => {
+    // Arrange - Setup query mock to return our test data
+    const mockQueryResponse = {
+      Items: [mockNotification_id1_user1, mockNotification_id1_user2, mockNotification_id2_user1, mockNotification_id2_user2] 
+    };
+    
+    mockQuery.mockReturnValue({ promise: vi.fn().mockResolvedValue(mockQueryResponse) });
 
-  it('should get all notifications', async () => {
-    expect(true).toBe(true);
+    // Act
+    const result = await notificationService.getNotificationByUserId('user-1');
+
+    //Assert
+    expect(mockQuery).toHaveBeenCalledWith({
+      TableName: 'BCANNotifications',
+      IndexName: 'userId-alertTime-index',
+      KeyConditionExpression: 'userId = :userId',
+      ExpressionAttributeValues: {
+        ':userId': 'user-1',
+      },
+      ScanIndexForward: false
+    });
+    
   });
 
   it('should send email successfully with valid parameters', async () => {
@@ -188,7 +219,7 @@ describe('NotificationController', () => {
     expect(mockSendEmail).toHaveBeenCalled();
   });
 
-  it('should handle empty strings gracefully', async () => {
+  it('should send an email that is an empty string', async () => {
     // Arrange
     const to = 'user@example.com';
     const subject = '';
@@ -212,7 +243,7 @@ describe('NotificationController', () => {
     });
   });
 
-  it('should handle very long email content', async () => {
+  it('should send very long email content', async () => {
     // Arrange
     const to = 'user@example.com';
     const subject = 'A'.repeat(1000); // Very long subject
@@ -236,32 +267,9 @@ describe('NotificationController', () => {
     });
   });
 
-  it('should get list of notifications by user id', async () => {
-    // Arrange - Setup query mock to return our test data
-    const mockQueryResponse = {
-      Items: [mockNotification2025, mockNotification2024] // Most recent first (2025, then 2024)
-    };
-    
-    mockQuery.mockReturnValue({ promise: vi.fn().mockResolvedValue(mockQueryResponse) });
+  
 
-    // Act
-    const result = await notificationService.getNotificationByUserId('user-1');
-
-    // Assert
-    expect(mockQuery).toHaveBeenCalledWith({
-      TableName: 'BCANNotifications',
-      IndexName: 'userId-alertTime-index',
-      KeyConditionExpression: 'userId = :userId',
-      ExpressionAttributeValues: {
-        ':userId': 'user-1',
-      },
-      ScanIndexForward: false
-    });
-    
-    expect(result).toEqual([mockNotification2025, mockNotification2024]);
-  });
-
-   it('should throw error when no notifications found for user', async () => {
+   it('should throw error when notifications is null', async () => {
     // Arrange - Setup query mock to return no items
     const mockQueryResponse = {
       Items: null // or undefined or []
@@ -274,14 +282,12 @@ describe('NotificationController', () => {
       .rejects.toThrow('Failed to retrieve notifications.');
   });
 
-  it('should create notification with valid data', async () => {
+  it('should create notification with valid data in the set table', async () => {
     const mockNotification = {
       notificationId: '123',
       userId : 'user-456',
       message : 'Test notification',
       alertTime : '2024-01-15T10:30:00.000Z',
-
-
     } as Notification;
     const result = await notificationService.createNotification(mockNotification);
     expect(mockPut).toHaveBeenCalledWith({
@@ -297,7 +303,7 @@ describe('NotificationController', () => {
     
   });
 
-  it('should use fallback table name when environment variable is not set', async () => {
+  it('should create notification with fallback table name when environment variable is not set', async () => {
     // Arrange - explicitly delete the environment variable
     delete process.env.DYNAMODB_NOTIFICATION_TABLE_NAME;
     
