@@ -17,6 +17,11 @@ What steps did you take to verify your changes work? These should be clear enoug
 
 Provide screenshots of any new components, styling changes, or pages. 
 
+
+### Test Changes
+If your new feature required some test to be changed or added to fit the new functionality or changes please document these changes here.
+
+
 ### 🏕️ (Optional) Future Work / Notes
 
 Did you notice anything ugly during the course of this ticket? Any bugs, design challenges, or unexpected behavior? Write it down so we can clean it up in a future ticket!
