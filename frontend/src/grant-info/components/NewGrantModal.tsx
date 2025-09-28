@@ -196,18 +196,90 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-content new-grant-grid">
-        <h2>Add New Grant</h2>
+        <h2>New Grant</h2>
         {errorMessage && <p className="error-message">{errorMessage}</p>}
 
         {/* Row 1 */}
-        <label className="label-col">Organization Name</label>
-        <input
-          className="input-col"
-          type="text"
-          placeholder="Click to edit name"
-          value={organization}
-          onChange={(e) => setOrganization(e.target.value)}
-        />
+
+        <div className="left-cols">
+
+          <div >
+            <label >Organization Name</label>
+            <input
+              className="long-input"
+              type="text"
+              placeholder="Click to edit name"
+              value={organization}
+              onChange={(e) => setOrganization(e.target.value)}
+            />
+          </div>
+
+          <div className="date-entry" >
+            
+            <div>
+              <label >Application Date</label>
+              <input
+                type="date"
+                value={applicationDate}
+                onChange={(e) => setApplicationDate(e.target.value)}
+              />
+            </div>
+            
+            <div >
+              <label >Grant Start Date</label>
+              <input
+                type="date"
+                value={grantStartDate}
+                onChange={(e) => setGrantStartDate(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label >Report Deadline</label>
+              <input
+                type="date"
+                value={grantStartDate}
+                onChange={(e) => setGrantStartDate(e.target.value)}
+              />
+            </div>
+            
+          </div>
+
+          <label >Estimated Completion Time (in hours)</label>
+          <input
+
+            type="number"
+            value={estimatedCompletionTimeInHours}
+            onChange={(e) => setEstimatedCompletionTimeInHours(Number(e.target.value))}
+            style={{ width: '66%' }}
+          />
+
+          <div>
+            <label >Timeline (in years)</label>
+            <input
+    
+              type="number"
+              value={timelineInYears}
+              onChange={(e) => setTimelineInYears(Number(e.target.value))}
+            />
+          </div>
+          
+          <label >Amount</label>
+          <input
+            type="number"
+            placeholder="$0.00"
+            value={amount}
+            onChange={(e) => setAmount(Number(e.target.value))}
+          />
+
+          
+        </div>
+        
+
+        
+        
+        
+
 
         <label className="label-col">BCAN POC</label>
         <div className="poc-box">
@@ -222,21 +294,8 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         </div>
 
         {/* Row 2: Dates */}
-        <label className="label-col">Application Date</label>
-        <input
-          className="input-col"
-          type="date"
-          value={applicationDate}
-          onChange={(e) => setApplicationDate(e.target.value)}
-        />
 
-        <label className="label-col">Grant Start Date</label>
-        <input
-          className="input-col"
-          type="date"
-          value={grantStartDate}
-          onChange={(e) => setGrantStartDate(e.target.value)}
-        />
+        
 
         <label className="label-col">Report Date</label>
         <input
@@ -247,21 +306,8 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         />
 
         {/* Row 3: Times */}
-        <label className="label-col">Estimated Completion Time (in hours)</label>
-        <input
-          className="input-col"
-          type="number"
-          value={estimatedCompletionTimeInHours}
-          onChange={(e) => setEstimatedCompletionTimeInHours(Number(e.target.value))}
-        />
 
-        <label className="label-col">Timeline (in years)</label>
-        <input
-          className="input-col"
-          type="number"
-          value={timelineInYears}
-          onChange={(e) => setTimelineInYears(Number(e.target.value))}
-        />
+        
 
         {/* Row 4: Does BCAN Qualify & Status */}
         <label className="label-col">Does BCAN Qualify?</label>
@@ -286,14 +332,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         </select>
 
         {/* Row 5: Amount */}
-        <label className="label-col">Amount</label>
-        <input
-          className="input-col"
-          type="number"
-          placeholder="$0.00"
-          value={amount}
-          onChange={(e) => setAmount(Number(e.target.value))}
-        />
+        
 
         {/* Row 6: Scope Documents (Attachments) */}
         <label className="label-col">Scope Documents</label>
