@@ -5,6 +5,7 @@ applications:
       phases:
         preBuild:
           commands:
+            - cat "hi world"
             - npm ci
         build:
           commands:
