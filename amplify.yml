@@ -5,7 +5,7 @@ applications:
       phases:
         preBuild:
           commands:
-            - npm ci
+            - npm i --prod
         build:
           commands:
             - npm run build       # runs "tsc -b && vite build"
