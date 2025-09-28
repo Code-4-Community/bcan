@@ -1,10 +1,10 @@
-import './grant-info/components/styles/AddGrantButton.css';
+import './grant-info/components/styles/GrantButton.css';
 
 // TODO: Fix 'any' typing here
 const AddGrantButton = ({ onClick } : any) => {
 
   return (
-    <button className="add-grant-button" onClick={onClick}>
+    <button className="grant-button add-grant-button" onClick={onClick}>
       + ADD
     </button>
   );

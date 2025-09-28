@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { getAppStore } from "../../../external/bcanSatchel/store";
 import Calendar from "./Calendar";
 import "./CalendarDropdown.css";
-import { FaCalendarAlt, FaChevronDown } from "react-icons/fa";
+import { FaCalendarAlt, FaChevronRight } from "react-icons/fa";
 
 // observer to make satchel store state variables
 const CalendarDropdown = observer(() => {
@@ -29,7 +29,7 @@ const CalendarDropdown = observer(() => {
             <button className="calendar-toggle-button" onClick={toggleDropdown}>
                 <FaCalendarAlt className="calendar-icon" />
                 <span>{displayText}</span>
-                <FaChevronDown />
+                <FaChevronRight />
             </button>
 
             {isOpen && (

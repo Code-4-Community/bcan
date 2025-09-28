@@ -1,6 +1,5 @@
 .search-bar-main-container {
     width: 461px;
-    padding: 20px;
 }
 
 .search-container {
@@ -8,7 +7,6 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 1.2rem;
 }
 
 .search-input-container {

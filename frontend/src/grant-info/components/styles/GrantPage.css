@@ -16,6 +16,10 @@ html, body {
     overflow-y: auto;
 }
 
+.sortbar {
+    border-radius: 1.2rem;
+}
+
 /* Main actions on the grant list (SEARCH, FILTER, ADD) */
 .action-bar {
     display: flex;
