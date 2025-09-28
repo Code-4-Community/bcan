@@ -1,6 +1,5 @@
 .search-bar-main-container {
-    width: 461px;
-    padding: 20px;
+    min-width: 300px;
 }
 
 .search-container {
@@ -14,12 +13,17 @@
 .search-input-container {
     position: relative;
     width: 100%;
+    border: 2px solid black;
+    border-radius: 8px;
 }
 
 .search-input {
     color: black;
     padding: 8px;
+    border-radius: 8px;
+    border: 0px;
 }
+
 
 .filter-state {
     color: whitesmoke;
