@@ -302,13 +302,15 @@ describe("GrantService", () => {
         attachments: [],
       };
 
+      const now = Date.now()
+
       mockPut.mockReturnValue({
-        promise: vi.fn().mockResolvedValue(Date.now()),
+        promise: vi.fn().mockResolvedValue(now),
       });
 
       const data = await grantService.addGrant(mockCreateGrantDto);
 
-      expect(data).toEqual(Date.now());
+      expect(data).toEqual(now);
       expect(mockDocumentClient.put).toHaveBeenCalledWith({
         TableName: expect.any(String),
         Item: {
