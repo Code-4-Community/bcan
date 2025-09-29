@@ -60,7 +60,6 @@
   .left-cols {
     grid-column: 1 / span 3;
     text-align: left;
-    
   }
 
   .date-entry  {
@@ -69,6 +68,10 @@
     align-self : center;
     gap: 10px;
  
+  }
+
+  .inputs {
+    padding-bottom : 20px;
   }
 
 

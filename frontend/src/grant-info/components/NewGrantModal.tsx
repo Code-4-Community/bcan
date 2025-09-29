@@ -203,10 +203,10 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
         <div className="left-cols">
 
-          <div >
+          <div className="inputs">
             <label >Organization Name</label>
             <input
-              className="long-input"
+              
               type="text"
               placeholder="Click to edit name"
               value={organization}
@@ -214,11 +214,12 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             />
           </div>
 
-          <div className="date-entry" >
+          <div className="date-entry inputs" >
             
-            <div>
+            <div >
               <label >Application Date</label>
               <input
+                className="inputs"
                 type="date"
                 value={applicationDate}
                 onChange={(e) => setApplicationDate(e.target.value)}
@@ -235,26 +236,44 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             </div>
 
             <div>
-              <label >Report Deadline</label>
-              <input
+              <label >Report Deadlines</label>
+              <div style={{
+                    border: "1px solid #ccc",
+                    backgroundColor: "#f5f5f5",
+                    padding: "10px",
+                    borderRadius: "2px",
+                    marginTop: "1px",
+                    width: "95%",
+                    height: "130%"
+                  }}>
+                <input
                 type="date"
                 value={grantStartDate}
                 onChange={(e) => setGrantStartDate(e.target.value)}
-              />
+                />
+                <button style={{width: "100%"}}>
+                  + Deadline 
+                </button>
+              </div>
+              
             </div>
             
           </div>
 
-          <label >Estimated Completion Time (in hours)</label>
-          <input
+          <div style={{marginTop: "-60px"}} className="inputs">
+            <label >Estimated Completion Time (in hours)</label>
+            <input
 
-            type="number"
-            value={estimatedCompletionTimeInHours}
-            onChange={(e) => setEstimatedCompletionTimeInHours(Number(e.target.value))}
-            style={{ width: '66%' }}
-          />
+              type="number"
+              value={estimatedCompletionTimeInHours}
+              onChange={(e) => setEstimatedCompletionTimeInHours(Number(e.target.value))}
+              style={{ width: '60%' }}
+            />
 
-          <div>
+          </div>
+          
+
+          <div className="inputs">
             <label >Timeline (in years)</label>
             <input
     
@@ -272,14 +291,16 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             onChange={(e) => setAmount(Number(e.target.value))}
           />
 
+          <label>Description</label>
+          <textarea
+            placeholder="Type Grant Descriptions, Application Requirements, and General Notes here..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            style={{width : "170%"}}
+          ></textarea>
+
           
         </div>
-        
-
-        
-        
-        
-
 
         <label className="label-col">BCAN POC</label>
         <div className="poc-box">
@@ -371,13 +392,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         </div>
 
         {/* Row 7: Description */}
-        <label className="label-col">Description</label>
-        <textarea
-          className="input-col"
-          placeholder="Type Grant Descriptions, Application Requirements, and General Notes here..."
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        ></textarea>
+        
 
         {/* Row 8: Buttons */}
         <div className="button-row">
