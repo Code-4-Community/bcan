@@ -195,56 +195,212 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content">
-        <form>
-          <h2>New Grant</h2>
+      <div className="modal-content new-grant-grid">
+        <h2>New Grant</h2>
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
 
-          <div className="flex mb-6 ">
-            <div className="md:w-1/2 mb-6 md:mb-0 ">
-              <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
-                Organization Name
-              </label>
-              <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Type Here"/>
-            </div>
+        {/* Row 1 */}
+
+        <div className="left-cols">
+
+          <div className="inputs">
+            <label >Organization Name</label>
+            <input
+              
+              type="text"
+              placeholder="Click to edit name"
+              value={organization}
+              onChange={(e) => setOrganization(e.target.value)}
+            />
           </div>
 
-          <div className="flex mb-6">
-            <div className="md:w-1/3 mb-6 md:mb-0">
-              <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-city">
-                Application Date
-              </label>
-              <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="date"/>
+          <div className="date-entry inputs" >
+            
+            <div >
+              <label >Application Date</label>
+              <input
+                className="inputs"
+                type="date"
+                value={applicationDate}
+                onChange={(e) => setApplicationDate(e.target.value)}
+              />
             </div>
-            <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-              <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
-                Grant Start Date
-              </label>
-              <div className="relative">
-                <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="date"/>
-              </div>
+            
+            <div >
+              <label >Grant Start Date</label>
+              <input
+                type="date"
+                value={grantStartDate}
+                onChange={(e) => setGrantStartDate(e.target.value)}
+              />
             </div>
-            <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-              <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-zip">
-                Report Deadlines
-              </label>
-              <div className="p-3 rounded h-60" style={{backgroundColor: '#D3D3D3'}}>
-                <input className="w-full text-gray-700 rounded" id="grid-city" type="date"/>
-                <button className="w-full mt-2">Add Deadline +</button>
-              </div>
 
+            <div>
+              <label >Report Deadlines</label>
+              <div style={{
+                    border: "1px solid #ccc",
+                    backgroundColor: "#f5f5f5",
+                    padding: "10px",
+                    borderRadius: "2px",
+                    marginTop: "1px",
+                    width: "95%",
+                    height: "130%"
+                  }}>
+                <input
+                type="date"
+                value={grantStartDate}
+                onChange={(e) => setGrantStartDate(e.target.value)}
+                />
+                <button style={{width: "100%"}}>
+                  + Deadline 
+                </button>
+              </div>
+              
             </div>
+            
           </div>
-        </form>
+
+          <div style={{marginTop: "-60px"}} className="inputs">
+            <label >Estimated Completion Time (in hours)</label>
+            <input
+
+              type="number"
+              value={estimatedCompletionTimeInHours}
+              onChange={(e) => setEstimatedCompletionTimeInHours(Number(e.target.value))}
+              style={{ width: '60%' }}
+            />
+
+          </div>
+          
+
+          <div className="inputs">
+            <label >Timeline (in years)</label>
+            <input
+    
+              type="number"
+              value={timelineInYears}
+              onChange={(e) => setTimelineInYears(Number(e.target.value))}
+            />
+          </div>
+          
+          <label >Amount</label>
+          <input
+            type="number"
+            placeholder="$0.00"
+            value={amount}
+            onChange={(e) => setAmount(Number(e.target.value))}
+          />
+
+          <label>Description</label>
+          <textarea
+            placeholder="Type Grant Descriptions, Application Requirements, and General Notes here..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            style={{width : "170%"}}
+          ></textarea>
+
+          
+        </div>
+
+        <label className="label-col">BCAN POC</label>
+        <div className="poc-box">
+          {bcanPocComponents}
+          <button onClick={addBcanPoc}>+ Add BCAN POC</button>
+        </div>
+
+        <label className="label-col">Grant Provider POC</label>
+        <div className="poc-box">
+          {grantProviderPocComponents}
+          <button onClick={addGrantProviderPoc}>+ Add Provider POC</button>
+        </div>
+
+        {/* Row 2: Dates */}
+
+        
+
+        <label className="label-col">Report Date</label>
+        <input
+          className="input-col"
+          type="date"
+          value={reportDate}
+          onChange={(e) => setReportDate(e.target.value)}
+        />
+
+        {/* Row 3: Times */}
+
+        
+
+        {/* Row 4: Does BCAN Qualify & Status */}
+        <label className="label-col">Does BCAN Qualify?</label>
+        <select
+          className="input-col"
+          value={doesBcanQualify ? "true" : "false"}
+          onChange={(e) => setDoesBcanQualify(e.target.value === "true")}
+        >
+          <option value="true">Yes</option>
+          <option value="false">No</option>
+        </select>
+
+        <label className="label-col">Status</label>
+        <select
+          className="input-col"
+          value={status}
+          onChange={(e) => setStatus((e.target.value) as Status)}
+        >
+          <option value={Status.Potential}>Potential</option>
+          <option value={Status.Active}>Active</option>
+          <option value={Status.Inactive}>Inactive</option>
+        </select>
+
+        {/* Row 5: Amount */}
+        
+
+        {/* Row 6: Scope Documents (Attachments) */}
+        <label className="label-col">Scope Documents</label>
+        <div className="attachments-container input-col">
+          {attachments.map((attachment, index) => (
+            <div className="attachment-entry" key={index}>
+              <input
+                type="text"
+                placeholder="Attachment Name"
+                value={attachment.attachment_name}
+                onChange={(e) =>
+                  handleAttachmentChange(index, "attachment_name", e.target.value)
+                }
+              />
+              <input
+                type="text"
+                placeholder="URL"
+                value={attachment.url}
+                onChange={(e) =>
+                  handleAttachmentChange(index, "url", e.target.value)
+                }
+              />
+              <select
+                value={attachment.type}
+                onChange={(e) =>
+                  handleAttachmentChange(index, "type", Number(e.target.value))
+                }
+              >
+                <option value={AttachmentType.SCOPE_DOCUMENT}>Scope Document</option>
+                <option value={AttachmentType.SUPPORTING_RESOURCE}>Supporting Resource</option>
+              </select>
+              <button onClick={() => removeAttachment(index)}>X</button>
+            </div>
+          ))}
+          <button onClick={addAttachment}>Choose Files</button>
+        </div>
+
+        {/* Row 7: Description */}
+        
+
+        {/* Row 8: Buttons */}
         <div className="button-row">
           <button onClick={onClose}>Close</button>
           <button onClick={handleSubmit}>Save</button>
         </div>
-
+      </div>
     </div>
-
-    </div>
-    
-    
   );
 };
 

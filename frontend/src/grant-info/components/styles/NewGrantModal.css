@@ -13,10 +13,9 @@
     padding-top: 2rem;
     padding-bottom: 2rem;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
   }
   
   /* 
@@ -25,17 +24,9 @@
   */
   .modal-content {
     background: #f7bfa6; /* Peach background */
-    border-radius: 8px;
     width: 90%;
     max-width: 900px; /* More width to accommodate multiple columns */
     padding: 2rem;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-      "Helvetica Neue", Arial, sans-serif;
-    font-size: 16px;
-    line-height: 1.5;
-    color: #000;
-    max-height: 90vh;
-    overflow-y: auto;
   }
   
   /* 
