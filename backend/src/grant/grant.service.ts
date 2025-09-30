@@ -1,4 +1,4 @@
-import { Injectable,Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import AWS from 'aws-sdk';
 import { Grant } from '../../../middle-layer/types/Grant';
 
@@ -38,17 +38,19 @@ export class GrantService {
             const data = await this.dynamoDb.get(params).promise();
 
             if (!data.Item) {
-                throw new Error('No grant with id ' + grantId + ' found.');
+                throw new NotFoundException('No grant with id ' + grantId + ' found.');
             }
 
             return data.Item as Grant;
         } catch (error) {
+            if (error instanceof NotFoundException) throw error;
+            
             console.log(error)
             throw new Error('Failed to retrieve grant.');
         }
     }
 
-    // Method to archive grants takes in array 
+    // Method to unarchive grants takes in array 
     async unarchiveGrants(grantIds :number[]) : Promise<number[]> {
         let successfulUpdates: number[] = [];
         for (const grantId of grantIds) {
@@ -67,7 +69,7 @@ export class GrantService {
                 console.log(res)
 
                 if (res.Attributes && res.Attributes.isArchived === false) {
-                    console.log(`Grant ${grantId} successfully archived.`);
+                    console.log(`Grant ${grantId} successfully un-archived.`);
                     successfulUpdates.push(grantId);
                 } else {
                     console.log(`Grant ${grantId} update failed or no change in status.`);
