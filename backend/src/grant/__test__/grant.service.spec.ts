@@ -317,6 +317,7 @@ describe("GrantService", () => {
         TableName: expect.any(String),
         Item: {
           ...mockCreateGrantDto,
+          grantId: expect.any(Number),
         },
       });
     });
