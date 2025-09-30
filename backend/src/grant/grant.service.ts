@@ -152,4 +152,28 @@ export class GrantService {
 
     return newGrantId;
   }
+
+  /* Deletes a grant from database based on its grant ID number
+  * @param grantId
+  */
+  async deleteGrantById(grantId: string): Promise<string> {
+    const params = {
+        TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || "TABLE_FAILURE",
+        Key: { grantId: grantId },
+        ConditionExpression: "attribute_exists(grantId)", // ensures grant exists
+    };
+
+    try {
+        await this.dynamoDb.delete(params).promise();
+        this.logger.log('Grant ${grantId} deleted successfully');
+        return 'Grant ${grantId} deleted successfully';
+    } catch (error: any) {
+        if (error.code === "ConditionalCheckFailedException") {
+            throw new Error('Grant ${grantId} does not exist');
+        }
+        this.logger.error('Failed to delete Grant ${grantId}', error.stack);
+        throw new Error('Failed to delete Grant ${grantId}');
+    }
+    
+  }
 }
