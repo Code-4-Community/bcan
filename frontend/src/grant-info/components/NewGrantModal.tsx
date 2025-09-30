@@ -194,35 +194,52 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <form>
+
+    <div className="modal-overlay"> {/*Greyed out background */}
+      <div className="modal-content"> {/*Popup container */}
+        <form>                         {/*Widget container */}
           <h2>New Grant</h2>
 
-          <div className="flex mb-6 ">
-            <div className="md:w-1/2 mb-6 md:mb-0 ">
+            {/*Organization name and input */}
+            <div className="w-full mb-6 md:mb-0 ">
               <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
                 Organization Name
               </label>
               <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Type Here"/>
             </div>
-          </div>
 
-          <div className="flex mb-6">
+
+          <div className="flex mb-6 w-full mt-6">
+            
             <div className="md:w-1/3 mb-6 md:mb-0">
-              <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-city">
+
+              {/*Application date and input */}
+              <div className="mb-6">
+                <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-city">
                 Application Date
-              </label>
-              <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="date"/>
+                </label>
+                <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="date"/>
+              </div>
+              
+              {/*Estimated completition time and input - need to make wider (length of application date and grant start date)*/}
+              <div className="w-full md:w-2/3">
+                <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
+                Estimated Completion Time
+                </label>
+                <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="date"/>
+              </div>
+
             </div>
-            <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+
+            {/*Grant Start Date and input */}
+            <div className=" md:w-1/3 px-3 mb-6 md:mb-0">
               <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
                 Grant Start Date
               </label>
-              <div className="relative">
-                <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="date"/>
-              </div>
+                <input className="w-full appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="date"/>
             </div>
+
+            {/*Report deadlines label and grey box */}
             <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
               <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-zip">
                 Report Deadlines
