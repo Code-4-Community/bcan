@@ -32,22 +32,7 @@ const GrantDetails: React.FC<GrantDetailsProps> = ({isEditing, curGrant, setCurG
                 onChange={handleChange}
                 readOnly={!isEditing}
             />
-            <h3>Application Requirements</h3>
-            <textarea
-                className="attribute-value large-textarea"
-                name="reporting_requirements"
-                value={curGrant.application_requirements}
-                onChange={handleChange}
-                readOnly={!isEditing}
-            />
-            <h3>Additional Notes</h3>
-            <textarea
-                className="attribute-value large-textarea"
-                name="attached_resources"
-                value={curGrant.additional_notes}
-                onChange={handleChange}
-                readOnly={!isEditing}
-            />
+
         </div>
     );
 }
