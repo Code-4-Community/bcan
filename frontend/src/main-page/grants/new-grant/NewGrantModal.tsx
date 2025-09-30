@@ -326,9 +326,11 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           value={status}
           onChange={(e) => setStatus((e.target.value) as Status)}
         >
-          <option value={Status.Potential}>Potential</option>
           <option value={Status.Active}>Active</option>
           <option value={Status.Inactive}>Inactive</option>
+          <option value={Status.Potential}>Potential</option>
+          <option value={Status.Pending}>Pending</option>
+          <option value={Status.Rejected}>Rejected</option>
         </select>
 
         {/* Row 5: Amount */}
