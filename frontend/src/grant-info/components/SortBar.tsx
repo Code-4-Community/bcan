@@ -54,7 +54,7 @@ const SortBar: React.FC = observer(() => {
       </div>
       <div>
         <div className="flex pb-2">{"Filter by Status"}</div>
-        <ul className="grant-buttons flex flex-col gap-2">
+        <ul className="flex flex-col gap-2">
           {linkList.map((item, index) => (
             <li key={index}>
               <Link
@@ -66,7 +66,7 @@ const SortBar: React.FC = observer(() => {
                 to={item.linkTo ? item.linkTo : "#"}
               >
                 <div
-                  className="grant-button flex justify-between items-center"
+                  className="grant-button flex w-full justify-between items-center"
                   style={{
                     color: selected === item.name ? "#3191CF" : "#000000",
                     backgroundColor:

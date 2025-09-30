@@ -40,5 +40,4 @@ html, body {
 .bot-half {
     display: flex;
     flex-direction: column;
-    margin: 0 2rem;
 }

@@ -14,7 +14,7 @@ function GrantPage() {
   const [selectedGrant, setSelectedGrant] = useState<Grant | null>(null);
 
   return (
-    <div className="grant-page">
+    <div className="grant-page px-4">
       <div className="top-half">
         <Header />
       </div>
@@ -22,7 +22,7 @@ function GrantPage() {
           <GrantSearch onGrantSelect={setSelectedGrant} />
           <AddGrantButton onClick={() => setShowNewGrantModal(true)} />
         </div>
-      <div className="grid grid-cols-5 gap-4 px-4">
+      <div className="grid grid-cols-5 gap-8 px-4">
         <div className="col-span-1">
           <SortBar/>
         </div>
