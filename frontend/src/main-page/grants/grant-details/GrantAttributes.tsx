@@ -96,7 +96,7 @@ export const GrantAttributes: React.FC<GrantAttributesProps> = ({curGrant, setCu
                     type="text"
                     className="attribute-value"
                     name="point_of_contacts"
-                    value={curGrant.grantmaker_poc.POC_name} // placeholder, will need to change
+                    value={curGrant.grantmaker_poc?.POC_name ?? ""} // placeholder, will need to change
                     onChange={handleChange}
                     readOnly={!isEditing}
                 />
