@@ -14,7 +14,7 @@ const Login = observer(() => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { login,isAuthenticated } = useAuthContext();
+  const {login, isAuthenticated } = useAuthContext();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
