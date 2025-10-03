@@ -198,59 +198,95 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     <div className="modal-overlay"> {/*Greyed out background */}
       <div className="modal-content"> {/*Popup container */}
         <form>                         {/*Widget container */}
-          <h2>New Grant</h2>
 
-            {/*Organization name and input */}
-            <div className="w-full mb-6 md:mb-0 ">
-              <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
-                Organization Name
-              </label>
-              <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Type Here"/>
-            </div>
+          {/*left column */}
+          <div className='w-1/2'>
+            <h2>New Grant</h2>
 
-
-          <div className="flex mb-6 w-full mt-6">
-            
-            <div className="md:w-1/3 mb-6 md:mb-0">
-
-              {/*Application date and input */}
-              <div className="mb-6">
-                <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-city">
-                Application Date
+              {/*Organization name and input */}
+              <div className="w-full md:mb-0 ">
+                <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                  Organization Name
                 </label>
-                <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="date"/>
+                <input className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Type Here"/>
+              </div>
+
+            {/*Top left quadrant - from app date, start date, report deadlines, est completion time*/}
+            <div className="flex  w-full space-x-4 mt-5 ">
+
+              {/* Left column: Application + Grant Start row */}
+              <div className="w-2/3">
+
+                {/*Application date and grant start date */}
+                <div className="flex space-x-4 mb-5">
+                  {/*Application date and input */}
+                  <div className="w-1/2">
+                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-city">
+                    Application Date
+                    </label>
+                    <input className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="date"/>
+                  </div>
+                  {/*Grant Start Date and input */}
+                  <div className=" w-1/2">
+                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
+                      Grant Start Date
+                    </label>
+                      <input className="h-16 w-full appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="date"/>
+                  </div>
+                </div>
+
+                {/*Estimated completition time and input - need to make wider (length of application date and grant start date)*/}
+                <div className="w-full">
+                  <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
+                  Estimated Completion Time
+                  </label>
+                  <input className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" />
+                </div>
+
+              </div>
+
+              {/*Right column*/}
+              <div className="w-1/3">
+                {/*Report deadlines label and grey box */}
+                <div className="h-full">
+                  <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
+                      Report Deadlines
+                  </label>
+                  <div className="p-3 rounded h-60" style={{backgroundColor: '#D3D3D3'}}>
+                      <input className="h-16 w-full text-gray-700 rounded" id="grid-city" type="date"/>
+                      <button className="h-10 w-full mt-2">Add Deadline +</button>
+                  </div>
+                </div>
               </div>
               
-              {/*Estimated completition time and input - need to make wider (length of application date and grant start date)*/}
-              <div className="w-full md:w-2/3">
-                <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
-                Estimated Completion Time
+            </div>
+
+            {/*Timeline label and input */}
+              <div className="w-full  md:mb-0 ">
+                <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                  Timeline (in years)
                 </label>
-                <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="date"/>
+                <input className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Type Here"/>
               </div>
 
-            </div>
-
-            {/*Grant Start Date and input */}
-            <div className=" md:w-1/3 px-3 mb-6 md:mb-0">
-              <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
-                Grant Start Date
-              </label>
-                <input className="w-full appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="date"/>
-            </div>
-
-            {/*Report deadlines label and grey box */}
-            <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-              <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-zip">
-                Report Deadlines
-              </label>
-              <div className="p-3 rounded h-60" style={{backgroundColor: '#D3D3D3'}}>
-                <input className="w-full text-gray-700 rounded" id="grid-city" type="date"/>
-                <button className="w-full mt-2">Add Deadline +</button>
+            {/*Amount label and input */}
+              <div className="w-full mt-5 md:mb-0 ">
+                <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                  Amount
+                </label>
+                <input className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Type Here"/>
               </div>
 
-            </div>
           </div>
+          
+
+
+
+          
+          
+            
+          
+
         </form>
         <div className="button-row">
           <button onClick={onClose}>Close</button>
