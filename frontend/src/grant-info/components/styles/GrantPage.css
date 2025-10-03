@@ -18,7 +18,7 @@ html, body {
 }
 
 .sortbar {
-    border-radius: 1.2rem;
+    border-radius: 15px;
 }
 
 /* Main actions on the grant list (SEARCH, FILTER, ADD) */

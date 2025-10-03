@@ -3,7 +3,7 @@
     height: 100%;
     flex-direction: column;
     justify-content: space-around;
-    border-radius: 1.2rem;
+    border-radius: 15px;
 background: #F7A781;
 /* padding: 0.5em; */
 }

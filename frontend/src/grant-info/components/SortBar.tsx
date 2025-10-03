@@ -74,10 +74,6 @@ const SortBar: React.FC = observer(() => {
                   }}
                 >
                   {item.name}
-                  {item.name == "All"
-                    ? grants.length
-                    : grants.filter((grant) => grant.status == item.name)
-                        .length}
                   <FaChevronRight />
                 </div>
               </Link>

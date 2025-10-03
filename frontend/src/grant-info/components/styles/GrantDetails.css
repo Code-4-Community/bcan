@@ -13,7 +13,7 @@
   
   .grant-details p{
     border: 1px solid black; 
-    border-radius: 8px; 
+    border-radius: 15px; 
     padding: 1rem; 
     margin-bottom: 1rem; 
     transition: border-color 0.3s ease; 
@@ -27,7 +27,7 @@
   min-width: 100%;
   padding: 1rem;      /* Matches <p> padding */
   border: 0.1rem solid #F26624;
-    border-radius: 8px;
+    border-radius: 15px;
   transition: border-color 0.3s ease;
   overflow-y: auto;
   resize: vertical;   /* Allows resizing */
