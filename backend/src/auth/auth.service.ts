@@ -1,8 +1,9 @@
 import { Injectable, InternalServerErrorException, Logger, UnauthorizedException } from '@nestjs/common';
 import AWS from 'aws-sdk';
-import { table } from 'console';
+import { group, table } from 'console';
 import * as crypto from 'crypto';
-
+import { User } from '../../../middle-layer/types/User';
+import { UserStatus } from '../types/UserStatus';
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -38,7 +39,7 @@ export class AuthService {
     }
 
     try {
-      await this.cognito
+      let createUserRes = await this.cognito
         .adminCreateUser({
           UserPoolId: userPoolId,
           Username: username,
@@ -59,14 +60,29 @@ export class AuthService {
         })
         .promise();
 
+        await this.cognito.adminAddUserToGroup(
+          {
+            GroupName: 'Inactive',
+            UserPoolId: userPoolId,
+            Username: username,
+          }
+        ) 
+
       const tableName = process.env.DYNAMODB_USER_TABLE_NAME || 'TABLE_FAILURE';
 
+      // Change this so it adds a user object
+      const user: User = {
+        userId: username,
+        position: UserStatus.Inactive,
+        email: email,
+        name: '',
+      }
+
+      // Spread operator to add the user object
       const params = {
         TableName: tableName,
         Item: {
-          userId: username,
-          email: email,
-          biography: '',
+          ...user
         },
       };
 
@@ -84,10 +100,31 @@ export class AuthService {
     }
   }
 
+  async addUserToGroup(username: string, groupName: string): Promise<void> {
+    const userPoolId = process.env.COGNITO_USER_POOL_ID;
+    if(groupName !== 'Employee' && groupName !== 'Admin' && groupName !== 'Inactive' ){
+      throw new Error('Invalid group name. Must be Employee, Admin, or Inactive.');
+    }
+    try{
+      await this.cognito.adminAddUserToGroup({
+        GroupName: groupName,
+        UserPoolId: userPoolId || 'POOL_FAILURE',
+        Username: username,
+      })
+    }
+    catch(error){
+      if (error instanceof Error) {
+        this.logger.error('Registration failed', error.stack);
+        throw new Error(error.message || 'Registration failed');
+      }
+      throw new Error('An unknown error occurred during registration');
+    }
+  }
+
   // Overall, needs better undefined handling and optional adding
   async login(username: string, password: string): Promise<{
     access_token?: string;
-    user?: any;
+    user?: User ;
     session?: string;
     challenge?: string;
     requiredAttributes?: string[];
@@ -184,13 +221,15 @@ export class AuthService {
   
       // Grab table reference for in-app use
       const userResult = await this.dynamoDb.get(params).promise();
-      let user = userResult.Item;
-  
+      let user = userResult.Item as User;
+
+      // Investigage this further it doesnt really make sense
       if (!user) {
-        const newUser = {
+        const newUser:User =  {
           userId: username,
           email: email,
-          biography: '',
+          position: UserStatus.Inactive,
+          name: '',
         };
   
         await this.dynamoDb
@@ -319,5 +358,7 @@ export class AuthService {
       throw new Error('An unknown error occurred');
     }
   }
+  
+
   
 }
