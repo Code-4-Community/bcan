@@ -140,7 +140,7 @@ export class GrantService {
         grantmaker_poc: grant.grantmaker_poc,
         bcan_poc: grant.bcan_poc,
         attachments: grant.attachments,
-        restricted_or_unrestricted: grant.restricted_or_unrestricted,
+        isRestricted: grant.isRestricted,
       }
     };
 
