@@ -27,6 +27,24 @@ export interface POCEntryRef {
 }
 
 const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+  /*
+      grantId: number;
+      organization: string;
+      does_bcan_qualify: boolean;
+      status: Status;
+      amount: number;
+      grant_start_date: TDateISO; // when the grant was started
+      application_deadline: TDateISO; // when was grant submission due
+      report_deadlines: TDateISO[];       // multiple report dates
+      description: string;
+      timeline: number; // Need to specify
+      estimated_completion_time: number,
+      grantmaker_poc: POC; // person of contact at organization giving the grant
+      // bcan_poc may need to be changed later to be a validated account
+      bcan_poc: POC; // person of contact at BCAN
+      attachments: Attachment[];
+      restricted_or_unrestricted: string; // "restricted" or "unrestricted"
+  */
   // Form fields, renamed to match your screenshot
   const [organization, setOrganization] = useState<string>("");
   const [bcanPocComponents, setBcanPocComponents] = useState<JSX.Element[]>([]);
@@ -37,7 +55,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   const [applicationDate, setApplicationDate] = useState<string>("");
   const [grantStartDate, setGrantStartDate] = useState<string>("");
-  const [reportDate, setReportDate] = useState<string>("");
+  const [reportDates, setReportDates] = useState<string[]>([]);
 
   const [timelineInYears, setTimelineInYears] = useState<number>(0);
   const [estimatedCompletionTimeInHours, setEstimatedCompletionTimeInHours] = useState<number>(0);
@@ -70,6 +88,11 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     setGrantProviderPocRefs([...grantProviderPocRefs, newRef]);
   };
 
+  /* Add a new blank report date to the list */
+  const addReportDate = () => {
+    setReportDates([...reportDates, ""]);
+  };0
+
   // Add an empty attachment row
   const addAttachment = () => {
     setAttachments([
@@ -101,13 +124,25 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     setAttachments(updated);
   };
 
+  const removeReportDate = (index: number) => {
+    const updated = [...reportDates];
+    updated.splice(index, 1);
+    setReportDates(updated);
+  };
+  const handleReportDateChange = (index: number, value: string) => {
+    const updated = [...reportDates];
+    updated[index] = value;
+    setReportDates(updated);
+  };
+
   /** Basic validations based on your screenshot fields */
   const validateInputs = (): boolean => {
     if (!organization) {
       setErrorMessage("Organization Name is required.");
       return false;
     }
-    if (!applicationDate || !grantStartDate || !reportDate) {
+    // removed check for report dates -- they can be empty (potential grants would have no report dates)
+    if (!applicationDate || !grantStartDate) {
       setErrorMessage("Please fill out all date fields.");
       return false;
     }
@@ -149,19 +184,19 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const newGrant: Grant = {
       grantId: -1,
       organization,
-      grantmaker_poc: providerPocList,
+      does_bcan_qualify: doesBcanQualify,
+      amount,
+      grant_start_date: grantStartDate as TDateISO,
       application_deadline: applicationDate as TDateISO,
-      report_deadline: reportDate as TDateISO,
+      status: status, // Potential = 0, Active = 1, Inactive = 2
+      bcan_poc: bcanPocList.length > 0 ? { POC_name: "", POC_email: bcanPocList[0] } : { POC_name: "", POC_email: ""}, // Just take the first for now
+      grantmaker_poc: providerPocList.length > 0 ? { POC_name: "", POC_email: providerPocList[0] } : { POC_name: "", POC_email: ""}, // Just take the first for now
+      report_deadlines: reportDates as TDateISO[],
       timeline: timelineInYears,
       estimated_completion_time: estimatedCompletionTimeInHours,
-      does_bcan_qualify: doesBcanQualify,
-      status: status, // Potential = 0, Active = 1, Inactive = 2
-      amount,
       description,
       attachments: attachmentsArray,
-      notification_date: applicationDate as TDateISO,
-      application_requirements : "",
-    additional_notes : "",
+      restricted_or_unrestricted: "unrestricted", // Default to unrestricted for now
     };
     console.log(newGrant);
     try {
@@ -238,13 +273,24 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           onChange={(e) => setGrantStartDate(e.target.value)}
         />
 
-        <label className="label-col">Report Date</label>
-        <input
-          className="input-col"
-          type="date"
-          value={reportDate}
-          onChange={(e) => setReportDate(e.target.value)}
-        />
+        <label className="label-col">Report Dates</label>
+        <div className="input-col report-dates-container">
+          {reportDates.map((d, idx) => (
+            <div className="report-date-entry" key={idx}>
+              <input
+                type="date"
+                value={d}
+                onChange={(e) => handleReportDateChange(idx, e.target.value)}
+             />
+              <button type="button" onClick={() => removeReportDate(idx)}>
+                X
+              </button>
+            </div>
+          ))}
+          <button type="button" onClick={addReportDate}>
+            + Add Report Date
+          </button>
+        </div>
 
         {/* Row 3: Times */}
         <label className="label-col">Estimated Completion Time (in hours)</label>
@@ -280,9 +326,11 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           value={status}
           onChange={(e) => setStatus((e.target.value) as Status)}
         >
-          <option value={Status.Potential}>Potential</option>
           <option value={Status.Active}>Active</option>
           <option value={Status.Inactive}>Inactive</option>
+          <option value={Status.Potential}>Potential</option>
+          <option value={Status.Pending}>Pending</option>
+          <option value={Status.Rejected}>Rejected</option>
         </select>
 
         {/* Row 5: Amount */}
