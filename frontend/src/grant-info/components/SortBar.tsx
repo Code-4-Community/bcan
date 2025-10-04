@@ -47,7 +47,7 @@ const SortBar: React.FC = observer(() => {
   }
 
   return (
-    <div className="sortbar flex flex-col gap-4 bg-light-orange p-6 rounded-[1.2rem]">
+    <div className="sortbar flex flex-col gap-4 bg-light-gray p-6 rounded-[1.2rem] border">
       <div>
         <div className="flex pb-2">{"Filter by Date"}</div>
         <CalendarDropdown />
@@ -59,22 +59,22 @@ const SortBar: React.FC = observer(() => {
             <li key={index}>
               <Link
                 onClick={(e) => categoryClicked(e, item.name, item.linkTo)}
-                style={{
-                  color: selected === item.name ? "#3191CF" : "#000000",
-                  textDecoration: selected === item.name ? "underline" : "none",
-                }}
                 to={item.linkTo ? item.linkTo : "#"}
               >
                 <div
-                  className="grant-button flex w-full justify-between items-center"
-                  style={{
-                    color: selected === item.name ? "#3191CF" : "#000000",
-                    backgroundColor:
-                      selected === item.name ? "#F2EBE4" : "#FFFFFF",
-                  }}
+                  className={`grant-button border hover:bg-medium-orange ${
+                    selected === item.name ? "bg-dark-orange" : "bg-white"
+                  }`}
                 >
-                  {item.name}
-                  <FaChevronRight />
+                  <div
+                    className="flex w-full justify-between items-center"
+                    style={{
+                      color: selected === item.name ? "#FFFFFF" : "#000000",
+                    }}
+                  >
+                    {item.name}
+                    <FaChevronRight />
+                  </div>
                 </div>
               </Link>
             </li>

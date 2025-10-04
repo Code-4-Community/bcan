@@ -1,5 +1,4 @@
-import { Input } from "@chakra-ui/react";
-import { FaSearchengin } from "react-icons/fa";
+import { IoIosSearch } from "react-icons/io";
 import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
 import "./styles/GrantSearch.css";
@@ -73,9 +72,12 @@ function GrantSearch({ onGrantSelect }: any) {
   return (
     <div className="search-bar-main-container">
       <form className="search-container">
-        <div className="search-input-container" style={{ position: "relative" }}>
+        <div
+          className="search-input-container"
+          style={{ position: "relative" }}
+        >
           {/* Absolutely-positioned icon */}
-          <FaSearchengin
+          <IoIosSearch
             style={{
               position: "absolute",
               top: "50%",
@@ -83,18 +85,20 @@ function GrantSearch({ onGrantSelect }: any) {
               transform: "translateY(-50%)",
               pointerEvents: "none",
               zIndex: 2,
+              marginLeft: "2px",
               // color: "#aaa" // optional styling
             }}
           />
-          <Input
-            placeholder="Search"
-            variant="subtle"
-            className="search-input"
-            onChange={handleInputChange}
-            value={userInput}
-            onFocus={() => setShowDropdown(dropdownGrants.length > 0)}
-            style={{ paddingLeft: "2rem" }} // make room for the icon
-          />
+          <input
+  type="text"
+  placeholder="Search"
+  className="search-input"
+  onChange={handleInputChange}
+  value={userInput}
+  onFocus={() => setShowDropdown(dropdownGrants.length > 0)}
+  style={{ paddingLeft: "2rem", backgroundColor: "white" }} // make room for the icon
+/>
+
 
           {showDropdown && (
             <div className="dropdown-container">

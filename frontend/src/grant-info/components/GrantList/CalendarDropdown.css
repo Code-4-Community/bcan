@@ -7,18 +7,19 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    border: 2px solid black;
+    border: 1px solid black;
     border-radius: 15px;
     background-color: white;
     cursor: pointer;
     font-size: 1rem;
     font-family: 'Inter', sans-serif;
     width: 100%;
-    height: 46px;
+    height: 42px;
 }
 
 .calendar-toggle-button:hover {
-    background-color: #f0f0f0;
+    background-color: #f7a781;
+    border-color: black;
 }
 
 .calendar-icon {

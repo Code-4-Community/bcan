@@ -7,7 +7,7 @@
 .grant-summary {
     list-style-type: none;
     /* justify-content: space-between; */
-    border-radius: 0.8rem;
+    border-radius: 15px;
 
     background-color: #F2EBE4;
     /* margin: 0; Remove margin */
@@ -49,8 +49,8 @@
     min-height: 0;
     overflow: hidden;
     transition: max-height 1s ease, background-color 0.2s ease;
-    border-bottom-right-radius: 1.2rem;
-    border-bottom-left-radius: 1.2rem;
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 15px;
     
 }
 

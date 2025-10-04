@@ -1,13 +1,11 @@
 .grant-button {
-    background-color: #F5B99C;
     color: #000;
     
     /* Shape and layout */
-    border: none;
     border-radius: 15px;
     padding: 8px 16px;
     font-size: 16px;
-    font-weight: 600;
+    
     cursor: pointer;
     height: 42px;
     
@@ -16,9 +14,12 @@
 
   .add-grant-button {
   width: 168.42px;
+  font-weight: 600;
   }
   
+  
   .grant-button:hover {
-    opacity: 0.9;
+    opacity: 0.8;
   }
+
   
