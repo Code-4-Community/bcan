@@ -62,7 +62,7 @@ export class AuthController {
       return { message: 'Profile has been updated' };
     }
 
-    @Post('delte-user')
+    @Post('delete-user')
     async deleteUser(
       @Body('username') username: string,
     ): Promise<{ message: string }> {
