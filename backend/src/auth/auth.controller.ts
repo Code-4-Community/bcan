@@ -61,6 +61,14 @@ export class AuthController {
       await this.authService.updateProfile(username, email, position_or_role);
       return { message: 'Profile has been updated' };
     }
+
+    @Post('delte-user')
+    async deleteUser(
+      @Body('username') username: string,
+    ): Promise<{ message: string }> {
+      await this.authService.deleteUser(username);
+      return { message: `${username} has been deleted` };
+    }
     
     
   
