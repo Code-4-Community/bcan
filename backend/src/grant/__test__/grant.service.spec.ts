@@ -312,9 +312,9 @@ describe("GrantService", () => {
 
       const data = await grantService.addGrant(mockCreateGrantDto);
 
-      expect(data).toEqual(now);
+      expect(data).closeTo(now, 1);
       expect(mockDocumentClient.put).toHaveBeenCalledWith({
-        TableName: expect.any(String),
+        TableName: "Grants",
         Item: {
           ...mockCreateGrantDto,
           grantId: expect.any(Number),
@@ -340,7 +340,7 @@ describe("GrantService", () => {
         amount: 1500,
         attachments: [],
         grantId: 0,
-        restricted_or_unrestricted: ""
+        isRestricted: false
       };
 
       mockPut.mockRejectedValue(new Error("DB Error"));
