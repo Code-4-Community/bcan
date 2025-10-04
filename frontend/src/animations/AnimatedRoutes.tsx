@@ -1,5 +1,5 @@
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
-import { TransitionGroup, CSSTransition } from "react-transition-group";
+// import { TransitionGroup, CSSTransition } from "react-transition-group";
 
 // static transitions sheet
 import "./transitions.css";
@@ -21,16 +21,7 @@ const AnimatedRoutes = observer(() => {
   const { isAuthenticated } = useAuthContext();
 
   return (
-    <TransitionGroup component={null}>
-      {/* 
-        key the transition by location.key 
-        so each route triggers an enter/exit animation
-      */}
-      <CSSTransition key={location.key} timeout={800} classNames="fade">
-        {/* 
-          Pass `location` to <Routes> to let RTG track route changes 
-        */}
-        <Routes location={location}>
+    <Routes location={location}>
           <Route
             path="/login"
             element={isAuthenticated ? <Navigate to="/account" /> : <Login />}
@@ -53,8 +44,6 @@ const AnimatedRoutes = observer(() => {
             }
           />
         </Routes>
-      </CSSTransition>
-    </TransitionGroup>
   );
 });
 

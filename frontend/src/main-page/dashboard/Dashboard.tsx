@@ -1,8 +1,9 @@
+import "./styles/Dashboard.css";
+
 function Dashboard() {
 
   return (
-    <div>
-
+    <div className="dashboard-page">
     </div>
   );
 }

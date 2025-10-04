@@ -1,5 +1,4 @@
 import "./styles/GrantPage.css";
-import Header from "../header/Header.js";
 import GrantList from "./grant-list/index.tsx";
 
 import AddGrantButton from "./new-grant/AddGrant.tsx";

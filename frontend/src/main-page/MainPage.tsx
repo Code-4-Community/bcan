@@ -6,7 +6,7 @@ import Users from "./users/Users";
 
 function MainPage() {
   return (
-    <div>
+    <div className="w-full">
       <Header />
       <Routes>
         <Route path="/dashboard" element={<Dashboard />} />
