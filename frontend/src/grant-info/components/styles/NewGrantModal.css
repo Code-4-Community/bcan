@@ -16,6 +16,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 2;
   }
   
   /* 
@@ -24,8 +25,8 @@
   */
   .modal-content {
     background: #f7bfa6; /* Peach background */
-    width: 90%;
-    max-width: 900px; /* More width to accommodate multiple columns */
+    width: 100%;
+    max-width: 1200px; /* More width to accommodate multiple columns */
     padding: 2rem;
   }
   

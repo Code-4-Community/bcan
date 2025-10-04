@@ -7,6 +7,7 @@ import { Grant } from "../../../../middle-layer/types/Grant";
 import { TDateISO } from "../../../../backend/src/utils/date";
 import { Status } from "../../../../middle-layer/types/Status";
 import { api } from "../../api";
+import { MdOutlinePerson2 } from "react-icons/md";
 
 /** Attachment type from your middle layer */
 enum AttachmentType {
@@ -197,10 +198,10 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
     <div className="modal-overlay"> {/*Greyed out background */}
       <div className="modal-content"> {/*Popup container */}
-        <form>                         {/*Widget container */}
+        <div className="flex">                         {/*Widget container */}
 
           {/*left column */}
-          <div className='w-1/2'>
+          <div className='w-1/2 p-4'>
             <h2>New Grant</h2>
 
               {/*Organization name and input */}
@@ -261,7 +262,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               
             </div>
 
-            {/*Timeline label and input */}
+              {/*Timeline label and input */}
               <div className="w-full  md:mb-0 ">
                 <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
                   Timeline (in years)
@@ -269,7 +270,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <input className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Type Here"/>
               </div>
 
-            {/*Amount label and input */}
+              {/*Amount label and input */}
               <div className="w-full mt-5 md:mb-0 ">
                 <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
                   Amount
@@ -278,16 +279,90 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               </div>
 
           </div>
-          
+
+          {/*Right column */}
+          <div className='flex p-4 w-1/2 mt-12'>
+
+              {/*Left column */}
+              <div className="w-1/2 p-2">
+                {/*BCAN POC div*/}
+                <div className="w-full mt-1">
+                    <label className="mb-2 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
+                        BCAN POC
+                    </label>
+                    {/*Box div*/}
+                    <div className="flex p-3 rounded h-40" style={{backgroundColor: '#D3D3D3'}}>
+                        <MdOutlinePerson2 className="w-1/2 h-full"/>
+                        <div className="w-1/2">
+                          <input className="h-16 w-full text-gray-700 rounded" id="grid-city" placeholder="Name" />
+                          <input className="h-16 w-full text-gray-700 rounded" id="grid-city" placeholder="e-mail" />
+                        </div> 
+                    </div>
+                </div>
+
+                {/*Qualify label and input */}
+                <div className="w-full mt-5 md:mb-0 ">
+                  <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                    Does BCAN qualify?
+                  </label>
+                  <input className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Type Here"/>
+                </div>
+
+                {/*Status label and input */}
+                <div className="w-full mt-5 md:mb-0 ">
+                  <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                    Status
+                  </label>
+                  <input className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Type Here"/>
+                </div>
+
+                {/*Restriction types label and input */}
+                <div className="w-full mt-5 md:mb-0 ">
+                  <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                    Restriction types
+                  </label>
+                  <input className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Type Here"/>
+                </div>
+              </div>
+
+              {/*Rightmost column */}
+              <div className="w-1/2 p-2">
+                {/*Grant Provider POC div*/}
+                <div className="w-full mt-1 ">
+                    <label className="mb-2 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
+                        Grant Provider POC
+                    </label>
+                    {/*Box div*/}
+                    <div className="flex p-3 rounded h-40" style={{backgroundColor: '#D3D3D3'}}>
+                        <MdOutlinePerson2 className="w-1/2 h-full"/>
+                        <div className="w-1/2">
+                          <input className="h-16 w-full text-gray-700 rounded" id="grid-city" placeholder="Name" />
+                          <input className="h-16 w-full text-gray-700 rounded" id="grid-city" placeholder="e-mail" />
+                        </div> 
+                    </div>
+                </div>
+
+                {/*Grant Provider POC div*/}
+                <div className="w-full mt-1 ">
+                    <label className="mb-2 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
+                        Scope Documents
+                    </label>
+                    {/*Box div*/}
+                    <div className="flex p-3 rounded h-40" style={{backgroundColor: '#D3D3D3'}}></div>
+                </div>
+
+                
+
+              </div>
+              
+
+              
 
 
+          </div>
+ 
 
-          
-          
-            
-          
-
-        </form>
+        </div>
         <div className="button-row">
           <button onClick={onClose}>Close</button>
           <button onClick={handleSubmit}>Save</button>
