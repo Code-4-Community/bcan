@@ -14,20 +14,17 @@ const Login = observer(() => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { login,isAuthenticated } = useAuthContext();
+  const { login } = useAuthContext();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await login(username, password);
-      if (isAuthenticated){
+
+    const success = await login(username, password);
+
+    if (success) {
       navigate("/grant-info");
-      } else {
-        alert('Login failed. Please check your credentials.');
-      }
-    } catch (error) {
-      console.error("Error during login:", error);
-      alert("An error occurred while logging in. Please try again later.");
+    } else {
+      alert("Login failed. Please check your credentials.");
     }
   };
 
