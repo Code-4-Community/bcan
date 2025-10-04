@@ -2,8 +2,14 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./styles/Header.css";
 import logo from "../../images/bcan_logo.svg";
-import { Status, statusToString } from "../../../../middle-layer/types/Status.ts";
-import { updateFilter, logoutUser } from "../../external/bcanSatchel/actions.ts";
+import {
+  Status,
+  statusToString,
+} from "../../../../middle-layer/types/Status.ts";
+import {
+  updateFilter,
+  logoutUser,
+} from "../../external/bcanSatchel/actions.ts";
 import { observer } from "mobx-react-lite";
 import { Menu, Button } from "@chakra-ui/react";
 import { FaCog } from "react-icons/fa";
@@ -28,11 +34,15 @@ const linkList: NavBarProps[] = [
 const Header: React.FC = observer(() => {
   const [selected, setSelected] = useState("All Grants");
 
-  function categoryClicked(e: React.MouseEvent, category: string, linkTo?: string) {
+  function categoryClicked(
+    e: React.MouseEvent,
+    category: string,
+    linkTo?: string
+  ) {
+    setSelected(category);
     if (!linkTo) {
       e.preventDefault();
       updateFilter(statusToString(category));
-      setSelected(category);
     }
   }
 
@@ -41,58 +51,53 @@ const Header: React.FC = observer(() => {
   };
 
   return (
-    <header className="header">
+    <header className="header bg-pale-orange drop-shadow-md">
       <div className="header-left-comp">
         <img className="logo" src={logo} alt="BCAN Logo" />
       </div>
       <div className="header-right-comp">
-        <ul className="grant-buttons">
+        <ul className="flex gap-8">
           {linkList.map((item, index) => (
             <li key={index}>
               <Link
                 onClick={(e) => categoryClicked(e, item.name, item.linkTo)}
-                style={{
-                  color: selected === item.name ? "#3191CF" : "#000000",
-                  textDecoration: selected === item.name ? "underline" : "none",
-                }}
                 to={item.linkTo ? item.linkTo : "#"}
               >
-                {item.name}
+                <div
+                  className={`header-button header-button${
+                    selected === item.name ? "-selected" : ""
+                  } hover:bg-medium-orange`}
+                >
+                  {item.name}
+                </div>
               </Link>
             </li>
           ))}
         </ul>
-        <div className="bell-container">
-        <BellButton />
-      </div>
-        <Menu.Root>
-          <Menu.Trigger asChild>
-            <Button variant="ghost" p={1} ml={4}>
-              <FaCog size={24} />
-            </Button>
-          </Menu.Trigger>
-          <Menu.Positioner>
-            <Menu.Content>
-              <Menu.Item
-                value="account"
-              >
-                <Link to="/account">
-                My Account
-                </Link>
-              </Menu.Item>
-              <Menu.Item
-                value="logout"
-              >
-                <Link
-                onClick={handleLogout}
-                to="/login"
-                >
-                  Logout
-                </Link>
-              </Menu.Item>
-            </Menu.Content>
-          </Menu.Positioner>
-        </Menu.Root>
+        <div className="header-right-controls flex items-center">
+          <div className="bell-container">
+            <BellButton />
+          </div>
+          <Menu.Root>
+            <Menu.Trigger asChild>
+              <Button variant="ghost" p={1} ml={4}>
+                <FaCog size={24} />
+              </Button>
+            </Menu.Trigger>
+            <Menu.Positioner>
+              <Menu.Content>
+                <Menu.Item value="account">
+                  <Link to="/account">My Account</Link>
+                </Menu.Item>
+                <Menu.Item value="logout">
+                  <Link onClick={handleLogout} to="/login">
+                    Logout
+                  </Link>
+                </Menu.Item>
+              </Menu.Content>
+            </Menu.Positioner>
+          </Menu.Root>
+        </div>
       </div>
     </header>
   );

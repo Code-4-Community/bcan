@@ -13,7 +13,7 @@ function GrantPage() {
   const [selectedGrant, setSelectedGrant] = useState<Grant | null>(null);
 
   return (
-    <div className="grant-page px-4">
+    <div className="grant-page px-8">
       <div className="top-half">
       </div>
         <div className="flex justify-end align-middle p-4 gap-4">

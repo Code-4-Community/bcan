@@ -25,10 +25,10 @@ const CalendarDropdown = observer(() => {
     }
 
     return (
-        <div className="calendar-dropdown">
-            <button className="calendar-toggle-button" onClick={toggleDropdown}>
-                <FaCalendarAlt className="calendar-icon" />
-                <span>{displayText}</span>
+        <div className="calendar-dropdown ">
+            <button className="calendar-toggle-button flex w-full justify-between items-center" onClick={toggleDropdown}>
+                <FaCalendarAlt/>
+                <span className="text-sm flex-shrink-0">{displayText}</span>
                 <FaChevronRight />
             </button>
 
