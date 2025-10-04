@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { getAppStore } from "../../../external/bcanSatchel/store";
 import Calendar from "./Calendar";
-import "./CalendarDropdown.css";
+import "../styles/CalendarDropdown.css";
 import { FaCalendarAlt, FaChevronRight } from "react-icons/fa";
 
 // observer to make satchel store state variables

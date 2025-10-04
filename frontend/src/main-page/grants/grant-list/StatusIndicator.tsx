@@ -2,7 +2,7 @@
 
 import React from "react";
 import { FaCircle } from "react-icons/fa";
-import { Status, getColorStatus } from "../../../../middle-layer/types/Status.ts";
+import { Status, getColorStatus } from "../../../../../middle-layer/types/Status.ts";
 
 interface StatusIndicatorProps {
   curStatus: Status;

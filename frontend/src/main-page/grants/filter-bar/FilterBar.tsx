@@ -3,23 +3,23 @@ import { Link } from "react-router-dom";
 import {
   Status,
   statusToString,
-} from "../../../../middle-layer/types/Status.ts";
+} from "../../../../../middle-layer/types/Status.ts";
 import {
   fetchAllGrants,
   updateFilter,
-} from "../../external/bcanSatchel/actions.ts";
+} from "../../../external/bcanSatchel/actions.ts";
 import { observer } from "mobx-react-lite";
-import { ProcessGrantData } from "./GrantList/processGrantData.ts";
-import CalendarDropdown from "./GrantList/CalendarDropdown.tsx";
+import { ProcessGrantData } from "./processGrantData.ts";
+import CalendarDropdown from "./CalendarDropdown.tsx";
 import { FaChevronRight } from "react-icons/fa";
 
-interface SortBarProps {
+interface FilterBarProps {
   name: string;
   linkTo?: string;
   filter?: Status;
 }
 
-const linkList: SortBarProps[] = [
+const linkList: FilterBarProps[] = [
   { name: "All" },
   { name: "Active", filter: Status.Active },
   { name: "Inactive", filter: Status.Inactive },
@@ -31,7 +31,7 @@ const linkList: SortBarProps[] = [
 /**
  * SortBar provides the sorting options for grants in the side bar
  */
-const SortBar: React.FC = observer(() => {
+const FilterBar: React.FC = observer(() => {
   const [selected, setSelected] = useState("All Grants");
   const { grants } = ProcessGrantData();
   function categoryClicked(
@@ -85,4 +85,4 @@ const SortBar: React.FC = observer(() => {
   );
 });
 
-export default SortBar;
+export default FilterBar;

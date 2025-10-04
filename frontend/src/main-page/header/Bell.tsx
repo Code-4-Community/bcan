@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
-import { api } from "./api";
+import { api } from "../../api";
 
 // get current user id
 // const currUserID = sessionStorage.getItem('userId');

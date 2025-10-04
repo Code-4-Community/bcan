@@ -7,7 +7,7 @@ import "./transitions.css";
 import { observer } from "mobx-react-lite";
 import Account from "../Account";
 import { useAuthContext } from "../context/auth/authContext";
-import GrantPage from "../grant-info/components/GrantPage";
+import MainPage from "../main-page/MainPage";
 import Login from "../Login";
 import Register from "../Register";
 
@@ -40,12 +40,12 @@ const AnimatedRoutes = observer(() => {
             element={
               isAuthenticated ? <Navigate to="/account" /> : <Register />
             }
-          />
+          /> 
           <Route
             path="/account"
             element={isAuthenticated ? <Account /> : <Navigate to="/login" />}
           />
-          <Route path="/grant-info" element={<GrantPage />} />
+          <Route path="/main/*" element={<MainPage/>} />
           <Route
             path="*"
             element={

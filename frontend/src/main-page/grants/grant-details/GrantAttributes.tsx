@@ -1,6 +1,6 @@
 import React from 'react';
-import './styles/GrantAttributes.css';
-import { Grant } from '../../../../middle-layer/types/Grant';
+import '../styles/GrantAttributes.css';
+import { Grant } from '../../../../../middle-layer/types/Grant';
 
 interface GrantAttributesProps {
   isEditing: boolean;

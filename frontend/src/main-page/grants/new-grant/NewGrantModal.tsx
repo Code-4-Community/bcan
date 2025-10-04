@@ -1,12 +1,12 @@
 // frontend/src/grant-info/components/NewGrantModal.tsx
 import React, { useState, createRef, RefObject } from "react";
-import { fetchAllGrants } from "../../external/bcanSatchel/actions";
-import "../components/styles/NewGrantModal.css";
+import { fetchAllGrants } from "../../../external/bcanSatchel/actions";
+import "../styles/NewGrantModal.css";
 import POCEntry from "./POCEntry";
-import { Grant } from "../../../../middle-layer/types/Grant";
-import { TDateISO } from "../../../../backend/src/utils/date";
-import { Status } from "../../../../middle-layer/types/Status";
-import { api } from "../../api";
+import { Grant } from "../../../../../middle-layer/types/Grant";
+import { TDateISO } from "../../../../../backend/src/utils/date";
+import { Status } from "../../../../../middle-layer/types/Status";
+import { api } from "../../../api";
 
 /** Attachment type from your middle layer */
 enum AttachmentType {

@@ -1,5 +1,5 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
-import "./styles/NewGrantModal.css";
+import "../styles/NewGrantModal.css";
 
 const POCEntry = forwardRef((_props, ref) => {
   const [poc, setPoc] = useState("");

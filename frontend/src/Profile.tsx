@@ -96,7 +96,7 @@ const Profile = observer(() => {
       <button type="submit" style={styles.button}>
         Save Changes
       </button>
-      <Link to="/grant-info" style={{ textDecoration: "none" }}>
+      <Link to="/main" style={{ textDecoration: "none" }}>
         <button style={styles.button}>Home</button>
       </Link>
       </div>

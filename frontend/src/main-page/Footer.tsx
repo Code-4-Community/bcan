@@ -1,7 +1,7 @@
 import React from 'react';
-import './styles/Footer.css'
+import '../styles/Footer.css'
 import { Group, Text } from '@chakra-ui/react';
-import { FooterText } from '../../translations/general';
+import { FooterText } from '../translations/general';
 
 const Footer: React.FC = () => {
     return (

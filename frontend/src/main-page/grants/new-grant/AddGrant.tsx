@@ -1,4 +1,4 @@
-import './grant-info/components/styles/GrantButton.css';
+import '../styles/GrantButton.css';
 
 // TODO: Fix 'any' typing here
 const AddGrantButton = ({ onClick } : any) => {

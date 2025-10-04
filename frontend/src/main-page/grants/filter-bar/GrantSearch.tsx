@@ -1,9 +1,9 @@
 import { IoIosSearch } from "react-icons/io";
 import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
-import "./styles/GrantSearch.css";
-import { Grant } from "../../middle-layer/types/Grant";
-import { api } from "./api";
+import "../styles/GrantSearch.css";
+import { Grant } from "../../../../../middle-layer/types/Grant";
+import { api } from "../../../api";
 
 function GrantSearch({ onGrantSelect }: any) {
   const [userInput, setUserInput] = useState("");

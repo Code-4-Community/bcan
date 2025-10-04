@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import "./styles/GrantItem.css";
-import { GrantAttributes } from "./GrantAttributes";
-import GrantDetails from "./GrantDetails";
+import "../styles/GrantItem.css";
+import { GrantAttributes } from "../grant-details/GrantAttributes";
+import GrantDetails from "../grant-details/GrantDetails";
 import StatusIndicator from "./StatusIndicator";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
-import { Grant } from "../../../../middle-layer/types/Grant";
-import { DoesBcanQualifyText } from "../../translations/general";
-import RingButton, { ButtonColorOption } from "../../custom/RingButton";
-import { Status } from "../../../../middle-layer/types/Status";
-import { api } from "../../api";
+import { Grant } from "../../../../../middle-layer/types/Grant";
+import { DoesBcanQualifyText } from "../../../translations/general";
+import RingButton, { ButtonColorOption } from "../../../custom/RingButton";
+import { Status } from "../../../../../middle-layer/types/Status";
+import { api } from "../../../api";
 
 interface GrantItemProps {
   grant: Grant;

@@ -1,12 +1,12 @@
 import "../styles/GrantList.css";
 import { observer } from "mobx-react-lite";
 import { useState, useEffect } from "react";
-import GrantItem from "../GrantItem";
-import GrantLabels from "../GrantLabels";
+import GrantItem from "./GrantItem.tsx";
+import GrantLabels from "./GrantLabels.tsx";
 import { ButtonGroup, IconButton, Pagination } from "@chakra-ui/react";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
-import { ProcessGrantData } from "./processGrantData.ts";
-import NewGrantModal from "../NewGrantModal.tsx";
+import { ProcessGrantData } from "../filter-bar/processGrantData.ts";
+import NewGrantModal from "../new-grant/NewGrantModal.tsx";
 
 const ITEMS_PER_PAGE = 6;
 

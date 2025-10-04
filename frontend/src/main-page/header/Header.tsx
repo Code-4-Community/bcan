@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./styles/Header.css";
-import logo from "./images/bcan_logo.svg";
-import { Status, statusToString } from "../../middle-layer/types/Status";
-import { updateFilter, logoutUser } from "./external/bcanSatchel/actions.ts";
+import logo from "../../images/bcan_logo.svg";
+import { Status, statusToString } from "../../../../middle-layer/types/Status.ts";
+import { updateFilter, logoutUser } from "../../external/bcanSatchel/actions.ts";
 import { observer } from "mobx-react-lite";
 import { Menu, Button } from "@chakra-ui/react";
 import { FaCog } from "react-icons/fa";
@@ -16,10 +16,9 @@ interface NavBarProps {
 }
 
 const linkList: NavBarProps[] = [
-  { name: "My Grants" },
-  { name: "Active Grants", filter: Status.Active },
-  { name: "Inactive Grants", filter: Status.Inactive },
-  { name: "Potential Grants", filter: Status.Potential },
+  { name: "Dashboard", linkTo: "/main/dashboard" },
+  { name: "All Grants", linkTo: "/main/all-grants" },
+  { name: "My Grants", linkTo: "/main/my-grants" },
 ];
 
 /**

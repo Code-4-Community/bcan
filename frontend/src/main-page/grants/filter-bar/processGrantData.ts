@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { getAppStore } from "../../../external/bcanSatchel/store";
-import { fetchAllGrants } from "../../../external/bcanSatchel/actions";
-import { Grant } from "../../../../../middle-layer/types/Grant";
+import { getAppStore } from "../../../external/bcanSatchel/store.ts";
+import { fetchAllGrants } from "../../../external/bcanSatchel/actions.ts";
+import { Grant } from "../../../../../middle-layer/types/Grant.ts";
 import {dateRangeFilter, filterGrants, statusFilter} from "./grantFilters";
 import { sortGrants } from "./grantSorter.ts";
 import { api } from "../../../api.ts";
