@@ -30,7 +30,7 @@ const mockGrants: Grant[] = [
     grantmaker_poc: { POC_name: "name", POC_email: "test@test.com" },
     bcan_poc: { POC_name: "name", POC_email: ""},
     attachments: [],
-    restricted_or_unrestricted: "unrestricted"
+    isRestricted: false
   },
   {
     grantId: 2,
@@ -47,7 +47,7 @@ const mockGrants: Grant[] = [
     bcan_poc:  { POC_name: "Allie", POC_email: "allie@gmail.com" },
     grantmaker_poc: { POC_name: "Benjamin", POC_email: "benpetrillo@yahoo.com" },
     attachments: [],
-    restricted_or_unrestricted: "restricted"
+    isRestricted: true
   },
 ];
 
@@ -224,7 +224,7 @@ describe("GrantService", () => {
         attachments: mockGrants[1].attachments,
         grant_start_date: mockGrants[1].grant_start_date,
         bcan_poc: mockGrants[1].bcan_poc,
-        restricted_or_unrestricted: mockGrants[1].restricted_or_unrestricted,
+        isRestricted: mockGrants[1].isRestricted,
       };
       const updatedAttributes = {
         does_bcan_qualify: mockUpdatedGrant.does_bcan_qualify,
@@ -270,7 +270,7 @@ describe("GrantService", () => {
         attachments: mockGrants[1].attachments,
         grant_start_date: mockGrants[1].grant_start_date,
         bcan_poc: mockGrants[1].bcan_poc,
-        restricted_or_unrestricted: mockGrants[1].restricted_or_unrestricted,
+        isRestricted: mockGrants[1].isRestricted,
       };
 
       mockUpdate.mockRejectedValue({
@@ -300,7 +300,7 @@ describe("GrantService", () => {
         grant_start_date: "2026-05-01",
         grantmaker_poc: { POC_name: "Aaron", POC_email: "a.ashby@northeastern.edu"},
         bcan_poc: { POC_name: "Ben Ahrendts", POC_email: "ben@gmail.com" },
-        restricted_or_unrestricted: "resricted"
+        isRestricted: true
       };
 
       const now = Date.now()
