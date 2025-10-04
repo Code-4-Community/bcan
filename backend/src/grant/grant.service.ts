@@ -1,7 +1,6 @@
-import { Injectable,Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import AWS from 'aws-sdk';
 import { Grant } from '../../../middle-layer/types/Grant';
-import { CreateGrantDto } from './dto/create-grant.dto';
 
 @Injectable()
 export class GrantService {
@@ -39,17 +38,19 @@ export class GrantService {
             const data = await this.dynamoDb.get(params).promise();
 
             if (!data.Item) {
-                throw new Error('No grant with id ' + grantId + ' found.');
+                throw new NotFoundException('No grant with id ' + grantId + ' found.');
             }
 
             return data.Item as Grant;
         } catch (error) {
+            if (error instanceof NotFoundException) throw error;
+            
             console.log(error)
             throw new Error('Failed to retrieve grant.');
         }
     }
 
-    // Method to archive grants takes in array 
+    // Method to unarchive grants takes in array 
     async unarchiveGrants(grantIds :number[]) : Promise<number[]> {
         let successfulUpdates: number[] = [];
         for (const grantId of grantIds) {
@@ -68,7 +69,7 @@ export class GrantService {
                 console.log(res)
 
                 if (res.Attributes && res.Attributes.isArchived === false) {
-                    console.log(`Grant ${grantId} successfully archived.`);
+                    console.log(`Grant ${grantId} successfully un-archived.`);
                     successfulUpdates.push(grantId);
                 } else {
                     console.log(`Grant ${grantId} update failed or no change in status.`);
@@ -117,8 +118,8 @@ export class GrantService {
         }
     }
     
-    // Add a new grant using the new CreateGrantDto.
-  async addGrant(grant: CreateGrantDto): Promise<number> {
+    // Add a new grant using the Grant interface from middleware.
+  async addGrant(grant: Grant): Promise<number> {
     // Generate a unique grant ID (using Date.now() for simplicity, needs proper UUID)
     const newGrantId = Date.now();
 
@@ -127,18 +128,19 @@ export class GrantService {
       Item: {
         grantId: newGrantId,
         organization: grant.organization,
-        description: grant.description,
-        /*bcan_poc: grant.bcan_poc,*/
-        grantmaker_poc: grant.grantmaker_poc,
-        application_deadline: grant.application_deadline,
-        notification_date: grant.notification_date,
-        report_deadline: grant.report_deadline,
-        timeline: grant.timeline,
-        estimated_completion_time: grant.estimated_completion_time,
         does_bcan_qualify: grant.does_bcan_qualify,
         status: grant.status, // Expected to be 0 (Potential), 1 (Active), or 2 (Inactive)
         amount: grant.amount,
+        grant_start_date: grant.grant_start_date,
+        application_deadline: grant.application_deadline,
+        report_deadlines: grant.report_deadlines,
+        description: grant.description,
+        timeline: grant.timeline,
+        estimated_completion_time: grant.estimated_completion_time,
+        grantmaker_poc: grant.grantmaker_poc,
+        bcan_poc: grant.bcan_poc,
         attachments: grant.attachments,
+        isRestricted: grant.isRestricted,
       }
     };
 
