@@ -7,10 +7,12 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 const mockPromise = vi.fn();
 const mockScan = vi.fn().mockReturnThis();
 const mockGet = vi.fn().mockReturnThis();
+const mockDelete = vi.fn().mockReturnThis();
 
 const mockDocumentClient = {
   scan: mockScan,
   get: mockGet,
+  delete: mockDelete,
   promise: mockPromise,
 };
 
@@ -54,4 +56,44 @@ describe('NotificationController', () => {
   it('Test', async () => {
     expect(true).toBe(true);
   });
+
+  // Tests for deleteGrantById method
+describe('deleteGrantById', () => {
+  it('should call DynamoDB delete with the correct params and return success message', async () => {
+    mockPromise.mockResolvedValueOnce({});
+
+    const result = await grantService.deleteGrantById('123');
+
+    expect(mockDelete).toHaveBeenCalledTimes(1); //ensures delete() was called once
+
+    //ensures delete() received an object containing the expected key and condition
+    expect(mockDelete).toHaveBeenCalledWith(
+      expect.objectContaining({
+        TableName: expect.any(String),
+        Key: {grantId: '123'},
+        ConditionExpression: 'attribute_exists(grantId)'
+      }),
+    );
+
+    expect(result).toEqual(expect.stringContaining('deleted successfully')); //service returns a string, checks it mentions success
+  });
+
+  it('should throw "does not exist" when DynamoDB returns ConditionalCheckFailedException', async () => {
+    //create an Error object and attach DynamoDB-style code
+    const conditionalError = new Error('Conditional check failed');
+    (conditionalError as any).code = 'ConditionalCheckFailedException';
+
+    mockPromise.mockRejectedValueOnce(conditionalError);
+
+    await expect(grantService.deleteGrantById('999'))
+    .rejects.toThrow(/does not exist/);
+  });
+
+  it('should throw a generic failure when DynamoDB fails for other reasons', async () => {
+    mockPromise.mockRejectedValueOnce(new Error('Some other DynamoDB error'));
+
+    await expect(grantService.deleteGrantById('123'))
+    .rejects.toThrow(/Failed to delete/);
+  });
+});
 });
