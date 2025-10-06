@@ -165,14 +165,14 @@ export class GrantService {
 
     try {
         await this.dynamoDb.delete(params).promise();
-        this.logger.log('Grant ${grantId} deleted successfully');
+        this.logger.log(`Grant ${grantId} deleted successfully`);
         return 'Grant ${grantId} deleted successfully';
     } catch (error: any) {
         if (error.code === "ConditionalCheckFailedException") {
-            throw new Error('Grant ${grantId} does not exist');
+            throw new Error(`Grant ${grantId} does not exist`);
         }
-        this.logger.error('Failed to delete Grant ${grantId}', error.stack);
-        throw new Error('Failed to delete Grant ${grantId}');
+        this.logger.error(`Failed to delete Grant ${grantId}`, error.stack);
+        throw new Error(`Failed to delete Grant ${grantId}`);
     }
     
   }
