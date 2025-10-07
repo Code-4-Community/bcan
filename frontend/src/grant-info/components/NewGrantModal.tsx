@@ -233,10 +233,10 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
     <div className="modal-overlay"> {/*Greyed out background */}
       <div className="modal-content"> {/*Popup container */}
-        <div className="flex">                         {/*Widget container */}
+        <div className="flex h-full">                         {/*Widget container */}
 
           {/*left column */}
-          <div className='w-1/2 p-4'>
+          <div className='w-1/2 p-4 h-full'>
             <h2>New Grant</h2>
 
               {/*Organization name and input */}
@@ -325,7 +325,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           {/*Right column */}
           <div className='flex p-4 w-1/2 mt-12 h-full'>
 
-              {/*Left column */}
+              {/* Top row*/}
               <div className="w-1/2 p-2 h-full">
                 {/*BCAN POC div*/}
                 <div className="w-full mt-1">
@@ -344,45 +344,55 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     </div>
                 </div>
 
-                {/*Qualify label and input */}
-                <div className="w-full mt-10">
-                  <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
-                    Does BCAN qualify?
-                  </label>
-                  <select style={{color: "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                    className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                    id="grid-first-name">
-                    <option value="">Select...</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                  </select>
-                </div>
+                {/* Select option menus */}
+                <div className="h-full">
+                  {/*Qualify label and input */}
+                  <div className="w-full mt-10">
+                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                      Does BCAN qualify?
+                    </label>
+                    <select style={{color: "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                      className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                      id="grid-first-name">
+                      <option value="">Select...</option>
+                      <option value="yes">Yes</option>
+                      <option value="no">No</option>
+                    </select>
+                  </div>
 
-                {/*Status label and input */}
-                <div className="w-full mt-5 md:mb-0 ">
-                  <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
-                    Status
-                  </label>
-                  <select style={{color: "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                    className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                    id="grid-first-name">
-                    <option value="">Select...</option>
-                    <option value="potential">Potential</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                    <option value="rejected">Rejected</option>
-                    <option value="pending">Pending</option>
-                  </select>
-                </div>
+                  {/*Status label and input */}
+                  <div className="w-full mt-5 md:mb-0 ">
+                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                      Status
+                    </label>
+                    <select style={{color: "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                      className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                      id="grid-first-name">
+                      <option value="">Select...</option>
+                      <option value="potential">Potential</option>
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                      <option value="rejected">Rejected</option>
+                      <option value="pending">Pending</option>
+                    </select>
+                  </div>
 
-                {/*Restriction types label and input */}
-                <div className="w-full mt-5 md:mb-0 ">
-                  <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
-                    Restriction types
-                  </label>
-                  <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                  className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Type Here"/>
+                  {/*Restriction types label and input */}
+                  <div className="w-full mt-5 md:mb-0 ">
+                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                      Restriction types
+                    </label>
+                    <select style={{color: "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                      className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                      id="grid-first-name">
+                      <option value="">Select...</option>
+                      <option value="restricted">Restricted</option>
+                      <option value="unrestricted">Unrestricted</option>
+                    </select>
+                  </div>
+
                 </div>
+                
               </div>
 
               {/*Rightmost column */}
@@ -406,12 +416,12 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
                 {/*Scope Documents div*/}
                 <div className="w-full mt-5 ">
-                    <label className="mb-2 mt-2 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
+                    <label className="mt-2 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
                         Scope Documents
                     </label>
-                    <button style={{color : "black", backgroundColor: "gray", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}className="h-10 w-full mt-2 mb-3">Upload Documents +</button>
+                    <button style={{color : "black", backgroundColor: "gray", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}className="h-10 w-full mt-2">Upload Documents +</button>
                     {/*Box div*/}
-                    <div className="flex p-3 rounded h-52" style={{backgroundColor: '#D3D3D3', borderColor: 'black', borderWidth: '1px'}}></div>
+                    <div className="flex p-3 rounded h-52 mt-6" style={{backgroundColor: '#D3D3D3', borderColor: 'black', borderWidth: '1px'}}></div>
                 </div>
 
                 
@@ -427,8 +437,8 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
         </div>
         <div className="button-row">
-          <button onClick={onClose}>Close</button>
-          <button onClick={handleSubmit}>Save</button>
+          <button style={{color : "black", backgroundColor: "white", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}} onClick={onClose} >Close</button>
+          <button style={{color : "black", backgroundColor: "#F58D5C", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}onClick={handleSubmit}>Save</button>
         </div>
 
     </div>
