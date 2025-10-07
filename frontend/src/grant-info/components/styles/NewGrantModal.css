@@ -135,6 +135,14 @@
     align-items: center;
     gap: 0.5rem;
   }
+
+  /* Each report date entry row */
+  .report-date-entry {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+  }
   
   /* The dropdown for Email/Phone in each POC entry */
   .poc-entry select {
