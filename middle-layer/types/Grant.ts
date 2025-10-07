@@ -20,5 +20,5 @@ export interface Grant {
     // bcan_poc may need to be changed later to be a validated account
     bcan_poc: POC; // person of contact at BCAN
     attachments: Attachment[]; // any attachments related to the grant
-    restricted_or_unrestricted: string; // "restricted" or "unrestricted" (restricted means BCAN must use the money for a specific purpose)
+    isRestricted: boolean;
 }

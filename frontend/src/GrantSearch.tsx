@@ -5,6 +5,7 @@ import Fuse from "fuse.js";
 import "./styles/GrantSearch.css";
 import { Grant } from "../../middle-layer/types/Grant";
 import { api } from "./api";
+import { updateSearchQuery } from "./external/bcanSatchel/actions";
 
 function GrantSearch({ onGrantSelect }: any) {
   const [userInput, setUserInput] = useState("");
@@ -43,6 +44,7 @@ function GrantSearch({ onGrantSelect }: any) {
     if (!query) {
       setDropdownGrants([]);
       setShowDropdown(false);
+      updateSearchQuery("");
       return;
     }
     const fuse = new Fuse<Grant>(grants, {
@@ -50,12 +52,15 @@ function GrantSearch({ onGrantSelect }: any) {
       threshold: 0.3,
     });
     const results = fuse.search(query).map((res) => res.item);
+    updateSearchQuery(query);
+
     setDropdownGrants(results.slice(0, 5));
-    setShowDropdown(results.length > 0);
+    setShowDropdown(true);
   };
 
   const handleSelectGrant = (selectedGrant: Grant) => {
     setUserInput(selectedGrant.organization);
+    updateSearchQuery(selectedGrant.organization);
     setShowDropdown(false);
     onGrantSelect?.(selectedGrant);
   };
@@ -73,7 +78,10 @@ function GrantSearch({ onGrantSelect }: any) {
   return (
     <div className="search-bar-main-container">
       <form className="search-container">
-        <div className="search-input-container" style={{ position: "relative" }}>
+        <div
+          className="search-input-container"
+          style={{ position: "relative" }}
+        >
           {/* Absolutely-positioned icon */}
           <FaSearchengin
             style={{
@@ -94,19 +102,29 @@ function GrantSearch({ onGrantSelect }: any) {
             value={userInput}
             onFocus={() => setShowDropdown(dropdownGrants.length > 0)}
             style={{ paddingLeft: "2rem" }} // make room for the icon
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                setShowDropdown(false);
+              }
+            }}
           />
 
           {showDropdown && (
             <div className="dropdown-container">
-              {dropdownGrants.map((grant, index) => (
-                <div
-                  key={index}
-                  className="dropdown-item"
-                  onClick={() => handleSelectGrant(grant)}
-                >
-                  {grant.organization}
-                </div>
-              ))}
+              {dropdownGrants.length > 0 ? (
+                dropdownGrants.map((grant, index) => (
+                  <div
+                    key={index}
+                    className="dropdown-item"
+                    onClick={() => handleSelectGrant(grant)}
+                  >
+                    {grant.organization}
+                  </div>
+                ))
+              ) : (
+                <div className="dropdown-item">No results found</div>
+              )}
             </div>
           )}
         </div>
