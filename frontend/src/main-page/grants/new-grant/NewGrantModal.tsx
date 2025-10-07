@@ -196,7 +196,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       estimated_completion_time: estimatedCompletionTimeInHours,
       description,
       attachments: attachmentsArray,
-      restricted_or_unrestricted: "unrestricted", // Default to unrestricted for now
+      isRestricted: false, // Default to unrestricted for now
     };
     console.log(newGrant);
     try {
