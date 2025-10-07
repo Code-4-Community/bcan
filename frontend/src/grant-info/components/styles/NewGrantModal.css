@@ -28,6 +28,8 @@
     width: 100%;
     max-width: 1200px; /* More width to accommodate multiple columns */
     padding: 2rem;
+    border: 2px solid black;
+    border-radius: 5px;
   }
   
   /* 
