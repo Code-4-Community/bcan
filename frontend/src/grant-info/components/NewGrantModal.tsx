@@ -209,8 +209,8 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
                   Organization Name
                 </label>
-                <input style={{borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Type Here"/>
+                <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                className="h-16 block w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight" id="grid-first-name" type="text" placeholder="Type Here"/>
               </div>
 
             {/*Top left quadrant - from app date, start date, report deadlines, est completion time*/}
@@ -226,15 +226,15 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-city">
                     Application Date
                     </label>
-                    <input style={{borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                    className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="date"/>
+                    <input style={{color : "gray", backgroundColor: '#F2EBE4',borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                    className="h-16 appearance-none block w-full text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="date"/>
                   </div>
                   {/*Grant Start Date and input */}
                   <div className=" w-1/2">
                     <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
                       Grant Start Date
                     </label>
-                      <input style={{borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                      <input style={{color : "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                       className="h-16 w-full appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="date"/>
                   </div>
                 </div>
@@ -244,7 +244,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
                   Estimated Completion Time
                   </label>
-                  <input style={{borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                  <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                   className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" />
                 </div>
 
@@ -258,9 +258,9 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       Report Deadlines
                   </label>
                   <div className="p-2 rounded h-60" style={{backgroundColor: '#D3D3D3', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}>
-                      <input style={{borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                      <input style={{color : "gray", backgroundColor: '#F2EBE4',borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                       className="h-16 w-full text-gray-700 rounded" id="grid-city" type="date"/>
-                      <button style={{borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}} className="h-10 w-full mt-2">Add Deadline +</button>
+                      <button style={{color : "black", backgroundColor: "#F58D5C", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}} className="h-10 w-full mt-2">Add Deadline +</button>
                   </div>
                 </div>
               </div>
@@ -272,7 +272,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
                   Timeline (in years)
                 </label>
-                <input  style={{borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                <input  style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                 className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Type Here"/>
               </div>
 
@@ -281,7 +281,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
                   Amount
                 </label>
-                <input style={{borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                 className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Type Here"/>
               </div>
 
@@ -293,17 +293,17 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               {/*Left column */}
               <div className="w-1/2 p-2 h-full">
                 {/*BCAN POC div*/}
-                <div className="w-full mt-1 mb-10">
-                    <label className="mb-2 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
+                <div className="w-full mt-1">
+                    <label className="mb-1 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
                         BCAN POC
                     </label>
                     {/*Box div*/} 
-                    <div className="flex p-3 rounded h-50" style={{backgroundColor: '#D3D3D3', borderColor: 'black', borderWidth: '1px'}}>
-                        <MdOutlinePerson2 className="w-1/2 h-full"/>
-                        <div className="w-1/2">
-                          <input style={{borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                    <div className="items-center flex p-3 rounded h-52" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px'}}>
+                        <MdOutlinePerson2 className="w-1/4 h-full p-1"/>
+                        <div className="w-3/4">
+                          <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                           className="h-16 w-full text-gray-700 rounded" id="grid-city" placeholder="Name" />
-                          <input style={{borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                          <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                           className="h-16 w-full text-gray-700 rounded" id="grid-city" placeholder="e-mail" />
                         </div> 
                     </div>
@@ -314,8 +314,13 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
                     Does BCAN qualify?
                   </label>
-                  <input style={{borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                  className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Type Here"/>
+                  <select style={{color: "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                    className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                    id="grid-first-name">
+                    <option value="">Select...</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
                 </div>
 
                 {/*Status label and input */}
@@ -323,8 +328,16 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
                     Status
                   </label>
-                  <input style={{borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                  className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Type Here"/>
+                  <select style={{color: "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                    className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                    id="grid-first-name">
+                    <option value="">Select...</option>
+                    <option value="potential">Potential</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="rejected">Rejected</option>
+                    <option value="pending">Pending</option>
+                  </select>
                 </div>
 
                 {/*Restriction types label and input */}
@@ -332,7 +345,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
                     Restriction types
                   </label>
-                  <input style={{borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                  <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                   className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Type Here"/>
                 </div>
               </div>
@@ -341,16 +354,16 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               <div className="w-1/2 p-2 h-full">
                 {/*Grant Provider POC div*/}
                 <div className="w-full mt-1 mb-10 ">
-                    <label className="mb-2 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
+                    <label className="mb-1 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
                         Grant Provider POC
                     </label>
                     {/*Box div*/}
-                    <div className="flex p-3 rounded h-50" style={{backgroundColor: '#D3D3D3', borderColor: 'black', borderWidth: '1px'}}>
-                        <MdOutlinePerson2 className="w-1/2 h-full"/>
-                        <div className="w-1/2">
-                          <input style={{borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                    <div className="flex p-3 rounded h-52 items-center" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px'}}>
+                        <MdOutlinePerson2 className="p-1 w-1/4 h-full"/>
+                        <div className="w-3/4">
+                          <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                           className="h-16 w-full text-gray-700 rounded" id="grid-city" placeholder="Name" />
-                          <input style={{borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                          <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                           className="h-16 w-full text-gray-700 rounded" id="grid-city" placeholder="e-mail" />
                         </div> 
                     </div>
@@ -361,7 +374,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     <label className="mb-2 mt-2 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
                         Scope Documents
                     </label>
-                    <button style={{borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}className="h-10 w-full mt-2 mb-2">Upload Documents</button>
+                    <button style={{color : "black", backgroundColor: "gray", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}className="h-10 w-full mt-2 mb-2">Upload Documents +</button>
                     {/*Box div*/}
                     <div className="flex p-3 rounded h-40" style={{backgroundColor: '#D3D3D3', borderColor: 'black', borderWidth: '1px'}}></div>
                 </div>

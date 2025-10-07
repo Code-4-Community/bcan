@@ -24,13 +24,16 @@
     We'll use a background color similar to the screenshot's peach tone.
   */
   .modal-content {
-    background: #f7bfa6; /* Peach background */
+    background: white; /* Peach background */
     width: 100%;
     max-width: 1200px; /* More width to accommodate multiple columns */
     padding: 2rem;
     border: 2px solid black;
     border-radius: 5px;
   }
+
+  /*
+  h-16 block w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight
   
   /* 
     We'll define a grid layout that lines up labels and inputs
