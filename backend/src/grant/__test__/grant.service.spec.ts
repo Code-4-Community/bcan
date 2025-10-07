@@ -168,12 +168,9 @@ describe("GrantService", () => {
       const data = await grantService.unarchiveGrants([1, 2]);
 
       expect(data).toEqual([1, 2]);
-      expect(
-      
-      ).toHaveBeenCalledTimes(2);
+      expect(mockUpdate).toHaveBeenCalledTimes(2);
 
-      const firstCallArgs = 
-            .mock.calls[0][0];
+      const firstCallArgs = mockUpdate.mock.calls[0][0];
       const secondCallArgs = mockUpdate.mock.calls[1][0];
 
       expect(firstCallArgs).toMatchObject({
