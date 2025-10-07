@@ -9,6 +9,7 @@ export class NotificationService {
   private ses = new AWS.SES({ region: process.env.AWS_REGION });
 
   // function to create a notification
+  // Should this have a check to prevent duplicate notifications?
   async createNotification(notification: Notification): Promise<Notification> {
 
     const alertTime = new Date(notification.alertTime); // ensures a Date can be created from the given alertTime
@@ -43,9 +44,11 @@ export class NotificationService {
     };
 
     try {
-      const data = await this.dynamoDb.query(params).promise();
 
-      if (!data.Items) {
+      
+      const data = await this.dynamoDb.query(params).promise();
+      // This is never hit, because no present userId throws an error
+      if (!data || !data.Items || data.Items.length == 0) {
         throw new Error('No notifications with user id ' + userId + ' found.');
       }
 
@@ -56,8 +59,11 @@ export class NotificationService {
     }
   }
 
+  
+
 
   // function that returns array of notifications by notification id
+  // should this exist?
   async getNotificationByNotificationId(notificationId: string): Promise<Notification[]> {
 
     // key condition expression specifies the query condition
