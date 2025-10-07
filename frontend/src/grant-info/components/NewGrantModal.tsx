@@ -233,7 +233,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
     <div className="modal-overlay"> {/*Greyed out background */}
       <div className="modal-content"> {/*Popup container */}
-        <div className="flex h-full">                         {/*Widget container */}
+        <div className="flex">                         {/*Widget container */}
 
           {/*left column */}
           <div className='w-1/2 p-4 h-full'>
@@ -323,31 +323,51 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           </div>
 
           {/*Right column */}
-          <div className='flex p-4 w-1/2 mt-12 h-full'>
+          <div className='p-4 w-1/2 mt-12 h-full'>
 
-              {/* Top row*/}
-              <div className="w-1/2 p-2 h-full">
-                {/*BCAN POC div*/}
-                <div className="w-full mt-1">
-                    <label className="mb-1 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
-                        BCAN POC
-                    </label>
-                    {/*Box div*/} 
-                    <div className="items-center flex p-3 rounded h-52" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px'}}>
-                        <MdOutlinePerson2 className="w-1/4 h-full p-1"/>
-                        <div className="w-3/4">
-                          <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                          className="h-16 w-full text-gray-700 rounded" id="grid-city" placeholder="Name" />
-                          <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                          className="h-16 w-full text-gray-700 rounded" id="grid-city" placeholder="e-mail" />
-                        </div> 
-                    </div>
-                </div>
+            {/*POC row */}
+            <div className="flex w-full h-1/2 mt-5">
+              {/*BCAN POC div*/}
+              <div className="w-full mt-1 p-2">
+                  <label className="mb-1 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
+                      BCAN POC
+                  </label>
+                  {/*Box div*/} 
+                  <div className="items-center flex p-3 rounded h-52" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px'}}>
+                      <MdOutlinePerson2 className="w-1/4 h-full p-1"/>
+                      <div className="w-3/4">
+                        <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        className="h-16 w-full text-gray-700 rounded" id="grid-city" placeholder="Name" />
+                        <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        className="h-16 w-full text-gray-700 rounded" id="grid-city" placeholder="e-mail" />
+                      </div> 
+                  </div>
+              </div>
 
-                {/* Select option menus */}
-                <div className="h-full">
+              {/*Grant Provider POC div*/}
+              <div className="p-2 w-full mt-1 ">
+                  <label className="mb-1 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
+                      Grant Provider POC
+                  </label>
+                  {/*Box div*/}
+                  <div className="flex p-3 rounded h-52 items-center" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px'}}>
+                      <MdOutlinePerson2 className="p-1 w-1/4 h-full"/>
+                      <div className="w-3/4">
+                        <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        className="h-16 w-full text-gray-700 rounded" id="grid-city" placeholder="Name" />
+                        <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        className="h-16 w-full text-gray-700 rounded" id="grid-city" placeholder="e-mail" />
+                      </div> 
+                  </div>
+              </div>
+            </div>
+
+            {/*bottom  right row*/}
+            <div className="flex h-1/2 w-full">
+               {/* Select option menus */}
+                <div className="p-2 h-full w-1/2 flex-col">
                   {/*Qualify label and input */}
-                  <div className="w-full mt-10">
+                  <div className="w-full ">
                     <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
                       Does BCAN qualify?
                     </label>
@@ -383,66 +403,41 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       Restriction types
                     </label>
                     <select style={{color: "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                      className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                      className="h-16 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" 
                       id="grid-first-name">
                       <option value="">Select...</option>
                       <option value="restricted">Restricted</option>
                       <option value="unrestricted">Unrestricted</option>
                     </select>
                   </div>
-
                 </div>
-                
+
+              {/*Scope Documents div*/}
+              <div className="p-2 w-1/2 h-full flex-col">
+                  <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
+                      Scope Documents
+                  </label>
+                  <button style={{color : "black", backgroundColor: "gray", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}className="h-10 w-full mt-2">Upload Documents +</button>
+                  {/*Box div*/}
+                  <div className="flex rounded h-52 mt-6" style={{backgroundColor: '#D3D3D3', borderColor: 'black', borderWidth: '1px'}}></div>
               </div>
-
-              {/*Rightmost column */}
-              <div className="w-1/2 p-2 h-full">
-                {/*Grant Provider POC div*/}
-                <div className="w-full mt-1 mb-10 ">
-                    <label className="mb-1 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
-                        Grant Provider POC
-                    </label>
-                    {/*Box div*/}
-                    <div className="flex p-3 rounded h-52 items-center" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px'}}>
-                        <MdOutlinePerson2 className="p-1 w-1/4 h-full"/>
-                        <div className="w-3/4">
-                          <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                          className="h-16 w-full text-gray-700 rounded" id="grid-city" placeholder="Name" />
-                          <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                          className="h-16 w-full text-gray-700 rounded" id="grid-city" placeholder="e-mail" />
-                        </div> 
-                    </div>
-                </div>
-
-                {/*Scope Documents div*/}
-                <div className="w-full mt-5 ">
-                    <label className="mt-2 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
-                        Scope Documents
-                    </label>
-                    <button style={{color : "black", backgroundColor: "gray", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}className="h-10 w-full mt-2">Upload Documents +</button>
-                    {/*Box div*/}
-                    <div className="flex p-3 rounded h-52 mt-6" style={{backgroundColor: '#D3D3D3', borderColor: 'black', borderWidth: '1px'}}></div>
-                </div>
-
-                
-
-              </div>
-              
-
-              
-
-
+            {/*End bottom right row */}
+            </div>
+          {/*End right column */}
           </div>
  
-
+        {/*End content before buttons */}
         </div>
+      
         <div className="button-row">
           <button style={{color : "black", backgroundColor: "white", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}} onClick={onClose} >Close</button>
           <button style={{color : "black", backgroundColor: "#F58D5C", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}onClick={handleSubmit}>Save</button>
         </div>
 
-    </div>
+      {/*End modal content */}
+      </div>
 
+    {/*End modal overlay */}
     </div>
     
     
