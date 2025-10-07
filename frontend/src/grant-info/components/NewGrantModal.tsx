@@ -374,9 +374,9 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     <label className="mb-2 mt-2 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
                         Scope Documents
                     </label>
-                    <button style={{color : "black", backgroundColor: "gray", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}className="h-10 w-full mt-2 mb-2">Upload Documents +</button>
+                    <button style={{color : "black", backgroundColor: "gray", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}className="h-10 w-full mt-2 mb-3">Upload Documents +</button>
                     {/*Box div*/}
-                    <div className="flex p-3 rounded h-40" style={{backgroundColor: '#D3D3D3', borderColor: 'black', borderWidth: '1px'}}></div>
+                    <div className="flex p-3 rounded h-52" style={{backgroundColor: '#D3D3D3', borderColor: 'black', borderWidth: '1px'}}></div>
                 </div>
 
                 
