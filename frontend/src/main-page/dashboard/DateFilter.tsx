@@ -15,13 +15,13 @@ const DateFilter: React.FC = observer(() => {
 
   // Initialize selection from store or fallback to all years
   const [selectedYears, setSelectedYears] = useState<number[]>(
-    yearFilter ?? []
+    uniqueYears
   );
 
   // Keep local selection in sync if store changes
   useEffect(() => {
-    setSelectedYears(yearFilter ?? uniqueYears);
-  }, [yearFilter]);
+    (yearFilter && yearFilter.length) === 0 ? setSelectedYears(uniqueYears) : setSelectedYears(yearFilter ?? uniqueYears);
+  }, [yearFilter, uniqueYears]);
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const year = Number(event.target.value);
