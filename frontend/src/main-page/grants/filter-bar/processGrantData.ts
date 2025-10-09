@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getAppStore } from "../../../external/bcanSatchel/store.ts";
 import { fetchAllGrants } from "../../../external/bcanSatchel/actions.ts";
 import { Grant } from "../../../../../middle-layer/types/Grant.ts";
-import {dateRangeFilter, filterGrants, statusFilter} from "./grantFilters";
+import {dateRangeFilter, filterGrants, statusFilter, yearFilterer} from "./grantFilters";
 import { sortGrants } from "./grantSorter.ts";
 import { api } from "../../../api.ts";
 
@@ -23,7 +23,7 @@ const fetchGrants = async () => {
 // contains callbacks for sorting and filtering grants
 // stores state for list of grants/filter
 export const ProcessGrantData = () => {
-    const { allGrants, filterStatus, startDateFilter, endDateFilter } = getAppStore();
+    const { allGrants, filterStatus, startDateFilter, endDateFilter,yearFilter } = getAppStore();
     const [grants, setGrants] = useState<Grant[]>([]);
 
     // init grant list
@@ -33,7 +33,7 @@ export const ProcessGrantData = () => {
 
     // when filter changes, update grant list state
     useEffect(() => {
-        const filters = [statusFilter(filterStatus), dateRangeFilter(startDateFilter, endDateFilter)]
+        const filters = [statusFilter(filterStatus), dateRangeFilter(startDateFilter, endDateFilter), yearFilterer(yearFilter)];
         const filtered = filterGrants(allGrants, filters);
         setGrants(filtered);
         // current brute force update everything when an attribute changes

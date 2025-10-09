@@ -14,6 +14,7 @@ import { observer } from "mobx-react-lite";
 import { Menu, Button } from "@chakra-ui/react";
 import { FaCog } from "react-icons/fa";
 import BellButton from "./Bell.tsx";
+import { useLocation } from 'react-router-dom';
 
 interface NavBarProps {
   name: string;
@@ -65,7 +66,7 @@ const Header: React.FC = observer(() => {
               >
                 <div
                   className={`header-button header-button${
-                    selected === item.name ? "-selected" : ""
+                    useLocation().pathname === item.linkTo ? "-selected" : ""
                   } hover:bg-medium-orange`}
                 >
                   {item.name}

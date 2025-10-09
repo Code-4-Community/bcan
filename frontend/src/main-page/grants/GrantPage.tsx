@@ -4,13 +4,21 @@ import GrantList from "./grant-list/index.tsx";
 import AddGrantButton from "./new-grant/AddGrant.tsx";
 import GrantSearch from "./filter-bar/GrantSearch.tsx";
 import NewGrantModal from "./new-grant/NewGrantModal.tsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Grant } from "../../../../middle-layer/types/Grant.ts";
 import FilterBar from "./filter-bar/FilterBar.tsx";
+import { updateEndDateFilter, updateFilter, updateStartDateFilter, updateYearFilter } from "../../external/bcanSatchel/actions.ts";
 
 function GrantPage() {
   const [showNewGrantModal, setShowNewGrantModal] = useState(false);
   const [selectedGrant, setSelectedGrant] = useState<Grant | null>(null);
+
+  useEffect(() => {
+            updateYearFilter(null);
+            updateFilter(null);
+            updateEndDateFilter(null);
+            updateStartDateFilter(null);
+        }, []);
 
   return (
     <div className="grant-page px-8">

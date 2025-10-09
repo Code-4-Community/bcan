@@ -16,3 +16,9 @@ export const dateRangeFilter = (start: Date | null, end: Date | null) => (grant:
     if (end && date > end) return false;
     return true;
 };
+
+export const yearFilterer = (years: number[] | null) => (grant: Grant) => {
+    if (!years) return true;
+    const grantYear = new Date(grant.application_deadline).getFullYear();
+    return years.includes(grantYear);
+}
