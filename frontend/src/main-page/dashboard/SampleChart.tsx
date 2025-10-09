@@ -1,8 +1,10 @@
 import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts";
-import { ProcessGrantData } from "../grants/filter-bar/processGrantData";
+import { useProcessGrantData } from "../grants/filter-bar/processGrantData";
+import { useEffect } from "react";
+import { observer } from "mobx-react-lite";
 
-function SampleChart() {
-  const { grants } = ProcessGrantData();
+const SampleChart: React.FC = observer(() => {
+  const { grants, onSort } = useProcessGrantData();
   const data = grants.map((grant) => ({
       name: new Date(grant.application_deadline).getFullYear().toString(),
       uv: grant.amount,
@@ -12,6 +14,10 @@ function SampleChart() {
   //     { name: "Page A", uv: 400, pv: 2400, amt: 2400 },
   //     { name: "Page B", uv: 600, pv: 2400, amt: 2400 },
   //   ];
+
+  useEffect(() => {
+    grants
+  }, [grants]);
 
   return (
     <div>
@@ -43,6 +49,6 @@ function SampleChart() {
       </BarChart>
     </div>
   );
-}
+});
 
 export default SampleChart;

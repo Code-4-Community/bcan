@@ -13,6 +13,7 @@ function GrantPage() {
   const [showNewGrantModal, setShowNewGrantModal] = useState(false);
   const [selectedGrant, setSelectedGrant] = useState<Grant | null>(null);
 
+  // reset filters on initial render
   useEffect(() => {
             updateYearFilter(null);
             updateFilter(null);

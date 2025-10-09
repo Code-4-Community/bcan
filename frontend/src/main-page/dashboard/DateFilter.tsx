@@ -3,48 +3,53 @@ import { updateYearFilter } from "../../external/bcanSatchel/actions";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { observer } from "mobx-react-lite";
 
-
 const DateFilter: React.FC = observer(() => {
-  const { yearFilter } = getAppStore();
-// Get initial store values
-  //const { yearFilter } = getAppStore();
+  const { allGrants, yearFilter } = getAppStore();
 
-  // Available years (can be dynamic later)
-  const yearList = [2022, 2023, 2024, 2025, 2026];
+  // Generate unique years dynamically from grants
+  const uniqueYears = Array.from(
+    new Set(
+      allGrants.map((g) => new Date(g.application_deadline).getFullYear())
+    )
+  ).sort((a, b) => a - b);
 
-  // Initialize from store or fallback to []
-  const [selectedYears, setSelectedYears] = useState<number[]>(yearList ?? []);
+  // Initialize selection from store or fallback to all years
+  const [selectedYears, setSelectedYears] = useState<number[]>(
+    yearFilter ?? []
+  );
 
-  // Update local + store + parent when a checkbox changes
+  // Keep local selection in sync if store changes
+  useEffect(() => {
+    setSelectedYears(yearFilter ?? uniqueYears);
+  }, [yearFilter]);
+
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const year = Number(event.target.value);
     const checked = event.target.checked;
 
-    setSelectedYears((prevSelected) => {
-      const updated = checked
-        ? [...prevSelected, year]
-        : prevSelected.filter((y) => y !== year);
+    let updatedYears;
+    if (checked) {
+      updatedYears = [...selectedYears, year];
+    } else {
+      updatedYears = selectedYears.filter((y) => y !== year);
+    }
 
-      updateYearFilter(updated);  
-      setSelectedYears(updated);     
-      return updated;
-    });
+    setSelectedYears(updatedYears);
+    updateYearFilter(updatedYears); // update store
+    console.log("Updated year filter:", updatedYears);
+    console.log("Current store year filter:", getAppStore().allGrants);
   };
-
-  // Sync local UI with store if it changes elsewhere
-  useEffect(() => {
-    setSelectedYears(yearFilter ?? []);
-  }, [yearFilter]);
 
   return (
     <div className="flex flex-col space-y-2">
-      {yearList.map((year) => (
+      {uniqueYears.map((year) => (
         <label key={year} className="flex items-center space-x-2">
           <input
             type="checkbox"
             value={year}
             checked={selectedYears.includes(year)}
             onChange={handleCheckboxChange}
+            defaultChecked={true}
           />
           <span>{year}</span>
         </label>

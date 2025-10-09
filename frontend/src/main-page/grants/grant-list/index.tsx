@@ -5,7 +5,7 @@ import GrantItem from "./GrantItem.tsx";
 import GrantLabels from "./GrantLabels.tsx";
 import { ButtonGroup, IconButton, Pagination } from "@chakra-ui/react";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
-import { ProcessGrantData } from "../filter-bar/processGrantData.ts";
+import { useProcessGrantData } from "../filter-bar/processGrantData.ts";
 import NewGrantModal from "../new-grant/NewGrantModal.tsx";
 
 const ITEMS_PER_PAGE = 6;
@@ -16,7 +16,7 @@ interface GrantListProps {
 }
 
 const GrantList: React.FC<GrantListProps> = observer(({ selectedGrantId, onClearSelectedGrant }) => {
-    const { grants, onSort } = ProcessGrantData();
+    const { grants, onSort } = useProcessGrantData();
     const [currentPage, setPage] = useState(1);
     const [showNewGrantModal, setShowNewGrantModal] = useState(false);
 
