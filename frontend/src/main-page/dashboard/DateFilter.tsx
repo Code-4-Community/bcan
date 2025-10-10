@@ -14,15 +14,16 @@ const DateFilter: React.FC = observer(() => {
   ).sort((a, b) => a - b);
 
   // Initialize selection from store or fallback to all years
-  const [selectedYears, setSelectedYears] = useState<number[]>(
-    uniqueYears
-  );
+  const [selectedYears, setSelectedYears] = useState<number[]>(uniqueYears);
 
   // Keep local selection in sync if store changes
   useEffect(() => {
-    (yearFilter && yearFilter.length) === 0 ? setSelectedYears(uniqueYears) : setSelectedYears(yearFilter ?? uniqueYears);
+    (yearFilter && yearFilter.length) === 0
+      ? setSelectedYears(uniqueYears)
+      : setSelectedYears(yearFilter ?? uniqueYears);
   }, [yearFilter, uniqueYears]);
 
+  // Update local store and state on checkbox change
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const year = Number(event.target.value);
     const checked = event.target.checked;
@@ -35,13 +36,11 @@ const DateFilter: React.FC = observer(() => {
     }
 
     setSelectedYears(updatedYears);
-    updateYearFilter(updatedYears); // update store
-    console.log("Updated year filter:", updatedYears);
-    console.log("Current store year filter:", getAppStore().allGrants);
+    updateYearFilter(updatedYears);
   };
 
   return (
-    <div className="flex flex-col space-y-2">
+    <div className="flex flex-col space-y-2 mb-4">
       {uniqueYears.map((year) => (
         <label key={year} className="flex items-center space-x-2">
           <input

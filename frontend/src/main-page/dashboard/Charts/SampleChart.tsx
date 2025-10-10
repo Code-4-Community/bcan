@@ -1,31 +1,20 @@
 import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts";
-import { useProcessGrantData } from "../grants/filter-bar/processGrantData";
-import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
+import { useProcessGrantData } from "../../../main-page/grants/filter-bar/processGrantData";
+import { aggregateMoneyGrantsByYear, YearAmount } from "../grantCalculations";
 
 const SampleChart: React.FC = observer(() => {
-  const { grants, onSort } = useProcessGrantData();
-  const data = grants.map((grant) => ({
-      name: new Date(grant.application_deadline).getFullYear().toString(),
-      uv: grant.amount,
-    }));
-
-  //   const data = [
-  //     { name: "Page A", uv: 400, pv: 2400, amt: 2400 },
-  //     { name: "Page B", uv: 600, pv: 2400, amt: 2400 },
-  //   ];
-
-  useEffect(() => {
-    grants
-  }, [grants]);
+  const { grants } = useProcessGrantData();
+  const data = aggregateMoneyGrantsByYear(grants, "status").map(
+    (grant: YearAmount) => ({
+      name: grant.year.toString(),
+      active: grant.Active,
+      inactive: grant.Inactive,
+    })
+  );
 
   return (
     <div>
-      {/* {grants.map((grant) => (
-                <div key={grant.grantId}>
-                    <p>{grant.title}</p>
-                </div>
-            ))} */}
       <BarChart
         width={600}
         height={300}
@@ -35,8 +24,17 @@ const SampleChart: React.FC = observer(() => {
         <CartesianGrid stroke="#aaa" strokeDasharray="5 5" />
         <Bar
           type="monotone"
-          dataKey="uv"
-          stroke="purple"
+          stackId="a"
+          dataKey="active"
+          fill="#90c4e5"
+          strokeWidth={2}
+          name="My data series name"
+        />
+        <Bar
+          type="monotone"
+          stackId="a"
+          dataKey="inactive"
+          fill="#F58D5C"
           strokeWidth={2}
           name="My data series name"
         />
