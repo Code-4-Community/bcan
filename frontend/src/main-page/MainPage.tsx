@@ -3,7 +3,6 @@ import Dashboard from "./dashboard/Dashboard";
 import GrantPage from "./grants/GrantPage";
 import Header from "./header/Header";
 import Users from "./users/Users";
-import { useEffect } from "react";
 
 function MainPage() {
   

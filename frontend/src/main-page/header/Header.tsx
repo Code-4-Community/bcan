@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./styles/Header.css";
 import logo from "../../images/bcan_logo.svg";
@@ -33,14 +32,12 @@ const linkList: NavBarProps[] = [
  * The cog displays a dropdown with "My Account" and "Logout" options.
  */
 const Header: React.FC = observer(() => {
-  const [selected, setSelected] = useState("All Grants");
 
   function categoryClicked(
     e: React.MouseEvent,
     category: string,
     linkTo?: string
   ) {
-    setSelected(category);
     if (!linkTo) {
       e.preventDefault();
       updateFilter(statusToString(category));
