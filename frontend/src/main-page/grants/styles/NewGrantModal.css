@@ -105,13 +105,8 @@
     padding: 0.6rem;
     font-size: 1rem;
     margin-bottom: 0.25rem;
-<<<<<<< HEAD:frontend/src/grant-info/components/styles/NewGrantModal.css
     border: 2px solid #ccc;
     border-radius: 5px;
-=======
-    border: 1px solid #ccc;
-    border-radius: 15px;
->>>>>>> origin/main:frontend/src/main-page/grants/styles/NewGrantModal.css
     box-sizing: border-box;
     background-color: #fff;
     color: #000;

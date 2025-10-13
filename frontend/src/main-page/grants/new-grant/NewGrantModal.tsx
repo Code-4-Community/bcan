@@ -3,11 +3,11 @@ import React, { useState, createRef, RefObject } from "react";
 import { fetchAllGrants } from "../../../external/bcanSatchel/actions";
 import "../styles/NewGrantModal.css";
 import POCEntry from "./POCEntry";
-import { Grant } from "../../../../middle-layer/types/Grant";
-import { TDateISO } from "../../../../backend/src/utils/date";
-import { Status } from "../../../../middle-layer/types/Status";
-import { api } from "../../api";
 import { MdOutlinePerson2 } from "react-icons/md";
+import { Grant } from "../../../../../middle-layer/types/Grant";
+import { TDateISO } from "../../../../../backend/src/utils/date";
+import { Status } from "../../../../../middle-layer/types/Status";
+//import { api } from "@/api";
 
 /** Attachment type from your middle layer */
 enum AttachmentType {
@@ -200,33 +200,33 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       isRestricted: false, // Default to unrestricted for now
     };
     console.log(newGrant);
-    try {
-      const response = await api("/grant/new-grant", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newGrant),
-      });
+    // try {
+    //   const response = await api("/grant/new-grant", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify(newGrant),
+    //   });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        setErrorMessage(errorData.errMessage || "Failed to add grant.");
-        return;
-      }
+    //   if (!response.ok) {
+    //     const errorData = await response.json();
+    //     setErrorMessage(errorData.errMessage || "Failed to add grant.");
+    //     return;
+    //   }
 
-      // Re-fetch the full list of grants
-      const grantsResponse = await api("/grant");
-      if (!grantsResponse.ok) {
-        throw new Error("Failed to re-fetch grants.");
-      }
-      const updatedGrants = await grantsResponse.json();
-      // Update the store
-      fetchAllGrants(updatedGrants);
+    //   // Re-fetch the full list of grants
+    //   //const grantsResponse = await api("/grant");
+    //   // if (!grantsResponse.ok) {
+    //   //   throw new Error("Failed to re-fetch grants.");
+    //   // }
+    //   // const updatedGrants = await grantsResponse.json();
+    //   // // Update the store
+    //   // fetchAllGrants(updatedGrants);
 
-      onClose();
-    } catch (error) {
-      setErrorMessage("Server error. Please try again.");
-      console.error(error);
-    }
+    //   onClose();
+    // } catch (error) {
+    //   setErrorMessage("Server error. Please try again.");
+    //   console.error(error);
+    // }
   };
 
   return (
