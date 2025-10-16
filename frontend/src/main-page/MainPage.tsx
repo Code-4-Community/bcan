@@ -3,7 +3,7 @@ import Dashboard from "./dashboard/Dashboard";
 import GrantPage from "./grants/GrantPage";
 import Header from "./header/Header";
 import Users from "./users/Users";
-import MyGrantsPage from "./grants/MyGrantsPage";
+
 
 function MainPage() {
   return (
@@ -11,8 +11,8 @@ function MainPage() {
       <Header />
       <Routes>
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/all-grants" element={<GrantPage />} />
-        <Route path="/my-grants" element={<MyGrantsPage />} />
+        <Route path="/all-grants" element={<GrantPage showOnlyMyGrants={false} />} />
+        <Route path="/my-grants" element={<GrantPage showOnlyMyGrants={true} />} /> 
         <Route path="/users" element={<Users />} />
         {/* fallback route */}
         <Route path="*" element={<GrantPage />} />
