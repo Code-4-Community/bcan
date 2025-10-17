@@ -12,6 +12,7 @@ export interface AppState {
   // TODO: should this be the ISODate type?
   startDateFilter: Date | null;
   endDateFilter: Date | null;
+  searchQuery: string;
 }
 
 // Define initial state
@@ -23,6 +24,7 @@ const initialState: AppState = {
   filterStatus: null,
   startDateFilter: null,
   endDateFilter: null,
+  searchQuery: '',
 };
 
 const store = createStore<AppState>('appStore', initialState);
