@@ -18,12 +18,12 @@ export enum Status {
 // string rep of status
 export function statusToString(status: string): Status | null{
     switch (status) {
-        case 'My Grants': return null; // no filter
-        case 'Active Grants': return Status.Active;
-        case 'Inactive Grants': return Status.Inactive;
-        case 'Potential Grants': return Status.Potential;
-        case 'Rejected Grants': return Status.Rejected;
-        case 'Pending Grants': return Status.Pending;
+        case 'All': return null; // no filter
+        case 'Active': return Status.Active;
+        case 'Inactive': return Status.Inactive;
+        case 'Potential': return Status.Potential;
+        case 'Rejected': return Status.Rejected;
+        case 'Pending': return Status.Pending;
         default: throw new Error(`Unknown status: ${status}`);
     }
 }

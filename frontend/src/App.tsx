@@ -2,7 +2,7 @@
  * App.tsx
  * Renders with <AnimatedRoutes />.
  */
-import "./App.css";
+import "./styles/App.css";
 import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
 import { BrowserRouter as Router } from "react-router-dom";
 import { observer } from "mobx-react-lite";
@@ -10,7 +10,7 @@ import { observer } from "mobx-react-lite";
 // Register store and mutators
 import "./external/bcanSatchel/mutators";
 import AnimatedRoutes from "./animations/AnimatedRoutes";
-import Footer from "./grant-info/components/Footer";
+import Footer from "./main-page/Footer";
 
 /**
  * Main app component that renders animated routes

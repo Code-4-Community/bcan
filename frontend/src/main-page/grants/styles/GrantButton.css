@@ -1,0 +1,25 @@
+.grant-button {
+    color: #000;
+    
+    /* Shape and layout */
+    border-radius: 15px;
+    padding: 8px 16px;
+    font-size: 16px;
+    
+    cursor: pointer;
+    height: 42px;
+    
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  .add-grant-button {
+  width: 168.42px;
+  font-weight: 600;
+  }
+  
+  
+  .grant-button:hover {
+    opacity: 0.8;
+  }
+
+  

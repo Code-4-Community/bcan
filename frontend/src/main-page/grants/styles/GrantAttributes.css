@@ -1,0 +1,31 @@
+.grant-attributes {
+    padding: 1rem;
+    border-radius: 15px; 
+    margin-top: 4rem;
+    height: 30%;
+    margin-right: 1rem;
+}
+
+.attribute-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem; 
+}
+
+.attribute-label {
+    font-weight: bold;
+    color:black; 
+    flex: 1; 
+    margin-right: 1rem;
+}
+
+.attribute-value {
+    background-color: white; 
+    padding: 0.5rem;
+    border: 1px solid black;
+    border-radius: 15px;
+    width: 100px;
+    height: 20px;
+}
+
+
