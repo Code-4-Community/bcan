@@ -7,18 +7,26 @@ import { ButtonGroup, IconButton, Pagination } from "@chakra-ui/react";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import { ProcessGrantData } from "../filter-bar/processGrantData.ts";
 import NewGrantModal from "../new-grant/NewGrantModal.tsx";
+import { Grant } from "../../../../../middle-layer/types/Grant.ts";
 
 const ITEMS_PER_PAGE = 6;
 
 interface GrantListProps {
     selectedGrantId?: number;
     onClearSelectedGrant?: () => void;
+    showOnlyMyGrants?: boolean;
+    currentUserEmail?: string;
 }
 
-const GrantList: React.FC<GrantListProps> = observer(({ selectedGrantId, onClearSelectedGrant }) => {
+const GrantList: React.FC<GrantListProps> = observer(({ selectedGrantId, onClearSelectedGrant, showOnlyMyGrants = false, currentUserEmail }) => {
     const { grants, onSort } = ProcessGrantData();
     const [currentPage, setPage] = useState(1);
     const [showNewGrantModal, setShowNewGrantModal] = useState(false);
+
+    const displayedGrants = showOnlyMyGrants ? grants.filter(
+        (grant: Grant) => grant.bcan_poc?.POC_email?.toLowerCase() === currentUserEmail?.toLowerCase()
+    )
+    : grants;
 
      useEffect(() => {
             if (selectedGrantId !== undefined && grants.length > 0) {
@@ -32,10 +40,10 @@ const GrantList: React.FC<GrantListProps> = observer(({ selectedGrantId, onClear
               }
          }, [selectedGrantId, grants, currentPage]);
 
-    const count = grants.length;
+    const count = displayedGrants.length;
     const startRange = (currentPage - 1) * ITEMS_PER_PAGE;
     const endRange = startRange + ITEMS_PER_PAGE;
-    const visibleItems = grants.slice(startRange, endRange);
+    const visibleItems = displayedGrants.slice(startRange, endRange);
 
     return (
         <div className="paginated-grant-list">
@@ -47,6 +55,13 @@ const GrantList: React.FC<GrantListProps> = observer(({ selectedGrantId, onClear
                          grant={grant}
                         defaultExpanded={grant.grantId === Number(selectedGrantId)} />
                     ))}
+                    {visibleItems.length === 0 && (
+                        <p className="text-center text-gray-500 py-6">
+                            {showOnlyMyGrants
+                            ? "You currently have no grants assigned as BCAN POC."
+                            : "No grants found>"}
+                        </p>
+                    )}
                 </div>
             </div>
             <Pagination.Root
