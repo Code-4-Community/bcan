@@ -6,6 +6,8 @@ import { updateSearchQuery } from "@/external/bcanSatchel/actions";
 import "../styles/GrantSearch.css";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { api } from "../../../api";
+import { Input } from "@chakra-ui/react";
+
 
 function GrantSearch({ onGrantSelect }: any) {
   const [userInput, setUserInput] = useState("");
