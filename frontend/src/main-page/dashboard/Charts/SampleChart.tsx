@@ -29,7 +29,6 @@ const SampleChart: React.FC = observer(() => {
     <div className="chart-container">
       <BarChart
         width={600}
-        responsive={true}
         height={300}
         data={data}
         margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
@@ -55,7 +54,6 @@ const SampleChart: React.FC = observer(() => {
         <YAxis
           width="auto"
           key={grants.length}
-          responsive={true}
           tickFormatter={(value: number) => `$${value / 1000}k`}
         />
         <Tooltip formatter={(value: number) => `$${value.toLocaleString()}`} />
