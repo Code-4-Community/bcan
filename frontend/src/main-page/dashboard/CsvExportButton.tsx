@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { downloadCsv, CsvColumn } from "../../utils/csvUtils";
 import { Grant } from "../../../../middle-layer/types/Grant";
-import { ProcessGrantData } from "../grants/filter-bar/processGrantData";
+import { useProcessGrantData } from "../../main-page/grants/filter-bar/processGrantData";
 import { observer } from "mobx-react-lite";
 import "../grants/styles/GrantButton.css";
+import { getAppStore } from "../../external/bcanSatchel/store";
 
 // Define the columns for the CSV export, including any necessary formatting.
 const columns: CsvColumn<Grant>[] = [
@@ -74,8 +75,9 @@ const columns: CsvColumn<Grant>[] = [
 ];
 
 const CsvExportButton: React.FC = observer(() => {
+  const {yearFilter } = getAppStore();
   const [isProcessing, setIsProcessing] = useState(false);
-  const { grants } = ProcessGrantData();
+  const { grants } = useProcessGrantData();
   const onClickDownload = async () => {
     setIsProcessing(true);
 
@@ -89,12 +91,12 @@ const CsvExportButton: React.FC = observer(() => {
     }
 
     // Simulate delay for UX
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     downloadCsv(
       data,
       columns,
-      `BCAN Data ${new Date().toISOString().split("T")[0]}`
+      `BCAN Data ${(yearFilter ?? []).join("_")} as of ${new Date().toISOString().split("T")[0]}`
     );
     setIsProcessing(false);
   };
