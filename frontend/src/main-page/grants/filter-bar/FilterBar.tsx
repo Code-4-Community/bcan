@@ -8,7 +8,6 @@ import {
   updateFilter,
 } from "../../../external/bcanSatchel/actions.ts";
 import { observer } from "mobx-react-lite";
-// import { ProcessGrantData } from "./processGrantData.ts";
 import CalendarDropdown from "./CalendarDropdown.tsx";
 import { FaChevronRight } from "react-icons/fa";
 
@@ -32,7 +31,6 @@ const linkList: FilterBarProps[] = [
  */
 const FilterBar: React.FC = observer(() => {
   const [selected, setSelected] = useState("All Grants");
-  // const { grants } = ProcessGrantData();
   function categoryClicked(
     e: React.MouseEvent,
     category: string,

@@ -17,3 +17,12 @@ html, body {
     overflow-y: auto;
     padding-bottom: 1em;
 }
+
+.chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    border-radius: 1.2rem;
+    border: 0.1rem solid #E0E0E0;
+}
