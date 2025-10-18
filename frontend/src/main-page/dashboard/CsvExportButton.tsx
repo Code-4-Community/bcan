@@ -75,7 +75,7 @@ const columns: CsvColumn<Grant>[] = [
 ];
 
 const CsvExportButton: React.FC = observer(() => {
-  const {yearFilter } = getAppStore();
+  const { yearFilter } = getAppStore();
   const [isProcessing, setIsProcessing] = useState(false);
   const { grants } = useProcessGrantData();
   const onClickDownload = async () => {
@@ -96,7 +96,9 @@ const CsvExportButton: React.FC = observer(() => {
     downloadCsv(
       data,
       columns,
-      `BCAN Data ${(yearFilter ?? []).join("_")} as of ${new Date().toISOString().split("T")[0]}`
+      `BCAN Data ${(yearFilter ?? []).join("_")} as of ${
+        new Date().toISOString().split("T")[0]
+      }`
     );
     setIsProcessing(false);
   };

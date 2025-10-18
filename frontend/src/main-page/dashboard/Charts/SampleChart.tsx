@@ -1,5 +1,13 @@
 import React from "react";
-import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from "recharts";
+import {
+  BarChart,
+  Bar,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+} from "recharts";
 import { observer } from "mobx-react-lite";
 import { useProcessGrantData } from "../../../main-page/grants/filter-bar/processGrantData";
 import { aggregateMoneyGrantsByYear, YearAmount } from "../grantCalculations";
@@ -50,8 +58,8 @@ const SampleChart: React.FC = observer(() => {
           responsive={true}
           tickFormatter={(value: number) => `$${value / 1000}k`}
         />
-        <Tooltip />
-          <LegendComp />
+        <Tooltip formatter={(value: number) => `$${value.toLocaleString()}`} />
+        <LegendComp />
       </BarChart>
     </div>
   );
