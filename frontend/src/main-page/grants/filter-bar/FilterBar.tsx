@@ -46,7 +46,7 @@ const FilterBar: React.FC = observer(() => {
   }
 
   return (
-    <div className="sortbar flex flex-col gap-4 bg-light-gray p-6 rounded-[1.2rem] border">
+    <div className="sortbar flex flex-col gap-4 bg-light-gray p-6 rounded-[1.2rem] border-[0.1rem]">
       <div>
         <div className="flex pb-2">{"Filter by Date"}</div>
         <CalendarDropdown />
