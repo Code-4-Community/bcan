@@ -1,9 +1,11 @@
 import { IoIosSearch } from "react-icons/io";
 import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
-import "../styles/GrantSearch.css";
+import { updateSearchQuery } from "../../../external/bcanSatchel/actions"; 
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { api } from "../../../api";
+import { Input } from "@chakra-ui/react";
+
 
 function GrantSearch({ onGrantSelect }: any) {
   const [userInput, setUserInput] = useState("");
@@ -42,6 +44,7 @@ function GrantSearch({ onGrantSelect }: any) {
     if (!query) {
       setDropdownGrants([]);
       setShowDropdown(false);
+      updateSearchQuery("");
       return;
     }
     const fuse = new Fuse<Grant>(grants, {
@@ -49,12 +52,15 @@ function GrantSearch({ onGrantSelect }: any) {
       threshold: 0.3,
     });
     const results = fuse.search(query).map((res) => res.item);
+    updateSearchQuery(query);
+
     setDropdownGrants(results.slice(0, 5));
-    setShowDropdown(results.length > 0);
+    setShowDropdown(true);
   };
 
   const handleSelectGrant = (selectedGrant: Grant) => {
     setUserInput(selectedGrant.organization);
+    updateSearchQuery(selectedGrant.organization);
     setShowDropdown(false);
     onGrantSelect?.(selectedGrant);
   };
@@ -89,28 +95,37 @@ function GrantSearch({ onGrantSelect }: any) {
               // color: "#aaa" // optional styling
             }}
           />
-          <input
-  type="text"
-  placeholder="Search"
-  className="search-input"
-  onChange={handleInputChange}
-  value={userInput}
-  onFocus={() => setShowDropdown(dropdownGrants.length > 0)}
-  style={{ paddingLeft: "2rem", backgroundColor: "white" }} // make room for the icon
-/>
-
+          <Input
+            placeholder="Search"
+            variant="subtle"
+            className="search-input"
+            onChange={handleInputChange}
+            value={userInput}
+            onFocus={() => setShowDropdown(dropdownGrants.length > 0)}
+            style={{ paddingLeft: "2rem" }} // make room for the icon
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                setShowDropdown(false);
+              }
+            }}
+          />
 
           {showDropdown && (
             <div className="dropdown-container">
-              {dropdownGrants.map((grant, index) => (
-                <div
-                  key={index}
-                  className="dropdown-item"
-                  onClick={() => handleSelectGrant(grant)}
-                >
-                  {grant.organization}
-                </div>
-              ))}
+              {dropdownGrants.length > 0 ? (
+                dropdownGrants.map((grant, index) => (
+                  <div
+                    key={index}
+                    className="dropdown-item"
+                    onClick={() => handleSelectGrant(grant)}
+                  >
+                    {grant.organization}
+                  </div>
+                ))
+              ) : (
+                <div className="dropdown-item">No results found</div>
+              )}
             </div>
           )}
         </div>

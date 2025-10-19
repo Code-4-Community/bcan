@@ -1,10 +1,10 @@
 import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts";
 import { observer } from "mobx-react-lite";
-import { useProcessGrantData } from "../../../main-page/grants/filter-bar/processGrantData";
+import { ProcessGrantData } from "../../../main-page/grants/filter-bar/processGrantData";
 import { aggregateMoneyGrantsByYear, YearAmount } from "../grantCalculations";
 
 const SampleChart: React.FC = observer(() => {
-  const { grants } = useProcessGrantData();
+  const { grants } = ProcessGrantData();
   const data = aggregateMoneyGrantsByYear(grants, "status").map(
     (grant: YearAmount) => ({
       name: grant.year.toString(),

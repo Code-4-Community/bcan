@@ -61,3 +61,8 @@ export const appendGrant = action(
   'appendGrant',
   (grant: Grant) => ({ grant })
 );
+
+export const updateSearchQuery = action(
+  'updateSearchQuery',
+  (searchQuery: string) => ({searchQuery})
+)
