@@ -9,14 +9,13 @@ import {
   Legend,
 } from "recharts";
 import { observer } from "mobx-react-lite";
-import { useProcessGrantData } from "../../../main-page/grants/filter-bar/processGrantData";
+import { ProcessGrantData } from "../../../main-page/grants/filter-bar/processGrantData";
 import { aggregateMoneyGrantsByYear, YearAmount } from "../grantCalculations";
 
 const SampleChart: React.FC = observer(() => {
-  const { grants } = useProcessGrantData();
+    const { grants } = ProcessGrantData();
   // Wrap Legend with a React component type to satisfy JSX typing
   const LegendComp = Legend as unknown as React.ComponentType<any>;
-
   const data = aggregateMoneyGrantsByYear(grants, "status").map(
     (grant: YearAmount) => ({
       name: grant.year.toString(),
