@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./styles/Header.css";
 import logo from "../../images/bcan_logo.svg";
@@ -14,6 +13,7 @@ import { observer } from "mobx-react-lite";
 import { Menu, Button } from "@chakra-ui/react";
 import { FaCog } from "react-icons/fa";
 import BellButton from "./Bell.tsx";
+import { useLocation } from 'react-router-dom';
 
 interface NavBarProps {
   name: string;
@@ -32,14 +32,12 @@ const linkList: NavBarProps[] = [
  * The cog displays a dropdown with "My Account" and "Logout" options.
  */
 const Header: React.FC = observer(() => {
-  const [selected, setSelected] = useState("All Grants");
 
   function categoryClicked(
     e: React.MouseEvent,
     category: string,
     linkTo?: string
   ) {
-    setSelected(category);
     if (!linkTo) {
       e.preventDefault();
       updateFilter(statusToString(category));
@@ -65,7 +63,7 @@ const Header: React.FC = observer(() => {
               >
                 <div
                   className={`header-button header-button${
-                    selected === item.name ? "-selected" : ""
+                    useLocation().pathname === item.linkTo ? "-selected" : ""
                   } hover:bg-medium-orange`}
                 >
                   {item.name}

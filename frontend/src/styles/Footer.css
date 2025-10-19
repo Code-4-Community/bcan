@@ -19,7 +19,7 @@ flex-grow: 1;
 
 .bcan-link {
     background-color: "#0b303b";
-    border: "1px solid #ccc";
+    border: "0.1rem solid #ccc";
     border-width: 0;
     border-radius: "100px";
     color: "#fff";

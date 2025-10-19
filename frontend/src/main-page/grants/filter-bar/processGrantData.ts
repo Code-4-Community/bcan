@@ -11,7 +11,7 @@ import {
 import { sortGrants } from "./grantSorter.ts";
 import { api } from "../../../api.ts";
 
-// GET request for all grants
+// fetch grants
 const fetchGrants = async () => {
   try {
     const response = await api("/grant");

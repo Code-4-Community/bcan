@@ -12,7 +12,7 @@
   }
   
   .grant-details p{
-    border: 1px solid black; 
+    border: 0.1rem solid black; 
     border-radius: 15px; 
     padding: 1rem; 
     margin-bottom: 1rem; 
