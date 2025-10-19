@@ -1,9 +1,7 @@
 import { IoIosSearch } from "react-icons/io";
 import { useEffect, useState } from "react";
 import Fuse from "fuse.js";
-import "./styles/GrantSearch.css";
-import { updateSearchQuery } from "@/external/bcanSatchel/actions"; 
-import "../styles/GrantSearch.css";
+import { updateSearchQuery } from "../../../external/bcanSatchel/actions"; 
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { api } from "../../../api";
 import { Input } from "@chakra-ui/react";
