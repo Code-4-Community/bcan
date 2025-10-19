@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { downloadCsv, CsvColumn } from "../../utils/csvUtils";
 import { Grant } from "../../../../middle-layer/types/Grant";
-import { useProcessGrantData } from "../../main-page/grants/filter-bar/processGrantData";
+import {  ProcessGrantData } from "../../main-page/grants/filter-bar/processGrantData";
 import { observer } from "mobx-react-lite";
 import "../grants/styles/GrantButton.css";
 import { getAppStore } from "../../external/bcanSatchel/store";
@@ -77,7 +77,7 @@ const columns: CsvColumn<Grant>[] = [
 const CsvExportButton: React.FC = observer(() => {
   const { yearFilter } = getAppStore();
   const [isProcessing, setIsProcessing] = useState(false);
-  const { grants } = useProcessGrantData();
+  const { grants } = ProcessGrantData();
   const onClickDownload = async () => {
     setIsProcessing(true);
 
