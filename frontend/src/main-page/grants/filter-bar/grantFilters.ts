@@ -35,3 +35,9 @@ export const searchFilter = (searchQuery: string) => (grant: Grant) => {
 
   return organization.includes(query);
 };
+
+export const yearFilterer = (years: number[] | null) => (grant: Grant) => {
+    if (!years || years.length == 0) return true;
+    const grantYear = new Date(grant.application_deadline).getFullYear();
+    return years.includes(grantYear);
+}
