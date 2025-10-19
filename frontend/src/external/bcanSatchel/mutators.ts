@@ -6,7 +6,8 @@ import {
   fetchAllGrants,
   updateFilter,
   updateStartDateFilter, updateEndDateFilter,
-  updateSearchQuery
+  updateSearchQuery,
+  updateYearFilter
 } from './actions';
 import { getAppStore } from './store';
 
@@ -73,4 +74,9 @@ mutator(updateEndDateFilter, (actionMessage) => {
 mutator(updateSearchQuery, (actionMessage) => {
   const store = getAppStore();
   store.searchQuery = actionMessage.searchQuery;
+})
+
+mutator(updateYearFilter, (actionMessage) => {
+  const store = getAppStore();
+  store.yearFilter = actionMessage.yearFilter;
 })
