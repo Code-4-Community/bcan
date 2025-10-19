@@ -9,6 +9,7 @@ import { DoesBcanQualifyText } from "../../../translations/general";
 import RingButton, { ButtonColorOption } from "../../../custom/RingButton";
 import { Status } from "../../../../../middle-layer/types/Status";
 import { api } from "../../../api";
+import { MdOutlinePerson2 } from "react-icons/md";
 
 interface GrantItemProps {
   grant: Grant;
@@ -182,161 +183,208 @@ return formattedCurrency;
           )}
         </li>
       </div>
+
       <div className={`grant-body bg-tan ${isExpanded ? "expanded" : ""}`}>
         {isExpanded && (
-          <div className="grant-description text-left">
-            <h2 className="font-semibold text-left mb-2">
-              Organization Name
-            </h2>
-            <span className="text-left">{curGrant.organization}</span>
+          
 
-            {/*Top left quadrant */}
-            <div className="flex w-1/2 space-x-4 mt-6 ">
-
-              {/* Left column (labels to the left of report deadlines)*/}
-              <div className="w-2/3 flex flex-col h-full">
-
-                {/*Application date and grant start date */}
-                <div className="flex space-x-4">
-                  {/*Application date*/}
-                  <div className="w-1/2 mb-2">
-                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-city">
-                    Application Date
-                    </label>
-                    <div 
-                      style={{
-                        color: "black", 
-                        backgroundColor: "#D3D3D3",
-                      }}
-                      className="h-10 flex items-center justify-center w-full rounded-lg  px-4"
-                    >
-                      {formatDate(curGrant.application_deadline)}
-                    </div>
-                  </div>
-                  {/*Grant Start Date */}
-                  <div className=" w-1/2">
-                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
-                      Grant Start Date
-                    </label>
-                      <div 
-                      style={{
-                        color: "black", 
-                        backgroundColor: "#D3D3D3",
-                      }}
-                      className="h-10 flex items-center justify-center w-full rounded-lg px-4"
-                    >
-                      {curGrant.grant_start_date}
-                    </div>
-                  </div>
-                </div>
-
-                {/*Estimated completition time */}
-                <div className="w-full mt-3 ">
-                  <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
-                  Estimated Completion Time (hours)
-                  </label>
-                  <div 
-                      style={{
-                        color: "black", 
-                        backgroundColor: "#D3D3D3",
-                      }}
-                      className="h-10 flex items-center justify-center w-full rounded-lg  px-4"
-                    >
-                      {curGrant.estimated_completion_time}
-                    </div>
-                </div>
-
-                {/*Timeline and Amount*/}
-                <div className="flex space-x-4 mt-5">
-                  {/*Timeline*/}
-                  <div className="w-1/2">
-                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-city">
-                    Timeline (years)
-                    </label>
-                    <div 
-                      style={{
-                        color: "black", 
-                        backgroundColor: "#D3D3D3",
-                      }}
-                      className="h-10 flex items-center justify-center w-full  rounded-lg px-4"
-                    >
-                      {curGrant.timeline}
-                    </div>
-                  </div>
-                  {/*Amount */}
-                  <div className=" w-1/2">
-                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
-                      Amount
-                    </label>
-                      <div 
-                      style={{
-                        color: "black", 
-                        backgroundColor: "#D3D3D3",
-                      }}
-                      className="h-10 flex items-center justify-center w-full rounded-lg  px-4"
-                    >
-                      {formatCurrency(curGrant.amount)}
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-
-              {/*Right column - report deadlines and grey box*/}
-              <div className="w-1/3 5-52">
+            <div className="flex">
+              {/*Top left quadrant */}
+              <div className="w-1/2 ">
                 
-                  <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                    Report Deadlines
-                  </label>
-                  <div
-                    className="p-2 rounded h-52 "
-                    style={{
-                      backgroundColor: "#F58D5C", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'
-                    }}
-                  >
-                    {/*Map each available report deadline to a div label
-                    If no deadlines, add "No deadlines" text */}
-                    {curGrant.report_deadlines && curGrant.report_deadlines.length > 0 ? (
-                      curGrant.report_deadlines.map((deadline: string, index: number) => (
-                        <div
-                          key={index}
-                          style={{
-                            color: "black",
-                            backgroundColor: "#D3D3D3",
-                          }}
-                          className="h-10 flex items-center justify-center w-full rounded-lg mb-2 px-4"
-                        >
-                          {formatDate(deadline)}
+                  {/*Organization name */}
+                  <div className="text-left">
+                    <h2 className="font-semibold text-left mb-1">
+                      Organization Name
+                    </h2>
+                    <span className="text-left mb-2">{curGrant.organization}</span>
+                  </div>
+
+                  {/*Section below org name : App date, report deadlines, amount */}
+                  <div className="flex w-full mt-4">
+                    {/*Left cluster of gray labels : Application Date -> Amount */}
+                    <div className="w-2/3"> 
+                      {/*Application date and grant start date */}
+                      <div className="flex space-x-4">
+                        {/*Application date*/}
+                        <div className="w-1/2 mb-3">
+                          <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-city">
+                          Application Date
+                          </label>
+                          <div 
+                            style={{
+                              color: "black", 
+                              backgroundColor: "#D3D3D3",
+                            }}
+                            className="h-10 flex items-center justify-center w-full rounded-lg  px-4"
+                          >
+                            {formatDate(curGrant.application_deadline)}
+                          </div>
                         </div>
-                      ))
-                    ) : (
-                      <div className="text-center text-gray-700 italic">No deadlines</div>
-                    )}
+                        {/*Grant Start Date */}
+                        <div className=" w-1/2">
+                          <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
+                            Grant Start Date
+                          </label>
+                            <div 
+                            style={{
+                              color: "black", 
+                              backgroundColor: "#D3D3D3",
+                            }}
+                            className="h-10 flex items-center justify-center w-full rounded-lg px-4"
+                          >
+                            {curGrant.grant_start_date}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/*Estimated completition time */}
+                      <div className="w-full ">
+                        <label className="mt-2 flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
+                        Estimated Completion Time (hours)
+                        </label>
+                        <div 
+                            style={{
+                              color: "black", 
+                              backgroundColor: "#D3D3D3",
+                            }}
+                            className="h-10 flex items-center justify-center w-full rounded-lg  px-4"
+                          >
+                            {curGrant.estimated_completion_time}
+                          </div>
+                      </div>
+
+                      {/*Timeline and Amount row*/}
+                      <div className="flex space-x-4 mt-5">
+                        {/*Timeline*/}
+                        <div className="w-1/2">
+                          <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-city">
+                          Timeline (years)
+                          </label>
+                          <div 
+                            style={{
+                              color: "black", 
+                              backgroundColor: "#D3D3D3",
+                            }}
+                            className="h-10 flex items-center justify-center w-full  rounded-lg px-4"
+                          >
+                            {curGrant.timeline}
+                          </div>
+                        </div>
+                        {/*Amount */}
+                        <div className=" w-1/2">
+                          <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
+                            Amount
+                          </label>
+                            <div 
+                            style={{
+                              color: "black", 
+                              backgroundColor: "#D3D3D3",
+                            }}
+                            className="h-10 flex items-center justify-center w-full rounded-lg  px-4"
+                          >
+                            {formatCurrency(curGrant.amount)}
+                          </div>
+                        </div>
+                      {/*End timeline and amount row */}
+                      </div>
+
+                    {/*End left cluster of gray labels */}
+                    </div>
+
+                    {/*Report deadlines div*/}
+                    <div className="w-1/3 h-full px-3">
+                      <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                        Report Deadlines
+                      </label>
+                      <div
+                        className="p-2 rounded h-52 "
+                        style={{
+                          backgroundColor: "#F58D5C", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'
+                        }}
+                      >
+                        {/*Map each available report deadline to a div label
+                        If no deadlines, add "No deadlines" text */}
+                        {curGrant.report_deadlines && curGrant.report_deadlines.length > 0 ? (
+                          curGrant.report_deadlines.map((deadline: string, index: number) => (
+                            <div
+                              key={index}
+                              style={{
+                                color: "black",
+                                backgroundColor: "#D3D3D3",
+                              }}
+                              className="h-10 flex items-center justify-center w-full rounded-lg mb-2 px-4"
+                            >
+                              {formatDate(deadline)}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-center text-gray-700 italic">No deadlines</div>
+                        )}
+                      {/*End report deadlines column */}
+                     </div>
+
+                  {/*End section below org */} 
                   </div>
+        
+                  
+              
+
                 
 
               </div>
-              
-            </div>
 
-            <div className="grant-content">
-              <GrantAttributes
-                curGrant={curGrant}
-                setCurGrant={setCurGrant}
-                isEditing={isEditing}
-              />
-              <GrantDetails
-                curGrant={curGrant}
-                setCurGrant={setCurGrant}
-                isEditing={isEditing}
-              />
+                  
+              {/*End top left column */}
+              </div>
+
+              {/*Top right quadrant*/}
+              <div className="flex w-1/2 space-x-4  mt-5">
+
+                {/*POC row */}
+                <div className="flex w-full">
+                  {/*BCAN POC div*/}
+                  <div className="w-full p-2">
+                      <label className="mb-2 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
+                          BCAN POC
+                      </label>
+                      {/*Box div*/} 
+                      <div className="items-center flex p-3 rounded h-52" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px'}}>
+                          <MdOutlinePerson2 className="w-1/4 h-full p-1"/>
+                          <div className="w-3/4">
+                            <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                            className="h-14 w-full text-gray-700 rounded" id="grid-city" placeholder="Name" />
+                            <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                            className="h-14 w-full text-gray-700 rounded" id="grid-city" placeholder="e-mail" />
+                          </div> 
+                      </div>
+                  </div>
+
+                  {/*Grant Provider POC div*/}
+                  <div className="p-2 w-full ">
+                      <label className="mb-2 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
+                          Grant Provider POC
+                      </label>
+                      {/*Box div*/}
+                      <div className="flex p-3 rounded h-52 items-center" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px'}}>
+                          <MdOutlinePerson2 className="p-1 w-1/4 h-full"/>
+                          <div className="w-3/4">
+                            <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                            className="h-14 w-full text-gray-700 rounded" id="grid-city" placeholder="Name" />
+                            <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                            className="h-14 w-full text-gray-700 rounded" id="grid-city" placeholder="e-mail" />
+                          </div> 
+                      </div>
+                  </div>
+                </div>
+
+              </div>
+
             </div>
-            <div className="bottom-buttons">
-              <button className="done-button" onClick={(e) => { e.stopPropagation(); toggleEdit(); }}>
-                {isEditing ? "SAVE" : "EDIT"}
-              </button>
-            </div>
-          </div>
+            
+
+            
+          
         )}
       </div>
     </div>
