@@ -314,11 +314,11 @@ return formattedCurrency;
             </div>
 
             {/*Right column */}
-            <div className="flex w-1/2 "> 
+            <div className="w-1/2 px-2"> 
               {/*POC row */}
-              <div className="flex w-full">
+              <div className="flex w-full mb-3">
                 {/*BCAN POC div*/}
-                <div className="w-full px-2">
+                <div className="w-full pr-3">
                   <label className="mb-2 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
                       BCAN POC
                   </label>
@@ -335,7 +335,7 @@ return formattedCurrency;
                 </div>
 
                 {/*Grant Provider POC div*/}
-                <div className="w-full px-2">
+                <div className="w-full">
                   <label className="mb-2 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
                       Grant Provider POC
                   </label>
@@ -351,6 +351,61 @@ return formattedCurrency;
                   </div>
                 </div>
               {/*End POC row */}
+              </div>
+
+              {/* Colored attributes  + scope documents row*/}
+              <div className="flex">
+                  {/*Colored attributes row */}
+                  <div className="w-1/2"> 
+
+                    {/*Does BCAN qualify  */}
+                    <div  className="w-1/2 mb-3">
+                      <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-city">
+                        Does BCAN qualify?
+                      </label>  
+                      <div 
+                        style={{color: "black", 
+                          backgroundColor: curGrant.does_bcan_qualify ? ButtonColorOption.GREEN : ButtonColorOption.GRAY}}
+                        className="h-10 flex items-center justify-center w-full rounded-lg  px-4"
+                        >
+                        {curGrant.does_bcan_qualify ? "Yes" : "No"}
+                      </div>
+                    </div>
+
+                    {/*Status*/}
+                    <div  className="w-1/2 mb-3">
+                      <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-city">
+                        Status
+                      </label>  
+                      <div 
+                        style={{color: "black", 
+                          backgroundColor: curGrant.status === "Active" 
+                                              ? ButtonColorOption.GREEN 
+                                              : curGrant.status === "Potential" 
+                                                ? ButtonColorOption.ORANGE 
+                                                : ButtonColorOption.GRAY}}
+                        className="h-10 flex items-center justify-center w-full rounded-lg  px-4"
+                        >
+                        {curGrant.status}
+                      </div>
+
+                    </div>
+
+                    {/*Restriction*/}
+                    <div  className="w-1/2 mb-3">
+                      <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-city">
+                        Restriction
+                      </label>  
+                      <div 
+                        style={{color: "black", 
+                          backgroundColor: curGrant.isRestricted ? ButtonColorOption.GRAY : "indianred"}}
+                        className="h-10 flex items-center justify-center w-full rounded-lg  px-4"
+                        >
+                        {curGrant.isRestricted ? "Restricted" : "Not Restricted"}
+                      </div>
+                    </div>
+
+                  </div>
               </div>
             
             {/*End right column */}
