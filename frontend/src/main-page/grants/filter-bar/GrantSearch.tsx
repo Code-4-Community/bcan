@@ -11,7 +11,8 @@ import { Input } from "@chakra-ui/react";
 
 function GrantSearch() {
   const [userInput, setUserInput] = useState("");
-  const [grants, setGrants] = useState<Grant[]>([]);
+  // @ts-ignore
+  const [grants, _setGrants] = useState<Grant[]>([]);
   // const [showDropdown, setShowDropdown] = useState(false);
   // const [dropdownGrants, setDropdownGrants] = useState<Grant[]>([]);
 

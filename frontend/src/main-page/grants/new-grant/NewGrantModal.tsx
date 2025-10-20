@@ -1,6 +1,6 @@
 // frontend/src/grant-info/components/NewGrantModal.tsx
 import React, { useState, createRef, RefObject } from "react";
-// import { fetchAllGrants } from "../../../external/bcanSatchel/actions";
+import { fetchAllGrants } from "../../../external/bcanSatchel/actions";
 import "../styles/NewGrantModal.css";
 import POCEntry from "./POCEntry";
 import { MdOutlinePerson2 } from "react-icons/md";
