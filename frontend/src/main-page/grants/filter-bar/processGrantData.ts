@@ -5,7 +5,7 @@ import { Grant } from "../../../../../middle-layer/types/Grant";
 import {
   dateRangeFilter,
   filterGrants,
-  searchFilter,
+  yearFilterer,
   statusFilter,
 } from "./grantFilters";
 import { sortGrants } from "./grantSorter.ts";
@@ -28,38 +28,24 @@ const fetchGrants = async () => {
 // contains callbacks for sorting and filtering grants
 // stores state for list of grants/filter
 export const ProcessGrantData = () => {
-  const {
-    allGrants,
-    filterStatus,
-    startDateFilter,
-    endDateFilter,
-    searchQuery,
-  } = getAppStore();
-  const [grants, setGrants] = useState<Grant[]>([]);
+  const { allGrants, filterStatus, startDateFilter, endDateFilter, yearFilter } = getAppStore();
 
-  // init grant list
+  // fetch grants on mount if empty
   useEffect(() => {
-    fetchGrants();
-  }, []);
+    if (allGrants.length === 0) fetchGrants();
+  }, [allGrants.length]);
 
-  // when filter changes, update grant list state
-  useEffect(() => {
-    const filters = [
-      statusFilter(filterStatus),
-      dateRangeFilter(startDateFilter, endDateFilter),
-      searchFilter(searchQuery),
-    ];
-    const filtered = filterGrants(allGrants, filters);
-    setGrants(filtered);
-    // current brute force update everything when an attribute changes
-  }, [allGrants, filterStatus, startDateFilter, endDateFilter, searchQuery]);
+  // compute filtered grants dynamically — no useState needed
+  const filteredGrants = filterGrants(allGrants, [
+    statusFilter(filterStatus),
+    dateRangeFilter(startDateFilter, endDateFilter),
+    yearFilterer(yearFilter),
+  ]);
 
-  // sorts grants based on attribute given, updates grant list state
+  // sorting callback
   const onSort = (header: keyof Grant, asc: boolean) => {
-    const sorted = sortGrants(grants, header, asc);
-    setGrants(sorted);
+    return sortGrants(filteredGrants, header, asc);
   };
 
-  // calculates total # of pages for pagination
-  return { grants, onSort };
+  return { grants: filteredGrants, onSort };
 };
