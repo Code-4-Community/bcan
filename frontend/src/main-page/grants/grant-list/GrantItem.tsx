@@ -318,35 +318,35 @@ return formattedCurrency;
               {/*POC row */}
               <div className="flex w-full">
                 {/*BCAN POC div*/}
-                <div className="w-full ">
+                <div className="w-full px-2">
                   <label className="mb-2 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
                       BCAN POC
                   </label>
                   {/*Box div*/} 
-                  <div className="items-center flex p-3 rounded" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px'}}>
-                      <MdOutlinePerson2 className="w-1/4 h-full p-1"/>
-                      <div className="w-3/4">
-                        <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                        className="h-14 w-full text-gray-700 rounded" id="grid-city" placeholder="Name" />
-                        <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                        className="h-14 w-full text-gray-700 rounded" id="grid-city" placeholder="e-mail" />
+                  <div className="items-center flex rounded" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px'}}>
+                      <MdOutlinePerson2 className="w-1/4 h-full "/>
+                      <div style={{ backgroundColor : '#FFCEB6' }} className="w-3/4 border-l border-black bg-[#FFCEB6] ">
+                        <h2
+                        className="px-2 text-left font-bold h-14 w-full text-gray-700 rounded flex items-center" id="grid-city"> {curGrant.bcan_poc?.POC_name ?? 'Unknown'} </h2>
+                        <h2 
+                        className="px-2 text-left h-14 w-full text-gray-700 rounded" id="grid-city" > {curGrant.bcan_poc?.POC_email ?? '----------'} </h2>
                       </div> 
                   </div>
                 </div>
 
                 {/*Grant Provider POC div*/}
-                <div className="w-full ">
+                <div className="w-full px-2">
                   <label className="mb-2 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
                       Grant Provider POC
                   </label>
                   {/*Box div*/}
-                  <div className="flex p-3 rounded items-center" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px'}}>
-                      <MdOutlinePerson2 className="p-1 w-1/4 h-full"/>
-                      <div className="w-3/4">
-                        <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                        className="h-14 w-full text-gray-700 rounded" id="grid-city" placeholder="Name" />
-                        <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                        className="h-14 w-full text-gray-700 rounded" id="grid-city" placeholder="e-mail" />
+                  <div className="items-center flex rounded" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px'}}>
+                      <MdOutlinePerson2 className="w-1/4 h-full"/>
+                      <div style={{ backgroundColor : '#FFCEB6' }} className="w-3/4 border-l border-black bg-[#FFCEB6] ">
+                        <h2 
+                        className="px-2 text-left font-bold h-14 w-full text-gray-700 rounded flex items-center" id="grid-city"  > {curGrant.grantmaker_poc?.POC_name ?? 'Unknown'}</h2>
+                        <h2
+                        className="px-2 text-left h-14 w-full text-gray-700 rounded flex items-center" id="grid-city"> {curGrant.grantmaker_poc?.POC_email ?? '----------'} </h2>
                       </div> 
                   </div>
                 </div>
