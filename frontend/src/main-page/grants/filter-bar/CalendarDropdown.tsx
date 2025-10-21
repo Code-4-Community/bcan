@@ -14,7 +14,7 @@ const CalendarDropdown = observer(() => {
 
     // ex: Apr 14th, 2025
     const formatDate = (date: Date) =>
-        date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+        date.toLocaleDateString("en-US", { month: "numeric", day: "numeric", year: "numeric" });
 
     // state variable not needed since will always rerender with satchel changes
     let displayText = "Select Date Range";
@@ -26,10 +26,10 @@ const CalendarDropdown = observer(() => {
 
     return (
         <div className="calendar-dropdown ">
-            <button className="calendar-toggle-button flex w-full justify-between items-center" onClick={toggleDropdown}>
-                <FaCalendarAlt/>
-                <span className="text-sm flex-shrink-0">{displayText}</span>
-                <FaChevronRight />
+            <button className="calendar-toggle-button flex w-full justify-between" onClick={toggleDropdown}>
+                {(!startDateFilter || !endDateFilter) && <FaCalendarAlt/>}
+                <div className="text-sm flex-shrink-0 block">{displayText}</div>
+                {(!startDateFilter || !endDateFilter) && <FaChevronRight />}
             </button>
 
             {isOpen && (
