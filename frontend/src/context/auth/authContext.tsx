@@ -11,7 +11,7 @@ import { api } from '../../api';
 interface AuthContextProps {
   isAuthenticated: boolean;
   login: (username: string, password: string) => Promise<boolean>;
-  register: (username: string, password: string, email: string) => Promise<void>;
+  register: (username: string, password: string, email: string) => Promise<boolean>;
   logout: () => void;
   user: User | null;
 }
@@ -57,22 +57,39 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
    /**
    * Register a new user and automatically log them in
    */
-   const register = async (username: string, password: string, email: string) => {
-    
-    const response = await api('/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password, email }),
-    });
+   const register = async (username: string, password: string, email: string): Promise<boolean> => {
+    try {
+      const response = await api('/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, email }),
+      });
 
-    const data = await response.json();
-    if (response.ok) {
-      // log the user in after registration
-      await login(username, password);
-    } else {
-      alert(data.message || 'Registration failed');
+      const data = await response.json();
+
+      if (response.ok) {
+        const loggedIn = await login(username, password);
+        if (loggedIn) return true;
+        console.warn('User registered but auto-login failed');
+        return false;
+      }
+
+      if (response.status === 409 || data.message?.includes('exists')) {
+        alert('An account with this username or email already exists.');
+      } else if (response.status === 400) {
+        alert(data.message || 'Invalid registration details.');
+      } else {
+        alert('Registration failed. Please try again later.');
+      }
+
+      return false;
+    } catch (error) {
+      console.error('Error during registration:', error);
+      alert('An unexpected error occurred. Please try again later.');
+      return false;
     }
   };
+
 
 
   /** Log out the user */

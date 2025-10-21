@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { setAuthState } from "./external/bcanSatchel/actions";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
 import logo from "./images/bcan_logo.svg";
-import { api } from "./api";
+import { useAuthContext } from "./context/auth/authContext";
 
 /**
  * Register a new BCAN user
@@ -14,41 +13,15 @@ const Register = observer(() => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  const { register } = useAuthContext();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    try {
-      const response = await api("/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password, email }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        alert(data.message || "Registration failed.");
-        return;
-      }
-
-      // If registration succeeded, automatically log in the user
-      const loginResponse = await api("/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const loginData = await loginResponse.json();
-
-      if (loginResponse.ok && loginData.access_token) {
-        setAuthState(true, loginData.user, loginData.access_token);
-        navigate("/grant-info");
-      } else {
-        alert(loginData.message || "Login after registration failed.");
-      }
-    } catch (error) {
-      console.error("Error during registration:", error);
-      alert("An error occurred while registering. Please try again later.");
+    const success = await register(username, password, email);
+    if (success) {
+      navigate("/login");
+    } else {
+      console.warn("Registration failed");
     }
   };
 
@@ -80,6 +53,7 @@ const Register = observer(() => {
           >
             ← Back to Sign In
           </button>
+          
 
           {/* Username field */}
           <label htmlFor="username" style={styles.label}>
