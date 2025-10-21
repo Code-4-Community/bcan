@@ -1,25 +1,33 @@
-import { getAppStore } from "../../../external/bcanSatchel/store.ts";
-import { fetchAllGrants } from "../../../external/bcanSatchel/actions.ts";
-import { Grant } from "../../../../../middle-layer/types/Grant.ts";
-import { dateRangeFilter, filterGrants, statusFilter, yearFilterer } from "./grantFilters";
+import { useEffect } from "react";
+import { getAppStore } from "../../../external/bcanSatchel/store";
+import { fetchAllGrants } from "../../../external/bcanSatchel/actions";
+import { Grant } from "../../../../../middle-layer/types/Grant";
+import {
+  dateRangeFilter,
+  filterGrants,
+  yearFilterer,
+  statusFilter,
+} from "./grantFilters";
 import { sortGrants } from "./grantSorter.ts";
 import { api } from "../../../api.ts";
-import { useEffect } from "react";
 
 // fetch grants
 const fetchGrants = async () => {
   try {
     const response = await api("/grant");
-    if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`HTTP Error, Status: ${response.status}`);
+    }
     const updatedGrants: Grant[] = await response.json();
     fetchAllGrants(updatedGrants);
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error("Error fetching grants:", error);
   }
 };
 
-// Hook to expose filtered/sorted grants
-export const useProcessGrantData = () => {
+// contains callbacks for sorting and filtering grants
+// stores state for list of grants/filter
+export const ProcessGrantData = () => {
   const { allGrants, filterStatus, startDateFilter, endDateFilter, yearFilter } = getAppStore();
 
   // fetch grants on mount if empty
