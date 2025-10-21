@@ -11,6 +11,7 @@ import { Status } from "../../../../../middle-layer/types/Status";
 import { api } from "../../../api";
 import { MdOutlinePerson2 } from "react-icons/md";
 import Attachment from "../../../../../middle-layer/types/Attachment";
+import NewGrantModal from "../new-grant/NewGrantModal";
 
 interface GrantItemProps {
   grant: Grant;
@@ -21,6 +22,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [isEditing, setIsEditing] = useState(false);
   const [curGrant, setCurGrant] = useState(grant);
+  const [showNewGrantModal, setShowNewGrantModal] = useState(false);
 
   // Track whether each custom dropdown is open.
   const [qualifyDropdownOpen, setQualifyDropdownOpen] = useState(false);
@@ -192,7 +194,7 @@ return formattedCurrency;
           <div className="flex  mt-6 mb-6">
 
             {/*Left column */}
-            <div className="w-1/2 px-3">
+            <div className="w-1/2 ">
 
               {/*Organization name (only div in the first row) */}
               <div className="text-left mb-6 text-lg">
@@ -214,7 +216,7 @@ return formattedCurrency;
                         </label>
                       <div 
                         style={{color: "black", backgroundColor: "#D3D3D3"}} 
-                        className="h-9  flex items-center justify-center w-full rounded-lg  px-4"
+                        className="h-9  flex items-center justify-center w-full rounded-full px-4"
                         >
                         {formatDate(curGrant.application_deadline)}
                       </div>
@@ -226,7 +228,7 @@ return formattedCurrency;
                         </label>
                         <div 
                           style={{color: "black", backgroundColor: "#D3D3D3"}}
-                          className="h-9 flex items-center justify-center w-full rounded-lg px-4"
+                          className="h-9 flex items-center justify-center w-full rounded-full px-4"
                           >
                           {curGrant.grant_start_date}
                         </div>
@@ -253,12 +255,12 @@ return formattedCurrency;
                 </div>
 
                 {/*Report deadlines div*/}
-                <div className="w-1/2 h-full px-3">
+                <div className="w-1/2 h-full pl-5">
                   <label className="flex block tracking-wide text-gray-700 font-bold mb-2">
                     Report Deadlines
                   </label>
                   <div
-                    className="p-2 rounded h-52 w-full"
+                    className="p-2 rounded h-52 w-4/5"
                     style={{
                       backgroundColor: "#F58D5C", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'
                     }}
@@ -273,7 +275,7 @@ return formattedCurrency;
                             color: "black",
                             backgroundColor: "#D3D3D3",
                           }}
-                          className="h-10 flex items-center justify-center w-full rounded-lg mb-2 px-4"
+                          className="h-10 flex items-center justify-center w-full rounded-full mb-2 px-4"
                         >
                           {formatDate(deadline)}
                         </div>
@@ -323,7 +325,7 @@ return formattedCurrency;
             </div>
 
             {/*Right column */}
-            <div className="w-1/2 px-3"> 
+            <div className="w-1/2 "> 
               {/*POC row */}
               <div className="flex w-full mb-4">
                 {/*BCAN POC div*/}
@@ -375,7 +377,7 @@ return formattedCurrency;
                       <div 
                         style={{color: "black", 
                           backgroundColor: curGrant.does_bcan_qualify ? ButtonColorOption.GREEN : ButtonColorOption.GRAY}}
-                        className="w-1/2 h-9 flex items-center justify-center rounded-lg  px-4"
+                        className="w-1/2 h-9 flex items-center justify-center rounded-full  px-4"
                         >
                         {curGrant.does_bcan_qualify ? "Yes" : "No"}
                       </div>
@@ -393,7 +395,7 @@ return formattedCurrency;
                                               : curGrant.status === "Potential" 
                                                 ? ButtonColorOption.ORANGE 
                                                 : ButtonColorOption.GRAY}}
-                        className="w-1/2 h-9 flex items-center justify-center rounded-lg  px-4"
+                        className="w-1/2 h-9 flex items-center justify-center rounded-full  px-4"
                         >
                         {curGrant.status}
                       </div>
@@ -408,7 +410,7 @@ return formattedCurrency;
                       <div 
                         style={{color: "black", 
                           backgroundColor: curGrant.isRestricted ?  "indianred" : ButtonColorOption.GRAY}}
-                        className="w-1/2 h-9 flex items-center justify-center rounded-lg  px-4"
+                        className="w-1/2 h-9 flex items-center justify-center rounded-full  px-4"
                         >
                         {curGrant.isRestricted ? "Restricted" : "Not Restricted"}
                       </div>
@@ -446,7 +448,7 @@ return formattedCurrency;
                         <div className="text-center text-gray-700 italic">No documents</div>
                       )}
                       </div>
-                  {/*End report deadlines div*/}
+                  {/*End scope docs div*/}
                   </div>
                 
               </div>
@@ -466,7 +468,7 @@ return formattedCurrency;
               </label>
             <div 
               style={{color: "black", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}} 
-              className=" h-48 bg-tan flex  w-full rounded-lg  px-4 "
+              className=" h-48 bg-tan flex  w-full rounded-lg  p-5 "
               >
               {curGrant.description}
             </div>
@@ -475,7 +477,7 @@ return formattedCurrency;
           {/*bottom buttons */}
           <div className="flex justify-between items-center w-full mt-6 mb-6" >
             <button 
-              style={{backgroundColor: 'indianred', color: 'black'}}
+              style={{backgroundColor: 'indianred', color: 'black', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
               className="py-2 px-4 rounded"
               onClick={() => {
                 if (window.confirm('Are you sure you want to delete this grant?')) {
@@ -486,22 +488,49 @@ return formattedCurrency;
             >
               Delete
             </button>
-            <button 
-              style={{
-                backgroundColor: isEditing ? ButtonColorOption.ORANGE : ButtonColorOption.GRAY, 
-                color: 'black'
-              }}
-              className="py-2 px-4 rounded"
-              onClick={toggleEdit}
-            >
-              {isEditing ? 'Save' : 'Edit'}
-            </button>
+
+            <div className="space-x-4">
+
+              <button 
+                style={{
+                  backgroundColor: "white",
+                  color: 'black',
+                  borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'
+                }}
+                className="py-2 px-4 rounded"
+                onClick={() => setIsExpanded(false)}
+              >
+                {'Close'}
+              </button>
+
+              <button 
+                style={{
+                  backgroundColor: ButtonColorOption.ORANGE ,
+                  color: 'black',
+                  borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'
+                }}
+                className="py-2 px-4 rounded"
+                onClick={() => setShowNewGrantModal(true)}
+              >
+                {'Edit'}
+              </button>
+
+            </div>
+            
           </div>
 
         {/*End expanded div */}
         </div> 
         )}
       </div>
+
+      <div className="hidden-features">
+        {showNewGrantModal && (
+          <NewGrantModal onClose={() => setShowNewGrantModal(false)} />
+        )}
+      </div>
+
+
     </div>
   );
 };
