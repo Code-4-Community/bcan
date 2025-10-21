@@ -7,6 +7,7 @@ import {
   filterGrants,
   yearFilterer,
   statusFilter,
+  searchFilter
 } from "./grantFilters";
 import { sortGrants } from "./grantSorter.ts";
 import { api } from "../../../api.ts";
@@ -28,7 +29,7 @@ const fetchGrants = async () => {
 // contains callbacks for sorting and filtering grants
 // stores state for list of grants/filter
 export const ProcessGrantData = () => {
-  const { allGrants, filterStatus, startDateFilter, endDateFilter, yearFilter } = getAppStore();
+  const { allGrants, filterStatus, startDateFilter, endDateFilter, yearFilter, searchQuery } = getAppStore();
 
   // fetch grants on mount if empty
   useEffect(() => {
@@ -40,6 +41,7 @@ export const ProcessGrantData = () => {
     statusFilter(filterStatus),
     dateRangeFilter(startDateFilter, endDateFilter),
     yearFilterer(yearFilter),
+    searchFilter(searchQuery)
   ]);
 
   // sorting callback

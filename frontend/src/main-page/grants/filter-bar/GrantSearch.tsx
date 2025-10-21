@@ -7,6 +7,7 @@ import { updateSearchQuery } from "../../../external/bcanSatchel/actions";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 // import { api } from "../../../api";
 import { Input } from "@chakra-ui/react";
+import "../styles/GrantSearch.css"
 
 
 function GrantSearch() {
