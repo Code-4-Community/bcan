@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import "../styles/GrantItem.css";
-import { GrantAttributes } from "../grant-details/GrantAttributes";
-import GrantDetails from "../grant-details/GrantDetails";
 import StatusIndicator from "./StatusIndicator";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { Grant } from "../../../../../middle-layer/types/Grant";
