@@ -12,7 +12,10 @@ export default {
       'dark-orange': "#F26624",
       'light-orange': "#f7a781",
       'medium-orange': '#F58D5C',
-      'white': "#FFFFFF"
+      'white': "#FFFFFF",
+      'light-gray': '#F8F8F8',
+      'pale-orange':'#FFCEB6',
+      'white-orange': '#FFF1EB',
     },
     fontFamily: {
       sans: ['Montserrat', 'sans-serif'],
@@ -25,7 +28,8 @@ export default {
       },
       borderRadius: {
         '4xl': '2rem',
-      }
+        'md': '15px',
+      },
     }
   },
   plugins: [],

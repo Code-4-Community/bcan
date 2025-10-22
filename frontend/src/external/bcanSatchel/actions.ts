@@ -49,6 +49,10 @@ export const updateEndDateFilter = action (
     'updateEndDateFilter',
     (endDateFilter: Date | null) => ({endDateFilter})
 )
+export const updateYearFilter = action (
+    'updateYearFilter',
+    (yearFilter: number[] | null) => ({yearFilter})
+)
 
 /**
  * Append a new grant to the current list of grants.
@@ -57,3 +61,8 @@ export const appendGrant = action(
   'appendGrant',
   (grant: Grant) => ({ grant })
 );
+
+export const updateSearchQuery = action(
+  'updateSearchQuery',
+  (searchQuery: string) => ({searchQuery})
+)

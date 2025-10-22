@@ -20,17 +20,18 @@
     "core-js": "^3.38.1",
     "framer-motion": "^11.16.0",
     "fuse": "^0.12.1",
-
     "fuse.js": "^7.1.0",
     "mobx": "^6.13.2",
     "mobx-react-lite": "^4.1.0",
     "react": "^18.3.1",
     "react-app-polyfill": "^3.0.0",
+    "react-csv": "^2.2.2",
     "react-datepicker": "^8.2.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.4.0",
     "react-router-dom": "^6.26.2",
     "react-transition-group": "^4.4.5",
+    "recharts": "^3.2.1",
     "satcheljs": "^4.3.1"
   },
   "devDependencies": {
