@@ -3,10 +3,12 @@ import "../styles/button.css";
 
 /* Maintained with button.css */
 export enum ButtonColorOption {
-    GREEN,
-    GRAY,
-    ORANGE,
+    GREEN = "#5AB911",
+  GRAY = "#D3D3D3",
+  ORANGE = "#F7A781",
 }
+
+
 
 /* API for components to setup a button with expected system colors */
 interface RingButtonProps {

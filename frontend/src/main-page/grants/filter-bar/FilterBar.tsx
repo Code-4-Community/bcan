@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Status,
-  statusToString,
+  stringToStatus,
 } from "../../../../../middle-layer/types/Status.ts";
 import {
   updateFilter,
@@ -38,7 +38,7 @@ const FilterBar: React.FC = observer(() => {
   ) {
     if (!linkTo) {
       e.preventDefault();
-      updateFilter(statusToString(category));
+      updateFilter(stringToStatus(category));
       setSelected(category);
     }
   }
