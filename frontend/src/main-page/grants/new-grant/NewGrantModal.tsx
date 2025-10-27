@@ -108,6 +108,20 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     setReportDates([...reportDates, ""]);
   };
 
+  // @ts-ignore
+  const _removeReportDate = (index: number) => {
+    const updated = [...reportDates];
+    updated.splice(index, 1);
+    setReportDates(updated);
+  };
+  
+  // @ts-ignore
+  const _handleReportDateChange = (index: number, value: string) => {
+    const updated = [...reportDates];
+    updated[index] = value;
+    setReportDates(updated);
+  };
+
   // Add an empty attachment row
   // @ts-ignore
   const _addAttachment = () => {
@@ -142,18 +156,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     setAttachments(updated);
   };
 
-  // @ts-ignore
-  const _removeReportDate = (index: number) => {
-    const updated = [...reportDates];
-    updated.splice(index, 1);
-    setReportDates(updated);
-  };
-  // @ts-ignore
-  const _handleReportDateChange = (index: number, value: string) => {
-    const updated = [...reportDates];
-    updated[index] = value;
-    setReportDates(updated);
-  };
+  
 
   /** Basic validations based on your screenshot fields */
   const validateInputs = (): boolean => {
@@ -264,7 +267,11 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   Organization Name
                 </label>
                 <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                className="h-14 block w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight" id="grid-first-name" type="text" placeholder="Type Here"/>
+                className="h-14 block w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight" 
+                id="grid-first-name"
+                 type="text" 
+                 placeholder="Type Here"
+                 onChange={(e) => _setOrganization(e.target.value)}/>
               </div>
 
             {/*Top left quadrant - from app date, start date, report deadlines, est completion time*/}
@@ -281,7 +288,10 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     Application Date
                     </label>
                     <input style={{color : "gray", backgroundColor: '#F2EBE4',borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                    className="h-14 appearance-none block w-full text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="date"/>
+                    className="h-14 appearance-none block w-full text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+                    id="grid-city" 
+                    type="date"
+                    onChange={(e) => _setApplicationDate(e.target.value)}/>
                   </div>
                   {/*Grant Start Date and input */}
                   <div className=" w-1/2">
@@ -289,17 +299,24 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       Grant Start Date
                     </label>
                       <input style={{color : "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                      className="h-14 w-full appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="date"/>
+                      className="h-14 w-full appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+                      id="grid-city" 
+                      type="date"
+                      onChange={(e) => _setGrantStartDate(e.target.value)}/>
                   </div>
                 </div>
 
                 {/*Estimated completition time and input - need to make wider (length of application date and grant start date)*/}
                 <div className="w-full">
                   <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
-                  Estimated Completion Time
+                  Estimated Completion Time 
                   </label>
-                  <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                  className="h-14 appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" />
+                  <input type="number" 
+                  min = "0"
+                  style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                  className="h-14 appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+                  id="grid-city"
+                  onChange={(e) => _setEstimatedCompletionTimeInHours(Number(e.target.value))}/>
                 </div>
 
               </div>
@@ -311,11 +328,41 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-zip">
                       Report Deadlines
                   </label>
-                  <div className="p-2 rounded h-60" style={{backgroundColor: '#D3D3D3', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}>
-                      <input style={{color : "gray", backgroundColor: '#F2EBE4',borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                      className="h-14 w-full text-gray-700 rounded" id="grid-city" type="date"/>
-                      <button style={{color : "black", backgroundColor: "#F58D5C", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}} className="h-10 w-full mt-2">Add Deadline +</button>
-                  </div>
+                  <div className="p-2 rounded h-60 overflow-y-auto overflow-x-hidden" style={{backgroundColor: '#D3D3D3', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}>
+                      {reportDates.map((date, index) => (
+                        <div key={index} className="flex gap-2 mb-2 w-full">
+                          <input 
+                            key={index}
+                            style={{color: "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                            className="h-14 flex-1 min-w-0 text-gray-700 rounded" 
+                            type="date"
+                            value={date}
+                            onChange={(e) => {
+                              const newDates = [...reportDates];
+                              newDates[index] = e.target.value;
+                              setReportDates(newDates);
+                            }}
+                          />
+                          {reportDates.length > 1 && (
+                            <button
+                              style={{backgroundColor: '#FF6B6B', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                              className="h-14 w-5 flex-shrink-0 rounded text-white font-bold flex items-center justify-center"
+                              onClick={() => _removeReportDate(index)}
+                            >
+                              ✕
+                            </button>
+                          )}
+                      </div>
+
+                      ))}
+                      <button 
+                        style={{color: "black", backgroundColor: "#F58D5C", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}} 
+                        className="h-10 w-full mt-2 flex items-center justify-center"
+                        onClick={_addReportDate}
+                      >
+                        Add Deadline +
+                      </button>
+                    </div>
                 </div>
               </div>
               
