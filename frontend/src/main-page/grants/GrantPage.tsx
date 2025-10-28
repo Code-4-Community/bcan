@@ -26,7 +26,7 @@ function GrantPage() {
       <div className="top-half">
       </div>
         <div className="flex justify-end align-middle p-4 gap-4">
-          <GrantSearch onGrantSelect={setSelectedGrant} />
+          <GrantSearch />
           <AddGrantButton onClick={() => setShowNewGrantModal(true)} />
         </div>
       <div className="grid grid-cols-5 gap-8 px-4">

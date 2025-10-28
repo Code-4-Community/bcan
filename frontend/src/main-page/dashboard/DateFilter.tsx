@@ -40,18 +40,25 @@ const DateFilter: React.FC = observer(() => {
   };
 
   return (
-    <div className="flex flex-col space-y-2 mb-4">
+    <div className="flex flex-col space-y-2 m-4">
       {uniqueYears.map((year) => (
-        <label key={year} className="flex items-center space-x-2">
+        <div className="flex items-center me-4">
           <input
             type="checkbox"
+            id={year.toString()}
             value={year}
             checked={selectedYears.includes(year)}
             onChange={handleCheckboxChange}
             defaultChecked={true}
           />
-          <span>{year}</span>
-        </label>
+          <label
+            htmlFor={year.toString()}
+            key={year}
+            className="ms-2 text-sm font-medium"
+          >
+            {year}
+          </label>
+        </div>
       ))}
     </div>
   );

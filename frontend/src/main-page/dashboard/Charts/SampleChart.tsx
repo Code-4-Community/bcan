@@ -1,10 +1,21 @@
-import { BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts";
+import React from "react";
+import {
+  BarChart,
+  Bar,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+} from "recharts";
 import { observer } from "mobx-react-lite";
 import { ProcessGrantData } from "../../../main-page/grants/filter-bar/processGrantData";
 import { aggregateMoneyGrantsByYear, YearAmount } from "../grantCalculations";
 
 const SampleChart: React.FC = observer(() => {
-  const { grants } = ProcessGrantData();
+    const { grants } = ProcessGrantData();
+  // Wrap Legend with a React component type to satisfy JSX typing
+  const LegendComp = Legend as unknown as React.ComponentType<any>;
   const data = aggregateMoneyGrantsByYear(grants, "status").map(
     (grant: YearAmount) => ({
       name: grant.year.toString(),
@@ -14,12 +25,12 @@ const SampleChart: React.FC = observer(() => {
   );
 
   return (
-    <div>
+    <div className="chart-container">
       <BarChart
         width={600}
         height={300}
         data={data}
-        margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
+        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
       >
         <CartesianGrid stroke="#aaa" strokeDasharray="5 5" />
         <Bar
@@ -28,7 +39,7 @@ const SampleChart: React.FC = observer(() => {
           dataKey="active"
           fill="#90c4e5"
           strokeWidth={2}
-          name="My data series name"
+          name="Active Grants"
         />
         <Bar
           type="monotone"
@@ -36,14 +47,16 @@ const SampleChart: React.FC = observer(() => {
           dataKey="inactive"
           fill="#F58D5C"
           strokeWidth={2}
-          name="My data series name"
+          name="Inactive Grants"
         />
         <XAxis dataKey="name" />
         <YAxis
           width="auto"
-          label={{ value: "UV", position: "insideLeft", angle: -90 }}
+          key={grants.length}
+          tickFormatter={(value: number) => `$${value / 1000}k`}
         />
-        <Tooltip />
+        <Tooltip formatter={(value: number) => `$${value.toLocaleString()}`} />
+        <LegendComp />
       </BarChart>
     </div>
   );

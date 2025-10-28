@@ -13,10 +13,10 @@
     padding-top: 2rem;
     padding-bottom: 2rem;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
+    z-index: 2;
   }
   
   /* 
@@ -24,19 +24,19 @@
     We'll use a background color similar to the screenshot's peach tone.
   */
   .modal-content {
-    background: #f7bfa6; /* Peach background */
-    border-radius: 15px;
-    width: 90%;
-    max-width: 900px; /* More width to accommodate multiple columns */
+    background: white; /* Peach background */
+    width: 100%;
+    max-width: 80%;
+    max-height: 80%; /* More width to accommodate multiple columns */
     padding: 2rem;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-      "Helvetica Neue", Arial, sans-serif;
-    font-size: 16px;
-    line-height: 1.5;
-    color: #000;
-    max-height: 90vh;
-    overflow-y: auto;
+    border: 3px solid black;
+    border-radius: 5px;
+    flex: 1 1 auto;
+    overflow-y: auto; /* Scroll if content exceeds max height */
   }
+
+  /*
+  h-16 block w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight
   
   /* 
     We'll define a grid layout that lines up labels and inputs
@@ -44,7 +44,7 @@
   */
   .new-grant-grid {
     display: grid;
-    grid-template-columns: 1fr 2fr; /* label-col is narrower, input-col is wider */
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr; /* label-col is narrower, input-col is wider */
     grid-auto-rows: auto;
     column-gap: 1rem;
     row-gap: 1rem;
@@ -55,11 +55,27 @@
     align-self: center; /* vertically center label text */
     font-weight: bold;
   }
-  
-  .input-col {
-    /* We'll let these fill the space as needed */
+
+
+  .left-cols {
+    grid-column: 1 / span 3;
+    text-align: left;
   }
-  
+
+  .date-entry  {
+    text-align: left;
+    display: flex;
+    align-self : center;
+    gap: 10px;
+ 
+  }
+
+  .inputs {
+    padding-bottom : 20px;
+  }
+
+
+
   /* 
     If you want certain rows to span the entire width,
     you can place them outside the grid or use grid-column: span 2;
@@ -73,6 +89,7 @@
     font-size: 1.8rem;
     font-weight: 600;
     text-align: center;
+    text-align : left;
   }
   
   /* Error message styling */

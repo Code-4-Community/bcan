@@ -3,6 +3,7 @@ import React, { useState, createRef, RefObject } from "react";
 import { fetchAllGrants } from "../../../external/bcanSatchel/actions";
 import "../styles/NewGrantModal.css";
 import POCEntry from "./POCEntry";
+import { MdOutlinePerson2 } from "react-icons/md";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { TDateISO } from "../../../../../backend/src/utils/date";
 import { Status } from "../../../../../middle-layer/types/Status";
@@ -46,34 +47,46 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       restricted_or_unrestricted: string; // "restricted" or "unrestricted"
   */
   // Form fields, renamed to match your screenshot
-  const [organization, setOrganization] = useState<string>("");
+  // @ts-ignore
+  const [organization, _setOrganization] = useState<string>("");
   const [bcanPocComponents, setBcanPocComponents] = useState<JSX.Element[]>([]);
   const [bcanPocRefs, setBcanPocRefs] = useState<RefObject<POCEntryRef>[]>([]);
 
   const [grantProviderPocComponents, setGrantProviderPocComponents] = useState<JSX.Element[]>([]);
   const [grantProviderPocRefs, setGrantProviderPocRefs] = useState<RefObject<POCEntryRef>[]>([]);
 
-  const [applicationDate, setApplicationDate] = useState<string>("");
-  const [grantStartDate, setGrantStartDate] = useState<string>("");
+  // @ts-ignore
+  const [applicationDate, _setApplicationDate] = useState<string>("");
+  // @ts-ignore
+  const [grantStartDate, _setGrantStartDate] = useState<string>("");
   const [reportDates, setReportDates] = useState<string[]>([]);
 
-  const [timelineInYears, setTimelineInYears] = useState<number>(0);
-  const [estimatedCompletionTimeInHours, setEstimatedCompletionTimeInHours] = useState<number>(0);
+  // @ts-ignore
+  const [timelineInYears, _setTimelineInYears] = useState<number>(0);
+  // @ts-ignore
+  const [estimatedCompletionTimeInHours, _setEstimatedCompletionTimeInHours] = useState<number>(0);
 
-  const [doesBcanQualify, setDoesBcanQualify] = useState<boolean>(false);
-  const [status, setStatus] = useState<Status>(Status.Potential);
+  // @ts-ignore
+  const [doesBcanQualify, _setDoesBcanQualify] = useState<boolean>(false);
+  // @ts-ignore
+  const [status, _setStatus] = useState<Status>(Status.Potential);
 
-  const [amount, setAmount] = useState<number>(0);
-  const [description, setDescription] = useState<string>("");
+  // @ts-ignore
+  const [amount, _setAmount] = useState<number>(0);
+  // @ts-ignore
+  const [description, _setDescription] = useState<string>("");
 
   // Attachments array
+  // @ts-ignore
   const [attachments, setAttachments] = useState<Attachment[]>([]);
 
   // For error handling
-  const [errorMessage, setErrorMessage] = useState<string>("");
+  // @ts-ignore
+  const [_errorMessage, setErrorMessage] = useState<string>("");
 
   /** Add a new BCAN POC entry */
-  const addBcanPoc = () => {
+  // @ts-ignore
+  const _addBcanPoc = () => {
     const newRef = createRef<POCEntryRef>();
     const newPOC = <POCEntry ref={newRef} key={`bcan-${bcanPocComponents.length}`} />;
     setBcanPocComponents([...bcanPocComponents, newPOC]);
@@ -81,7 +94,8 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   };
 
   /** Add a new Grant Provider POC entry */
-  const addGrantProviderPoc = () => {
+  // @ts-ignore
+  const _addGrantProviderPoc = () => {
     const newRef = createRef<POCEntryRef>();
     const newPOC = <POCEntry ref={newRef} key={`provider-${grantProviderPocComponents.length}`} />;
     setGrantProviderPocComponents([...grantProviderPocComponents, newPOC]);
@@ -89,12 +103,14 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   };
 
   /* Add a new blank report date to the list */
-  const addReportDate = () => {
+  // @ts-ignore
+  const _addReportDate = () => {
     setReportDates([...reportDates, ""]);
-  };0
+  };
 
   // Add an empty attachment row
-  const addAttachment = () => {
+  // @ts-ignore
+  const _addAttachment = () => {
     setAttachments([
       ...attachments,
       {
@@ -106,30 +122,34 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   };
 
   // Remove a specific attachment row
-  const removeAttachment = (index: number) => {
+  // @ts-ignore
+  const _removeAttachment = (index: number) => {
     const updated = [...attachments];
     updated.splice(index, 1);
     setAttachments(updated);
   };
 
   // Update a field in one attachment
-  const handleAttachmentChange = (
+  // @ts-ignore
+  const _handleAttachmentChange = (
     index: number,
     field: keyof Attachment,
     value: string | AttachmentType
   ) => {
     const updated = [...attachments];
-    // @ts-ignore
+    // @ts-expect-error - Keeping for future use
     updated[index][field] = value;
     setAttachments(updated);
   };
 
-  const removeReportDate = (index: number) => {
+  // @ts-ignore
+  const _removeReportDate = (index: number) => {
     const updated = [...reportDates];
     updated.splice(index, 1);
     setReportDates(updated);
   };
-  const handleReportDateChange = (index: number, value: string) => {
+  // @ts-ignore
+  const _handleReportDateChange = (index: number, value: string) => {
     const updated = [...reportDates];
     updated[index] = value;
     setReportDates(updated);
@@ -229,172 +249,226 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content new-grant-grid">
-        <h2>Add New Grant</h2>
-        {errorMessage && <p className="error-message">{errorMessage}</p>}
 
-        {/* Row 1 */}
-        <label className="label-col">Organization Name</label>
-        <input
-          className="input-col"
-          type="text"
-          placeholder="Click to edit name"
-          value={organization}
-          onChange={(e) => setOrganization(e.target.value)}
-        />
+    <div className="modal-overlay"> {/*Greyed out background */}
+      <div className="modal-content"> {/*Popup container */}
+        <div className="flex">                         {/*Widget container */}
 
-        <label className="label-col">BCAN POC</label>
-        <div className="poc-box">
-          {bcanPocComponents}
-          <button onClick={addBcanPoc}>+ Add BCAN POC</button>
-        </div>
+          {/*left column */}
+          <div className='w-1/2 p-4 h-full'>
+            <h2>New Grant</h2>
 
-        <label className="label-col">Grant Provider POC</label>
-        <div className="poc-box">
-          {grantProviderPocComponents}
-          <button onClick={addGrantProviderPoc}>+ Add Provider POC</button>
-        </div>
+              {/*Organization name and input */}
+              <div className="w-full md:mb-0 ">
+                <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                  Organization Name
+                </label>
+                <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                className="h-14 block w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight" id="grid-first-name" type="text" placeholder="Type Here"/>
+              </div>
 
-        {/* Row 2: Dates */}
-        <label className="label-col">Application Date</label>
-        <input
-          className="input-col"
-          type="date"
-          value={applicationDate}
-          onChange={(e) => setApplicationDate(e.target.value)}
-        />
+            {/*Top left quadrant - from app date, start date, report deadlines, est completion time*/}
+            <div className="flex  w-full space-x-4 mt-5 ">
 
-        <label className="label-col">Grant Start Date</label>
-        <input
-          className="input-col"
-          type="date"
-          value={grantStartDate}
-          onChange={(e) => setGrantStartDate(e.target.value)}
-        />
+              {/* Left column: Application + Grant Start row */}
+              <div className="w-2/3">
 
-        <label className="label-col">Report Dates</label>
-        <div className="input-col report-dates-container">
-          {reportDates.map((d, idx) => (
-            <div className="report-date-entry" key={idx}>
-              <input
-                type="date"
-                value={d}
-                onChange={(e) => handleReportDateChange(idx, e.target.value)}
-             />
-              <button type="button" onClick={() => removeReportDate(idx)}>
-                X
-              </button>
+                {/*Application date and grant start date */}
+                <div className="flex space-x-4 mb-5">
+                  {/*Application date and input */}
+                  <div className="w-1/2">
+                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-city">
+                    Application Date
+                    </label>
+                    <input style={{color : "gray", backgroundColor: '#F2EBE4',borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                    className="h-14 appearance-none block w-full text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="date"/>
+                  </div>
+                  {/*Grant Start Date and input */}
+                  <div className=" w-1/2">
+                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
+                      Grant Start Date
+                    </label>
+                      <input style={{color : "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                      className="h-14 w-full appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" type="date"/>
+                  </div>
+                </div>
+
+                {/*Estimated completition time and input - need to make wider (length of application date and grant start date)*/}
+                <div className="w-full">
+                  <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
+                  Estimated Completion Time
+                  </label>
+                  <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                  className="h-14 appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-city" />
+                </div>
+
+              </div>
+
+              {/*Right column*/}
+              <div className="w-1/3">
+                {/*Report deadlines label and grey box */}
+                <div className="h-full" >
+                  <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-zip">
+                      Report Deadlines
+                  </label>
+                  <div className="p-2 rounded h-60" style={{backgroundColor: '#D3D3D3', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}>
+                      <input style={{color : "gray", backgroundColor: '#F2EBE4',borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                      className="h-14 w-full text-gray-700 rounded" id="grid-city" type="date"/>
+                      <button style={{color : "black", backgroundColor: "#F58D5C", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}} className="h-10 w-full mt-2">Add Deadline +</button>
+                  </div>
+                </div>
+              </div>
+              
             </div>
-          ))}
-          <button type="button" onClick={addReportDate}>
-            + Add Report Date
-          </button>
-        </div>
 
-        {/* Row 3: Times */}
-        <label className="label-col">Estimated Completion Time (in hours)</label>
-        <input
-          className="input-col"
-          type="number"
-          value={estimatedCompletionTimeInHours}
-          onChange={(e) => setEstimatedCompletionTimeInHours(Number(e.target.value))}
-        />
+              {/*Timeline label and input */}
+              <div className="w-full  md:mb-0 ">
+                <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                  Timeline (in years)
+                </label>
+                <input  style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                className="h-14 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Type Here"/>
+              </div>
 
-        <label className="label-col">Timeline (in years)</label>
-        <input
-          className="input-col"
-          type="number"
-          value={timelineInYears}
-          onChange={(e) => setTimelineInYears(Number(e.target.value))}
-        />
+              {/*Amount label and input */}
+              <div className="w-full mt-5 md:mb-0 ">
+                <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                  Amount
+                </label>
+                <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                className="h-14 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Type Here"/>
+              </div>
 
-        {/* Row 4: Does BCAN Qualify & Status */}
-        <label className="label-col">Does BCAN Qualify?</label>
-        <select
-          className="input-col"
-          value={doesBcanQualify ? "true" : "false"}
-          onChange={(e) => setDoesBcanQualify(e.target.value === "true")}
-        >
-          <option value="true">Yes</option>
-          <option value="false">No</option>
-        </select>
+          </div>
 
-        <label className="label-col">Status</label>
-        <select
-          className="input-col"
-          value={status}
-          onChange={(e) => setStatus((e.target.value) as Status)}
-        >
-          <option value={Status.Active}>Active</option>
-          <option value={Status.Inactive}>Inactive</option>
-          <option value={Status.Potential}>Potential</option>
-          <option value={Status.Pending}>Pending</option>
-          <option value={Status.Rejected}>Rejected</option>
-        </select>
+          {/*Right column */}
+          <div className='p-4 w-1/2 mt-12 h-full'>
 
-        {/* Row 5: Amount */}
-        <label className="label-col">Amount</label>
-        <input
-          className="input-col"
-          type="number"
-          placeholder="$0.00"
-          value={amount}
-          onChange={(e) => setAmount(Number(e.target.value))}
-        />
+            {/*POC row */}
+            <div className="flex w-full h-1/2 mt-5">
+              {/*BCAN POC div*/}
+              <div className="w-full mt-1 p-2">
+                  <label className="mb-1 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
+                      BCAN POC
+                  </label>
+                  {/*Box div*/} 
+                  <div className="items-center flex p-3 rounded h-52" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px'}}>
+                      <MdOutlinePerson2 className="w-1/4 h-full p-1"/>
+                      <div className="w-3/4">
+                        <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        className="h-14 w-full text-gray-700 rounded" id="grid-city" placeholder="Name" />
+                        <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        className="h-14 w-full text-gray-700 rounded" id="grid-city" placeholder="e-mail" />
+                      </div> 
+                  </div>
+              </div>
 
-        {/* Row 6: Scope Documents (Attachments) */}
-        <label className="label-col">Scope Documents</label>
-        <div className="attachments-container input-col">
-          {attachments.map((attachment, index) => (
-            <div className="attachment-entry" key={index}>
-              <input
-                type="text"
-                placeholder="Attachment Name"
-                value={attachment.attachment_name}
-                onChange={(e) =>
-                  handleAttachmentChange(index, "attachment_name", e.target.value)
-                }
-              />
-              <input
-                type="text"
-                placeholder="URL"
-                value={attachment.url}
-                onChange={(e) =>
-                  handleAttachmentChange(index, "url", e.target.value)
-                }
-              />
-              <select
-                value={attachment.type}
-                onChange={(e) =>
-                  handleAttachmentChange(index, "type", Number(e.target.value))
-                }
-              >
-                <option value={AttachmentType.SCOPE_DOCUMENT}>Scope Document</option>
-                <option value={AttachmentType.SUPPORTING_RESOURCE}>Supporting Resource</option>
-              </select>
-              <button onClick={() => removeAttachment(index)}>X</button>
+              {/*Grant Provider POC div*/}
+              <div className="p-2 w-full mt-1 ">
+                  <label className="mb-1 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
+                      Grant Provider POC
+                  </label>
+                  {/*Box div*/}
+                  <div className="flex p-3 rounded h-52 items-center" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px'}}>
+                      <MdOutlinePerson2 className="p-1 w-1/4 h-full"/>
+                      <div className="w-3/4">
+                        <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        className="h-14 w-full text-gray-700 rounded" id="grid-city" placeholder="Name" />
+                        <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        className="h-14 w-full text-gray-700 rounded" id="grid-city" placeholder="e-mail" />
+                      </div> 
+                  </div>
+              </div>
             </div>
-          ))}
-          <button onClick={addAttachment}>Choose Files</button>
+
+            {/*bottom  right row*/}
+            <div className="flex h-full w-full">
+               {/* Select option menus */}
+                <div className="p-2 h-full w-1/2 flex-col">
+                  {/*Qualify label and input */}
+                  <div className="w-full ">
+                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                      Does BCAN qualify?
+                    </label>
+                    <select style={{color: "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                      className="h-14 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                      id="grid-first-name">
+                      <option value="">Select...</option>
+                      <option value="yes">Yes</option>
+                      <option value="no">No</option>
+                    </select>
+                  </div>
+
+                  {/*Status label and input */}
+                  <div className="w-full mt-5 md:mb-0 ">
+                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                      Status
+                    </label>
+                    <select style={{color: "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                      className="h-14 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                      id="grid-first-name">
+                      <option value="">Select...</option>
+                      <option value="potential">Potential</option>
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                      <option value="rejected">Rejected</option>
+                      <option value="pending">Pending</option>
+                    </select>
+                  </div>
+
+                  {/*Restriction types label and input */}
+                  <div className="w-full mt-5 md:mb-0 ">
+                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                      Restriction types
+                    </label>
+                    <select style={{color: "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                      className="h-14 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" 
+                      id="grid-first-name">
+                      <option value="">Select...</option>
+                      <option value="restricted">Restricted</option>
+                      <option value="unrestricted">Unrestricted</option>
+                    </select>
+                  </div>
+                </div>
+
+              {/*Scope Documents div p-2 h-full w-1/2 flex-col*/}
+              <div className="p-2 h-full w-1/2 flex-col">
+                  <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
+                      Scope Documents
+                  </label>
+                  <button style={{color : "black", backgroundColor: "gray", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}className="w-full mt-2 h-12">Upload Documents +</button>
+                  {/*Box div*/}
+                  <div className="flex rounded h-48 mt-4" style={{backgroundColor: '#D3D3D3', borderColor: 'black', borderWidth: '1px'}}></div>
+              </div>
+            {/*End bottom right row */}
+            </div>
+          {/*End right column */}
+          </div>
+ 
+        {/*End grid content*/}
         </div>
 
-        {/* Row 7: Description */}
-        <label className="label-col">Description</label>
-        <textarea
-          className="input-col"
-          placeholder="Type Grant Descriptions, Application Requirements, and General Notes here..."
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        ></textarea>
-
-        {/* Row 8: Buttons */}
+        {/*Description and input */}
+              <div className="w-full md:mb-0 ">
+                <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                  Description
+                </label>
+                <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                className="h-48 block w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight" id="grid-first-name" type="text"/>
+              </div>
+      
         <div className="button-row">
-          <button onClick={onClose}>Close</button>
-          <button onClick={handleSubmit}>Save</button>
+          <button style={{color : "black", backgroundColor: "white", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}} onClick={onClose} >Close</button>
+          <button style={{color : "black", backgroundColor: "#F58D5C", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}onClick={handleSubmit}>Save</button>
         </div>
+
+      {/*End modal content */}
       </div>
+
+    {/*End modal overlay */}
     </div>
+    
+    
   );
 };
 
