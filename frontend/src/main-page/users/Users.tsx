@@ -48,18 +48,36 @@ function Users() {
         </div>
         <div>
           {usersTabStatus === UsersTab.CurrentUsers ? (
-            <ApprovedUserCard
-              name="Aaron Ashby"
-              email="a.ashby@mit.edu"
-              position="Employee"
-            />
+            <>
+              <div className="flex px-9 pb-3 m-7 border-b border-b-[#BFBBBB] font-semibold justify-around">
+                <p className="w-[140px] text-left">User Name</p>
+                <p className="w-[140px] text-left">User ID</p>
+                <p className="w-[140px] text-left">Email</p>
+                <p className="w-[140px] text-left">Position</p>
+              </div>
+              <ApprovedUserCard
+                name="Aaron Ashby"
+                email="a.ashby@mit.edu"
+                position="Employee"
+              />
+            </>
           ) : (
-            <PendingUserCard
-              name="Aaron Ashby"
-              email="a.ashby@uconn.edu"
-              position="Inactive"
-              dateRequested={new Date("02/14/2006")}
-            />
+            <>
+              <div className="flex px-9 pb-3 m-7 border-b border-b-[#BFBBBB] font-semibold justify-around">
+                <p className="w-[140px] text-left">User Name</p>
+                <p className="w-[140px] text-left">User ID</p>
+                <p className="w-[140px] text-left">Email</p>
+                <p className="w-[140px] text-left">Position</p>
+                <p className="w-[140px] text-left">Date Requested</p>
+                <div className="w-[140px]"></div>
+              </div>
+              <PendingUserCard
+                name="Aaron Ashby"
+                email="a.ashby@uconn.edu"
+                position="Inactive"
+                dateRequested={new Date("02/14/2006")}
+              />
+            </>
           )}
         </div>
       </div>
