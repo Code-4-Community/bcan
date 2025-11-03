@@ -25,14 +25,17 @@
   */
   .modal-content {
     background: white; /* Peach background */
-    width: 100%;
-    max-width: 80%;
+    max-width: 70%;
     max-height: 80%; /* More width to accommodate multiple columns */
     padding: 2rem;
-    border: 3px solid black;
-    border-radius: 5px;
+    overflow-y : auto;
+    overflow-x : hidden;
+    border: 2px solid black;
+    border-radius : 1.2rem;
     flex: 1 1 auto;
-    overflow-y: auto; /* Scroll if content exceeds max height */
+    box-sizing: border-box;
+    
+    /* Scroll if content exceeds max height */
   }
 
   /*
@@ -177,6 +180,7 @@
     justify-content: flex-end;
     gap: 1rem;
     margin-top: 2rem;
+    margin-right : 1.2rem;
   }
   
   /* 
@@ -197,4 +201,5 @@
   .modal-content button:hover {
     background-color: #0056b3;
   }
+
   

@@ -4,6 +4,7 @@ import { fetchAllGrants } from "../../../external/bcanSatchel/actions";
 import "../styles/NewGrantModal.css";
 import POCEntry from "./POCEntry";
 import { MdOutlinePerson2 } from "react-icons/md";
+import { FiUpload } from "react-icons/fi";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { TDateISO } from "../../../../../backend/src/utils/date";
 import { Status } from "../../../../../middle-layer/types/Status";
@@ -68,6 +69,10 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   // @ts-ignore
   const [doesBcanQualify, _setDoesBcanQualify] = useState<boolean>(false);
+
+  // @ts-ignore
+  const [isRestricted, _setIsRestricted] = useState<boolean>(false);
+
   // @ts-ignore
   const [status, _setStatus] = useState<Status>(Status.Potential);
 
@@ -83,6 +88,14 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   // For error handling
   // @ts-ignore
   const [_errorMessage, setErrorMessage] = useState<string>("");
+  // @ts-ignore
+  const [bcanPocName, setBcanPocName] = useState('');
+  // @ts-ignore
+  const [bcanPocEmail, setBcanPocEmail] = useState('');
+  // @ts-ignore
+  const [grantProviderPocName, setGrantProviderPocName] = useState('');
+  // @ts-ignore
+  const [grantProviderPocEmail, setGrantProviderPocEmail] = useState('');
 
   /** Add a new BCAN POC entry */
   // @ts-ignore
@@ -254,20 +267,18 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   return (
 
     <div className="modal-overlay"> {/*Greyed out background */}
-      <div className="modal-content"> {/*Popup container */}
-        <div className="flex">                         {/*Widget container */}
-
+      <div className="modal-content "> {/*Popup container */}
+        <h2 className="font-family-helvetica">New Grant</h2>
+        <div className="flex">  {/* Major components in two columns */}
           {/*left column */}
-          <div className='w-1/2 p-4 h-full'>
-            <h2>New Grant</h2>
-
+          <div className='w-1/2  pr-5'>
               {/*Organization name and input */}
-              <div className="w-full md:mb-0 ">
-                <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+              <div className="w-full md:mb-0">
+                <label className="font-family-helvetica text-lg flex block text-black  mb-1" htmlFor="grid-first-name">
                   Organization Name
                 </label>
-                <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                className="h-14 block w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight" 
+                <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                className=" font-family-helveticablock w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight" 
                 id="grid-first-name"
                  type="text" 
                  placeholder="Type Here"
@@ -281,25 +292,25 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               <div className="w-2/3">
 
                 {/*Application date and grant start date */}
-                <div className="flex space-x-4 mb-5">
+                <div className="flex space-x-4">
                   {/*Application date and input */}
                   <div className="w-1/2">
-                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-city">
+                    <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-city">
                     Application Date
                     </label>
-                    <input style={{color : "gray", backgroundColor: '#F2EBE4',borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                    className="h-14 appearance-none block w-full text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+                    <input style={{height: "48px", backgroundColor: '#F2EBE4',borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                    className="font-family-helvetica appearance-none block w-full text-black border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
                     id="grid-city" 
                     type="date"
                     onChange={(e) => _setApplicationDate(e.target.value)}/>
                   </div>
                   {/*Grant Start Date and input */}
                   <div className=" w-1/2">
-                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
+                    <label className="font-family-helvetica flex block tracking-wide text-black text-black text-lg mb-1" htmlFor="grid-state">
                       Grant Start Date
                     </label>
-                      <input style={{color : "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                      className="h-14 w-full appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+                      <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                      className="font-family-helvetica w-full appearance-none block w-full bg-gray-200 text-black border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
                       id="grid-city" 
                       type="date"
                       onChange={(e) => _setGrantStartDate(e.target.value)}/>
@@ -307,14 +318,14 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 </div>
 
                 {/*Estimated completition time and input - need to make wider (length of application date and grant start date)*/}
-                <div className="w-full">
-                  <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
-                  Estimated Completion Time 
+                <div className="w-full mt-10">
+                  <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-state">
+                  Estimated Completion Time (in hours)
                   </label>
                   <input type="number" 
                   min = "0"
-                  style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                  className="h-14 appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+                  style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                  className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
                   id="grid-city"
                   onChange={(e) => _setEstimatedCompletionTimeInHours(Number(e.target.value))}/>
                 </div>
@@ -322,19 +333,19 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               </div>
 
               {/*Right column*/}
-              <div className="w-1/3">
+              <div className="w-1/3 ">
                 {/*Report deadlines label and grey box */}
                 <div className="h-full" >
-                  <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-zip">
+                  <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-zip">
                       Report Deadlines
-                  </label>
-                  <div className="p-2 rounded h-60 overflow-y-auto overflow-x-hidden" style={{backgroundColor: '#D3D3D3', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}>
+                  </label> 
+                  <div className="p-2 rounded h-56 overflow-y-auto overflow-x-hidden" style={{backgroundColor: '#D3D3D3', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}>
                       {reportDates.map((date, index) => (
                         <div key={index} className="flex gap-2 mb-2 w-full">
                           <input 
                             key={index}
-                            style={{color: "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                            className="h-14 flex-1 min-w-0 text-gray-700 rounded" 
+                            style={{height: "42px", color: "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                            className="font-family-helvetica flex-1 min-w-0 text-gray-700 rounded" 
                             type="date"
                             value={date}
                             onChange={(e) => {
@@ -345,8 +356,8 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                           />
                           {reportDates.length > 1 && (
                             <button
-                              style={{backgroundColor: '#FF6B6B', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                              className="h-14 w-5 flex-shrink-0 rounded text-white font-bold flex items-center justify-center"
+                              style={{height: "42px",backgroundColor: '#FF6B6B', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                              className="font-family-helvetica w-5 flex-shrink-0 rounded text-white font-bold flex items-center justify-center"
                               onClick={() => _removeReportDate(index)}
                             >
                               ✕
@@ -356,8 +367,8 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
                       ))}
                       <button 
-                        style={{color: "black", backgroundColor: "#F58D5C", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}} 
-                        className="h-10 w-full mt-2 flex items-center justify-center"
+                        style={{height: "42px", color: "black", backgroundColor: "#F58D5C", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}} 
+                        className="font-family-helvetica w-full mt-2 flex items-center justify-center"
                         onClick={_addReportDate}
                       >
                         Add Deadline +
@@ -369,77 +380,80 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             </div>
 
               {/*Timeline label and input */}
-              <div className="w-full  md:mb-0 ">
-                <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+              <div className="w-full -mt-4">
+                <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
                   Timeline (in years)
                 </label>
-                <input  style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                className="h-14 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Type Here"/>
+                <input  style={{height: "42px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                className="font-family-helvetica appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                type="number" min = "0" id="grid-first-name" placeholder="Type Here" onChange={(e) => _setTimelineInYears(e.target.value)}/>
               </div>
 
               {/*Amount label and input */}
               <div className="w-full mt-5 md:mb-0 ">
-                <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
-                  Amount
+                <label className="font-family-helvetica flex block tracking-wide text-gray-700 text-lg mb-1" htmlFor="grid-first-name">
+                  Amount (in $)
                 </label>
-                <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                className="h-14 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Type Here"/>
+                <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                className="font-family-helvetica appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                min="0" id="grid-first-name" type="number" placeholder="Type Here" onChange={(e) => _setAmount(Number(e.target.value))}/>
               </div>
 
           </div>
 
           {/*Right column */}
-          <div className='p-4 w-1/2 mt-12 h-full'>
+          <div className='w-1/2 pl-5'>
 
             {/*POC row */}
-            <div className="flex w-full h-1/2 mt-5">
+            <div className="flex w-full mb-20">
               {/*BCAN POC div*/}
-              <div className="w-full mt-1 p-2">
-                  <label className="mb-1 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
+              <div className="w-full pr-3">
+                  <label className="font-family-helvetica mb-1 flex block tracking-wide text-black text-lg" htmlFor="grid-zip">
                       BCAN POC
                   </label>
                   {/*Box div*/} 
-                  <div className="items-center flex p-3 rounded h-52" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px'}}>
+                  <div className="items-center flex p-3 rounded h-full" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}>
                       <MdOutlinePerson2 className="w-1/4 h-full p-1"/>
                       <div className="w-3/4">
-                        <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                        className="h-14 w-full text-gray-700 rounded" id="grid-city" placeholder="Name" />
-                        <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                        className="h-14 w-full text-gray-700 rounded" id="grid-city" placeholder="e-mail" />
+                        <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        className="font-family-helvetica w-full text-gray-700 rounded" id="grid-city" placeholder="Name" value={bcanPocName} onChange={(e) => setBcanPocName(e.target.value)}/>
+                        <input style={{height: "48px",backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        className="font-family-helvetica w-full text-gray-700 rounded"
+                         id="grid-city" placeholder="e-mail" value={bcanPocEmail} onChange={(e) => setBcanPocEmail(e.target.value)}/>
                       </div> 
                   </div>
               </div>
 
               {/*Grant Provider POC div*/}
-              <div className="p-2 w-full mt-1 ">
-                  <label className="mb-1 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
+              <div className="w-full pl-3">
+                  <label className="font-family-helvetica mb-1 flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-zip">
                       Grant Provider POC
                   </label>
                   {/*Box div*/}
-                  <div className="flex p-3 rounded h-52 items-center" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px'}}>
+                  <div className="flex p-3 rounded  items-center h-full" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}>
                       <MdOutlinePerson2 className="p-1 w-1/4 h-full"/>
                       <div className="w-3/4">
-                        <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                        className="h-14 w-full text-gray-700 rounded" id="grid-city" placeholder="Name" />
-                        <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                        className="h-14 w-full text-gray-700 rounded" id="grid-city" placeholder="e-mail" />
+                        <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        className="font-family-helvetica w-full text-gray-700 rounded" id="grid-city" placeholder="Name" value={grantProviderPocName} onChange={(e) => setGrantProviderPocName(e.target.value)}/>
+                        <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        className="font-family-helvetica w-full text-gray-700 rounded" id="grid-city" placeholder="e-mail" value={grantProviderPocEmail} onChange={(e) => setGrantProviderPocEmail(e.target.value)}/>
                       </div> 
                   </div>
               </div>
             </div>
 
             {/*bottom  right row*/}
-            <div className="flex h-full w-full">
+            <div className="flex w-full ">
                {/* Select option menus */}
-                <div className="p-2 h-full w-1/2 flex-col">
+                <div className="w-1/2 flex-col pr-3">
                   {/*Qualify label and input */}
                   <div className="w-full ">
-                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                    <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
                       Does BCAN qualify?
                     </label>
-                    <select style={{color: "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                      className="h-14 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                      id="grid-first-name">
+                    <select style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                      className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                      id="grid-first-name" value={doesBcanQualify ? "yes" : ""} onChange={(e) => _setDoesBcanQualify(e.target.value === "yes")}>
                       <option value="">Select...</option>
                       <option value="yes">Yes</option>
                       <option value="no">No</option>
@@ -447,13 +461,13 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   </div>
 
                   {/*Status label and input */}
-                  <div className="w-full mt-5 md:mb-0 ">
-                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                  <div className="w-full mt-5 ">
+                    <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
                       Status
                     </label>
-                    <select style={{color: "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                      className="h-14 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                      id="grid-first-name">
+                    <select style={{height: "48px",  backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                      className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                      id="grid-first-name" value={status} onChange={(e) => _setStatus(e.target.value as Status)}>
                       <option value="">Select...</option>
                       <option value="potential">Potential</option>
                       <option value="active">Active</option>
@@ -464,13 +478,13 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   </div>
 
                   {/*Restriction types label and input */}
-                  <div className="w-full mt-5 md:mb-0 ">
-                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                  <div className="w-full  md:mb-0 mt-5">
+                    <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
                       Restriction types
                     </label>
-                    <select style={{color: "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                      className="h-14 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" 
-                      id="grid-first-name">
+                    <select style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                      className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" 
+                      id="grid-first-name" value={isRestricted ? "restricted" : ""} onChange={(e) => _setIsRestricted(e.target.value === "restricted")}>
                       <option value="">Select...</option>
                       <option value="restricted">Restricted</option>
                       <option value="unrestricted">Unrestricted</option>
@@ -479,13 +493,62 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 </div>
 
               {/*Scope Documents div p-2 h-full w-1/2 flex-col*/}
-              <div className="p-2 h-full w-1/2 flex-col">
-                  <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
-                      Scope Documents
-                  </label>
-                  <button style={{color : "black", backgroundColor: "gray", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}className="w-full mt-2 h-12">Upload Documents +</button>
-                  {/*Box div*/}
-                  <div className="flex rounded h-48 mt-4" style={{backgroundColor: '#D3D3D3', borderColor: 'black', borderWidth: '1px'}}></div>
+              <div className="w-1/2 flex-col pl-3">
+                <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-zip">
+                  Scope Documents
+                </label>
+                
+                <label htmlFor="file-upload">
+                  <button 
+                    type="button"
+                    style={{height: "48px", color: "black", backgroundColor: "gray", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                    className="items-center flex font-family-helvetica w-full mt-1 mb-2 justify-center"
+                    onClick={() => document.getElementById('file-upload')?.click()}
+                  >
+                    <FiUpload className="mr-2"/>
+                    <span>Upload Documents</span>
+                  </button>
+                </label>
+                
+                <input
+                  id="file-upload"
+                  type="file"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => {
+                    const files = Array.from(e.target.files || []);
+                    const newAttachments: Attachment[] = files.map(file => ({
+                      attachment_name: file.name,
+                      url: URL.createObjectURL(file),
+                      type: AttachmentType.SCOPE_DOCUMENT
+                    }));
+                    setAttachments([...attachments, ...newAttachments]);
+                  }}
+                />
+                
+                {/*Box div*/}
+                <div className="p-2 rounded h-48 overflow-y-auto overflow-x-hidden" style={{backgroundColor: '#D3D3D3', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}>
+                  {attachments.map((attachment, index) => (
+                    <div key={index} className="flex gap-2 mb-2 w-full">
+                      <div 
+                        style={{height: "42px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}
+                        className="overflow-hidden font-family-helvetica flex-1 min-w-0 text-gray-700 rounded flex items-center px-3"
+                      >
+                        {attachment.attachment_name}
+                      </div>
+                      <button
+                        style={{height: "42px", backgroundColor: '#FF6B6B', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        className="font-family-helvetica w-10 flex-shrink-0 rounded text-white font-bold flex items-center justify-center"
+                        onClick={() => {
+                          const newAttachments = attachments.filter((_, i) => i !== index);
+                          setAttachments(newAttachments);
+                        }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
             {/*End bottom right row */}
             </div>
@@ -496,17 +559,18 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         </div>
 
         {/*Description and input */}
-              <div className="w-full md:mb-0 ">
-                <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+              <div className="w-full mt-5 p-2">
+                <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
                   Description
                 </label>
-                <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                className="h-48 block w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight" id="grid-first-name" type="text"/>
+                <textarea style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                className="font-family-helvetica h-48 block w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight" id="grid-first-name" type="text"
+                value={description} onChange={(e) => _setDescription(e.target.value)}/>
               </div>
       
         <div className="button-row">
-          <button style={{color : "black", backgroundColor: "white", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}} onClick={onClose} >Close</button>
-          <button style={{color : "black", backgroundColor: "#F58D5C", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}onClick={handleSubmit}>Save</button>
+          <button style={{fontFamily : "helvetica", color : "black", backgroundColor: "white", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}} onClick={onClose} >Close</button>
+          <button style={{fontFamily : "helvetica", color : "black", backgroundColor: "#F58D5C", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}onClick={handleSubmit}>Save</button>
         </div>
 
       {/*End modal content */}
