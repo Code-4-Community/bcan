@@ -1,11 +1,15 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import AWS from 'aws-sdk';
 import { Grant } from '../../../middle-layer/types/Grant';
-
+import { NotificationService } from '.././notifications/notifcation.service';
+import { Notification } from '../../../middle-layer/types/Notification';
+import { TDateISO } from '../utils/date';
 @Injectable()
 export class GrantService {
     private readonly logger = new Logger(GrantService.name);
-      private dynamoDb = new AWS.DynamoDB.DocumentClient();
+    private dynamoDb = new AWS.DynamoDB.DocumentClient();
+
+    constructor(private readonly notificationService: NotificationService) {}
 
     // function to retrieve all grants in our database
     async getAllGrants(): Promise<Grant[]> {
@@ -178,4 +182,56 @@ export class GrantService {
     }
     
   }
+
+  private getNotificationTimes(deadlineISO: string): string[] {
+    const deadline = new Date(deadlineISO);
+    const daysBefore = [14, 7, 3];
+    return daysBefore.map(days => {
+      const d = new Date(deadline);
+      d.setDate(deadline.getDate() - days);
+      return d.toISOString();
+    });
+  }
+
+  private async createGrantNotifications(grant: Grant, userId: string) {
+    const { grantId, organization, application_deadline, report_deadlines } = grant;
+  
+    // Application deadline notifications
+    if (application_deadline) {
+      const alertTimes = this.getNotificationTimes(application_deadline);
+      for (const alertTime of alertTimes) {
+        const message = `Application due in ${this.daysUntil(alertTime, application_deadline)} days for ${organization}`;
+        const notification: Notification = {
+          notificationId: `${grantId}-app-${alertTime}`,
+          userId,
+          message,
+          alertTime: alertTime as TDateISO,
+        };
+        await this.notificationService.createNotification(notification);
+      }
+    }
+  
+    // Report deadlines notifications
+    if (report_deadlines && Array.isArray(report_deadlines)) {
+      for (const reportDeadline of report_deadlines) {
+        const alertTimes = this.getNotificationTimes(reportDeadline);
+        for (const alertTime of alertTimes) {
+          const message = `Report due in ${this.daysUntil(alertTime, reportDeadline)} days for ${organization}`;
+          const notification: Notification = {
+            notificationId: `${grantId}-report-${alertTime}`,
+            userId,
+            message,
+            alertTime: alertTime as TDateISO,
+          };
+          await this.notificationService.createNotification(notification);
+        }
+      }
+    }
+  }
+  
+  private daysUntil(alertTime: string, deadline: string): number {
+    const diffMs = +new Date(deadline) - +new Date(alertTime);
+    return Math.round(diffMs / (1000 * 60 * 60 * 24));
+  }
+  
 }
