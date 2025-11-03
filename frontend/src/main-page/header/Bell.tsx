@@ -24,9 +24,9 @@ const BellButton = () => {
   const handleClick = async () => {
     //temporary dummy data for now
     const dummyNotifications = [
-      {id: 1, message: "Grant A deadline approaching in 3 days"},
-      {id: 2, message: "Grant B deadline tomorrow!"}, 
-      {id: 3, message: "Grant C deadline passed yesterday!"},
+      {id: 1, title: "Grant Deadline", message: "Grant A deadline approaching in 3 days"},
+      {id: 2, title: "Grant Deadline", message: "Grant B deadline tomorrow!"}, 
+      {id: 3, title: "Grant Deadline", message: "Grant C deadline passed yesterday!"},
     ];
     //const response = await api(
       //`/notifications/user/${currUserID}`,
@@ -44,7 +44,7 @@ const BellButton = () => {
   const handleClose = () => setClicked(false);
 
   return (
-    <>
+    <div className="bell-container">
       <button
         className={`bell-button ${isClicked ? "hovered" : ""}`}
         onClick={handleClick}
@@ -58,7 +58,7 @@ const BellButton = () => {
         onClose={handleClose}
         />
       )}
-    </>
+    </div>
   );
 };
 

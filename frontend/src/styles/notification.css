@@ -1,21 +1,25 @@
 .notification-popup {
   position: absolute;
   right: 0;
-  top: 40px;
-  width: 320px;
+  top: 75px;
+  width: 360px;
   background-color: white;
   border: 1px solid #343131;
-  border-radius: 12px;
+  border-radius: 6px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  padding: 1rem;
+  padding: 0.7rem;
   z-index: 1000;
 }
+
 
 .popup-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0.5rem 0.5rem;
+  border-bottom: 1px solid #ddd;
 }
+
 
 .popup-header h3 {
   font-size: 1.1rem;
@@ -24,10 +28,11 @@
   margin: 0;
 }
 
+
 .close-button {
   background: none;
   border: none;
-  font-size: 1.2rem;
+  font-size: 1rem;
   cursor: pointer;
   color: #777;
 }
@@ -35,31 +40,55 @@
   color: #e74c3c;
 }
 
+
 .notification-list {
   max-height: 200px;
   overflow-y: auto;
   margin-top: 10px;
 }
 
+
 .grant-notification {
   background-color: #f9f9f9;
-  border: 1px solid #eee;
-  border-radius: 8px;
+  border: 1px solid #b3afaf;
+  border-radius: 0px;
   padding: 8px 10px;
-  margin-bottom: 8px;
+  margin-bottom: 2px;
   font-size: 0.9rem;
   transition: background-color 0.2s ease;
+}
+
+.notification-title {
+  font-weight: 600;
+  font-size: 13px;
+  color: #101010;
+  line-height: 1.15;
+}
+
+.notification-message {
+  font-size: 12.5px;
+  color: #555;
+  margin-top: 4px;
+  line-height: 1.2;
 }
 
 .grant-notification:hover {
   background-color: #f1f1f1;
 }
 
+
+.bell-container {
+  position: relative;
+  display: inline-block;
+}
+
+
 .trash-container {
   display: flex;
   justify-content: flex-end;
   margin-top: 12px;
 }
+
 
 .trash-icon {
   color: #aaa;

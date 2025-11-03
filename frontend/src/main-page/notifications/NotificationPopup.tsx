@@ -4,7 +4,7 @@ import { FaTrash } from "react-icons/fa";
 import '../../styles/notification.css';
 
 interface NotificationPopupProps {
-    notifications: any[];
+    notifications: { id: string; title: string; message: string }[];
     onClose: () => void;
 }
 
@@ -13,18 +13,18 @@ const NotificationPopup: React.FC<NotificationPopupProps> = ({
     onClose
 }) => {
     return createPortal(
-        <div className="notification-popup">
+        <div className="notification-popup" role="dialog" aria-label="Notifications">
             <div className="popup-header">
                 <h3>Alerts</h3>
-                <button className="close-button" onClick={onClose}>
+                <button className="close-button" onClick={onClose} aria-label="Close notificiations">
                     ✕
                 </button>
             </div>
 
             <div className="notification-list">
-                {notifications.length > 0 ? (
+                {notifications && notifications.length > 0 ? (
                     notifications.map((n) => (
-                        <GrantNotification key={n.id} message={n.message} />
+                        <GrantNotification key={n.id} title={n.title} message={n.message} />
                     ))
                 ) : (
                     <p className="empty-text">No new notifications</p>
