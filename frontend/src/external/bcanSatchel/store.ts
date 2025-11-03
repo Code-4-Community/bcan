@@ -13,7 +13,7 @@ export interface AppState {
   startDateFilter: Date | null;
   endDateFilter: Date | null;
   searchQuery: string;
-  yearFilter:number[];
+  yearFilter:number[] | [];
 }
 
 // Define initial state
