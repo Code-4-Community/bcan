@@ -15,7 +15,7 @@ function GrantPage() {
 
   // reset filters on initial render
   useEffect(() => {
-            updateYearFilter(null);
+            updateYearFilter([]);
             updateFilter(null);
             updateEndDateFilter(null);
             updateStartDateFilter(null);

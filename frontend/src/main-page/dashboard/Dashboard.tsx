@@ -22,7 +22,7 @@ import KPICards from "./Charts/KPICards";
 const Dashboard = observer(() => {
   // reset filters on initial render
   useEffect(() => {
-    updateYearFilter(null);
+    updateYearFilter([]);
     updateFilter(null);
     updateEndDateFilter(null);
     updateStartDateFilter(null);
