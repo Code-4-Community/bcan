@@ -6,8 +6,7 @@ import { Grant } from "../../../../../middle-layer/types/Grant";
 import { getListApplied } from "../../../../../middle-layer/types/Status";
 
 const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
-
-   // Helper to sum values for given statuses
+  // Helper to sum values for given statuses
   const sumByStatus = (data: Record<string, number>, statuses: string[]) =>
     Object.entries(data)
       .filter(([status]) => statuses.includes(status))
@@ -49,18 +48,18 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
     color: string;
   }) => {
     return (
-      <div className="w-[100px]">
+      <div className="w-[100px] ">
         <div style={{ fontWeight: 500 }}>{name}</div>
         <div
           style={{
             height: 3,
-            width: "100%",
+            width: "80%",
             backgroundColor: color,
-            marginTop: 4,
+            marginTop: 0,
             borderRadius: 2,
           }}
         />
-        <div style={{ fontSize: 12, color: "#555", marginTop: 4 }}>
+        <div style={{ fontSize: 12, color: "#555", marginTop: 0 }}>
           {`${(percent * 100).toFixed(0)}% ($${(value / 1_000_000).toFixed(
             2
           )}M)`}
@@ -88,7 +87,7 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
           </div>
           {/* Floating Right Label */}
           {sumUnreceived > 0 && (
-            <div className="absolute top-2 right-2">
+            <div className="absolute top-2 right-2 p-4 mx-10 my-4 z-50 rounded-3xl bg-white bg-opacity-50">
               <LabelItem
                 name="Unreceived"
                 value={sumUnreceived}
@@ -99,7 +98,7 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
           )}
           {/* Floating Left Label */}
           {sumReceived > 0 && (
-            <div className="absolute -bottom-[240px] left-2">
+            <div className="absolute -bottom-[240px] left-2 p-4 mx-10 my-4 z-50  rounded-3xl bg-white bg-opacity-50">
               <LabelItem
                 name="Received"
                 value={sumReceived}
