@@ -13,7 +13,7 @@ export interface AppState {
   startDateFilter: Date | null;
   endDateFilter: Date | null;
   searchQuery: string;
-  yearFilter:number[] | null;
+  yearFilter:number[];
 }
 
 // Define initial state
@@ -26,7 +26,7 @@ const initialState: AppState = {
   startDateFilter: null,
   endDateFilter: null,
   searchQuery: '',
-  yearFilter: null
+  yearFilter: []
 };
 
 const store = createStore<AppState>('appStore', initialState);
