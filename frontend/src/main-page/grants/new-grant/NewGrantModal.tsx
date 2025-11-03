@@ -1,5 +1,6 @@
 // frontend/src/grant-info/components/NewGrantModal.tsx
 import React, { useState, createRef, RefObject } from "react";
+import CurrencyInput from 'react-currency-input-field';
 import { fetchAllGrants } from "../../../external/bcanSatchel/actions";
 import "../styles/NewGrantModal.css";
 import POCEntry from "./POCEntry";
@@ -68,13 +69,13 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [estimatedCompletionTimeInHours, _setEstimatedCompletionTimeInHours] = useState<number>(0);
 
   // @ts-ignore
-  const [doesBcanQualify, _setDoesBcanQualify] = useState<boolean>(false);
+  const [doesBcanQualify, _setDoesBcanQualify] = useState<string>("");
 
   // @ts-ignore
-  const [isRestricted, _setIsRestricted] = useState<boolean>(false);
+  const [isRestricted, _setIsRestricted] = useState<string>("");
 
   // @ts-ignore
-  const [status, _setStatus] = useState<Status>(Status.Potential);
+  const [status, _setStatus] = useState<string>("");
 
   // @ts-ignore
   const [amount, _setAmount] = useState<number>(0);
@@ -186,6 +187,15 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       setErrorMessage("Amount must be greater than 0.");
       return false;
     }
+    if (doesBcanQualify == "") {
+      setErrorMessage("Set Does Bcan Qualify? to 'yes' or 'no' ");
+    }
+    if (isRestricted == "") {
+      setErrorMessage("Set Restriction Type to 'restricted' or 'unrestricted' ");
+    }
+    if (status == "") {
+      setErrorMessage("Set Status");
+    }
     return true;
   };
 
@@ -220,11 +230,11 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const newGrant: Grant = {
       grantId: -1,
       organization,
-      does_bcan_qualify: doesBcanQualify,
+      does_bcan_qualify: (doesBcanQualify == "yes" ? true : false),
       amount,
       grant_start_date: grantStartDate as TDateISO,
       application_deadline: applicationDate as TDateISO,
-      status: status, // Potential = 0, Active = 1, Inactive = 2
+      status: status as Status, // Potential = 0, Active = 1, Inactive = 2
       bcan_poc: bcanPocList.length > 0 ? { POC_name: "", POC_email: bcanPocList[0] } : { POC_name: "", POC_email: ""}, // Just take the first for now
       grantmaker_poc: providerPocList.length > 0 ? { POC_name: "", POC_email: providerPocList[0] } : { POC_name: "", POC_email: ""}, // Just take the first for now
       report_deadlines: reportDates as TDateISO[],
@@ -232,7 +242,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       estimated_completion_time: estimatedCompletionTimeInHours,
       description,
       attachments: attachmentsArray,
-      isRestricted: false, // Default to unrestricted for now
+      isRestricted: (isRestricted == "restricted" ? true : false), // Default to unrestricted for now
     };
     console.log(newGrant);
     try {
@@ -278,7 +288,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   Organization Name
                 </label>
                 <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                className=" font-family-helveticablock w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight" 
+                className=" font-family-helvetica block w-full text-black placeholder:text-gray-400 border rounded py-3 px-4 mb-3 leading-tight" 
                 id="grid-first-name"
                  type="text" 
                  placeholder="Type Here"
@@ -298,10 +308,11 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-city">
                     Application Date
                     </label>
-                    <input style={{height: "48px", backgroundColor: '#F2EBE4',borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                    className="font-family-helvetica appearance-none block w-full text-black border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+                    <input style={{height: "48px", backgroundColor: '#F2EBE4',borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color: applicationDate ? "black" : "gray"}}
+                    className="font-family-helvetica appearance-none block w-full border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
                     id="grid-city" 
                     type="date"
+
                     onChange={(e) => _setApplicationDate(e.target.value)}/>
                   </div>
                   {/*Grant Start Date and input */}
@@ -309,8 +320,8 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     <label className="font-family-helvetica flex block tracking-wide text-black text-black text-lg mb-1" htmlFor="grid-state">
                       Grant Start Date
                     </label>
-                      <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                      className="font-family-helvetica w-full appearance-none block w-full bg-gray-200 text-black border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+                      <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color: grantStartDate ? "black" : "gray"}}
+                      className="font-family-helvetica w-full appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
                       id="grid-city" 
                       type="date"
                       onChange={(e) => _setGrantStartDate(e.target.value)}/>
@@ -325,7 +336,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   <input type="number" 
                   min = "0"
                   style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                  className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+                  className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
                   id="grid-city"
                   onChange={(e) => _setEstimatedCompletionTimeInHours(Number(e.target.value))}/>
                 </div>
@@ -344,8 +355,8 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                         <div key={index} className="flex gap-2 mb-2 w-full">
                           <input 
                             key={index}
-                            style={{height: "42px", color: "gray", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                            className="font-family-helvetica flex-1 min-w-0 text-gray-700 rounded" 
+                            style={{height: "42px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                            className="font-family-helvetica flex-1 min-w-0 text-black rounded" 
                             type="date"
                             value={date}
                             onChange={(e) => {
@@ -385,18 +396,18 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   Timeline (in years)
                 </label>
                 <input  style={{height: "42px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                className="font-family-helvetica appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                type="number" min = "0" id="grid-first-name" placeholder="Type Here" onChange={(e) => _setTimelineInYears(e.target.value)}/>
+                className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                type="number" min = "0" placeholder="Type Here" onChange={(e) => _setTimelineInYears(Number(e.target.value))}/>
               </div>
 
               {/*Amount label and input */}
               <div className="w-full mt-5 md:mb-0 ">
-                <label className="font-family-helvetica flex block tracking-wide text-gray-700 text-lg mb-1" htmlFor="grid-first-name">
+                <label className="font-family-helvetica flex block tracking-wide text-black placeholder:text-gray-400 text-lg mb-1" htmlFor="grid-first-name">
                   Amount (in $)
                 </label>
-                <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                <CurrencyInput style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                 className="font-family-helvetica appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                min="0" id="grid-first-name" type="number" placeholder="Type Here" onChange={(e) => _setAmount(Number(e.target.value))}/>
+                min={0} decimalsLimit={2} placeholder="Type Here" onValueChange={(value) => _setAmount(Number(value))}/>
               </div>
 
           </div>
@@ -451,9 +462,9 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
                       Does BCAN qualify?
                     </label>
-                    <select style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                      className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                      id="grid-first-name" value={doesBcanQualify ? "yes" : ""} onChange={(e) => _setDoesBcanQualify(e.target.value === "yes")}>
+                    <select style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color : doesBcanQualify == "" ? "gray" : "black"}}
+                      className="font-family-helvetica appearance-none block w-full bg-gray-200 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                      id="grid-first-name" value={doesBcanQualify} onChange={(e) => _setDoesBcanQualify(e.target.value)}>
                       <option value="">Select...</option>
                       <option value="yes">Yes</option>
                       <option value="no">No</option>
@@ -465,8 +476,8 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
                       Status
                     </label>
-                    <select style={{height: "48px",  backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                      className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                    <select style={{height: "48px",  backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color : status == "" ? "gray" : "black"}}
+                      className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
                       id="grid-first-name" value={status} onChange={(e) => _setStatus(e.target.value as Status)}>
                       <option value="">Select...</option>
                       <option value="potential">Potential</option>
@@ -482,12 +493,12 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
                       Restriction types
                     </label>
-                    <select style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                      className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" 
-                      id="grid-first-name" value={isRestricted ? "restricted" : ""} onChange={(e) => _setIsRestricted(e.target.value === "restricted")}>
+                    <select style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color : isRestricted == "" ? "gray" : "black"}}
+                      className="font-family-helvetica appearance-none block w-full bg-gray-200 border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" 
+                      id="grid-first-name" value={isRestricted} onChange={(e) => _setIsRestricted(e.target.value)}>
                       <option value="">Select...</option>
-                      <option value="restricted">Restricted</option>
-                      <option value="unrestricted">Unrestricted</option>
+                      <option style={{color:"black"}} value="unrestricted">Unrestricted</option>
+                      <option style={{color:"black"}} value="restricted">Restricted</option>
                     </select>
                   </div>
                 </div>
@@ -564,7 +575,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   Description
                 </label>
                 <textarea style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                className="font-family-helvetica h-48 block w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight" id="grid-first-name" type="text"
+                className="font-family-helvetica h-48 block w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight" id="grid-first-name" 
                 value={description} onChange={(e) => _setDescription(e.target.value)}/>
               </div>
       
