@@ -1,5 +1,7 @@
+import { createPortal } from 'react-dom';
 import GrantNotification from "./GrantNotification";
 import { FaTrash } from "react-icons/fa";
+import '../../styles/notification.css';
 
 interface NotificationPopupProps {
     notifications: any[];
@@ -10,10 +12,10 @@ const NotificationPopup: React.FC<NotificationPopupProps> = ({
     notifications,
     onClose
 }) => {
-    return (
+    return createPortal(
         <div className="notification-popup">
             <div className="popup-header">
-                <h3>Grant Deadlines</h3>
+                <h3>Alerts</h3>
                 <button className="close-button" onClick={onClose}>
                     ✕
                 </button>
@@ -35,7 +37,8 @@ const NotificationPopup: React.FC<NotificationPopupProps> = ({
                 title="Delete all notifications (coming later)"
                 />
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
 
