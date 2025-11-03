@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as dotenv from 'dotenv'
-import AWS from 'aws-sdk';
+import * as AWS from 'aws-sdk';
 
 /* ! */
 async function bootstrap() {

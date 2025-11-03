@@ -1,9 +1,33 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get, Req, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Get('session')
+  async getSession(@Req() req: any) {
+    try {
+      const authHeader = req.headers['authorization'] || req.headers['Authorization'];
+      
+      if (!authHeader) {
+        throw new UnauthorizedException('No active session');
+      }
+
+      const token = authHeader.startsWith('Bearer ') 
+        ? authHeader.substring(7) 
+        : authHeader;
+      
+      const user = await this.authService.validateSession(token);
+      
+      return {
+        user,
+        message: 'Session valid'
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid or expired session');
+    }
+  }
 
   @Post('register')
   async register(

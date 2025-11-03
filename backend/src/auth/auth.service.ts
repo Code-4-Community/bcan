@@ -1,14 +1,13 @@
 import { Injectable, InternalServerErrorException, Logger, UnauthorizedException } from '@nestjs/common';
-import AWS from 'aws-sdk';
-import { table } from 'console';
+import * as AWS from 'aws-sdk';
 import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
 
-  private cognito = new AWS.CognitoIdentityServiceProvider();
-  private dynamoDb = new AWS.DynamoDB.DocumentClient();
+  private cognito;
+  private dynamoDb;
 
   private computeHatch(
     username: string,
@@ -23,6 +22,25 @@ export class AuthService {
       .createHmac(hatch, clientSecret)
       .update(username + clientId)
       .digest('base64');
+  }
+
+constructor() {
+  try {
+    console.log('Starting AuthService constructor...');
+      console.log('AWS module:', typeof AWS);
+      console.log('AWS.CognitoIdentityServiceProvider:', typeof AWS.CognitoIdentityServiceProvider);
+      
+      this.cognito = new AWS.CognitoIdentityServiceProvider();
+      console.log('Cognito initialized successfully');
+      
+      this.dynamoDb = new AWS.DynamoDB.DocumentClient();
+      console.log('DynamoDB initialized successfully');
+      
+      console.log('AuthService constructor completed');
+    } catch (error) {
+      console.error('FATAL: AuthService constructor failed:', error);
+      throw error;
+    }
   }
 
   async register(
@@ -319,5 +337,53 @@ export class AuthService {
       throw new Error('An unknown error occurred');
     }
   }
-  
+
+  // Add this to auth.service.ts
+
+async validateSession(accessToken: string): Promise<any> {
+  try {
+    // Use Cognito's getUser method to validate the token
+    const getUserResponse = await this.cognito
+      .getUser({ AccessToken: accessToken })
+      .promise();
+
+    const username = getUserResponse.Username;
+    let email: string | undefined;
+
+    // Extract email from user attributes
+    for (const attribute of getUserResponse.UserAttributes) {
+      if (attribute.Name === 'email') {
+        email = attribute.Value;
+        break;
+      }
+    }
+
+    // Get additional user info from DynamoDB
+    const tableName = process.env.DYNAMODB_USER_TABLE_NAME || 'TABLE_FAILURE';
+    const params = {
+      TableName: tableName,
+      Key: {
+        userId: username,
+      },
+    };
+
+    const userResult = await this.dynamoDb.get(params).promise();
+    const user = userResult.Item;
+
+    if (!user) {
+      throw new Error('User not found in database');
+    }
+
+    return user;
+  } catch (error: unknown) {
+    this.logger.error('Session validation failed', error);
+    
+    const cognitoError = error as AwsCognitoError;
+    if (cognitoError.code === 'NotAuthorizedException') {
+      throw new UnauthorizedException('Session expired or invalid');
+    }
+    
+    throw new UnauthorizedException('Failed to validate session');
+  }
+}
 }
