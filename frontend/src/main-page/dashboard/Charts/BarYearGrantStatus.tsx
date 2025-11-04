@@ -8,12 +8,18 @@ import {
   LabelList,
 } from "recharts";
 import { observer } from "mobx-react-lite";
-import { aggregateMoneyGrantsByYear, YearAmount } from "../grantCalculations";
+import {
+  aggregateCountGrantsByYear,
+  aggregateMoneyGrantsByYear,
+  YearAmount,
+} from "../grantCalculations";
 import "../styles/Dashboard.css";
 import { Grant } from "../../../../../middle-layer/types/Grant";
+import { useState } from "react";
 
 const BarYearGrantStatus = observer(
   ({ recentYear, grants }: { recentYear: number; grants: Grant[] }) => {
+    const [checked, setChecked] = useState(true);
 
     // Filtering data for most receny year
     const recentData = grants.filter(
@@ -22,7 +28,16 @@ const BarYearGrantStatus = observer(
     );
 
     // Formatting data for chart
-    const data = aggregateMoneyGrantsByYear(recentData, "status")
+    const data_money = aggregateMoneyGrantsByYear(recentData, "status")
+      .flatMap((grant: YearAmount) =>
+        Object.entries(grant.data).map(([key, value]) => ({
+          name: key,
+          value,
+        }))
+      )
+      .sort((a, b) => b.value - a.value);
+
+    const data_count = aggregateCountGrantsByYear(recentData, "status")
       .flatMap((grant: YearAmount) =>
         Object.entries(grant.data).map(([key, value]) => ({
           name: key,
@@ -33,15 +48,37 @@ const BarYearGrantStatus = observer(
 
     return (
       <div className="chart-container">
-        {/* Title */}
-        <div className="text-lg w-full text-left font-semibold align">
-          Year Grant Status
+        <div className="flex flex-row w-full justify-between">
+          <div>
+            {/* Title */}
+            <div className="text-lg w-full text-left font-semibold align">
+              Year Grant Status
+            </div>
+            {/* Year */}
+            <div className="text-sm w-full text-left align">{recentYear}</div>
+          </div>
+          {/* Toggle */}
+          <div className="mt-2">
+            <label className="inline-flex items-center mb-5 cursor-pointer">
+              <span className="me-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                Count
+              </span>
+              <input
+                type="checkbox"
+                checked={checked}
+                onChange={() => setChecked(!checked)}
+                className="sr-only peer"
+              />
+              <div className=" bg-light-orange relative w-9 h-5 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-dark-orange rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border after:rounded-full after:h-4 after:w-4 after:transition-allpeer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"></div>
+              <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                Money
+              </span>
+            </label>
+          </div>
         </div>
-        {/* Year */}
-        <div className="text-sm w-full text-left align">{recentYear}</div>
         <ResponsiveContainer width="100%" height={300} min-width={400}>
           <BarChart
-            data={data}
+            data={checked ? data_money : data_count}
             layout="vertical"
             margin={{ top: 10, right: 60, left: 20, bottom: 30 }}
           >
@@ -57,7 +94,9 @@ const BarYearGrantStatus = observer(
               width="auto"
               hide
               key={grants.length}
-              tickFormatter={(value: number) => `$${value / 1000}k`}
+              tickFormatter={(value: number) =>
+                checked ? `$${value / 1000}k` : `${value}`
+              }
             />
             <Bar
               type="monotone"
@@ -65,14 +104,18 @@ const BarYearGrantStatus = observer(
               dataKey="value"
               fill="#F58D5C"
               strokeWidth={2}
-              name="Active Grants"
+              name="Grants"
               radius={[15, 15, 15, 15]}
             >
               <LabelList
                 dataKey="value"
                 position="right"
                 formatter={(label: any) =>
-                  typeof label === "number" ? `$${label / 1000}k` : label
+                  typeof label === "number"
+                    ? checked
+                      ? `$${label / 1000}k`
+                      : `${label}`
+                    : label
                 }
               />
             </Bar>
@@ -83,7 +126,9 @@ const BarYearGrantStatus = observer(
                 border: "1px solid #ccc",
                 boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
               }}
-              formatter={(value: number) => `$${value.toLocaleString()}`}
+              formatter={(value: number) =>
+                checked ? `$${value.toLocaleString()}` : `${value}`
+              }
             />
           </BarChart>
         </ResponsiveContainer>
