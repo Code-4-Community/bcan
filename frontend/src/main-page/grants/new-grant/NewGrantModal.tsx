@@ -365,7 +365,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                               setReportDates(newDates);
                             }}
                           />
-                          {reportDates.length > 1 && (
+                          {reportDates.length > 0 && (
                             <button
                               style={{height: "42px",backgroundColor: '#FF6B6B', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                               className="font-family-helvetica w-5 flex-shrink-0 rounded text-white font-bold flex items-center justify-center"
