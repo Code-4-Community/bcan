@@ -55,7 +55,6 @@ const KPICards = observer(
 
     // Helper: percent change formula
     const percentChange = (current: number, previous: number) => {
-      console.log("current:", current, "previous:", previous);
       return previous === 0 ? 0 : ((current - previous) / previous) * 100;
     };
 

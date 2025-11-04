@@ -41,8 +41,6 @@ const Dashboard = observer(() => {
   const recentYear = uniqueYears[0];
   const priorYear = uniqueYears[1];
 
-  console.log("Recent Year:", recentYear, "Prior Year:", priorYear);
-
   const { grants } = ProcessGrantData();
 
   return (
