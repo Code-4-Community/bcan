@@ -32,7 +32,7 @@ export class AuthController {
     @Body('password') password: string,
   ): Promise<{
     access_token?: string;
-    user?: User;
+    user: User;
     session?: string;
     challenge?: string;
     requiredAttributes?: string[];

@@ -14,4 +14,14 @@ export class UserController {
   async getUserById(@Param('id') userId: string) {
     return await this.userService.getUserById(userId);
   }
+
+  @Get('inactive')
+  async getAllInactiveUsers() {
+    return await this.userService.getAllInactiveUsers();
+  }
+
+  @Get('active')
+  async getAllActiveUsers() {
+    return await this.userService.getAllActiveUsers();
+  }
 }

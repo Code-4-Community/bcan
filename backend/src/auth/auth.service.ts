@@ -8,7 +8,7 @@ import AWS from "aws-sdk";
 import { group, table } from "console";
 import * as crypto from "crypto";
 import { User } from "../../../middle-layer/types/User";
-import { UserStatus } from "../types/UserStatus";
+import { UserStatus } from "../../../middle-layer/types/UserStatus";
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -135,7 +135,7 @@ export class AuthService {
     password: string
   ): Promise<{
     access_token?: string;
-    user?: User;
+    user: User;
     session?: string;
     challenge?: string;
     requiredAttributes?: string[];
@@ -181,6 +181,7 @@ export class AuthService {
           session: response.Session,
           requiredAttributes,
           username,
+          user : {} as User,
         };
       }
 

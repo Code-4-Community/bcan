@@ -1,6 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ApprovedUserCard from "./ApprovedUserCard";
 import PendingUserCard from "./PendingUserCard";
+import { User } from "../../../../middle-layer/types/User";
+import {api} from "../../api"
+const fetchActiveUsers = async () => {
+  try{
+    const response = await api("/user/active");
+    if (!response.ok) {
+      throw new Error(`HTTP Error, Status: ${response.status}`);
+    }
+    const activeUsers = await response.json();
+    return activeUsers as User[];
+  }
+  catch (error) {
+    console.error("Error fetching active users:", error);
+  }
+}
+
+const fetchInactiveUsers = async () => {
+  try{
+    const response = await api("/user/inactive");
+    if (!response.ok) {
+      throw new Error(`HTTP Error, Status: ${response.status}`);
+    }
+    const activeUsers = await response.json();
+    return activeUsers as User[];
+  }
+  catch (error) {
+    console.error("Error fetching active users:", error);
+  }
+}
+
 
 // Represents a specific tab to show on the user page
 enum UsersTab {
@@ -12,6 +42,7 @@ function Users() {
   const [usersTabStatus, setUsersTabStatus] = useState<UsersTab>(
     UsersTab.CurrentUsers
   );
+
 
   return (
     <div className="p-8">
