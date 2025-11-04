@@ -1,8 +1,11 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
-import { api } from "../../api";
+//import { api } from "../../api";
 import NotificationPopup from "../notifications/NotificationPopup";
+import { setNotifications as setNotificationsAction } from "../../external/bcanSatchel/actions";
+import { getAppStore } from "../../external/bcanSatchel/store";
+//import { mutatorAction } from "satcheljs";
 
 // get current user id
 // const currUserID = sessionStorage.getItem('userId');
@@ -10,7 +13,9 @@ const currUserID = "bcanuser33";
 
 const BellButton = () => {
   // stores notifications for the current user
-  const [notifications, setNotifications] = useState<any[]>([]);
+  //const [notifications, setNotifications] = useState<any[]>([]);
+  const store = getAppStore();
+  const notifications = store.notifications ?? [];
 
   // determines whether bell has been clicked
   const [isClicked, setClicked] = useState(false);
@@ -37,7 +42,7 @@ const BellButton = () => {
     //);
     //console.log(response);
     //const currNotifications = await response.json();
-    setNotifications(dummyNotifications);
+    setNotificationsAction(dummyNotifications);
     setClicked(!isClicked);
     return notifications;
   };

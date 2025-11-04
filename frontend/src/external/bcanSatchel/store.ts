@@ -14,6 +14,7 @@ export interface AppState {
   endDateFilter: Date | null;
   searchQuery: string;
   yearFilter:number[] | null;
+  notifications: { id: number; title: string; message: string; }[];
 }
 
 // Define initial state
@@ -26,7 +27,8 @@ const initialState: AppState = {
   startDateFilter: null,
   endDateFilter: null,
   searchQuery: '',
-  yearFilter: null
+  yearFilter: null,
+  notifications: []
 };
 
 const store = createStore<AppState>('appStore', initialState);

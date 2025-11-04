@@ -4,7 +4,7 @@ import { FaTrash } from "react-icons/fa";
 import '../../styles/notification.css';
 
 interface NotificationPopupProps {
-    notifications: { id: string; title: string; message: string }[];
+    notifications: { id: number; title: string; message: string }[];
     onClose: () => void;
 }
 

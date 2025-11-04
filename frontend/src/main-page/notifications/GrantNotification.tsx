@@ -13,7 +13,7 @@ const GrantNotification: React.FC<GrantNotificationProps> = ({ title, message })
                 <FontAwesomeIcon icon={faBell} style={{ color: "gray"}} />
             </div>
             <div className="notification-text">
-                <div className="notification-title>{title}">{title}</div>
+                <div className="notification-title">{title}</div>
                 <div className="notification-message">{message}</div>
             </div>
         </div>
