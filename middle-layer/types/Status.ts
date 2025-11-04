@@ -40,3 +40,12 @@ export function getColorStatus(status: string) {
         default: return 'Unknown';
     }
 }
+
+// Get list of status types for received and unreceived grants
+export function getListApplied(received: boolean){
+    if(received){
+        return ["Active", "Inactive"]
+    } else{
+        return ["Pending", "Rejected"]
+    }
+}

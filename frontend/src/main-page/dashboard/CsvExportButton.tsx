@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { downloadCsv, CsvColumn } from "../../utils/csvUtils";
 import { Grant } from "../../../../middle-layer/types/Grant";
-import {  ProcessGrantData } from "../../main-page/grants/filter-bar/processGrantData";
+import { ProcessGrantData } from "../../main-page/grants/filter-bar/processGrantData";
 import { observer } from "mobx-react-lite";
 import "../grants/styles/GrantButton.css";
 import { getAppStore } from "../../external/bcanSatchel/store";
-
+import { BiExport } from "react-icons/bi";
 // Define the columns for the CSV export, including any necessary formatting.
 const columns: CsvColumn<Grant>[] = [
   { key: "grantId", title: "Grant ID" },
@@ -105,13 +105,14 @@ const CsvExportButton: React.FC = observer(() => {
 
   return (
     <button
-      className="grant-button add-grant-button bg-medium-orange"
+      className="grant-button bg-[#FFF1EB] flex justify-between items-center"
       type="button"
       onClick={onClickDownload}
       disabled={isProcessing}
       title="Export the grants data including any applied filters."
     >
-      {isProcessing ? "Please wait..." : "Export CSV"}
+      {isProcessing ? "Exporting..." : "Export CSV"}
+      <BiExport className="ms-2 text-sm" />
     </button>
   );
 });
