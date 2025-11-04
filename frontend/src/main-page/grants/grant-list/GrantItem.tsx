@@ -171,7 +171,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
   }
 
   return (
-    <div className="grant-item-wrapper">
+    <div className="grant-item-wrapper w-fit">
       <div
         className={`grant-summary p-4 ${isExpanded ? "expanded rounded-b-none" : ""} grid grid-cols-5 items-center`}
         onClick={toggleExpand}
