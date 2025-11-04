@@ -74,7 +74,7 @@ const DateFilter: React.FC = observer(() => {
               <div className="flex items-center p-2 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-600">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 rounded-sm accent-dark-orange bg-pale-orange"
+                  className="w-4 h-4 rounded-sm accent-dark-orange bg-[#FFF1EB]"
                   id={year.toString()}
                   value={year}
                   checked={selectedYears.includes(year)}

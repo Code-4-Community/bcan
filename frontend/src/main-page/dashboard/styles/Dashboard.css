@@ -7,6 +7,40 @@ body {
   font-size: medium;
 }
 
+/* Hide the default checkbox */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none; /* For Safari */
+  margin: 0; /* Remove default margin */
+  /* Additional styling for the custom checkbox container */
+  width: 1.2em;
+  height: 1.2em;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+}
+
+/* Style the custom checkmark using a pseudo-element */
+input[type="checkbox"]::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 0.4em;
+  height: 0.8em;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  display: none; /* Hidden by default */
+}
+
+input[type="checkbox"]:checked::before {
+  display: block; /* Show the checkmark */
+  border-color:black;
+}
+
 /* Main container styling */
 .dashboard-page {
   display: flex;
