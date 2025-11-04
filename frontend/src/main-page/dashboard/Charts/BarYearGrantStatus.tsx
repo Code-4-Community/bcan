@@ -68,6 +68,7 @@ const BarYearGrantStatus = observer(
                 checked={checked}
                 onChange={() => setChecked(!checked)}
                 className="sr-only peer"
+                style={{display:"none"}}
               />
               <div className=" bg-light-orange relative w-9 h-5 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-dark-orange rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border after:rounded-full after:h-4 after:w-4 after:transition-allpeer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"></div>
               <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
