@@ -27,7 +27,7 @@ function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
   console.log("Current logged-in user:", user);
   // reset filters on initial render
   useEffect(() => {
-            updateYearFilter(null);
+            updateYearFilter([]);
             updateFilter(null);
             updateEndDateFilter(null);
             updateStartDateFilter(null);
