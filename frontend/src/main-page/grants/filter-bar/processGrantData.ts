@@ -1,50 +1,53 @@
-import { useEffect, useState } from "react";
-import { getAppStore } from "../../../external/bcanSatchel/store.ts";
-import { fetchAllGrants } from "../../../external/bcanSatchel/actions.ts";
-import { Grant } from "../../../../../middle-layer/types/Grant.ts";
-import {dateRangeFilter, filterGrants, statusFilter} from "./grantFilters";
+import { useEffect } from "react";
+import { getAppStore } from "../../../external/bcanSatchel/store";
+import { fetchAllGrants } from "../../../external/bcanSatchel/actions";
+import { Grant } from "../../../../../middle-layer/types/Grant";
+import {
+  dateRangeFilter,
+  filterGrants,
+  yearFilterer,
+  statusFilter,
+  searchFilter
+} from "./grantFilters";
 import { sortGrants } from "./grantSorter.ts";
 import { api } from "../../../api.ts";
 
-// GET request for all grants
+// fetch grants
 const fetchGrants = async () => {
-    try {
-        const response = await api("/grant");
-        if (!response.ok) {
-            throw new Error(`HTTP Error, Status: ${response.status}`);
-        }
-        const updatedGrants: Grant[] = await response.json();
-        fetchAllGrants(updatedGrants);
-    } catch (error) {
-        console.error("Error fetching grants:", error);
+  try {
+    const response = await api("/grant");
+    if (!response.ok) {
+      throw new Error(`HTTP Error, Status: ${response.status}`);
     }
+    const updatedGrants: Grant[] = await response.json();
+    fetchAllGrants(updatedGrants);
+  } catch (error) {
+    console.error("Error fetching grants:", error);
+  }
 };
 
 // contains callbacks for sorting and filtering grants
 // stores state for list of grants/filter
 export const ProcessGrantData = () => {
-    const { allGrants, filterStatus, startDateFilter, endDateFilter } = getAppStore();
-    const [grants, setGrants] = useState<Grant[]>([]);
+  const { allGrants, filterStatus, startDateFilter, endDateFilter, yearFilter, searchQuery } = getAppStore();
 
-    // init grant list
-    useEffect(() => {
-        fetchGrants();
-    }, []);
+  // fetch grants on mount if empty
+  useEffect(() => {
+    if (allGrants.length === 0) fetchGrants();
+  }, [allGrants.length]);
 
-    // when filter changes, update grant list state
-    useEffect(() => {
-        const filters = [statusFilter(filterStatus), dateRangeFilter(startDateFilter, endDateFilter)]
-        const filtered = filterGrants(allGrants, filters);
-        setGrants(filtered);
-        // current brute force update everything when an attribute changes
-    }, [allGrants, filterStatus, startDateFilter, endDateFilter]);
+  // compute filtered grants dynamically — no useState needed
+  const filteredGrants = filterGrants(allGrants, [
+    statusFilter(filterStatus),
+    dateRangeFilter(startDateFilter, endDateFilter),
+    yearFilterer(yearFilter),
+    searchFilter(searchQuery)
+  ]);
 
-    // sorts grants based on attribute given, updates grant list state
-    const onSort = (header: keyof Grant, asc: boolean) => {
-        const sorted = sortGrants(grants, header, asc);
-        setGrants(sorted);
-    };
+  // sorting callback
+  const onSort = (header: keyof Grant, asc: boolean) => {
+    return sortGrants(filteredGrants, header, asc);
+  };
 
-    // calculates total # of pages for pagination
-    return { grants, onSort };
+  return { grants: filteredGrants, onSort };
 };

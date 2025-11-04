@@ -109,7 +109,61 @@ const GrantList: React.FC<GrantListProps> = observer(({ selectedGrantId, onClear
                 <NewGrantModal onClose={() => setShowNewGrantModal(false)} />
             )}
         </div>
+        <Pagination.Root
+          className="pt-4"
+          count={count}
+          pageSize={ITEMS_PER_PAGE}
+          page={currentPage}
+          onClick={() => {
+            if (onClearSelectedGrant) {
+              onClearSelectedGrant();
+            }
+          }}
+          onPageChange={(e) => {
+            setPage(e.page);
+          }}
+        >
+          <ButtonGroup variant="ghost" size="md">
+            <Pagination.PrevTrigger asChild>
+              <IconButton>
+                <HiChevronLeft />
+              </IconButton>
+            </Pagination.PrevTrigger>
+            <Pagination.Context>
+              {({ pages }) =>
+                pages.map((page, index) =>
+                  page.type === "page" ? (
+                    <IconButton
+                      key={index}
+                      className={
+                        currentPage === page.value
+                          ? "text-dark-blue underline"
+                          : "ghost"
+                      }
+                      onClick={() => setPage(page.value)}
+                      aria-label={`Go to page ${page.value}`}
+                    >
+                      {page.value}
+                    </IconButton>
+                  ) : (
+                    "..."
+                  )
+                )
+              }
+            </Pagination.Context>
+            <Pagination.NextTrigger asChild>
+              <IconButton>
+                <HiChevronRight />
+              </IconButton>
+            </Pagination.NextTrigger>
+          </ButtonGroup>
+        </Pagination.Root>
+        {showNewGrantModal && (
+          <NewGrantModal onClose={() => setShowNewGrantModal(false)} />
+        )}
+      </div>
     );
-});
+  }
+);
 
 export default GrantList;

@@ -4,10 +4,11 @@ import GrantList from "./grant-list/index.tsx";
 import AddGrantButton from "./new-grant/AddGrant.tsx";
 import GrantSearch from "./filter-bar/GrantSearch.tsx";
 import NewGrantModal from "./new-grant/NewGrantModal.tsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Grant } from "../../../../middle-layer/types/Grant.ts";
 import FilterBar from "./filter-bar/FilterBar.tsx";
 import { useAuthContext } from "../../context/auth/authContext";
+import { updateEndDateFilter, updateFilter, updateStartDateFilter, updateYearFilter } from "../../external/bcanSatchel/actions.ts";
 
 
 interface GrantPageProps {
@@ -24,13 +25,20 @@ function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
   const currentUserEmail = user?.email || ""; //safe fallback
 
   console.log("Current logged-in user:", user);
+  // reset filters on initial render
+  useEffect(() => {
+            updateYearFilter(null);
+            updateFilter(null);
+            updateEndDateFilter(null);
+            updateStartDateFilter(null);
+        }, []);
 
   return (
     <div className="grant-page px-8">
       <div className="top-half">
       </div>
         <div className="flex justify-end align-middle p-4 gap-4">
-          <GrantSearch onGrantSelect={setSelectedGrant} />
+          <GrantSearch />
           <AddGrantButton onClick={() => setShowNewGrantModal(true)} />
         </div>
       <div className="grid grid-cols-5 gap-8 px-4">

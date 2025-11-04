@@ -8,7 +8,6 @@ import {
   updateFilter,
 } from "../../../external/bcanSatchel/actions.ts";
 import { observer } from "mobx-react-lite";
-// import { ProcessGrantData } from "./processGrantData.ts";
 import CalendarDropdown from "./CalendarDropdown.tsx";
 import { FaChevronRight } from "react-icons/fa";
 
@@ -32,7 +31,6 @@ const linkList: FilterBarProps[] = [
  */
 const FilterBar: React.FC = observer(() => {
   const [selected, setSelected] = useState("All Grants");
-  // const { grants } = ProcessGrantData();
   function categoryClicked(
     e: React.MouseEvent,
     category: string,
@@ -46,7 +44,7 @@ const FilterBar: React.FC = observer(() => {
   }
 
   return (
-    <div className="sortbar flex flex-col gap-4 bg-light-gray p-6 rounded-[1.2rem] border">
+    <div className="sortbar flex flex-col gap-4 bg-light-gray p-6 rounded-[1.2rem] border-[0.1rem]">
       <div>
         <div className="flex pb-2">{"Filter by Date"}</div>
         <CalendarDropdown />
