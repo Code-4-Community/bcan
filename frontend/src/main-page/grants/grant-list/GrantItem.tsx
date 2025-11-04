@@ -176,7 +176,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
         className={`grant-summary p-4 ${isExpanded ? "expanded rounded-b-none" : ""} grid grid-cols-5 items-center`}
         onClick={toggleExpand}
       >
-        <li className="font-bold text-left flex items-center ">
+        <li className="font-bold text-left flex items-center">
           {isExpanded ? <FaChevronDown /> : <FaChevronRight />}
           <span className="ml-2 truncate">{curGrant.organization}</span>
         </li>
@@ -470,7 +470,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
                       <div 
                         style={{color: "black", 
                           backgroundColor: curGrant.does_bcan_qualify ? ButtonColorOption.GREEN : ButtonColorOption.GRAY}}
-                        className="w-1/2 h-9 flex items-center justify-center rounded-full  px-4"
+                        className="w-3/5 h-9 flex items-center justify-center rounded-full  px-4"
                         >
                         {curGrant.does_bcan_qualify ? "Yes" : "No"}
                       </div>
@@ -488,7 +488,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
                                               : curGrant.status === "Potential" 
                                                 ? ButtonColorOption.ORANGE 
                                                 : ButtonColorOption.GRAY}}
-                        className="w-1/2 h-9 flex items-center justify-center rounded-full  px-4"
+                        className="w-3/5 h-9 flex items-center justify-center rounded-full  px-4"
                         >
                         {curGrant.status}
                       </div>
@@ -503,7 +503,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
                       <div 
                         style={{color: "black", 
                           backgroundColor: curGrant.isRestricted ?  "indianred" : ButtonColorOption.GRAY}}
-                        className="w-1/2 h-9 flex items-center justify-center rounded-full  px-4"
+                        className="w-3/5 h-9 flex items-center justify-center rounded-full  px-4"
                         >
                         {curGrant.isRestricted ? "Restricted" : "Not Restricted"}
                       </div>
@@ -561,7 +561,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
               </label>
             <div 
               style={{color: "black", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}} 
-              className=" h-48 bg-tan flex  w-full rounded-lg  p-5 "
+              className=" h-40 bg-tan flex  w-full rounded-lg  p-5 "
               >
               {curGrant.description}
             </div>
