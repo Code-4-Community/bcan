@@ -1,13 +1,14 @@
 .notification-popup {
   position: absolute;
   right: 0;
+  left: 48rem;
   top: 75px;
   width: 360px;
   background-color: white;
   border: 1px solid #343131;
   border-radius: 6px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  padding: 0.7rem;
+  padding: 0.5rem;
   z-index: 1000;
 }
 
@@ -49,13 +50,21 @@
 
 
 .grant-notification {
-  background-color: #f9f9f9;
-  border: 1px solid #b3afaf;
+  border-bottom: 0.2px solid #dfd9d9;
   border-radius: 0px;
   padding: 8px 10px;
   margin-bottom: 2px;
   font-size: 0.9rem;
   transition: background-color 0.2s ease;
+  display: flex;
+}
+
+.bell-notif {
+  margin-right: 10px;
+  background-color: rgb(225, 225, 225);
+  padding: 10px;
+  border-radius: 100%;
+  scale: 67%;
 }
 
 .notification-title {
@@ -74,12 +83,6 @@
 
 .grant-notification:hover {
   background-color: #f1f1f1;
-}
-
-
-.bell-container {
-  position: relative;
-  display: inline-block;
 }
 
 
