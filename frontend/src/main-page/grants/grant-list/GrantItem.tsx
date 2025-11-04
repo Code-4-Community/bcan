@@ -332,7 +332,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
 
                   {/*Estimated completion time row*/}
                   <div className="w-full justify-center">
-                    <label className="text-lg mt-2 flex block tracking-wide text-gray-700 font-bold mb-2" htmlFor="grid-state">
+                    <label className="mt-2 flex block tracking-wide text-gray-700 font-bold mb-2" htmlFor="grid-state">
                       Estimated Completion Time
                     </label>
                     <div 
