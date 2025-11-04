@@ -16,7 +16,7 @@ const NotificationPopup: React.FC<NotificationPopupProps> = ({
         <div className="notification-popup" role="dialog" aria-label="Notifications">
             <div className="popup-header">
                 <h3>Alerts</h3>
-                <button className="close-button" onClick={onClose} aria-label="Close notificiations">
+                <button className="close-button" onClick={onClose} aria-label="Close notifications">
                     ✕
                 </button>
             </div>

@@ -1,11 +1,11 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
-//import { api } from "../../api";
+//import { api } from "../../api"; //todo: swap out dummy data with real api fetch when backend is ready
 import NotificationPopup from "../notifications/NotificationPopup";
 import { setNotifications as setNotificationsAction } from "../../external/bcanSatchel/actions";
 import { getAppStore } from "../../external/bcanSatchel/store";
-//import { mutatorAction } from "satcheljs";
+
 
 // get current user id
 // const currUserID = sessionStorage.getItem('userId');
@@ -13,7 +13,6 @@ const currUserID = "bcanuser33";
 
 const BellButton = () => {
   // stores notifications for the current user
-  //const [notifications, setNotifications] = useState<any[]>([]);
   const store = getAppStore();
   const notifications = store.notifications ?? [];
 
@@ -34,6 +33,7 @@ const BellButton = () => {
       {id: 3, title: "Grant Deadline", message: "Grant C deadline passed yesterday!"},
       {id: 4, title: "Grant Deadline", message: "Grant D deadline tomorrow!"}
     ];
+    //previous api logic (for later)
     //const response = await api(
       //`/notifications/user/${currUserID}`,
       //{
