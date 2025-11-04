@@ -439,7 +439,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
                 </div>
 
                 {/*Grant Provider POC div*/}
-                <div className="w-full">
+                <div className="w-full pl-3">
                   <label className="text-lg mb-2 flex block tracking-wide text-gray-700 font-bold" htmlFor="grid-zip">
                       Grant Provider POC
                   </label>
@@ -460,7 +460,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
               {/* Colored attributes  + scope documents row*/}
               <div className="flex justify-between">
                   {/*Colored attributes col */}
-                  <div className="w-1/2 pr-4 "> 
+                  <div className="w-1/2 pr-3 "> 
 
                     {/*Does BCAN qualify  */}
                     <div  className="w-full mb-3">
@@ -512,7 +512,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
                   </div>
 
                   {/*Scope documents div*/}
-                  <div className="w-1/2">
+                  <div className="w-1/2 pl-3">
                     <label className="text-lg flex block tracking-wide text-gray-700 font-bold mb-2 ">
                       Scope Documents
                     </label>
