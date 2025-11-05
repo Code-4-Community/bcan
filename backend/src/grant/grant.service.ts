@@ -115,6 +115,7 @@ export class GrantService {
 
         try {
             const result = await this.dynamoDb.update(params).promise();
+            await this.updateGrantNotifications(grantData);
             return JSON.stringify(result); // returns the changed attributes stored in db
         } catch(err) {
             console.log(err);
@@ -151,6 +152,8 @@ export class GrantService {
     try {
       await this.dynamoDb.put(params).promise();
       this.logger.log(`Uploaded grant from ${grant.organization}`);
+      const userId = grant.bcan_poc.POC_email;
+      await this.createGrantNotifications({ ...grant, grantId: newGrantId }, userId);
     } catch (error: any) {
       this.logger.error(`Failed to upload new grant from ${grant.organization}`, error.stack);
       throw new Error(`Failed to upload new grant from ${grant.organization}`);
@@ -183,6 +186,10 @@ export class GrantService {
     
   }
 
+  /*
+    Helper method that takes in a deadline in ISO format and returns an array of ISO strings representing the notification times
+    for 14 days, 7 days, and 3 days before the deadline.
+  */
   private getNotificationTimes(deadlineISO: string): string[] {
     const deadline = new Date(deadlineISO);
     const daysBefore = [14, 7, 3];
@@ -193,6 +200,11 @@ export class GrantService {
     });
   }
 
+  /**
+   * Helper method that creates notifications for a grant's application and report deadlines
+   * @param grant represents the grant of which we want to create a notification for
+   * @param userId represents the user to whom we want to send the notification
+   */
   private async createGrantNotifications(grant: Grant, userId: string) {
     const { grantId, organization, application_deadline, report_deadlines } = grant;
   
@@ -202,7 +214,7 @@ export class GrantService {
       for (const alertTime of alertTimes) {
         const message = `Application due in ${this.daysUntil(alertTime, application_deadline)} days for ${organization}`;
         const notification: Notification = {
-          notificationId: `${grantId}-app-${alertTime}`,
+          notificationId: `${grantId}-app`,
           userId,
           message,
           alertTime: alertTime as TDateISO,
@@ -218,7 +230,7 @@ export class GrantService {
         for (const alertTime of alertTimes) {
           const message = `Report due in ${this.daysUntil(alertTime, reportDeadline)} days for ${organization}`;
           const notification: Notification = {
-            notificationId: `${grantId}-report-${alertTime}`,
+            notificationId: `${grantId}-report`,
             userId,
             message,
             alertTime: alertTime as TDateISO,
@@ -228,10 +240,53 @@ export class GrantService {
       }
     }
   }
+
+  /**
+   * Helper method to update notifications for a grant's application and report deadlines
+   * @param grant represents the grant of which we want to update notifications for
+   */
+  private async updateGrantNotifications(grant: Grant) {
+    const { grantId, organization, application_deadline, report_deadlines } = grant;
   
+    // Application notifications
+    if (application_deadline) {
+      const alertTimes = this.getNotificationTimes(application_deadline);
+      for (const alertTime of alertTimes) {
+        const notificationId = `${grantId}-app`;
+        const message = `Application due in ${this.daysUntil(alertTime, application_deadline)} days for ${organization}`;
+  
+        await this.notificationService.updateNotification(notificationId, {
+          message,
+          alertTime: alertTime as TDateISO,
+        });
+      }
+    }
+  
+    // Report notifications
+    if (report_deadlines && Array.isArray(report_deadlines)) {
+      for (const reportDeadline of report_deadlines) {
+        const alertTimes = this.getNotificationTimes(reportDeadline);
+        for (const alertTime of alertTimes) {
+          const notificationId = `${grantId}-report`;
+          const message = `Report due in ${this.daysUntil(alertTime, reportDeadline)} days for ${organization}`;
+  
+          await this.notificationService.updateNotification(notificationId, {
+            message,
+            alertTime: alertTime as TDateISO,
+          });
+        }
+      }
+    }
+  }
+  
+  /*
+    Helper method that calculates the number of days between alert time and deadline
+  */
   private daysUntil(alertTime: string, deadline: string): number {
     const diffMs = +new Date(deadline) - +new Date(alertTime);
     return Math.round(diffMs / (1000 * 60 * 60 * 24));
   }
+
+
   
 }

@@ -132,4 +132,30 @@ export class NotificationService {
     }
   }
 
+  // function to update notification by its id
+  async updateNotification(notificationId: string, updates: Partial<Notification>): Promise<string> {
+    const updateKeys = Object.keys(updates);
+    const UpdateExpression = "SET " + updateKeys.map(k => `#${k} = :${k}`).join(", ");
+    const ExpressionAttributeNames = updateKeys.reduce((acc, key) => ({ ...acc, [`#${key}`]: key }), {});
+    const ExpressionAttributeValues = updateKeys.reduce((acc, key) => ({ ...acc, [`:${key}`]: updates[key as keyof Notification] }), {});
+    
+    const params = {
+      TableName: process.env.DYNAMODB_NOTIFICATION_TABLE_NAME!,
+      Key: { notificationId },
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues,
+      ReturnValues: "UPDATED_NEW",
+    };
+  
+    try {
+      const result = await this.dynamoDb.update(params).promise();
+      return JSON.stringify(result);
+  } catch(err) {
+      console.log(err);
+      throw new Error(`Failed to update Notification ${notificationId}`)
+  }
+  }
+  
+
 }

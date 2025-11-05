@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Query, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, Param, Patch } from '@nestjs/common';
 import { NotificationService } from './notifcation.service';
 import { Notification } from '../../../middle-layer/types/Notification';
 
@@ -26,6 +26,13 @@ export class NotificationController {
   async findByUser(@Param('userId') userId: string) {
     console.log("HERE")
     return await this.notificationService.getNotificationByUserId(userId);
+  }
+
+  // updates notification by its id
+  @Patch(':notificationId')
+  async updateNotification(@Param('notificationId') notificationId: string, 
+  @Body() notification: Partial<Notification>){
+    return await this.notificationService.updateNotification(notificationId, notification);
   }
 
 
