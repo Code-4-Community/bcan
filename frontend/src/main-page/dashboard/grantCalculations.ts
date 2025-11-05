@@ -2,7 +2,7 @@ import { Grant } from "../../../../middle-layer/types/Grant";
 
 export type YearAmount = {
   year: number;
-  [key: string]: number;
+  data: {[key: string]: number};
 };
 
 /**
@@ -29,7 +29,7 @@ export function aggregateMoneyGrantsByYear(
   return Object.entries(grouped)
     .map(([year, groups]) => ({
       year: Number(year),
-      ...groups,
+      data:{...groups},
     }))
     .sort((a, b) => a.year - b.year);
 }
@@ -62,7 +62,7 @@ export function aggregateCountGrantsByYear(
       for (const [key, ids] of Object.entries(groups)) {
         counts[key] = ids.size;
       }
-      return { year: Number(year), ...counts };
+      return { year: Number(year), data:{...counts }};
     })
     .sort((a, b) => a.year - b.year);
 }

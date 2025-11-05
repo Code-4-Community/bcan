@@ -7,15 +7,27 @@ import NewGrantModal from "./new-grant/NewGrantModal.tsx";
 import { useEffect, useState } from "react";
 import { Grant } from "../../../../middle-layer/types/Grant.ts";
 import FilterBar from "./filter-bar/FilterBar.tsx";
+import { useAuthContext } from "../../context/auth/authContext";
 import { updateEndDateFilter, updateFilter, updateStartDateFilter, updateYearFilter } from "../../external/bcanSatchel/actions.ts";
 
-function GrantPage() {
+
+interface GrantPageProps {
+  showOnlyMyGrants?: boolean; //if true, filters grants by user email
+}
+
+
+function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
   const [showNewGrantModal, setShowNewGrantModal] = useState(false);
   const [selectedGrant, setSelectedGrant] = useState<Grant | null>(null);
 
+  const { user } = useAuthContext(); //gets current logged in user
+
+  const currentUserEmail = user?.email || ""; //safe fallback
+
+  console.log("Current logged-in user:", user);
   // reset filters on initial render
   useEffect(() => {
-            updateYearFilter(null);
+            updateYearFilter([]);
             updateFilter(null);
             updateEndDateFilter(null);
             updateStartDateFilter(null);
@@ -40,6 +52,8 @@ function GrantPage() {
                 selectedGrant ? selectedGrant.grantId : undefined
               }
               onClearSelectedGrant={() => setSelectedGrant(null)}
+              currentUserEmail={currentUserEmail}
+              showOnlyMyGrants={showOnlyMyGrants}
             />
           </div>
         </div>

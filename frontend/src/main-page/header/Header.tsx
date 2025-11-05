@@ -14,6 +14,7 @@ import { Menu, Button } from "@chakra-ui/react";
 import { FaCog } from "react-icons/fa";
 import BellButton from "./Bell.tsx";
 import { useLocation } from 'react-router-dom';
+import UserButton from "./UserButton.tsx";
 
 interface NavBarProps {
   name: string;
@@ -72,13 +73,13 @@ const Header: React.FC = observer(() => {
             </li>
           ))}
         </ul>
-        <div className="header-right-controls flex items-center">
+        <div className="header-right-controls flex items-center gap-2">
           <div className="bell-container">
             <BellButton />
           </div>
           <Menu.Root>
             <Menu.Trigger asChild>
-              <Button variant="ghost" p={1} ml={4}>
+              <Button variant="ghost" p={1}>
                 <FaCog size={24} />
               </Button>
             </Menu.Trigger>
@@ -95,6 +96,7 @@ const Header: React.FC = observer(() => {
               </Menu.Content>
             </Menu.Positioner>
           </Menu.Root>
+          <UserButton />
         </div>
       </div>
     </header>
