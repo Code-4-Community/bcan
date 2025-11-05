@@ -85,6 +85,12 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   // Attachments array
   // @ts-ignore
   const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [isAddingAttachment, setIsAddingAttachment] = useState(false);
+  const [newAttachment, setNewAttachment] = useState<Attachment>({
+    attachment_name: "",
+    url: "",
+    type: AttachmentType.SCOPE_DOCUMENT,
+  });
 
   // For error handling
   // @ts-ignore
@@ -139,14 +145,13 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   // Add an empty attachment row
   // @ts-ignore
   const _addAttachment = () => {
-    setAttachments([
-      ...attachments,
-      {
-        attachment_name: "",
-        url: "",
-        type: AttachmentType.SCOPE_DOCUMENT,
-      },
-    ]);
+    if (!newAttachment.attachment_name || !newAttachment.url) return;
+    setAttachments([...attachments, newAttachment]);
+    setNewAttachment({
+      attachment_name: "",
+      url: "",
+      type: AttachmentType.SCOPE_DOCUMENT,
+    });
   };
 
   // Remove a specific attachment row
@@ -155,6 +160,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const updated = [...attachments];
     updated.splice(index, 1);
     setAttachments(updated);
+    if (updated.length === 0) setIsAddingAttachment(false);
   };
 
   // Update a field in one attachment
@@ -169,8 +175,6 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     updated[index][field] = value;
     setAttachments(updated);
   };
-
-  
 
   /** Basic validations based on your screenshot fields */
   const validateInputs = (): boolean => {
@@ -416,7 +420,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           <div className='w-1/2 pl-5'>
 
             {/*POC row */}
-            <div className="flex w-full mb-20">
+            <div className="flex w-full mb-[74px]">
               {/*BCAN POC div*/}
               <div className="w-full pr-3">
                   <label className="font-family-helvetica mb-1 flex block tracking-wide text-black text-lg" htmlFor="grid-zip">
@@ -505,60 +509,142 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
               {/*Scope Documents div p-2 h-full w-1/2 flex-col*/}
               <div className="w-1/2 flex-col pl-3">
-                <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-zip">
+                <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1">
                   Scope Documents
                 </label>
-                
-                <label htmlFor="file-upload">
-                  <button 
+
+                {/* Upload button */}
+                {!isAddingAttachment && (
+                  <button
                     type="button"
-                    style={{height: "48px", color: "black", backgroundColor: "gray", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                    onClick={() => setIsAddingAttachment(true)}
+                    style={{
+                      height: "48px",
+                      color: "black",
+                      backgroundColor: "gray",
+                      borderStyle: "solid",
+                      borderColor: "black",
+                      borderWidth: "1px",
+                    }}
                     className="items-center flex font-family-helvetica w-full mt-1 mb-2 justify-center"
-                    onClick={() => document.getElementById('file-upload')?.click()}
                   >
-                    <FiUpload className="mr-2"/>
+                    <FiUpload className="mr-2" />
                     <span>Upload Documents</span>
                   </button>
-                </label>
-                
-                <input
-                  id="file-upload"
-                  type="file"
-                  multiple
-                  className="hidden"
-                  onChange={(e) => {
-                    const files = Array.from(e.target.files || []);
-                    const newAttachments: Attachment[] = files.map(file => ({
-                      attachment_name: file.name,
-                      url: URL.createObjectURL(file),
-                      type: AttachmentType.SCOPE_DOCUMENT
-                    }));
-                    setAttachments([...attachments, ...newAttachments]);
-                  }}
-                />
-                
-                {/*Box div*/}
-                <div className="p-2 rounded h-48 overflow-y-auto overflow-x-hidden" style={{backgroundColor: '#D3D3D3', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}>
-                  {attachments.map((attachment, index) => (
-                    <div key={index} className="flex gap-2 mb-2 w-full">
-                      <div 
-                        style={{height: "42px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}
-                        className="overflow-hidden font-family-helvetica flex-1 min-w-0 text-gray-700 rounded flex items-center px-3"
-                      >
-                        {attachment.attachment_name}
+                )}
+
+                {/* Editable attachment rows */}
+                {isAddingAttachment && (
+                  <div className="  mt-1 mb-2">
+                      <div className="gap-2 items-center">
+                        <input
+                          type="text"
+                          placeholder="Name"
+                          className="flex-1 px-2 border border-black rounded"
+                          style={{ backgroundColor: "#F2EBE4", height: "42px" }}
+                          value={newAttachment.attachment_name}
+                          onChange={(e) =>
+                            setNewAttachment({ ...newAttachment, attachment_name: e.target.value })
+                          }
+                        />
+                        <input
+                          type="text"
+                          placeholder="URL"
+                          className="h-12 flex-1 px-2 border border-black rounded"
+                          style={{ backgroundColor: "#F2EBE4", height: "42px" }}
+                          value={newAttachment.url}
+                          onChange={(e) =>
+                            setNewAttachment({ ...newAttachment, url: e.target.value })
+                          }
+                        />
+                        <select
+                          className="h-12 border border-black rounded px-2 items-center justify-center"
+                          style={{ backgroundColor: "#F2EBE4", height: "42px" }}
+                          value={newAttachment.type}
+                          onChange={(e) =>
+                            setNewAttachment({
+                              ...newAttachment,
+                              type: Number(e.target.value) as AttachmentType,
+                            })
+                          }
+                        >
+                          <option  value={AttachmentType.SCOPE_DOCUMENT}>Scope</option>
+                          <option  value={AttachmentType.SUPPORTING_RESOURCE}>
+                            Supporting
+                          </option>
+                        </select>
+
+                        <div className="flex justify-end">
+
+                          <button
+                            type="button"
+                            onClick={() => setIsAddingAttachment(false)}
+                            style={{backgroundColor: "#D3D3D3", color : "black", height: "21px"}}
+                            className="mr-2 border border-black rounded  flex items-center justify-center"
+                          >
+                            Close
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={_addAttachment}
+                            style={{backgroundColor: "#F58D5C", color : "black", height: "21px"}}
+                            className="border border-black rounded flex items-center justify-center"
+                          >
+                            Add + 
+                          </button>
+
+                        </div>
+                        
                       </div>
-                      <button
-                        style={{height: "42px", backgroundColor: '#FF6B6B', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                        className="font-family-helvetica w-10 flex-shrink-0 rounded text-white font-bold flex items-center justify-center"
-                        onClick={() => {
-                          const newAttachments = attachments.filter((_, i) => i !== index);
-                          setAttachments(newAttachments);
-                        }}
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))}
+     
+                  </div>
+                )}
+
+                {/* Gray box showing added links */}
+                <div
+                  className=" p-2 rounded overflow-y-auto overflow-x-hidden"
+                  style={{
+                    backgroundColor: "#D3D3D3",
+                    borderStyle: "solid",
+                    borderColor: "black",
+                    borderWidth: "1px",
+                    borderRadius: "1.2rem",
+                    height: isAddingAttachment ? "77px" : "192px" 
+                  }}
+                >
+                  {attachments
+                    .filter((a) => a.url) // show only filled ones
+                    .map((attachment, index) => (
+                      <div key={index} className="flex gap-2 mb-2 w-full items-center">
+                        <div
+                          style={{
+                            height: "42px",
+                            backgroundColor: "#F2EBE4",
+                            borderStyle: "solid",
+                            borderColor: "black",
+                            borderWidth: "1px",
+                            borderRadius: "1.2rem",
+                          }}
+                          className="overflow-hidden font-family-helvetica flex-1 min-w-0 text-gray-700 rounded flex items-center px-3 justify-between"
+                        >
+                          <a
+                            href={attachment.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 underline truncate"
+                          >
+                            {attachment.attachment_name || "Untitled"}
+                          </a>
+                          <span className="ml-2 text-xs text-gray-600">
+                            ({attachment.type === AttachmentType.SCOPE_DOCUMENT
+                              ? "Scope"
+                              : "Supporting"}
+                            )
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                 </div>
               </div>
             {/*End bottom right row */}
