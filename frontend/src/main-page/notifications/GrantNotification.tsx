@@ -1,5 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
+import { FaTrash } from "react-icons/fa";
 
 interface GrantNotificationProps {
     title: string;
@@ -16,7 +17,11 @@ const GrantNotification: React.FC<GrantNotificationProps> = ({ title, message })
                 <div className="notification-title">{title}</div>
                 <div className="notification-message">{message}</div>
             </div>
-        </div>
+            <FaTrash
+                className="notification-trash-icon"
+                title="Delete notification"
+            />
+            </div>
     );
 };
 

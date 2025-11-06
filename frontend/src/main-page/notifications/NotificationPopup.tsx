@@ -1,6 +1,5 @@
 import { createPortal } from 'react-dom';
 import GrantNotification from "./GrantNotification";
-import { FaTrash } from "react-icons/fa";
 import '../../styles/notification.css';
 
 interface NotificationPopupProps {
@@ -29,13 +28,6 @@ const NotificationPopup: React.FC<NotificationPopupProps> = ({
                 ) : (
                     <p className="empty-text">No new notifications</p>
                 )}
-            </div>
-
-            <div className="trash-container">
-                <FaTrash
-                className="trash-icon"
-                title="Delete all notifications (coming later)"
-                />
             </div>
         </div>,
         document.body

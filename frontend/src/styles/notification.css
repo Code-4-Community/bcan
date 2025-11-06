@@ -49,9 +49,11 @@
 
 
 .grant-notification {
+  position: relative;
   border-bottom: 0.2px solid #dfd9d9;
   border-radius: 0px;
   padding: 8px 10px;
+  padding-right: 35px;
   margin-bottom: 2px;
   font-size: 0.9rem;
   transition: background-color 0.2s ease;
@@ -63,7 +65,17 @@
   background-color: rgb(225, 225, 225);
   padding: 10px;
   border-radius: 100%;
-  scale: 67%;
+  scale: 73%;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-text {
+  flex: 1;
 }
 
 .notification-title {
@@ -84,19 +96,15 @@
   background-color: #f1f1f1;
 }
 
-
-.trash-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 12px;
-}
-
-
-.trash-icon {
+.notification-trash-icon {
+  position: absolute;
+  bottom: 8px;
+  right: 10px;
   color: #aaa;
   cursor: pointer;
-  font-size: 1.0rem;
+  font-size: 0.9rem
 }
-.trash-icon:hover {
-  color: #e74c3c;
+
+.notification-trash-icon:hover {
+  color: #e74c3c
 }
