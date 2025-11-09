@@ -281,7 +281,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
 
       <div className={`grant-body bg-white ${isExpanded ? "expanded" : ""}`}>
         {isExpanded && (
-        <div > 
+        <div style={{ height: '100%' }}> 
 
           {/*div for the two columns above description*/}
           <div className="flex  mt-6 mb-6">
