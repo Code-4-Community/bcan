@@ -8,8 +8,9 @@ import { MdOutlinePerson2 } from "react-icons/md";
 import { FiUpload } from "react-icons/fi";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { TDateISO } from "../../../../../backend/src/utils/date";
-import { Status } from "../../../../../middle-layer/types/Status";
+import { Status, statusToString } from "../../../../../middle-layer/types/Status";
 import { api } from "../../../api";
+
 
 /** Attachment type from your middle layer */
 enum AttachmentType {
@@ -29,7 +30,13 @@ export interface POCEntryRef {
   getPOC: () => string;
 }
 
-const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+interface NewGrantModalProps {
+  grant?: Grant;
+  onClose: () => void;
+}
+
+
+const NewGrantModal: React.FC<NewGrantModalProps> = ({ grant, onClose }) => {
   /*
       grantId: number;
       organization: string;
@@ -278,6 +285,20 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     }
   };
 
+  function formatDate(isoString: string): string {
+    const date = new Date(isoString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  function formatCurrency(amount : number): string {
+    const formattedCurrency = new Intl.NumberFormat('en-US', {style: 'currency',currency: 'USD',
+    maximumFractionDigits:0}).format(amount);
+    return formattedCurrency;
+  }
+
   return (
 
     <div className="modal-overlay"> {/*Greyed out background */}
@@ -390,6 +411,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       </button>
                     </div>
                 </div>
+              {/*End report deadline */}
               </div>
               
             </div>
@@ -484,11 +506,11 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
                       id="grid-first-name" value={status} onChange={(e) => _setStatus(e.target.value as Status)}>
                       <option value="">Select...</option>
-                      <option value="potential">Potential</option>
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                      <option value="rejected">Rejected</option>
-                      <option value="pending">Pending</option>
+                      <option value="Potential">Potential</option>
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                      <option value="Rejected">Rejected</option>
+                      <option value="Pending">Pending</option>
                     </select>
                   </div>
 
