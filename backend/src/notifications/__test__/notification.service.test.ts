@@ -12,6 +12,7 @@ const mockScan = vi.fn().mockReturnThis();
 const mockGet = vi.fn().mockReturnThis();
 const mockSend = vi.fn().mockReturnThis(); // for SES
 const mockPut = vi.fn().mockReturnThis();
+const mockDelete = vi.fn().mockReturnThis();
 const mockQuery = vi.fn().mockReturnThis();
 const mockSendEmail = vi.fn().mockReturnThis();
 const mockUpdate = vi.fn().mockReturnThis();
@@ -22,6 +23,7 @@ const mockDocumentClient = {
   put: mockPut,
   query: mockQuery,
   update: mockUpdate,
+  delete : mockDelete,
   promise: mockPromise,
 };
 
@@ -418,5 +420,53 @@ describe('NotificationController', () => {
   
 
 
+  describe('deleteNotification', () => {
+    it('should successfully delete a notification given a valid id', async () => {
+      mockPromise.mockResolvedValueOnce({})
 
+      const result = await notificationService.deleteNotification('0')
+
+      expect(mockDelete).toHaveBeenCalledTimes(1)
+
+      expect(mockDelete).toHaveBeenCalledWith({
+        TableName: 'BCANNotifications',
+        Key: {
+          notificationId: '0',
+        },
+        ConditionExpression: 'attribute_exists(notificationId)'
+      })
+
+      expect(result).toEqual('Notification with id 0 successfully deleted')
+    })
+
+    it('uses the fallback table when the environment variable is not set', async () => {
+      delete process.env.DYNAMODB_NOTIFICATION_TABLE_NAME
+      mockPromise.mockResolvedValueOnce({})
+
+      const result = await notificationService.deleteNotification('0')
+
+      expect(mockDelete).toHaveBeenCalledWith({
+        TableName: 'TABLE_FAILURE',
+        Key: {
+          notificationId: '0',
+        },
+        ConditionExpression: 'attribute_exists(notificationId)'
+      })
+    })
+
+    it('throws an error when the given notification id does not exist', async () => {
+      mockPromise.mockRejectedValueOnce({
+        code: 'ConditionalCheckFailedException', 
+        message: 'The item does not exist' 
+      });
+
+      try {
+        await notificationService.deleteNotification('999');
+        throw new Error('Expected deleteNotification to throw');
+      } catch (err: any) {
+        expect(err).toBeInstanceOf(Error);
+        expect(err.message).toContain('Notification with id 999 not found');
+      }
+    })
+  })
 });

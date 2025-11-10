@@ -158,4 +158,29 @@ export class NotificationService {
   }
   
 
+  /**
+   * Deletes the notification with the given id from the database and returns a success message if the deletion was successful
+   * @param notificationId the id of the notification to delete
+   */
+  async deleteNotification(notificationId: string): Promise<string> {
+    const params = {
+      TableName: process.env.DYNAMODB_NOTIFICATION_TABLE_NAME || 'TABLE_FAILURE',
+      Key: {
+        notificationId,
+      },
+      ConditionExpression: 'attribute_exists(notificationId)'
+    }
+
+    try {
+      await this.dynamoDb.delete(params).promise()
+      return `Notification with id ${notificationId} successfully deleted`
+    } catch (error: any) {
+      if (error.code === "ConditionalCheckFailedException") {
+        throw new Error(`Notification with id ${notificationId} not found`)
+      }
+
+      console.error(error)
+      throw new Error(`Failed to delete notification with id ${notificationId}`)
+    }
+  }
 }
