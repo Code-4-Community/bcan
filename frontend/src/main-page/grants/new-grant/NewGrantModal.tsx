@@ -8,8 +8,11 @@ import { MdOutlinePerson2 } from "react-icons/md";
 import { FiUpload } from "react-icons/fi";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { TDateISO } from "../../../../../backend/src/utils/date";
-import { Status } from "../../../../../middle-layer/types/Status";
+import { Status,
+  // statusToString
+   } from "../../../../../middle-layer/types/Status";
 import { api } from "../../../api";
+
 
 /** Attachment type from your middle layer */
 enum AttachmentType {
@@ -29,7 +32,13 @@ export interface POCEntryRef {
   getPOC: () => string;
 }
 
-const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+interface NewGrantModalProps {
+  grant?: Grant;
+  onClose: () => void;
+}
+
+
+const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
   /*
       grantId: number;
       organization: string;
@@ -49,41 +58,30 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       restricted_or_unrestricted: string; // "restricted" or "unrestricted"
   */
   // Form fields, renamed to match your screenshot
-  // @ts-ignore
-  const [organization, _setOrganization] = useState<string>("");
+  const [organization, setOrganization] = useState<string>("");
   const [bcanPocComponents, setBcanPocComponents] = useState<JSX.Element[]>([]);
   const [bcanPocRefs, setBcanPocRefs] = useState<RefObject<POCEntryRef>[]>([]);
 
   const [grantProviderPocComponents, setGrantProviderPocComponents] = useState<JSX.Element[]>([]);
   const [grantProviderPocRefs, setGrantProviderPocRefs] = useState<RefObject<POCEntryRef>[]>([]);
 
-  // @ts-ignore
-  const [applicationDate, _setApplicationDate] = useState<string>("");
-  // @ts-ignore
-  const [grantStartDate, _setGrantStartDate] = useState<string>("");
+  const [applicationDate, setApplicationDate] = useState<string>("");
+  const [grantStartDate, setGrantStartDate] = useState<string>("");
   const [reportDates, setReportDates] = useState<string[]>([]);
 
-  // @ts-ignore
-  const [timelineInYears, _setTimelineInYears] = useState<number>(0);
-  // @ts-ignore
+  const [timelineInYears, setTimelineInYears] = useState<number>(0);
   const [estimatedCompletionTimeInHours, _setEstimatedCompletionTimeInHours] = useState<number>(0);
 
-  // @ts-ignore
-  const [doesBcanQualify, _setDoesBcanQualify] = useState<string>("");
+  const [doesBcanQualify, setDoesBcanQualify] = useState<string>("");
 
-  // @ts-ignore
-  const [isRestricted, _setIsRestricted] = useState<string>("");
+  const [isRestricted, setIsRestricted] = useState<string>("");
 
-  // @ts-ignore
-  const [status, _setStatus] = useState<string>("");
+  const [status, setStatus] = useState<string>("");
 
-  // @ts-ignore
-  const [amount, _setAmount] = useState<number>(0);
-  // @ts-ignore
-  const [description, _setDescription] = useState<string>("");
+  const [amount, setAmount] = useState<number>(0);
+  const [description, setDescription] = useState<string>("");
 
   // Attachments array
-  // @ts-ignore
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [isAddingAttachment, setIsAddingAttachment] = useState(false);
   const [newAttachment, setNewAttachment] = useState<Attachment>({
@@ -93,15 +91,11 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   });
 
   // For error handling
-  // @ts-ignore
+    // @ts-exopect-error
   const [_errorMessage, setErrorMessage] = useState<string>("");
-  // @ts-ignore
   const [bcanPocName, setBcanPocName] = useState('');
-  // @ts-ignore
   const [bcanPocEmail, setBcanPocEmail] = useState('');
-  // @ts-ignore
   const [grantProviderPocName, setGrantProviderPocName] = useState('');
-  // @ts-ignore
   const [grantProviderPocEmail, setGrantProviderPocEmail] = useState('');
 
   /** Add a new BCAN POC entry */
@@ -143,8 +137,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   };
 
   // Add an empty attachment row
-  // @ts-ignore
-  const _addAttachment = () => {
+  const addAttachment = () => {
     if (!newAttachment.attachment_name || !newAttachment.url) return;
     setAttachments([...attachments, newAttachment]);
     setNewAttachment({
@@ -278,6 +271,20 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     }
   };
 
+  // function formatDate(isoString: string): string {
+  //   const date = new Date(isoString);
+  //   const year = date.getFullYear();
+  //   const month = String(date.getMonth() + 1).padStart(2, '0');
+  //   const day = String(date.getDate()).padStart(2, '0');
+  //   return `${year}-${month}-${day}`;
+  // }
+
+  // function formatCurrency(amount : number): string {
+  //   const formattedCurrency = new Intl.NumberFormat('en-US', {style: 'currency',currency: 'USD',
+  //   maximumFractionDigits:0}).format(amount);
+  //   return formattedCurrency;
+  // }
+
   return (
 
     <div className="modal-overlay"> {/*Greyed out background */}
@@ -296,7 +303,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 id="grid-first-name"
                  type="text" 
                  placeholder="Type Here"
-                 onChange={(e) => _setOrganization(e.target.value)}/>
+                 onChange={(e) => setOrganization(e.target.value)}/>
               </div>
 
             {/*Top left quadrant - from app date, start date, report deadlines, est completion time*/}
@@ -317,7 +324,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     id="grid-city" 
                     type="date"
 
-                    onChange={(e) => _setApplicationDate(e.target.value)}/>
+                    onChange={(e) => setApplicationDate(e.target.value)}/>
                   </div>
                   {/*Grant Start Date and input */}
                   <div className=" w-1/2">
@@ -328,7 +335,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       className="font-family-helvetica w-full appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
                       id="grid-city" 
                       type="date"
-                      onChange={(e) => _setGrantStartDate(e.target.value)}/>
+                      onChange={(e) => setGrantStartDate(e.target.value)}/>
                   </div>
                 </div>
 
@@ -390,6 +397,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       </button>
                     </div>
                 </div>
+              {/*End report deadline */}
               </div>
               
             </div>
@@ -401,7 +409,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 </label>
                 <input  style={{height: "42px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                 className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                type="number" min = "0" placeholder="Type Here" onChange={(e) => _setTimelineInYears(Number(e.target.value))}/>
+                type="number" min = "0" placeholder="Type Here" onChange={(e) => setTimelineInYears(Number(e.target.value))}/>
               </div>
 
               {/*Amount label and input */}
@@ -411,7 +419,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 </label>
                 <CurrencyInput style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                 className="font-family-helvetica appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                min={0} decimalsLimit={2} placeholder="Type Here" onValueChange={(value) => _setAmount(Number(value))}/>
+                min={0} decimalsLimit={2} placeholder="Type Here" onValueChange={(value) => setAmount(Number(value))}/>
               </div>
 
           </div>
@@ -468,7 +476,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     </label>
                     <select style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color : doesBcanQualify == "" ? "gray" : "black"}}
                       className="font-family-helvetica appearance-none block w-full bg-gray-200 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                      id="grid-first-name" value={doesBcanQualify} onChange={(e) => _setDoesBcanQualify(e.target.value)}>
+                      id="grid-first-name" value={doesBcanQualify} onChange={(e) => setDoesBcanQualify(e.target.value)}>
                       <option value="">Select...</option>
                       <option value="yes">Yes</option>
                       <option value="no">No</option>
@@ -482,13 +490,13 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     </label>
                     <select style={{height: "48px",  backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color : status == "" ? "gray" : "black"}}
                       className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                      id="grid-first-name" value={status} onChange={(e) => _setStatus(e.target.value as Status)}>
+                      id="grid-first-name" value={status} onChange={(e) => setStatus(e.target.value as Status)}>
                       <option value="">Select...</option>
-                      <option value="potential">Potential</option>
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                      <option value="rejected">Rejected</option>
-                      <option value="pending">Pending</option>
+                      <option value="Potential">Potential</option>
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                      <option value="Rejected">Rejected</option>
+                      <option value="Pending">Pending</option>
                     </select>
                   </div>
 
@@ -499,7 +507,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     </label>
                     <select style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color : isRestricted == "" ? "gray" : "black"}}
                       className="font-family-helvetica appearance-none block w-full bg-gray-200 border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" 
-                      id="grid-first-name" value={isRestricted} onChange={(e) => _setIsRestricted(e.target.value)}>
+                      id="grid-first-name" value={isRestricted} onChange={(e) => setIsRestricted(e.target.value)}>
                       <option value="">Select...</option>
                       <option style={{color:"black"}} value="unrestricted">Unrestricted</option>
                       <option style={{color:"black"}} value="restricted">Restricted</option>
@@ -587,7 +595,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
                           <button
                             type="button"
-                            onClick={_addAttachment}
+                            onClick={addAttachment}
                             style={{backgroundColor: "#F58D5C", color : "black", height: "21px"}}
                             className="border border-black rounded flex items-center justify-center"
                           >
@@ -662,7 +670,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 </label>
                 <textarea style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                 className="font-family-helvetica h-48 block w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight" id="grid-first-name" 
-                value={description} onChange={(e) => _setDescription(e.target.value)}/>
+                value={description} onChange={(e) => setDescription(e.target.value)}/>
               </div>
       
         <div className="button-row">

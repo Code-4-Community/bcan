@@ -5,7 +5,7 @@
  *  (3) Inactive: Grant earnings are used up
  */
 export enum Status {
-    Potential= "Potential",
+    Potential = "Potential",
     Active = "Active",
     Inactive = "Inactive",
     Rejected = "Rejected",
@@ -16,7 +16,7 @@ export enum Status {
 // 3) turn enums to string
 
 // string rep of status
-export function statusToString(status: string): Status | null{
+export function stringToStatus(status: string): Status | null{
     switch (status) {
         case 'All': return null; // no filter
         case 'Active': return Status.Active;
@@ -26,6 +26,16 @@ export function statusToString(status: string): Status | null{
         case 'Pending': return Status.Pending;
         default: throw new Error(`Unknown status: ${status}`);
     }
+}
+
+export function statusToString(status : Status): string {
+    switch (status) {
+        case  Status.Active : return 'Active';
+        case Status.Inactive : return "Inactive";
+        case Status.Potential : return "Potential";
+        case Status.Rejected : return "Rejected";
+        case Status.Pending : return "Pending";   
+    }   
 }
 
 // color associated with status on UI, represented as a string
@@ -38,5 +48,14 @@ export function getColorStatus(status: string) {
         case "Rejected": return "#FF0000" // red
         case "Pending": return "#FFA500" // orange
         default: return 'Unknown';
+    }
+}
+
+// Get list of status types for received and unreceived grants
+export function getListApplied(received: boolean){
+    if(received){
+        return ["Active", "Inactive"]
+    } else{
+        return ["Pending", "Rejected"]
     }
 }
