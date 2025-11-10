@@ -171,7 +171,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
   }
 
   return (
-    <div className="grant-item-wrapper">
+    <div className="grant-item-wrapper w-fit">
       <div
         className={`grant-summary p-4 ${isExpanded ? "expanded rounded-b-none" : ""} grid grid-cols-5 items-center`}
         onClick={toggleExpand}
@@ -332,7 +332,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
 
                   {/*Estimated completion time row*/}
                   <div className="w-full justify-center">
-                    <label className="text-lg mt-2 flex block tracking-wide text-gray-700 font-bold mb-2" htmlFor="grid-state">
+                    <label className="mt-2 flex block tracking-wide text-gray-700 font-bold mb-2" htmlFor="grid-state">
                       Estimated Completion Time
                     </label>
                     <div 
