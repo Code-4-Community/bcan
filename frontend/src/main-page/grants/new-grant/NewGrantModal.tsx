@@ -3,7 +3,6 @@ import React, { useState, createRef, RefObject } from "react";
 import CurrencyInput from 'react-currency-input-field';
 import { fetchAllGrants } from "../../../external/bcanSatchel/actions";
 import "../styles/NewGrantModal.css";
-import POCEntry from "./POCEntry";
 import { MdOutlinePerson2 } from "react-icons/md";
 import { FiUpload } from "react-icons/fi";
 import { Grant } from "../../../../../middle-layer/types/Grant";
@@ -114,13 +113,6 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const _removeReportDate = (index: number) => {
     const updated = [...reportDates];
     updated.splice(index, 1);
-    setReportDates(updated);
-  };
-  
-  // @ts-ignore
-  const _handleReportDateChange = (index: number, value: string) => {
-    const updated = [...reportDates];
-    updated[index] = value;
     setReportDates(updated);
   };
 
