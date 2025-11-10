@@ -9,7 +9,7 @@ import { getAppStore } from "../../external/bcanSatchel/store";
 
 // get current user id
 // const currUserID = sessionStorage.getItem('userId');
-const currUserID = "bcanuser33";
+// const currUserID = "bcanuser33";
 
 const BellButton = () => {
   // stores notifications for the current user
