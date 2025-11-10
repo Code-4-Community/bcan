@@ -1,14 +1,14 @@
 // frontend/src/grant-info/components/NewGrantModal.tsx
-import React, { useState, createRef, RefObject } from "react";
+import React, { useState } from "react";
+import CurrencyInput from 'react-currency-input-field';
 import { fetchAllGrants } from "../../../external/bcanSatchel/actions";
 import "../styles/NewGrantModal.css";
-import POCEntry from "./POCEntry";
 import { MdOutlinePerson2 } from "react-icons/md";
+import { FiUpload } from "react-icons/fi";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { TDateISO } from "../../../../../backend/src/utils/date";
-import { Status, statusToString } from "../../../../../middle-layer/types/Status";
+import { Status } from "../../../../../middle-layer/types/Status";
 import { api } from "../../../api";
-
 
 /** Attachment type from your middle layer */
 enum AttachmentType {
@@ -23,18 +23,8 @@ interface Attachment {
   type: AttachmentType;
 }
 
-/** POC ref type from POCEntry */
-export interface POCEntryRef {
-  getPOC: () => string;
-}
 
-interface NewGrantModalProps {
-  grant?: Grant;
-  onClose: () => void;
-}
-
-
-const NewGrantModal: React.FC<NewGrantModalProps> = ({ grant, onClose }) => {
+const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   /*
       grantId: number;
       organization: string;
@@ -54,69 +44,73 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ grant, onClose }) => {
       restricted_or_unrestricted: string; // "restricted" or "unrestricted"
   */
   // Form fields, renamed to match your screenshot
-  // @ts-ignore
+
+  // Used
   const [organization, _setOrganization] = useState<string>("");
-  const [bcanPocComponents, setBcanPocComponents] = useState<JSX.Element[]>([]);
-  const [bcanPocRefs, setBcanPocRefs] = useState<RefObject<POCEntryRef>[]>([]);
 
-  const [grantProviderPocComponents, setGrantProviderPocComponents] = useState<JSX.Element[]>([]);
-  const [grantProviderPocRefs, setGrantProviderPocRefs] = useState<RefObject<POCEntryRef>[]>([]);
-
-  // @ts-ignore
+  // Used
   const [applicationDate, _setApplicationDate] = useState<string>("");
-  // @ts-ignore
+  // Used
   const [grantStartDate, _setGrantStartDate] = useState<string>("");
+  // Used
   const [reportDates, setReportDates] = useState<string[]>([]);
 
-  // @ts-ignore
+  // Used
   const [timelineInYears, _setTimelineInYears] = useState<number>(0);
-  // @ts-ignore
+
+  // Used
   const [estimatedCompletionTimeInHours, _setEstimatedCompletionTimeInHours] = useState<number>(0);
 
-  // @ts-ignore
-  const [doesBcanQualify, _setDoesBcanQualify] = useState<boolean>(false);
-  // @ts-ignore
-  const [status, _setStatus] = useState<Status>(Status.Potential);
+  // Used
+  const [doesBcanQualify, _setDoesBcanQualify] = useState<string>("");
 
-  // @ts-ignore
+  // Used
+  const [isRestricted, _setIsRestricted] = useState<string>("");
+
+  // Used
+  const [status, _setStatus] = useState<string>("");
+
+  // Used
   const [amount, _setAmount] = useState<number>(0);
-  // @ts-ignore
+  // Used
   const [description, _setDescription] = useState<string>("");
 
   // Attachments array
-  // @ts-ignore
+  // Used
   const [attachments, setAttachments] = useState<Attachment[]>([]);
+  // Used
+  const [isAddingAttachment, setIsAddingAttachment] = useState(false);
+
+  // Used
+  const [bcanPocName, setBcanPocName] = useState('');
+  // Used
+  const [bcanPocEmail, setBcanPocEmail] = useState('');
+  // Used
+  const [grantProviderPocName, setGrantProviderPocName] = useState('');
+  // Used
+  const [grantProviderPocEmail, setGrantProviderPocEmail] = useState('');
+
 
   // For error handling
   // @ts-ignore
   const [_errorMessage, setErrorMessage] = useState<string>("");
 
-  /** Add a new BCAN POC entry */
-  // @ts-ignore
-  const _addBcanPoc = () => {
-    const newRef = createRef<POCEntryRef>();
-    const newPOC = <POCEntry ref={newRef} key={`bcan-${bcanPocComponents.length}`} />;
-    setBcanPocComponents([...bcanPocComponents, newPOC]);
-    setBcanPocRefs([...bcanPocRefs, newRef]);
-  };
-
-  /** Add a new Grant Provider POC entry */
-  // @ts-ignore
-  const _addGrantProviderPoc = () => {
-    const newRef = createRef<POCEntryRef>();
-    const newPOC = <POCEntry ref={newRef} key={`provider-${grantProviderPocComponents.length}`} />;
-    setGrantProviderPocComponents([...grantProviderPocComponents, newPOC]);
-    setGrantProviderPocRefs([...grantProviderPocRefs, newRef]);
-  };
+  
 
   /* Add a new blank report date to the list */
-  // @ts-ignore
+  // Used
   const _addReportDate = () => {
     setReportDates([...reportDates, ""]);
   };
 
-  // Add an empty attachment row
-  // @ts-ignore
+  // Used
+  const _removeReportDate = (index: number) => {
+    const updated = [...reportDates];
+    updated.splice(index, 1);
+    setReportDates(updated);
+  };
+
+  // Used
   const _addAttachment = () => {
     setAttachments([
       ...attachments,
@@ -126,18 +120,19 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ grant, onClose }) => {
         type: AttachmentType.SCOPE_DOCUMENT,
       },
     ]);
+    setIsAddingAttachment(true);
   };
 
-  // Remove a specific attachment row
-  // @ts-ignore
+  // Used
   const _removeAttachment = (index: number) => {
     const updated = [...attachments];
     updated.splice(index, 1);
     setAttachments(updated);
+    if (updated.length === 0) setIsAddingAttachment(false);
   };
 
   // Update a field in one attachment
-  // @ts-ignore
+  // Used
   const _handleAttachmentChange = (
     index: number,
     field: keyof Attachment,
@@ -147,19 +142,6 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ grant, onClose }) => {
     // @ts-expect-error - Keeping for future use
     updated[index][field] = value;
     setAttachments(updated);
-  };
-
-  // @ts-ignore
-  const _removeReportDate = (index: number) => {
-    const updated = [...reportDates];
-    updated.splice(index, 1);
-    setReportDates(updated);
-  };
-  // @ts-ignore
-  const _handleReportDateChange = (index: number, value: string) => {
-    const updated = [...reportDates];
-    updated[index] = value;
-    setReportDates(updated);
   };
 
   /** Basic validations based on your screenshot fields */
@@ -177,6 +159,15 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ grant, onClose }) => {
       setErrorMessage("Amount must be greater than 0.");
       return false;
     }
+    if (doesBcanQualify == "") {
+      setErrorMessage("Set Does Bcan Qualify? to 'yes' or 'no' ");
+    }
+    if (isRestricted == "") {
+      setErrorMessage("Set Restriction Type to 'restricted' or 'unrestricted' ");
+    }
+    if (status == "") {
+      setErrorMessage("Set Status");
+    }
     return true;
   };
 
@@ -184,22 +175,7 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ grant, onClose }) => {
   const handleSubmit = async () => {
     if (!validateInputs()) return;
 
-    // Gather BCAN POC values
-    const bcanPocList: string[] = [];
-    bcanPocRefs.forEach((ref) => {
-      if (ref.current) {
-        bcanPocList.push(ref.current.getPOC());
-      }
-    });
-
-    // Gather Grant Provider POC values
-    const providerPocList: string[] = [];
-    grantProviderPocRefs.forEach((ref) => {
-      if (ref.current) {
-        providerPocList.push(ref.current.getPOC());
-      }
-    });
-
+    
     // Convert attachments array
     const attachmentsArray = attachments.map((att) => ({
       attachment_name: att.attachment_name.trim(),
@@ -207,23 +183,25 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ grant, onClose }) => {
       type: att.type,
     }));
 
+
+
     /* Matches middle layer definition */
     const newGrant: Grant = {
       grantId: -1,
       organization,
-      does_bcan_qualify: doesBcanQualify,
+      does_bcan_qualify: (doesBcanQualify == "yes" ? true : false),
       amount,
       grant_start_date: grantStartDate as TDateISO,
       application_deadline: applicationDate as TDateISO,
-      status: status, // Potential = 0, Active = 1, Inactive = 2
-      bcan_poc: bcanPocList.length > 0 ? { POC_name: "", POC_email: bcanPocList[0] } : { POC_name: "", POC_email: ""}, // Just take the first for now
-      grantmaker_poc: providerPocList.length > 0 ? { POC_name: "", POC_email: providerPocList[0] } : { POC_name: "", POC_email: ""}, // Just take the first for now
+      status: status as Status, // Potential = 0, Active = 1, Inactive = 2
+      bcan_poc: { POC_name: bcanPocName, POC_email: bcanPocEmail }, 
+      grantmaker_poc: { POC_name: grantProviderPocName, POC_email: grantProviderPocEmail }, // Just take the first for now
       report_deadlines: reportDates as TDateISO[],
       timeline: timelineInYears,
       estimated_completion_time: estimatedCompletionTimeInHours,
       description,
       attachments: attachmentsArray,
-      isRestricted: false, // Default to unrestricted for now
+      isRestricted: (isRestricted == "restricted" ? true : false), // Default to unrestricted for now
     };
     console.log(newGrant);
     try {
@@ -255,38 +233,25 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ grant, onClose }) => {
     }
   };
 
-  function formatDate(isoString: string): string {
-    const date = new Date(isoString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-
-  function formatCurrency(amount : number): string {
-    const formattedCurrency = new Intl.NumberFormat('en-US', {style: 'currency',currency: 'USD',
-    maximumFractionDigits:0}).format(amount);
-    return formattedCurrency;
-  }
-
   return (
 
     <div className="modal-overlay"> {/*Greyed out background */}
-      <div className="modal-content"> {/*Popup container */}
-        <div className="flex">                         {/*Widget container */}
-
+      <div className="modal-content "> {/*Popup container */}
+        <h2 className="font-family-helvetica">New Grant</h2>
+        <div className="flex">  {/* Major components in two columns */}
           {/*left column */}
-          <div className='w-1/2 p-4 h-full'>
-            <h2>New Grant</h2>
-
+          <div className='w-1/2  pr-5'>
               {/*Organization name and input */}
-              <div className="w-full md:mb-0 ">
-                <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+              <div className="w-full md:mb-0">
+                <label className="font-family-helvetica text-lg flex block text-black  mb-1" htmlFor="grid-first-name">
                   Organization Name
                 </label>
-                <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                className="h-14 block w-full border rounded py-3 px-4 mb-3 leading-tight" id="grid-first-name"
-                 type="text" placeholder = {grant? "" : "Type Here"} defaultValue={grant? grant.organization : ""}/>
+                <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                className=" font-family-helvetica block w-full text-black placeholder:text-gray-400 border rounded py-3 px-4 mb-3 leading-tight" 
+                id="grid-first-name"
+                 type="text" 
+                 placeholder="Type Here"
+                 onChange={(e) => _setOrganization(e.target.value)}/>
               </div>
 
             {/*Top left quadrant - from app date, start date, report deadlines, est completion time*/}
@@ -296,161 +261,169 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ grant, onClose }) => {
               <div className="w-2/3">
 
                 {/*Application date and grant start date */}
-                <div className="flex space-x-4 mb-5">
+                <div className="flex space-x-4">
                   {/*Application date and input */}
                   <div className="w-1/2">
-                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-city">
-                    Application Deadline
+                    <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-city">
+                    Application Date
                     </label>
-                    <input style={{ backgroundColor: '#F2EBE4',borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                    className="h-14  block w-full  border rounded py-3 px-4 leading-tight "
-                     id="grid-city" type="date" defaultValue={grant? formatDate(grant.application_deadline) : ""}/>
+                    <input style={{height: "48px", backgroundColor: '#F2EBE4',borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color: applicationDate ? "black" : "gray"}}
+                    className="font-family-helvetica appearance-none block w-full border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+                    id="grid-city" 
+                    type="date"
+
+                    onChange={(e) => _setApplicationDate(e.target.value)}/>
                   </div>
                   {/*Grant Start Date and input */}
                   <div className=" w-1/2">
-                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
+                    <label className="font-family-helvetica flex block tracking-wide text-black text-black text-lg mb-1" htmlFor="grid-state">
                       Grant Start Date
                     </label>
-                      <input style={{ backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                      className="h-14 w-full appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
-                      id="grid-city" type="date" defaultValue={grant? formatDate(grant.grant_start_date) : ""}/>
+                      <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color: grantStartDate ? "black" : "gray"}}
+                      className="font-family-helvetica w-full appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+                      id="grid-city" 
+                      type="date"
+                      onChange={(e) => _setGrantStartDate(e.target.value)}/>
                   </div>
                 </div>
 
                 {/*Estimated completition time and input - need to make wider (length of application date and grant start date)*/}
-                <div className="w-full">
-                  <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-state">
-                  Estimated Completion Time (hours)
+                <div className="w-full mt-10">
+                  <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-state">
+                  Estimated Completion Time (in hours)
                   </label>
-                  <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                  className="h-14 appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
-                  id="grid-city" 
-                  defaultValue={grant? grant.estimated_completion_time : ""}/>
+                  <input type="number" 
+                  min = "0"
+                  style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                  className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+                  id="grid-city"
+                  onChange={(e) => _setEstimatedCompletionTimeInHours(Number(e.target.value))}/>
                 </div>
 
               </div>
 
-              {/*Report deadlines column*/}
-              <div className="w-1/3">
+              {/*Right column*/}
+              <div className="w-1/3 ">
                 {/*Report deadlines label and grey box */}
-                <div className="h-full">
-                  <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-zip">
-                    Report Deadlines
-                  </label>
-                  <div className="p-2 rounded h-60 overflow-y-auto" style={{backgroundColor: '#D3D3D3', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}>
-                    {grant?.report_deadlines && grant.report_deadlines.length > 0 ? (
-                      grant.report_deadlines.map((deadline, index) => (
-                        <input 
-                          key={index}
-                          style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                          className="h-14 w-full text-gray-700 rounded mb-2" 
-                          type="date"
-                          defaultValue={formatDate(deadline)}
-                        />
-                      ))
-                    ) : (
-                      <input 
-                        style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                        className="h-14 w-full text-gray-700 rounded" 
-                        id="grid-city" 
-                        type="date"
-                      />
-                    )}
-                    <button style={{color: "black", backgroundColor: "#F58D5C", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}} 
-                    className="h-10 w-full mt-2 flex items-center justify-center">
-                      Add Deadline +
-                    </button>
-                  </div>
+                <div className="h-full" >
+                  <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-zip">
+                      Report Deadlines
+                  </label> 
+                  <div className="p-2 rounded h-56 overflow-y-auto overflow-x-hidden" style={{backgroundColor: '#D3D3D3', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}>
+                      {reportDates.map((date, index) => (
+                        <div key={index} className="flex gap-2 mb-2 w-full">
+                          <input 
+                            key={index}
+                            style={{height: "42px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                            className="font-family-helvetica flex-1 min-w-0 text-black rounded" 
+                            type="date"
+                            value={date}
+                            onChange={(e) => {
+                              const newDates = [...reportDates];
+                              newDates[index] = e.target.value;
+                              setReportDates(newDates);
+                            }}
+                          />
+                          {reportDates.length > 0 && (
+                            <button
+                              style={{height: "42px",backgroundColor: '#FF6B6B', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                              className="font-family-helvetica w-5 flex-shrink-0 rounded text-white font-bold flex items-center justify-center"
+                              onClick={() => _removeReportDate(index)}
+                            >
+                              ✕
+                            </button>
+                          )}
+                      </div>
+
+                      ))}
+                      <button 
+                        style={{height: "42px", color: "black", backgroundColor: "#F58D5C", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}} 
+                        className="font-family-helvetica w-full mt-2 flex items-center justify-center"
+                        onClick={_addReportDate}
+                      >
+                        Add Deadline +
+                      </button>
+                    </div>
                 </div>
-              {/*End report deadline */}
               </div>
               
             </div>
 
               {/*Timeline label and input */}
-              <div className="w-full  md:mb-0 ">
-                <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+              <div className="w-full -mt-4">
+                <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
                   Timeline (in years)
                 </label>
-                <input  style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px' }}
-                className="h-14 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                id="grid-first-name" type="text" 
-                placeholder={grant? "" : "Type Here"} defaultValue={grant? grant.timeline : ""}/>
+                <input  style={{height: "42px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                type="number" min = "0" placeholder="Type Here" onChange={(e) => _setTimelineInYears(Number(e.target.value))}/>
               </div>
 
               {/*Amount label and input */}
               <div className="w-full mt-5 md:mb-0 ">
-                <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
-                  Amount
+                <label className="font-family-helvetica flex block tracking-wide text-black placeholder:text-gray-400 text-lg mb-1" htmlFor="grid-first-name">
+                  Amount (in $)
                 </label>
-                <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                className="h-14 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                id="grid-first-name" type="text" 
-                placeholder={grant? "" : "Type Here"} defaultValue={grant? formatCurrency(grant.amount) : ""}/>
+                <CurrencyInput style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                className="font-family-helvetica appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                min={0} decimalsLimit={2} placeholder="Type Here" onValueChange={(value) => _setAmount(Number(value))}/>
               </div>
 
           </div>
 
           {/*Right column */}
-          <div className='p-4 w-1/2 mt-12 h-full'>
+          <div className='w-1/2 pl-5'>
 
             {/*POC row */}
-            <div className="flex w-full h-1/2 mt-5">
+            <div className="flex w-full mb-[74px]">
               {/*BCAN POC div*/}
-              <div className="w-full mt-1 p-2">
-                  <label className="mb-1 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
+              <div className="w-full pr-3">
+                  <label className="font-family-helvetica mb-1 flex block tracking-wide text-black text-lg" htmlFor="grid-zip">
                       BCAN POC
                   </label>
                   {/*Box div*/} 
-                  <div className="items-center flex p-3 rounded h-52" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px'}}>
+                  <div className="items-center flex p-3 rounded h-full" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}>
                       <MdOutlinePerson2 className="w-1/4 h-full p-1"/>
                       <div className="w-3/4">
-                        <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                        className="h-14 w-full text-gray-700 rounded" id="grid-city" placeholder="Name" defaultValue={grant?.bcan_poc? grant.bcan_poc.POC_name : ""} />
-                        <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                        className="h-14 w-full text-gray-700 rounded" id="grid-city" placeholder="Email" defaultValue={grant?.bcan_poc? grant.bcan_poc.POC_email : ""}   />
+                        <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        className="font-family-helvetica w-full text-gray-700 rounded" id="grid-city" placeholder="Name" value={bcanPocName} onChange={(e) => setBcanPocName(e.target.value)}/>
+                        <input style={{height: "48px",backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        className="font-family-helvetica w-full text-gray-700 rounded"
+                         id="grid-city" placeholder="e-mail" value={bcanPocEmail} onChange={(e) => setBcanPocEmail(e.target.value)}/>
                       </div> 
                   </div>
               </div>
 
               {/*Grant Provider POC div*/}
-              <div className="p-2 w-full mt-1 ">
-                  <label className="mb-1 flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
+              <div className="w-full pl-3">
+                  <label className="font-family-helvetica mb-1 flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-zip">
                       Grant Provider POC
                   </label>
                   {/*Box div*/}
-                  <div className="flex p-3 rounded h-52 items-center" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px'}}>
+                  <div className="flex p-3 rounded  items-center h-full" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}>
                       <MdOutlinePerson2 className="p-1 w-1/4 h-full"/>
                       <div className="w-3/4">
-                        <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                        className="h-14 w-full text-gray-700 rounded" id="grid-city" placeholder="Name" defaultValue={grant?.grantmaker_poc? grant.grantmaker_poc.POC_name : ""}   />
-                        <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                        className="h-14 w-full text-gray-700 rounded" id="grid-city" placeholder="Email" defaultValue={grant?.grantmaker_poc? grant.grantmaker_poc.POC_email : ""}  />
+                        <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        className="font-family-helvetica w-full text-gray-700 rounded" id="grid-city" placeholder="Name" value={grantProviderPocName} onChange={(e) => setGrantProviderPocName(e.target.value)}/>
+                        <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        className="font-family-helvetica w-full text-gray-700 rounded" id="grid-city" placeholder="e-mail" value={grantProviderPocEmail} onChange={(e) => setGrantProviderPocEmail(e.target.value)}/>
                       </div> 
                   </div>
               </div>
             </div>
 
             {/*bottom  right row*/}
-            <div className="flex h-full w-full">
+            <div className="flex w-full ">
                {/* Select option menus */}
-                <div className="p-2 h-full w-1/2 flex-col">
+                <div className="w-1/2 flex-col pr-3">
                   {/*Qualify label and input */}
                   <div className="w-full ">
-                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                    <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
                       Does BCAN qualify?
                     </label>
-                    <select 
-                      style={{
-                        backgroundColor: '#F2EBE4', 
-                        borderStyle: 'solid', 
-                        borderColor: 'black', 
-                        borderWidth: '1px'
-                      }}
-                      className="h-14 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                      id="grid-first-name"
-                      value={grant ? (grant.does_bcan_qualify ? "yes" : "no") : ""}
-                    >
+                    <select style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color : doesBcanQualify == "" ? "gray" : "black"}}
+                      className="font-family-helvetica appearance-none block w-full bg-gray-200 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                      id="grid-first-name" value={doesBcanQualify} onChange={(e) => _setDoesBcanQualify(e.target.value)}>
                       <option value="">Select...</option>
                       <option value="yes">Yes</option>
                       <option value="no">No</option>
@@ -458,66 +431,180 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ grant, onClose }) => {
                   </div>
 
                   {/*Status label and input */}
-                  <div className="w-full mt-5 md:mb-0 ">
-                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                  <div className="w-full mt-5 ">
+                    <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
                       Status
                     </label>
-                    <select style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                      className="h-14 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                      id="grid-first-name"
-                      value={grant ? statusToString(grant.status) : ""}
-                      >
+                    <select style={{height: "48px",  backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color : status == "" ? "gray" : "black"}}
+                      className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                      id="grid-first-name" value={status} onChange={(e) => _setStatus(e.target.value as Status)}>
                       <option value="">Select...</option>
-                      <option value="Potential">Potential</option>
-                      <option value="Active">Active</option>
-                      <option value="Inactive">Inactive</option>
-                      <option value="Rejected">Rejected</option>
-                      <option value="Pending">Pending</option>
+                      <option value="potential">Potential</option>
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                      <option value="rejected">Rejected</option>
+                      <option value="pending">Pending</option>
                     </select>
                   </div>
 
                   {/*Restriction types label and input */}
-                  <div className="w-full mt-5 md:mb-0 ">
-                    <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+                  <div className="w-full  md:mb-0 mt-5">
+                    <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
                       Restriction types
                     </label>
-                    <select style={{ backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                      className="h-14 appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" 
-                      id="grid-first-name" value={grant ? (grant.isRestricted ? "restricted" : "unrestricted") : ""}>
+                    <select style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color : isRestricted == "" ? "gray" : "black"}}
+                      className="font-family-helvetica appearance-none block w-full bg-gray-200 border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" 
+                      id="grid-first-name" value={isRestricted} onChange={(e) => _setIsRestricted(e.target.value)}>
                       <option value="">Select...</option>
-                      <option value="restricted">Restricted</option>
-                      <option value="unrestricted">Unrestricted</option>
+                      <option style={{color:"black"}} value="unrestricted">Unrestricted</option>
+                      <option style={{color:"black"}} value="restricted">Restricted</option>
                     </select>
                   </div>
                 </div>
 
               {/*Scope Documents div p-2 h-full w-1/2 flex-col*/}
-              <div className="p-2 h-full w-1/2 flex-col">
-                  <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold" htmlFor="grid-zip">
-                      Scope Documents
-                  </label>
-                  <button style={{color : "black", backgroundColor: "gray", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}className="w-full mt-2 h-12">Upload Documents +</button>
-                  {/*Box div*/}
-                  <div className="rounded h-48 mt-4 p-3 overflow-y-auto" style={{backgroundColor: '#D3D3D3', borderColor: 'black', borderWidth: '1px'}}>
-                    {grant?.attachments && grant?.attachments.length > 0 ? (
-                      grant.attachments.map((attachment: Attachment, index: number) => (
-                        <div
-                          key={index}
-                          style={{
-                            color: "black",
-                            borderStyle: 'solid', 
-                            borderColor: 'black', 
-                            borderWidth: '1px'
-                          }}
-                          className="h-10 flex items-center justify-center w-full mx-auto rounded-lg mb-2 px-4 bg-tan"
+              <div className="w-1/2 flex-col pl-3">
+                <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1">
+                  Scope Documents
+                </label>
+
+                {/* Upload button */}
+                {!isAddingAttachment && (
+                  <button
+                    type="button"
+                    onClick={_addAttachment}
+                    style={{
+                      height: "48px",
+                      color: "black",
+                      backgroundColor: "gray",
+                      borderStyle: "solid",
+                      borderColor: "black",
+                      borderWidth: "1px",
+                    }}
+                    className="items-center flex font-family-helvetica w-full mt-1 mb-2 justify-center"
+                  >
+                    <FiUpload className="mr-2" />
+                    <span>Upload Documents</span>
+                  </button>
+                )}
+
+                {/* Editable attachment rows */}
+                {isAddingAttachment && (
+                  <div className="  mt-1 mb-2">
+                    {attachments.map((attachment, index) => (
+                      <div key={index} className="gap-2 items-center">
+                        <input
+                          type="text"
+                          placeholder="Name"
+                          className="flex-1 px-2 border border-black rounded"
+                          style={{ backgroundColor: "#F2EBE4", height: "42px" }}
+                          value={attachment.attachment_name}
+                          onChange={(e) =>
+                            _handleAttachmentChange(index, "attachment_name", e.target.value)
+                          }
+                        />
+                        <input
+                          type="text"
+                          placeholder="URL"
+                          className="h-12 flex-1 px-2 border border-black rounded"
+                          style={{ backgroundColor: "#F2EBE4", height: "42px" }}
+                          value={attachment.url}
+                          onChange={(e) =>
+                            _handleAttachmentChange(index, "url", e.target.value)
+                          }
+                        />
+                        <select
+                          className="h-12 border border-black rounded px-2 items-center justify-center"
+                          style={{ backgroundColor: "#F2EBE4", height: "42px" }}
+                          value={attachment.type}
+                          onChange={(e) =>
+                            _handleAttachmentChange(
+                              index,
+                              "type",
+                              Number(e.target.value) as AttachmentType
+                            )
+                          }
                         >
-                          {attachment.url}
+                          <option  value={AttachmentType.SCOPE_DOCUMENT}>Scope</option>
+                          <option  value={AttachmentType.SUPPORTING_RESOURCE}>
+                            Supporting
+                          </option>
+                        </select>
+
+                        <div className="flex justify-end">
+
+                          <button
+                            type="button"
+                            onClick={() => _removeAttachment(index)}
+                            style={{backgroundColor: "#D3D3D3", color : "black", height: "21px"}}
+                            className="mr-2 border border-black rounded  flex items-center justify-center"
+                          >
+                            Close
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={_addAttachment}
+                            style={{backgroundColor: "#F58D5C", color : "black", height: "21px"}}
+                            className="border border-black rounded flex items-center justify-center"
+                          >
+                            Add + 
+                          </button>
+
                         </div>
-                      ))
-                    ) : (
-                      <div className="text-center text-gray-700 italic">No documents</div>
-                    )}
+                        
+                      </div>
+                    ))}
+                      
+
                   </div>
+                )}
+
+                {/* Gray box showing added links */}
+                <div
+                  className=" p-2 rounded overflow-y-auto overflow-x-hidden"
+                  style={{
+                    backgroundColor: "#D3D3D3",
+                    borderStyle: "solid",
+                    borderColor: "black",
+                    borderWidth: "1px",
+                    borderRadius: "1.2rem",
+                    height: isAddingAttachment ? "77px" : "192px" 
+                  }}
+                >
+                  {attachments
+                    .filter((a) => a.url) // show only filled ones
+                    .map((attachment, index) => (
+                      <div key={index} className="flex gap-2 mb-2 w-full items-center">
+                        <div
+                          style={{
+                            height: "42px",
+                            backgroundColor: "#F2EBE4",
+                            borderStyle: "solid",
+                            borderColor: "black",
+                            borderWidth: "1px",
+                            borderRadius: "1.2rem",
+                          }}
+                          className="overflow-hidden font-family-helvetica flex-1 min-w-0 text-gray-700 rounded flex items-center px-3 justify-between"
+                        >
+                          <a
+                            href={attachment.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 underline truncate"
+                          >
+                            {attachment.attachment_name || "Untitled"}
+                          </a>
+                          <span className="ml-2 text-xs text-gray-600">
+                            ({attachment.type === AttachmentType.SCOPE_DOCUMENT
+                              ? "Scope"
+                              : "Supporting"}
+                            )
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                </div>
               </div>
             {/*End bottom right row */}
             </div>
@@ -528,18 +615,18 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ grant, onClose }) => {
         </div>
 
         {/*Description and input */}
-              <div className="w-full md:mb-0 px-5">
-                <label className="flex block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="grid-first-name">
+              <div className="w-full mt-5 p-2">
+                <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
                   Description
                 </label>
-                <input style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                className="h-48 block w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight" id="grid-first-name" type="text"
-                placeholder={grant? "" : "Write description here" } defaultValue={grant? grant.description : ""}/>
+                <textarea style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                className="font-family-helvetica h-48 block w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight" id="grid-first-name" 
+                value={description} onChange={(e) => _setDescription(e.target.value)}/>
               </div>
       
         <div className="button-row">
-          <button style={{color : "black", backgroundColor: "white", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}} onClick={onClose} >Close</button>
-          <button style={{color : "black", backgroundColor: "#F58D5C", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}onClick={handleSubmit}>Save</button>
+          <button style={{fontFamily : "helvetica", color : "black", backgroundColor: "white", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}} onClick={onClose} >Close</button>
+          <button style={{fontFamily : "helvetica", color : "black", backgroundColor: "#F58D5C", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}onClick={handleSubmit}>Save</button>
         </div>
 
       {/*End modal content */}

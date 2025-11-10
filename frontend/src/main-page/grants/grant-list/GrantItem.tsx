@@ -631,7 +631,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
       <div className="hidden-features">
           {showNewGrantModal && (
             <NewGrantModal 
-              grant={curGrant}
+              //grant={curGrant}
               onClose={() => setShowNewGrantModal(false)} 
             />
           )}
