@@ -23,10 +23,6 @@ interface Attachment {
   type: AttachmentType;
 }
 
-/** POC ref type from POCEntry */
-export interface POCEntryRef {
-  getPOC: () => string;
-}
 
 const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   /*
