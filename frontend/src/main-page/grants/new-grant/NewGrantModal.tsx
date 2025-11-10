@@ -48,8 +48,6 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   // Used
   const [organization, _setOrganization] = useState<string>("");
 
-  
-
   // Used
   const [applicationDate, _setApplicationDate] = useState<string>("");
   // Used
