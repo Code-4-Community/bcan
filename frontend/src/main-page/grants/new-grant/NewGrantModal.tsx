@@ -1,5 +1,5 @@
 // frontend/src/grant-info/components/NewGrantModal.tsx
-import React, { useState, createRef, RefObject } from "react";
+import React, { useState } from "react";
 import CurrencyInput from 'react-currency-input-field';
 import { fetchAllGrants } from "../../../external/bcanSatchel/actions";
 import "../styles/NewGrantModal.css";
