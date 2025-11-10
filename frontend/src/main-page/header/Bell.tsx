@@ -1,17 +1,20 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
-//import { api } from "../../api"; //todo: swap out dummy data with real api fetch when backend is ready
+import { api } from "../../api";
 import NotificationPopup from "../notifications/NotificationPopup";
 import { setNotifications as setNotificationsAction } from "../../external/bcanSatchel/actions";
 import { getAppStore } from "../../external/bcanSatchel/store";
-
+import { useAuthContext } from "../../context/auth/authContext";
 
 // get current user id
 // const currUserID = sessionStorage.getItem('userId');
 // const currUserID = "bcanuser33";
 
 const BellButton = () => {
+  // gets current user from auth context
+  const { user } = useAuthContext();
+
   // stores notifications for the current user
   const store = getAppStore();
   const notifications = store.notifications ?? [];
@@ -26,26 +29,43 @@ const BellButton = () => {
 
   // function that handles when button is clicked and fetches notifications
   const handleClick = async () => {
-    //temporary dummy data for now
-    const dummyNotifications = [
-      {id: 1, title: "Grant Deadline", message: "Grant A deadline approaching in 3 days"},
-      {id: 2, title: "Grant Deadline", message: "Grant B deadline tomorrow!"}, 
-      {id: 3, title: "Grant Deadline", message: "Grant C deadline passed yesterday!"},
-      {id: 4, title: "Grant Deadline", message: "Grant D deadline tomorrow!"}
-    ];
-    //previous api logic (for later)
-    //const response = await api(
-      //`/notifications/user/${currUserID}`,
-      //{
-        //method: "GET",
-      //}
-    //);
-    //console.log(response);
-    //const currNotifications = await response.json();
-    setNotificationsAction(dummyNotifications);
-    setClicked(!isClicked);
-    return notifications;
-  };
+    // don't fetch if user isn't logged in (safe fallback)
+    if (!user?.userId) {
+      console.warn("No user logged in, cannot fetch notifications");
+      setClicked(!isClicked);
+      return;
+    }
+
+    try {
+      // call backend route
+      const response = await api(
+        `/notifications/user/${user.userId}`,
+        {
+          method: "GET",
+        }
+      );
+
+      if (!response.ok) {
+        console.error("Failed to fetch notifications:", response.statusText);
+        // still open popup even if fetch fails (show empty state)
+        setClicked(!isClicked);
+        return;
+      }
+
+      // parse the notifications from response
+      const fetchedNotifications = await response.json();
+
+      // update store with fetched notifications 
+      setNotificationsAction(fetchedNotifications);
+
+      // toggle popup open
+      setClicked(!isClicked);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+      //still open popup on error
+      setClicked(!isClicked);
+    }
+    };
 
   const handleClose = () => setClicked(false);
 

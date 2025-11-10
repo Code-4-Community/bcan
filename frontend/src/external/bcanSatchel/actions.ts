@@ -2,6 +2,7 @@ import { action } from 'satcheljs';
 import { Grant } from '../../../../middle-layer/types/Grant'
 import { User } from '../../../../middle-layer/types/User'
 import { Status } from '../../../../middle-layer/types/Status'
+import { Notification } from '../../../../middle-layer/types/Notification';
 
 /**
  * Set whether the user is authenticated, update the user object,
@@ -69,7 +70,5 @@ export const updateSearchQuery = action(
 
 export const setNotifications = action(
   'setNotifications',
-  (notifications: {id: number; title: string; message: string }[]) => ({
-    notifications,
-  })
+  (notifications: Notification[]) => ({notifications})
 )
