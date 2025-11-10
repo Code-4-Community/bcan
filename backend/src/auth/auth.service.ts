@@ -9,6 +9,7 @@ import { group, table } from "console";
 import * as crypto from "crypto";
 import { User } from "../../../middle-layer/types/User";
 import { UserStatus } from "../../../middle-layer/types/UserStatus";
+import { HttpException, HttpStatus, BadRequestException, ConflictException } from '@nestjs/common';
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -44,6 +45,22 @@ export class AuthService {
     }
 
     try {
+      const paramEmailCheck = {
+  TableName: process.env.DYNAMODB_USER_TABLE_NAME as string,
+  FilterExpression: "#email = :email",
+  ExpressionAttributeNames: {
+    "#email": "email"
+  },
+  ExpressionAttributeValues: {
+    ":email": email
+  }
+};
+      let uniqueEmailCheck = await this.dynamoDb.scan(paramEmailCheck).promise();
+      
+      if (uniqueEmailCheck.Items && uniqueEmailCheck.Items.length > 0) {
+      throw new ConflictException("Email already in use."); // 409 status
+      }
+
       let createUserRes = await this.cognito
         .adminCreateUser({
           UserPoolId: userPoolId,
@@ -95,6 +112,10 @@ export class AuthService {
         `User ${username} registered successfully and added to DynamoDB.`
       );
     } catch (error) {
+      if (error instanceof HttpException) {
+        this.logger.error("Email already in user", error.stack);
+      throw error;
+    }
       if (error instanceof Error) {
         this.logger.error("Registration failed", error.stack);
         throw new Error(error.message || "Registration failed");
