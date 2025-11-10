@@ -8,11 +8,8 @@ import { MdOutlinePerson2 } from "react-icons/md";
 import { FiUpload } from "react-icons/fi";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { TDateISO } from "../../../../../backend/src/utils/date";
-import { Status,
-  // statusToString
-   } from "../../../../../middle-layer/types/Status";
+import { Status } from "../../../../../middle-layer/types/Status";
 import { api } from "../../../api";
-
 
 /** Attachment type from your middle layer */
 enum AttachmentType {
@@ -32,13 +29,7 @@ export interface POCEntryRef {
   getPOC: () => string;
 }
 
-interface NewGrantModalProps {
-  grant?: Grant;
-  onClose: () => void;
-}
-
-
-const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
+const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   /*
       grantId: number;
       organization: string;
@@ -58,71 +49,68 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
       restricted_or_unrestricted: string; // "restricted" or "unrestricted"
   */
   // Form fields, renamed to match your screenshot
-  const [organization, setOrganization] = useState<string>("");
-  const [bcanPocComponents, setBcanPocComponents] = useState<JSX.Element[]>([]);
-  const [bcanPocRefs, setBcanPocRefs] = useState<RefObject<POCEntryRef>[]>([]);
 
-  const [grantProviderPocComponents, setGrantProviderPocComponents] = useState<JSX.Element[]>([]);
-  const [grantProviderPocRefs, setGrantProviderPocRefs] = useState<RefObject<POCEntryRef>[]>([]);
+  // Used
+  const [organization, _setOrganization] = useState<string>("");
 
-  const [applicationDate, setApplicationDate] = useState<string>("");
-  const [grantStartDate, setGrantStartDate] = useState<string>("");
+  
+
+  // Used
+  const [applicationDate, _setApplicationDate] = useState<string>("");
+  // Used
+  const [grantStartDate, _setGrantStartDate] = useState<string>("");
+  // Used
   const [reportDates, setReportDates] = useState<string[]>([]);
 
-  const [timelineInYears, setTimelineInYears] = useState<number>(0);
+  // Used
+  const [timelineInYears, _setTimelineInYears] = useState<number>(0);
+
+  // Used
   const [estimatedCompletionTimeInHours, _setEstimatedCompletionTimeInHours] = useState<number>(0);
 
-  const [doesBcanQualify, setDoesBcanQualify] = useState<string>("");
+  // Used
+  const [doesBcanQualify, _setDoesBcanQualify] = useState<string>("");
 
-  const [isRestricted, setIsRestricted] = useState<string>("");
+  // Used
+  const [isRestricted, _setIsRestricted] = useState<string>("");
 
-  const [status, setStatus] = useState<string>("");
+  // Used
+  const [status, _setStatus] = useState<string>("");
 
-  const [amount, setAmount] = useState<number>(0);
-  const [description, setDescription] = useState<string>("");
+  // Used
+  const [amount, _setAmount] = useState<number>(0);
+  // Used
+  const [description, _setDescription] = useState<string>("");
 
   // Attachments array
+  // Used
   const [attachments, setAttachments] = useState<Attachment[]>([]);
+  // Used
   const [isAddingAttachment, setIsAddingAttachment] = useState(false);
-  const [newAttachment, setNewAttachment] = useState<Attachment>({
-    attachment_name: "",
-    url: "",
-    type: AttachmentType.SCOPE_DOCUMENT,
-  });
 
-  // For error handling
-    // @ts-exopect-error
-  const [_errorMessage, setErrorMessage] = useState<string>("");
+  // Used
   const [bcanPocName, setBcanPocName] = useState('');
+  // Used
   const [bcanPocEmail, setBcanPocEmail] = useState('');
+  // Used
   const [grantProviderPocName, setGrantProviderPocName] = useState('');
+  // Used
   const [grantProviderPocEmail, setGrantProviderPocEmail] = useState('');
 
-  /** Add a new BCAN POC entry */
-  // @ts-ignore
-  const _addBcanPoc = () => {
-    const newRef = createRef<POCEntryRef>();
-    const newPOC = <POCEntry ref={newRef} key={`bcan-${bcanPocComponents.length}`} />;
-    setBcanPocComponents([...bcanPocComponents, newPOC]);
-    setBcanPocRefs([...bcanPocRefs, newRef]);
-  };
 
-  /** Add a new Grant Provider POC entry */
+  // For error handling
   // @ts-ignore
-  const _addGrantProviderPoc = () => {
-    const newRef = createRef<POCEntryRef>();
-    const newPOC = <POCEntry ref={newRef} key={`provider-${grantProviderPocComponents.length}`} />;
-    setGrantProviderPocComponents([...grantProviderPocComponents, newPOC]);
-    setGrantProviderPocRefs([...grantProviderPocRefs, newRef]);
-  };
+  const [_errorMessage, setErrorMessage] = useState<string>("");
+
+  
 
   /* Add a new blank report date to the list */
-  // @ts-ignore
+  // Used
   const _addReportDate = () => {
     setReportDates([...reportDates, ""]);
   };
 
-  // @ts-ignore
+  // Used
   const _removeReportDate = (index: number) => {
     const updated = [...reportDates];
     updated.splice(index, 1);
@@ -136,19 +124,20 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
     setReportDates(updated);
   };
 
-  // Add an empty attachment row
-  const addAttachment = () => {
-    if (!newAttachment.attachment_name || !newAttachment.url) return;
-    setAttachments([...attachments, newAttachment]);
-    setNewAttachment({
-      attachment_name: "",
-      url: "",
-      type: AttachmentType.SCOPE_DOCUMENT,
-    });
+  // Used
+  const _addAttachment = () => {
+    setAttachments([
+      ...attachments,
+      {
+        attachment_name: "",
+        url: "",
+        type: AttachmentType.SCOPE_DOCUMENT,
+      },
+    ]);
+    setIsAddingAttachment(true);
   };
 
-  // Remove a specific attachment row
-  // @ts-ignore
+  // Used
   const _removeAttachment = (index: number) => {
     const updated = [...attachments];
     updated.splice(index, 1);
@@ -157,7 +146,7 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
   };
 
   // Update a field in one attachment
-  // @ts-ignore
+  // Used
   const _handleAttachmentChange = (
     index: number,
     field: keyof Attachment,
@@ -200,28 +189,15 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
   const handleSubmit = async () => {
     if (!validateInputs()) return;
 
-    // Gather BCAN POC values
-    const bcanPocList: string[] = [];
-    bcanPocRefs.forEach((ref) => {
-      if (ref.current) {
-        bcanPocList.push(ref.current.getPOC());
-      }
-    });
-
-    // Gather Grant Provider POC values
-    const providerPocList: string[] = [];
-    grantProviderPocRefs.forEach((ref) => {
-      if (ref.current) {
-        providerPocList.push(ref.current.getPOC());
-      }
-    });
-
+    
     // Convert attachments array
     const attachmentsArray = attachments.map((att) => ({
       attachment_name: att.attachment_name.trim(),
       url: att.url.trim(),
       type: att.type,
     }));
+
+
 
     /* Matches middle layer definition */
     const newGrant: Grant = {
@@ -232,8 +208,8 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
       grant_start_date: grantStartDate as TDateISO,
       application_deadline: applicationDate as TDateISO,
       status: status as Status, // Potential = 0, Active = 1, Inactive = 2
-      bcan_poc: bcanPocList.length > 0 ? { POC_name: "", POC_email: bcanPocList[0] } : { POC_name: "", POC_email: ""}, // Just take the first for now
-      grantmaker_poc: providerPocList.length > 0 ? { POC_name: "", POC_email: providerPocList[0] } : { POC_name: "", POC_email: ""}, // Just take the first for now
+      bcan_poc: { POC_name: bcanPocName, POC_email: bcanPocEmail }, 
+      grantmaker_poc: { POC_name: grantProviderPocName, POC_email: grantProviderPocEmail }, // Just take the first for now
       report_deadlines: reportDates as TDateISO[],
       timeline: timelineInYears,
       estimated_completion_time: estimatedCompletionTimeInHours,
@@ -271,20 +247,6 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
     }
   };
 
-  // function formatDate(isoString: string): string {
-  //   const date = new Date(isoString);
-  //   const year = date.getFullYear();
-  //   const month = String(date.getMonth() + 1).padStart(2, '0');
-  //   const day = String(date.getDate()).padStart(2, '0');
-  //   return `${year}-${month}-${day}`;
-  // }
-
-  // function formatCurrency(amount : number): string {
-  //   const formattedCurrency = new Intl.NumberFormat('en-US', {style: 'currency',currency: 'USD',
-  //   maximumFractionDigits:0}).format(amount);
-  //   return formattedCurrency;
-  // }
-
   return (
 
     <div className="modal-overlay"> {/*Greyed out background */}
@@ -303,7 +265,7 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
                 id="grid-first-name"
                  type="text" 
                  placeholder="Type Here"
-                 onChange={(e) => setOrganization(e.target.value)}/>
+                 onChange={(e) => _setOrganization(e.target.value)}/>
               </div>
 
             {/*Top left quadrant - from app date, start date, report deadlines, est completion time*/}
@@ -324,7 +286,7 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
                     id="grid-city" 
                     type="date"
 
-                    onChange={(e) => setApplicationDate(e.target.value)}/>
+                    onChange={(e) => _setApplicationDate(e.target.value)}/>
                   </div>
                   {/*Grant Start Date and input */}
                   <div className=" w-1/2">
@@ -335,7 +297,7 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
                       className="font-family-helvetica w-full appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
                       id="grid-city" 
                       type="date"
-                      onChange={(e) => setGrantStartDate(e.target.value)}/>
+                      onChange={(e) => _setGrantStartDate(e.target.value)}/>
                   </div>
                 </div>
 
@@ -397,7 +359,6 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
                       </button>
                     </div>
                 </div>
-              {/*End report deadline */}
               </div>
               
             </div>
@@ -409,7 +370,7 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
                 </label>
                 <input  style={{height: "42px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                 className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                type="number" min = "0" placeholder="Type Here" onChange={(e) => setTimelineInYears(Number(e.target.value))}/>
+                type="number" min = "0" placeholder="Type Here" onChange={(e) => _setTimelineInYears(Number(e.target.value))}/>
               </div>
 
               {/*Amount label and input */}
@@ -419,7 +380,7 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
                 </label>
                 <CurrencyInput style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                 className="font-family-helvetica appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                min={0} decimalsLimit={2} placeholder="Type Here" onValueChange={(value) => setAmount(Number(value))}/>
+                min={0} decimalsLimit={2} placeholder="Type Here" onValueChange={(value) => _setAmount(Number(value))}/>
               </div>
 
           </div>
@@ -476,7 +437,7 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
                     </label>
                     <select style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color : doesBcanQualify == "" ? "gray" : "black"}}
                       className="font-family-helvetica appearance-none block w-full bg-gray-200 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                      id="grid-first-name" value={doesBcanQualify} onChange={(e) => setDoesBcanQualify(e.target.value)}>
+                      id="grid-first-name" value={doesBcanQualify} onChange={(e) => _setDoesBcanQualify(e.target.value)}>
                       <option value="">Select...</option>
                       <option value="yes">Yes</option>
                       <option value="no">No</option>
@@ -490,13 +451,13 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
                     </label>
                     <select style={{height: "48px",  backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color : status == "" ? "gray" : "black"}}
                       className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                      id="grid-first-name" value={status} onChange={(e) => setStatus(e.target.value as Status)}>
+                      id="grid-first-name" value={status} onChange={(e) => _setStatus(e.target.value as Status)}>
                       <option value="">Select...</option>
-                      <option value="Potential">Potential</option>
-                      <option value="Active">Active</option>
-                      <option value="Inactive">Inactive</option>
-                      <option value="Rejected">Rejected</option>
-                      <option value="Pending">Pending</option>
+                      <option value="potential">Potential</option>
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                      <option value="rejected">Rejected</option>
+                      <option value="pending">Pending</option>
                     </select>
                   </div>
 
@@ -507,7 +468,7 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
                     </label>
                     <select style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color : isRestricted == "" ? "gray" : "black"}}
                       className="font-family-helvetica appearance-none block w-full bg-gray-200 border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" 
-                      id="grid-first-name" value={isRestricted} onChange={(e) => setIsRestricted(e.target.value)}>
+                      id="grid-first-name" value={isRestricted} onChange={(e) => _setIsRestricted(e.target.value)}>
                       <option value="">Select...</option>
                       <option style={{color:"black"}} value="unrestricted">Unrestricted</option>
                       <option style={{color:"black"}} value="restricted">Restricted</option>
@@ -525,7 +486,7 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
                 {!isAddingAttachment && (
                   <button
                     type="button"
-                    onClick={() => setIsAddingAttachment(true)}
+                    onClick={_addAttachment}
                     style={{
                       height: "48px",
                       color: "black",
@@ -544,15 +505,16 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
                 {/* Editable attachment rows */}
                 {isAddingAttachment && (
                   <div className="  mt-1 mb-2">
-                      <div className="gap-2 items-center">
+                    {attachments.map((attachment, index) => (
+                      <div key={index} className="gap-2 items-center">
                         <input
                           type="text"
                           placeholder="Name"
                           className="flex-1 px-2 border border-black rounded"
                           style={{ backgroundColor: "#F2EBE4", height: "42px" }}
-                          value={newAttachment.attachment_name}
+                          value={attachment.attachment_name}
                           onChange={(e) =>
-                            setNewAttachment({ ...newAttachment, attachment_name: e.target.value })
+                            _handleAttachmentChange(index, "attachment_name", e.target.value)
                           }
                         />
                         <input
@@ -560,20 +522,21 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
                           placeholder="URL"
                           className="h-12 flex-1 px-2 border border-black rounded"
                           style={{ backgroundColor: "#F2EBE4", height: "42px" }}
-                          value={newAttachment.url}
+                          value={attachment.url}
                           onChange={(e) =>
-                            setNewAttachment({ ...newAttachment, url: e.target.value })
+                            _handleAttachmentChange(index, "url", e.target.value)
                           }
                         />
                         <select
                           className="h-12 border border-black rounded px-2 items-center justify-center"
                           style={{ backgroundColor: "#F2EBE4", height: "42px" }}
-                          value={newAttachment.type}
+                          value={attachment.type}
                           onChange={(e) =>
-                            setNewAttachment({
-                              ...newAttachment,
-                              type: Number(e.target.value) as AttachmentType,
-                            })
+                            _handleAttachmentChange(
+                              index,
+                              "type",
+                              Number(e.target.value) as AttachmentType
+                            )
                           }
                         >
                           <option  value={AttachmentType.SCOPE_DOCUMENT}>Scope</option>
@@ -586,7 +549,7 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
 
                           <button
                             type="button"
-                            onClick={() => setIsAddingAttachment(false)}
+                            onClick={() => _removeAttachment(index)}
                             style={{backgroundColor: "#D3D3D3", color : "black", height: "21px"}}
                             className="mr-2 border border-black rounded  flex items-center justify-center"
                           >
@@ -595,7 +558,7 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
 
                           <button
                             type="button"
-                            onClick={addAttachment}
+                            onClick={_addAttachment}
                             style={{backgroundColor: "#F58D5C", color : "black", height: "21px"}}
                             className="border border-black rounded flex items-center justify-center"
                           >
@@ -605,7 +568,9 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
                         </div>
                         
                       </div>
-     
+                    ))}
+                      
+
                   </div>
                 )}
 
@@ -670,7 +635,7 @@ const NewGrantModal: React.FC<NewGrantModalProps> = ({ onClose }) => {
                 </label>
                 <textarea style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                 className="font-family-helvetica h-48 block w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight" id="grid-first-name" 
-                value={description} onChange={(e) => setDescription(e.target.value)}/>
+                value={description} onChange={(e) => _setDescription(e.target.value)}/>
               </div>
       
         <div className="button-row">
