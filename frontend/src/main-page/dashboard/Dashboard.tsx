@@ -32,7 +32,7 @@ const Dashboard = observer(() => {
 
   const uniqueYears = Array.from(
     new Set(
-      yearFilter?.length > 0
+      yearFilter && yearFilter?.length > 0
         ? yearFilter
         : allGrants.map((g) => new Date(g.application_deadline).getFullYear())
     )

@@ -13,7 +13,8 @@ export interface AppState {
   startDateFilter: Date | null;
   endDateFilter: Date | null;
   searchQuery: string;
-  yearFilter:number[] | [];
+  yearFilter:number[] | null;
+  notifications: { id: number; title: string; message: string; }[];
 }
 
 // Define initial state
@@ -26,7 +27,8 @@ const initialState: AppState = {
   startDateFilter: null,
   endDateFilter: null,
   searchQuery: '',
-  yearFilter: []
+  yearFilter: null,
+  notifications: []
 };
 
 const store = createStore<AppState>('appStore', initialState);

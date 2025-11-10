@@ -7,7 +7,8 @@ import {
   updateFilter,
   updateStartDateFilter, updateEndDateFilter,
   updateSearchQuery,
-  updateYearFilter
+  updateYearFilter,
+  setNotifications
 } from './actions';
 import { getAppStore } from './store';
 
@@ -79,4 +80,9 @@ mutator(updateSearchQuery, (actionMessage) => {
 mutator(updateYearFilter, (actionMessage) => {
   const store = getAppStore();
   store.yearFilter = actionMessage.yearFilter;
+})
+
+mutator(setNotifications, (actionMessage) => {
+  const store = getAppStore();
+  store.notifications = actionMessage.notifications;
 })

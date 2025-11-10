@@ -66,3 +66,10 @@ export const updateSearchQuery = action(
   'updateSearchQuery',
   (searchQuery: string) => ({searchQuery})
 )
+
+export const setNotifications = action(
+  'setNotifications',
+  (notifications: {id: number; title: string; message: string }[]) => ({
+    notifications,
+  })
+)
