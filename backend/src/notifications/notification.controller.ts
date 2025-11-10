@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Query, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, Param, Patch, Put, Delete } from '@nestjs/common';
 import { NotificationService } from './notifcation.service';
 import { Notification } from '../../../middle-layer/types/Notification';
 
@@ -27,6 +27,14 @@ export class NotificationController {
     console.log("HERE")
     return await this.notificationService.getNotificationByUserId(userId);
   }
+
+  // updates notification by its id
+  @Put(':notificationId')
+  async updateNotification(@Param('notificationId') notificationId: string, 
+  @Body() notification: Partial<Notification>){
+    return await this.notificationService.updateNotification(notificationId, notification);
+  }
+
 
   /**
    * Deletes the notification with the given id from the database, if it exists.
