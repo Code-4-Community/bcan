@@ -51,7 +51,7 @@ export const updateEndDateFilter = action (
 )
 export const updateYearFilter = action (
     'updateYearFilter',
-    (yearFilter: number[] | null) => ({yearFilter})
+    (yearFilter: number[] | []) => ({yearFilter})
 )
 
 /**
