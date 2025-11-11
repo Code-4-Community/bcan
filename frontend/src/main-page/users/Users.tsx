@@ -171,15 +171,13 @@ function Users() {
                 <p className="w-[140px] text-left">User ID</p>
                 <p className="w-[140px] text-left">Email</p>
                 <p className="w-[140px] text-left">Position</p>
-                <p className="w-[140px] text-left">Date Requested</p>
                 <div className="w-[140px]"></div>
               </div>
               {currentPageUsers.map((user) => (
                 <PendingUserCard
-                name={user.userId}
+                name={user.name}
                 email={user.email}
                 position={user.position}
-                dateRequested={new Date("02/14/2006")}
               />
               ))}
             </>
