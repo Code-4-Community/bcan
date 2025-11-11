@@ -52,7 +52,11 @@ const Dashboard = observer(() => {
 
       <div className=" gap-6 grid grid-cols-7">
         <div className="col-span-3 h-full">
-          <KPICards grants={grants} recentYear={recentYear} priorYear={priorYear} />
+          <KPICards
+            grants={grants}
+            recentYear={recentYear}
+            priorYear={priorYear}
+          />
         </div>
         <div className="col-span-4">
           <LineChartSuccessRate grants={grants} />

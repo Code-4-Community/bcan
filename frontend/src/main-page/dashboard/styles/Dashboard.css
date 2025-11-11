@@ -97,3 +97,29 @@ input[type="checkbox"]:checked::before {
   border-radius: 8px !important;
   overflow: hidden !important;
 }
+
+#reactSchedulerOutsideWrapper {
+  /* Hide scrollbars but keep scroll functionality */
+  
+  overflow: hidden;
+}
+
+#reactSchedulerOutsideWrapper:hover{
+  /* Hide scrollbars but keep scroll functionality */
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+
+#reactSchedulerOutsideWrapper button {
+  /* Hide scrollbars but keep scroll functionality */
+  overflow: hidden;
+  border-color: darkslategray;
+  color:black;
+}
+
+#reactSchedulerOutsideWrapper svg {
+  /* Hide scrollbars but keep scroll functionality */
+  
+  fill:darkslategray;
+}

@@ -37,7 +37,7 @@ export function getColorStatus(status: string) {
         // TODO add colors for rejected and pending
         case "Rejected": return "#FF0000" // red
         case "Pending": return "#FFA500" // orange
-        default: return 'Unknown';
+        default: return '#A9A9A9';
     }
 }
 

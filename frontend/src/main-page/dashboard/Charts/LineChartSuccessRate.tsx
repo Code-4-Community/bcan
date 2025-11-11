@@ -87,14 +87,14 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
   data.sort((a, b) => a.date.getTime() - b.date.getTime());
 
   return (
-    <div className="chart-container">
+    <div className="chart-container h-full">
       {/* Title */}
       <div className="text-lg w-full text-left font-semibold align">
         Success Rate by Year
       </div>
       <ResponsiveContainer
         width="100%"
-        height={200}
+        height="100%"
         maxHeight={300}
         min-width={400}
       >
