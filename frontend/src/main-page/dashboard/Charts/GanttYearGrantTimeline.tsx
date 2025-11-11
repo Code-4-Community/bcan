@@ -4,81 +4,94 @@ import { observer } from "mobx-react-lite";
 import { SetStateAction, useCallback, useState } from "react";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { getColorStatus } from "../../../../../middle-layer/types/Status";
-import "../styles/Dashboard.css"
+import "../styles/Dashboard.css";
 
 export const GanttYearGrantTimeline = observer(
-  ({ recentYear, grants }: { recentYear: number; grants: Grant[] }) => {
+  ({
+    recentYear,
+    grants,
+    uniqueYears,
+  }: {
+    recentYear: number;
+    grants: Grant[];
+    uniqueYears: number[];
+  }) => {
     //  Filter grants for the selected year
+    // and if the current year is selected in the filter include that as well
+    const filterYear =
+      recentYear < new Date().getFullYear()
+        ? recentYear
+        : Math.min(recentYear, new Date().getFullYear());
     const recentData = grants.filter(
       (grant) =>
-        new Date(grant.application_deadline).getFullYear() === recentYear
+        new Date(grant.application_deadline).getFullYear() <= recentYear &&
+        new Date(grant.application_deadline).getFullYear() >= filterYear
     );
 
- const data: SchedulerData = recentData.map((grant) => {
-  const application_deadline = new Date(grant.application_deadline);
-  const startDate = new Date(
-    application_deadline.getFullYear(),
-    application_deadline.getMonth(),
-    application_deadline.getDate() - 14
-  );
-  const endDate = new Date(
-    application_deadline.getFullYear(),
-    application_deadline.getMonth(),
-    application_deadline.getDate()
-  );
-
-  // Create application task
-  const tasks = [
-    {
-      id: `${grant.grantId}-application`,
-      startDate,
-      endDate,
-      occupancy: 0,
-      title: grant.organization,
-      subtitle: grant.status,
-      description: `App Deadline: ${application_deadline.toLocaleDateString()}`,
-      bgColor: getColorStatus(grant.status),
-    },
-  ];
-
-  // Add a task for each report deadline (if any)
-  if (grant.report_deadlines && grant.report_deadlines.length > 0) {
-    grant.report_deadlines.forEach((rd, index) => {
-      const report_deadline = new Date(rd);
-      const report_startDate = new Date(
-        report_deadline.getFullYear(),
-        report_deadline.getMonth(),
-        report_deadline.getDate() - 14
+    // Formatting the data for SchedulerData
+    const data: SchedulerData = recentData.map((grant) => {
+      const application_deadline = new Date(grant.application_deadline);
+      const startDate = new Date(
+        application_deadline.getFullYear(),
+        application_deadline.getMonth(),
+        application_deadline.getDate() - 14
       );
-      const report_endDate = new Date(
-        report_deadline.getFullYear(),
-        report_deadline.getMonth(),
-        report_deadline.getDate()
+      const endDate = new Date(
+        application_deadline.getFullYear(),
+        application_deadline.getMonth(),
+        application_deadline.getDate()
       );
 
-      tasks.push({
-        id: `${grant.grantId}-report-${index}`,
-        startDate: report_startDate,
-        endDate: report_endDate,
-        occupancy: 0,
-        title: grant.organization,
-        subtitle: grant.status,
-        description: `Report Deadline: ${report_deadline.toLocaleDateString()}`,
-        bgColor: getColorStatus(grant.status),
-      });
+      // Create application task
+      const tasks = [
+        {
+          id: `${grant.grantId}-application`,
+          startDate,
+          endDate,
+          occupancy: 0,
+          title: grant.organization,
+          description: `App Deadline: ${application_deadline.toLocaleDateString()}`,
+          bgColor: getColorStatus(grant.status),
+        },
+      ];
+
+      // Add a task for each report deadline (if any)
+      if (grant.report_deadlines && grant.report_deadlines.length > 0) {
+        grant.report_deadlines.forEach((rd, index) => {
+          const report_deadline = new Date(rd);
+          const report_startDate = new Date(
+            report_deadline.getFullYear(),
+            report_deadline.getMonth(),
+            report_deadline.getDate() - 14
+          );
+          const report_endDate = new Date(
+            report_deadline.getFullYear(),
+            report_deadline.getMonth(),
+            report_deadline.getDate()
+          );
+
+          tasks.push({
+            id: `${grant.grantId}-report-${index}`,
+            startDate: report_startDate,
+            endDate: report_endDate,
+            occupancy: 0,
+            title: grant.organization,
+            description: `Report Deadline: ${report_deadline.toLocaleDateString()}`,
+            bgColor: getColorStatus(grant.status),
+          });
+        });
+      }
+
+      return {
+        id: String(grant.grantId),
+        label: {
+          icon: "",
+          title: grant.organization,
+          subtitle: `${grant.status} • $${grant.amount.toLocaleString()}`,
+        },
+        data: tasks,
+      };
     });
-  }
-
-  return {
-    id: String(grant.grantId),
-    label: {
-      icon: "",
-      title: grant.organization,
-      subtitle: `${grant.status} • $${grant.amount.toLocaleString()}`,
-    },
-    data: tasks,
-  };
-});
 
     const [range, setRange] = useState({
       startDate: new Date(),
@@ -92,26 +105,12 @@ export const GanttYearGrantTimeline = observer(
       []
     );
 
-      const handleItemClick = useCallback(
-    (item: any) => {
-      if (!item) return;
-      console.log("here");
-      // Navigate/zoom to the task’s date range
-      setRange({
-        startDate: item.startDate,
-        endDate: item.endDate,
-      });
-    },
-    []
-  );
-
     // Filtering events that are included in current date range
     // Example can be also found on video https://youtu.be/9oy4rTVEfBQ?t=118&si=52BGKSIYz6bTZ7fx
     // and in the react-scheduler repo App.tsx file https://github.com/Bitnoise/react-scheduler/blob/master/src/App.tsx
     const filteredMockedSchedulerData = data.map((grant) => ({
       ...grant,
       data: grant.data.filter((project) => {
-        // we use "dayjs" for date calculations, but feel free to use library of your choice
         const startInRange =
           (dayjs(project.startDate).isAfter(range.startDate, "day") &&
             dayjs(project.startDate).isBefore(range.endDate, "day")) ||
@@ -139,19 +138,21 @@ export const GanttYearGrantTimeline = observer(
           Year Grant Timeline
         </div>
         {/* Year */}
-        <div className="text-sm w-full text-left">{recentYear}</div>
-        <div className="w-full h-full relative">
+        <div className="text-sm w-full text-left">
+          {filterYear !== recentYear && uniqueYears.includes(filterYear)
+            ? filterYear + "-"
+            : ""}
+          {recentYear}
+        </div>
+        <div className="w-full h-full max-w-screen relative">
           <Scheduler
             data={filteredMockedSchedulerData}
             isLoading={false}
             onRangeChange={handleRangeChange}
-            onTileClick={(clickedResource) => console.log(clickedResource)}
-            onItemClick={handleItemClick}
             config={{
               zoom: 0,
               filterButtonState: -1,
               showTooltip: false,
-              maxRecordsPerPage: 5
             }}
           />
         </div>

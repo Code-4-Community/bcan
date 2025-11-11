@@ -41,9 +41,9 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
       const captured =
         received + unreceived > 0 ? received / (received + unreceived) : 0;
 
-      // Convert year → date for time series (e.g. "2024" → "2024-01-02")
+      // Convert year to date for time series
       return {
-        date: new Date(`${grant.year}-01-02`),
+        date: new Date(`${grant.year}-01-03`),
         money_captured: Number(captured.toFixed(2)),
       };
     }
@@ -63,9 +63,9 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
       const captured =
         received + unreceived > 0 ? received / (received + unreceived) : 0;
 
-      // Convert year → date for time series (e.g. "2024" → "2024-01-02")
+      // Convert year to date for time series
       return {
-        date: new Date(`${grant.year}-01-02`),
+        date: new Date(`${grant.year}-01-04`),
         grants_captured: Number(captured.toFixed(2)),
       };
     }

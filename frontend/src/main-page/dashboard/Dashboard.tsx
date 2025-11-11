@@ -68,7 +68,7 @@ const Dashboard = observer(() => {
           <StackedBarMoneyReceived grants={grants} />
         </div>
         <div className="col-span-5">
-          <GanttYearGrantTimeline recentYear={recentYear} grants={grants} />
+          <GanttYearGrantTimeline recentYear={recentYear} grants={grants} uniqueYears={uniqueYears} />
         </div>
         <div className="col-span-2">
           <BarYearGrantStatus recentYear={recentYear} grants={grants} />
