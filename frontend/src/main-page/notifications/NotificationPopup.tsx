@@ -5,17 +5,21 @@ import { api } from "../../api";
 import { setNotifications as setNotificationsAction } from "../../external/bcanSatchel/actions";
 import { useAuthContext } from "../../context/auth/authContext";
 import { Notification } from "../../../../middle-layer/types/Notification";
+import { getAppStore } from "../../external/bcanSatchel/store";
+import { observer } from 'mobx-react-lite';
 
 interface NotificationPopupProps {
     notifications: Notification[];
     onClose: () => void;
 }
 
-const NotificationPopup: React.FC<NotificationPopupProps> = ({
+const NotificationPopup: React.FC<NotificationPopupProps> = observer(({
     notifications,
     onClose
 }) => {
     const { user } = useAuthContext();
+    const store = getAppStore();
+    const liveNotifications = store.notifications ?? [];
 
     const handleDelete = async (notificationId: string) => {
         try {
@@ -31,23 +35,27 @@ const NotificationPopup: React.FC<NotificationPopupProps> = ({
             return;
         }
 
-        if (user?.userId) {
-            const fetchResponse = await api(
-                `/notifications/user/${user.userId}`,
-                {
-                    method: "GET",
-                }
-            );
+        // TODO: Remove hardcoded userId after /auth/session endpoint is fixed
+        const testUserId = "bcanuser33"; //hardcode userid for refetch (test)
+
+        const fetchResponse = await api(
+            `/notifications/user/${testUserId}`,
+            {
+                method: "GET",
+            }
+        );
 
             if (fetchResponse.ok) {
                 const updatedNotifications = await fetchResponse.json();
                 setNotificationsAction(updatedNotifications);
             }
         }
-        } catch (error) {
+        catch (error) {
             console.error("Error deleting notification:", error);
         }
     };
+
+    console.log("Live notifications:", liveNotifications);
 
     return createPortal(
         <div className="notification-popup" role="dialog" aria-label="Notifications">
@@ -59,8 +67,8 @@ const NotificationPopup: React.FC<NotificationPopupProps> = ({
             </div>
 
             <div className="notification-list">
-                {notifications && notifications.length > 0 ? (
-                    notifications.map((n) => (
+                {liveNotifications && liveNotifications.length > 0 ? (
+                    liveNotifications.map((n) => (
                         <GrantNotification 
                         key={n.notificationId}
                         notificationId={n.notificationId}
@@ -76,6 +84,6 @@ const NotificationPopup: React.FC<NotificationPopupProps> = ({
         </div>,
         document.body
     );
-};
+});
 
 export default NotificationPopup;

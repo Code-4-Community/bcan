@@ -29,17 +29,21 @@ const BellButton = () => {
 
   // function that handles when button is clicked and fetches notifications
   const handleClick = async () => {
+    // TODO: Remove hardcoded userId after /auth/session endpoint is fixed
+
+    const testUserId = "bcanuser33"; //hardcoded for testing
+
     // don't fetch if user isn't logged in (safe fallback)
-    if (!user?.userId) {
-      console.warn("No user logged in, cannot fetch notifications");
-      setClicked(!isClicked);
-      return;
-    }
+    //if (!user?.userId) {
+      //console.warn("No user logged in, cannot fetch notifications");
+      //setClicked(!isClicked);
+      //return;
+    //}
 
     try {
       // call backend route
       const response = await api(
-        `/notifications/user/${user.userId}`,
+        `/notifications/user/${testUserId}`,
         {
           method: "GET",
         }
