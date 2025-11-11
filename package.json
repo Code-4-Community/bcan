@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@vendia/serverless-express": "^4.12.6",
     "recharts": "^3.2.1",
     "ts-morph": "^23.0.0",
     "typescript": "^5.7.3"

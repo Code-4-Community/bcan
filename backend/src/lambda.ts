@@ -1,23 +1,28 @@
 import { Handler } from 'aws-lambda';
-import { createServer, proxy } from 'aws-serverless-express';
+import serverlessExpress from '@vendia/serverless-express';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
-// Cache between cold starts
-let cachedServer: ReturnType<typeof createServer>;
+let cachedHandler: any;
 
 async function bootstrapServer() {
-  if (cachedServer) return cachedServer;
-
   const app = await NestFactory.create(AppModule);
+  
+  app.enableCors({
+    origin: 'https://main.d3nms49d928y9k.amplifyapp.com',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
+  
   await app.init();
   const expressApp = app.getHttpAdapter().getInstance();
-  cachedServer = createServer(expressApp);
-  return cachedServer;
+  return serverlessExpress({ app: expressApp });
 }
 
-// Main Lambda handler
-export const handler: Handler = async (event, context) => {
-  const server = await bootstrapServer();
-  return proxy(server, event, context, 'PROMISE').promise;
+export const handler: Handler = async (event, context, callback) => {
+  if (!cachedHandler) {
+    cachedHandler = await bootstrapServer();
+  }
+  return cachedHandler(event, context, callback);
 };

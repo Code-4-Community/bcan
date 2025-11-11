@@ -2,9 +2,30 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { GrantController } from "../grant.controller";
 import { GrantService } from "../grant.service";
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { Grant } from "../../types/Grant";
+type POC = { POC_name: string; POC_email: string };
+import { TDateISO } from "../../utils/date";
+
+
 import { NotFoundException } from "@nestjs/common";
-import { mock } from "node:test";
+
+interface Grant {
+  grantId: number;
+  organization: string;
+  does_bcan_qualify: boolean;
+  status: Status;
+  amount: number;
+  grant_start_date: TDateISO;
+  application_deadline: TDateISO;
+  report_deadlines: TDateISO[];
+  description: string;
+  timeline: number;
+  estimated_completion_time: number;
+  grantmaker_poc?: POC;
+  bcan_poc: POC;
+  attachments: any[];
+  isRestricted: boolean;
+  isArchived?: boolean;
+}
 
 enum Status {
   Potential = "Potential",
