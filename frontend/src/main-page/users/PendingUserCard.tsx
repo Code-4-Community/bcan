@@ -6,14 +6,12 @@ interface PendingUserCardProps {
   name: string;
   email: string;
   position: string;
-  dateRequested: Date;
 }
 
 const PendingUserCard = ({
   name,
   email,
   position,
-  dateRequested,
 }: PendingUserCardProps) => {
   return (
     <div className="bg-white text-lg border rounded-md m-8 p-6 flex justify-around items-center">
@@ -23,9 +21,6 @@ const PendingUserCard = ({
       <div className="w-[140px]">
         <UserPositionCard position={position} />
       </div>
-      <p className="w-[140px] text-left">
-        {dateRequested.toLocaleDateString("en-GB")}
-      </p>
       <div className="flex w-[140px] gap-3">
         <button className="bg-[#c6fbd3] w-8 h-8 focus:outline-none rounded">
           <FontAwesomeIcon icon={faCheck} style={{ color: "black" }} />
