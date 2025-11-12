@@ -1,5 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { UserService } from './user.service';
+import { User } from '../../../middle-layer/types/User';
 
 @Controller('user')
 export class UserController {
@@ -10,18 +11,20 @@ export class UserController {
     return await this.userService.getAllUsers();
   }
 
-  @Get(':id')
-  async getUserById(@Param('id') userId: string) {
-    return await this.userService.getUserById(userId);
-  }
 
   @Get('inactive')
-  async getAllInactiveUsers() {
+  async getAllInactiveUsers(): Promise<User[]> {
     return await this.userService.getAllInactiveUsers();
   }
 
   @Get('active')
-  async getAllActiveUsers() {
+  async getAllActiveUsers(): Promise<User[]> {
+    console.log("Fetching all active users");
     return await this.userService.getAllActiveUsers();
+  }
+
+   @Get(':id')
+  async getUserById(@Param('id') userId: string) {
+    return await this.userService.getUserById(userId);
   }
 }

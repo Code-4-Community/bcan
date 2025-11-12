@@ -2,29 +2,33 @@ import { useEffect, useState } from "react";
 import ApprovedUserCard from "./ApprovedUserCard";
 import PendingUserCard from "./PendingUserCard";
 import { User } from "../../../../middle-layer/types/User";
-import {api} from "../../api"
-const fetchActiveUsers = async () => {
-  try{
-    const response = await api("/user/active");
+import { api } from "../../api"
+const fetchActiveUsers = async (): Promise<User[]> => {
+  try {
+    const response = await api("/user/active", {
+      method: 'GET'
+    });
+    
     if (!response.ok) {
       throw new Error(`HTTP Error, Status: ${response.status}`);
     }
+    
     const activeUsers = await response.json();
     return activeUsers as User[];
-  }
-  catch (error) {
+  } catch (error) {
     console.error("Error fetching active users:", error);
+    return []; // Return empty array on error
   }
 }
 
 const fetchInactiveUsers = async () => {
-  try{
-    const response = await api("/user/inactive");
+  try {
+    const response = await api("/user/inactive", {method : 'GET' });
     if (!response.ok) {
       throw new Error(`HTTP Error, Status: ${response.status}`);
     }
-    const activeUsers = await response.json();
-    return activeUsers as User[];
+    const inactiveUsers = await response.json();
+    return inactiveUsers as User[];
   }
   catch (error) {
     console.error("Error fetching active users:", error);
@@ -43,6 +47,24 @@ function Users() {
     UsersTab.CurrentUsers
   );
 
+  const [activeUsers, setActiveUsers] = useState<User[]>([]);
+  const [inactiveUsers, setInactiveUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const active = await fetchActiveUsers();
+      const inactive = await fetchInactiveUsers();
+      if (active) {
+        console.log("Active Users:", active);
+        setActiveUsers(active);
+      }
+      if (inactive) {
+        setInactiveUsers(inactive);
+      }
+    };
+    fetchUsers();
+  }, [usersTabStatus]);
+
 
   return (
     <div className="p-8">
@@ -57,21 +79,19 @@ function Users() {
       <div className="min-h-screen bg-[#F5F4F4] border rounded-md relative">
         <div className="absolute right-7 top-0 -translate-y-full flex">
           <button
-            className={`w-52 h-16 border rounded-b-none focus:outline-none ${
-              usersTabStatus === UsersTab.PendingUsers
+            className={`w-52 h-16 border rounded-b-none focus:outline-none ${usersTabStatus === UsersTab.PendingUsers
                 ? "bg-[#F5F4F4] border-x-[#000000] border-t-[#000000]"
                 : "bg-[#F4F4F4] border-x-[#BFBBBB] border-t-[#BFBBBB] border-b-[#000000]"
-            }`}
+              }`}
             onClick={() => setUsersTabStatus(UsersTab.PendingUsers)}
           >
             Pending Users
           </button>
           <button
-            className={`w-52 h-16 border rounded-b-none ml-2 focus:outline-none ${
-              usersTabStatus === UsersTab.CurrentUsers
+            className={`w-52 h-16 border rounded-b-none ml-2 focus:outline-none ${usersTabStatus === UsersTab.CurrentUsers
                 ? "bg-[#F5F4F4] border-x-[#000000] border-t-[#000000]"
                 : "bg-[#F4F4F4] border-x-[#BFBBBB] border-t-[#BFBBBB] border-b-[#000000]"
-            }`}
+              }`}
             onClick={() => setUsersTabStatus(UsersTab.CurrentUsers)}
           >
             Current Users
@@ -86,11 +106,15 @@ function Users() {
                 <p className="w-[140px] text-left">Email</p>
                 <p className="w-[140px] text-left">Position</p>
               </div>
-              <ApprovedUserCard
-                name="Aaron Ashby"
-                email="a.ashby@mit.edu"
-                position="Employee"
-              />
+
+              {activeUsers.map((user) => (
+                <ApprovedUserCard
+                  key={user.userId}
+                  name={user.name}
+                  email={user.email}
+                  position={user.position}
+                />
+              ))}
             </>
           ) : (
             <>
@@ -102,12 +126,15 @@ function Users() {
                 <p className="w-[140px] text-left">Date Requested</p>
                 <div className="w-[140px]"></div>
               </div>
-              <PendingUserCard
-                name="Aaron Ashby"
-                email="a.ashby@uconn.edu"
-                position="Inactive"
-                dateRequested={new Date("02/14/2006")}
-              />
+             {inactiveUsers.map((user) => (
+                <PendingUserCard
+                  key={user.userId}
+                  name={user.name}
+                  email={user.email}
+                  position={user.position}
+                  dateRequested={new Date()}
+                />
+              ))}
             </>
           )}
         </div>

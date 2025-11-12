@@ -132,7 +132,7 @@ export class AuthService {
     }
   }
 
-  async addUserToGroup(username: string, groupName: string): Promise<void> {
+  async addUserToGroup(username: string, groupName: string, requestedBy : string): Promise<void> {
     const userPoolId = process.env.COGNITO_USER_POOL_ID;
     if (
       groupName !== "Employee" &&
