@@ -46,7 +46,7 @@ export class UserService {
   }
 
   async getAllInactiveUsers(): Promise<User[]> {
-    console.log("Fetching all inactive users in service");
+    this.logger.log("Fetching all inactive users in service");
     const params = {
       TableName: process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE",
       FilterExpression: "#pos IN (:inactive)",
@@ -70,6 +70,7 @@ export class UserService {
       return users;
     } catch (error) {
       this.logger.error("Error scanning DynamoDB:", error);
+      if (error instanceof NotFoundException) throw error;
       throw new InternalServerErrorException(
         "Failed to retrieve inactive users."
       );
@@ -107,6 +108,7 @@ export class UserService {
       return users;
     } catch (error) {
       this.logger.error("Error scanning DynamoDB:", error);
+      if (error instanceof NotFoundException) throw error;
       throw new InternalServerErrorException(
         "Failed to retrieve inactive users."
       );
