@@ -132,4 +132,55 @@ export class NotificationService {
     }
   }
 
+  // function to update notification by its id
+  async updateNotification(notificationId: string, updates: Partial<Notification>): Promise<string> {
+    const updateKeys = Object.keys(updates);
+    const UpdateExpression = "SET " + updateKeys.map(k => `#${k} = :${k}`).join(", ");
+    const ExpressionAttributeNames = updateKeys.reduce((acc, key) => ({ ...acc, [`#${key}`]: key }), {});
+    const ExpressionAttributeValues = updateKeys.reduce((acc, key) => ({ ...acc, [`:${key}`]: updates[key as keyof Notification] }), {});
+    
+    const params = {
+      TableName: process.env.DYNAMODB_NOTIFICATION_TABLE_NAME!,
+      Key: { notificationId },
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues,
+      ReturnValues: "UPDATED_NEW",
+    };
+  
+    try {
+      const result = await this.dynamoDb.update(params).promise();
+      return JSON.stringify(result);
+  } catch(err) {
+      console.log(err);
+      throw new Error(`Failed to update Notification ${notificationId}`)
+  }
+  }
+  
+
+  /**
+   * Deletes the notification with the given id from the database and returns a success message if the deletion was successful
+   * @param notificationId the id of the notification to delete
+   */
+  async deleteNotification(notificationId: string): Promise<string> {
+    const params = {
+      TableName: process.env.DYNAMODB_NOTIFICATION_TABLE_NAME || 'TABLE_FAILURE',
+      Key: {
+        notificationId,
+      },
+      ConditionExpression: 'attribute_exists(notificationId)'
+    }
+
+    try {
+      await this.dynamoDb.delete(params).promise()
+      return `Notification with id ${notificationId} successfully deleted`
+    } catch (error: any) {
+      if (error.code === "ConditionalCheckFailedException") {
+        throw new Error(`Notification with id ${notificationId} not found`)
+      }
+
+      console.error(error)
+      throw new Error(`Failed to delete notification with id ${notificationId}`)
+    }
+  }
 }

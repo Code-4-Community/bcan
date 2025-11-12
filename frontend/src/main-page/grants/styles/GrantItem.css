@@ -86,6 +86,9 @@
     transition: background-color 0.3s ease;
 }
 
-
+.gray-label {
+    color: black;
+    background-color: "#D3D3D3";
+}
 
 

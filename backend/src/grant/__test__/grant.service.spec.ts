@@ -93,8 +93,16 @@ describe("GrantService", () => {
       providers: [GrantService],
     }).compile();
 
+    grantService = Object.assign(module.get<GrantService>(GrantService), {
+      notificationService: { 
+        createNotification: vi.fn(), 
+        updateNotification: vi.fn() 
+      }
+    });
+    
     controller = module.get<GrantController>(GrantController);
     grantService = module.get<GrantService>(GrantService);
+    
   });
 
   it("should be defined", () => {
@@ -390,6 +398,163 @@ describe('deleteGrantById', () => {
 
     await expect(grantService.deleteGrantById('123'))
     .rejects.toThrow(/Failed to delete/);
+  });
+});
+describe('Notification helpers', () => {
+  let notificationServiceMock: any;
+  let grantServiceWithMockNotif: GrantService;
+
+  beforeEach(() => {
+    // mock notification service with spy functions
+    notificationServiceMock = {
+      createNotification: vi.fn().mockResolvedValue(undefined),
+      updateNotification: vi.fn().mockResolvedValue(undefined),
+    };
+
+    grantServiceWithMockNotif = new GrantService(notificationServiceMock);
+  });
+
+  describe('getNotificationTimes', () => {
+    it('should return ISO strings for 14, 7, and 3 days before deadline', () => {
+      const deadline = '2025-12-25T00:00:00.000Z';
+      const result = (grantServiceWithMockNotif as any).getNotificationTimes(deadline);
+
+      expect(result).toHaveLength(3);
+      result.forEach((date: any) => expect(date).toMatch(/^\d{4}-\d{2}-\d{2}T/));
+
+      const parsed = result.map((r: string | number | Date) => new Date(r));
+      const main = new Date(deadline);
+      const diffs = parsed.map((d: string | number) => Math.round((+main - +d) / (1000 * 60 * 60 * 24)));
+
+      expect(diffs).toEqual([14, 7, 3]);
+    });
+  });
+
+  describe('createGrantNotifications', () => {
+    it('should create notifications for application and report deadlines', async () => {
+      const mockGrant: Grant = {
+        grantId: 100,
+        organization: 'Boston Cares',
+        does_bcan_qualify: true,
+        status: Status.Active,
+        amount: 10000,
+        grant_start_date: '2025-01-01',
+        application_deadline: '2025-12-31T00:00:00.000Z',
+        report_deadlines: ['2026-01-31T00:00:00.000Z'],
+        description: 'Helping local communities',
+        timeline: 12,
+        estimated_completion_time: 365,
+        grantmaker_poc: { POC_name: 'Sarah', POC_email: 'sarah@test.com' },
+        bcan_poc: { POC_name: 'Tom', POC_email: 'tom@test.com' },
+        attachments: [],
+        isRestricted: false,
+      };
+
+      await (grantServiceWithMockNotif as any).createGrantNotifications(mockGrant, 'user123');
+
+      // application_deadline => 3 notifications (14,7,3 days)
+      // one report_deadline => 3 more
+      expect(notificationServiceMock.createNotification).toHaveBeenCalledTimes(6);
+      expect(notificationServiceMock.createNotification).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: 'user123',
+          notificationId: expect.stringContaining('-app'),
+          message: expect.stringContaining('Application due in'),
+          alertTime: expect.any(String),
+        })
+      );
+      expect(notificationServiceMock.createNotification).toHaveBeenCalledWith(
+        expect.objectContaining({
+          notificationId: expect.stringContaining('-report'),
+          message: expect.stringContaining('Report due in'),
+        })
+      );
+    });
+
+    it('should handle missing deadlines gracefully', async () => {
+      const mockGrant = {
+        grantId: 55,
+        organization: 'No Deadline Org',
+        does_bcan_qualify: true,
+        status: Status.Active,
+        amount: 5000,
+        grant_start_date: '2025-01-01',
+        description: '',
+        timeline: 1,
+        estimated_completion_time: 10,
+        grantmaker_poc: { POC_name: 'A', POC_email: 'a@a.com' },
+        bcan_poc: { POC_name: 'B', POC_email: 'b@b.com' },
+        attachments: [],
+        isRestricted: false,
+      } as unknown as Grant;
+
+      await (grantServiceWithMockNotif as any).createGrantNotifications(mockGrant, 'userX');
+
+      expect(notificationServiceMock.createNotification).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('updateGrantNotifications', () => {
+    it('should call updateNotification for all alert times', async () => {
+      const mockGrant: Grant = {
+        grantId: 123,
+        organization: 'Grant Org',
+        does_bcan_qualify: true,
+        status: Status.Pending,
+        amount: 5000,
+        grant_start_date: '2025-01-01',
+        application_deadline: '2025-06-30T00:00:00.000Z',
+        report_deadlines: ['2025-07-15T00:00:00.000Z'],
+        description: 'Test desc',
+        timeline: 1,
+        estimated_completion_time: 100,
+        grantmaker_poc: { POC_name: 'Alice', POC_email: 'alice@test.com' },
+        bcan_poc: { POC_name: 'Bob', POC_email: 'bob@test.com' },
+        attachments: [],
+        isRestricted: false,
+      };
+
+      await (grantServiceWithMockNotif as any).updateGrantNotifications(mockGrant);
+
+      // Expect 6 updateNotification calls (3 per deadline)
+      expect(notificationServiceMock.updateNotification).toHaveBeenCalledTimes(6);
+      expect(notificationServiceMock.updateNotification).toHaveBeenCalledWith(
+        expect.stringContaining('-app'),
+        expect.objectContaining({
+          message: expect.stringContaining('Application due in'),
+          alertTime: expect.any(String),
+        })
+      );
+      expect(notificationServiceMock.updateNotification).toHaveBeenCalledWith(
+        expect.stringContaining('-report'),
+        expect.objectContaining({
+          message: expect.stringContaining('Report due in'),
+        })
+      );
+    });
+
+    it('should not crash when no deadlines exist', async () => {
+      const mockGrant = {
+        grantId: 321,
+        organization: 'No deadlines',
+        does_bcan_qualify: false,
+        status: Status.Inactive,
+        amount: 0,
+        grant_start_date: '2025-01-01',
+        report_deadlines: [],
+        description: '',
+        timeline: 0,
+        estimated_completion_time: 0,
+        grantmaker_poc: { POC_name: 'X', POC_email: 'x@test.com' },
+        bcan_poc: { POC_name: 'Y', POC_email: 'y@test.com' },
+        attachments: [],
+        isRestricted: false,
+      } as unknown as Grant;
+
+      await (grantServiceWithMockNotif as any).updateGrantNotifications(mockGrant);
+
+      expect(notificationServiceMock.updateNotification).not.toHaveBeenCalled();
+    });
   });
 });
 });

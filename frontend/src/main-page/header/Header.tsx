@@ -3,7 +3,7 @@ import "./styles/Header.css";
 import logo from "../../images/bcan_logo.svg";
 import {
   Status,
-  statusToString,
+  stringToStatus,
 } from "../../../../middle-layer/types/Status.ts";
 import {
   updateFilter,
@@ -41,7 +41,7 @@ const Header: React.FC = observer(() => {
   ) {
     if (!linkTo) {
       e.preventDefault();
-      updateFilter(statusToString(category));
+      updateFilter(stringToStatus(category));
     }
   }
 
