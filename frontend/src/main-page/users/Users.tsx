@@ -1,94 +1,70 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ApprovedUserCard from "./ApprovedUserCard";
 import PendingUserCard from "./PendingUserCard";
 import { User } from "../../../../middle-layer/types/User";
 import { Pagination, ButtonGroup, IconButton } from "@chakra-ui/react";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
+import { observer } from "mobx-react-lite";
+import { getAppStore } from "../../external/bcanSatchel/store";
 
 // Represents a specific tab to show on the user page
 enum UsersTab {
   PendingUsers,
   CurrentUsers,
 }
+import { api } from "../../api"
+const fetchActiveUsers = async (): Promise<User[]> => {
+  try {
+    const response = await api("/user/active", {
+      method: 'GET'
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP Error, Status: ${response.status}`);
+    }
+    
+    const activeUsers = await response.json();
+    return activeUsers as User[];
+  } catch (error) {
+    console.error("Error fetching active users:", error);
+    return []; // Return empty array on error
+  }
+}
 
-const mockUsers: User[] = [
-  {
-    userId: "id1",
-    position: "Admin",
-    email: "email1",
-    name: "name1",
-  },
-  {
-    userId: "id2",
-    position: "Employee",
-    email: "email2",
-    name: "name2",
-  },
-  {
-    userId: "id3",
-    position: "Inactive",
-    email: "email3",
-    name: "name3",
-  },
-  {
-    userId: "id4",
-    position: "Admin",
-    email: "email4",
-    name: "name4",
-  },
-  {
-    userId: "id5",
-    position: "Employee",
-    email: "email5",
-    name: "name5",
-  },
-  {
-    userId: "id6",
-    position: "Inactive",
-    email: "email6",
-    name: "name6",
-  },
-  {
-    userId: "id7",
-    position: "Admin",
-    email: "email7",
-    name: "name7",
-  },
-  {
-    userId: "id8",
-    position: "Employee",
-    email: "email8",
-    name: "name8",
-  },
-  {
-    userId: "id9",
-    position: "Inactive",
-    email: "email9",
-    name: "name9",
-  },
-  {
-    userId: "id10",
-    position: "Admin",
-    email: "email10",
-    name: "name10",
-  },
-  {
-    userId: "id11",
-    position: "Employee",
-    email: "email11",
-    name: "name11",
-  },
-  {
-    userId: "id12",
-    position: "Admin",
-    email: "email12",
-    name: "name12",
-  },
-];
+const fetchInactiveUsers = async () => {
+  try {
+    const response = await api("/user/inactive", {method : 'GET' });
+    if (!response.ok) {
+      throw new Error(`HTTP Error, Status: ${response.status}`);
+    }
+    const inactiveUsers = await response.json();
+    return inactiveUsers as User[];
+  }
+  catch (error) {
+    console.error("Error fetching active users:", error);
+  }
+}
+
 
 const ITEMS_PER_PAGE = 8;
 
-function Users() {
+const Users = observer(() => {
+  const store = getAppStore();
+  
+  
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const active = await fetchActiveUsers();
+      const inactive = await fetchInactiveUsers();
+      if (active) {
+        store.activeUsers = active;
+      }
+      if (inactive) {
+store.inactiveUsers = inactive;    }
+    };
+    fetchUsers();
+  
+  }, []);
   const [usersTabStatus, setUsersTabStatus] = useState<UsersTab>(
     UsersTab.CurrentUsers
   );
@@ -96,8 +72,8 @@ function Users() {
 
   const filteredUsers =
     usersTabStatus === UsersTab.PendingUsers
-      ? mockUsers.filter((user) => user.position === "Inactive")
-      : mockUsers.filter((user) => user.position !== "Inactive");
+      ? store.inactiveUsers
+      : store.activeUsers;
 
   const numUsers = filteredUsers.length;
   const pageStartIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -230,6 +206,6 @@ function Users() {
       </div>
     </div>
   );
-}
+})
 
 export default Users;
