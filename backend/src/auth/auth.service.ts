@@ -51,6 +51,7 @@ export class AuthService {
 
     try {
       // Check to see if the inputted email already exists in the user table
+      this.logger.log(`Checking if email ${email} is already in use.`);
       const paramEmailCheck = {
         TableName: process.env.DYNAMODB_USER_TABLE_NAME as string,
         FilterExpression: "#email = :email",
@@ -68,7 +69,7 @@ export class AuthService {
       if (uniqueEmailCheck.Items && uniqueEmailCheck.Items.length > 0) {
         throw new ConflictException("Email already in use."); // 409 status
       }
-
+      this.logger.log(`Email ${email} is unique. Proceeding with registration.`);
       let createUserRes = await this.cognito
         .adminCreateUser({
           UserPoolId: userPoolId,
@@ -80,7 +81,7 @@ export class AuthService {
           MessageAction: "SUPPRESS",
         })
         .promise();
-
+        this.logger.log(`Cognito user created:`);
       await this.cognito
         .adminSetUserPassword({
           UserPoolId: userPoolId,
@@ -89,13 +90,13 @@ export class AuthService {
           Permanent: true,
         })
         .promise();
-
+        this.logger.log(`Password set for user ${username}.`);
       await this.cognito.adminAddUserToGroup({
         GroupName: "Inactive",
         UserPoolId: userPoolId,
         Username: username,
       });
-
+      this.logger.log(`User ${username} added to Inactive group.`);
       const tableName = process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE";
 
       // Change this so it adds a user object
@@ -120,7 +121,7 @@ export class AuthService {
         `User ${username} registered successfully and added to DynamoDB.`
       );
     } catch (error) {
-      if (error instanceof HttpException) {
+      if (error instanceof ConflictException) {
         this.logger.error("Email already in user", error.stack);
         throw error;
       }

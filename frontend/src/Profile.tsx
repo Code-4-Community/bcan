@@ -5,6 +5,7 @@ import { updateUserProfile } from "./external/bcanSatchel/actions";
 import { toJS } from 'mobx';
 import { Link } from "react-router-dom";
 import { api } from "./api";
+import { UserStatus } from "../../middle-layer/types/UserStatus";
 
 /**
  * Current logged in user's profile
@@ -50,7 +51,7 @@ const Profile = observer(() => {
       user && updateUserProfile({
         ...user,
         email,
-        position: position,
+        position: position as UserStatus,
       });
   
       alert("Profile updated successfully.");
