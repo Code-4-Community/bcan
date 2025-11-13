@@ -18,11 +18,11 @@ const fetchActiveUsers = async (): Promise<User[]> => {
     const response = await api("/user/active", {
       method: 'GET'
     });
-    
+
     if (!response.ok) {
       throw new Error(`HTTP Error, Status: ${response.status}`);
     }
-    
+
     const activeUsers = await response.json();
     return activeUsers as User[];
   } catch (error) {
@@ -33,7 +33,7 @@ const fetchActiveUsers = async (): Promise<User[]> => {
 
 const fetchInactiveUsers = async () => {
   try {
-    const response = await api("/user/inactive", {method : 'GET' });
+    const response = await api("/user/inactive", { method: 'GET' });
     if (!response.ok) {
       throw new Error(`HTTP Error, Status: ${response.status}`);
     }
@@ -50,8 +50,8 @@ const ITEMS_PER_PAGE = 8;
 
 const Users = observer(() => {
   const store = getAppStore();
-  
-  
+
+
   useEffect(() => {
     const fetchUsers = async () => {
       const active = await fetchActiveUsers();
@@ -60,11 +60,12 @@ const Users = observer(() => {
         store.activeUsers = active;
       }
       if (inactive) {
-store.inactiveUsers = inactive;    }
+        store.inactiveUsers = inactive;
+      }
     };
     fetchUsers();
-  
-  }, []);
+
+  });
   const [usersTabStatus, setUsersTabStatus] = useState<UsersTab>(
     UsersTab.CurrentUsers
   );
@@ -96,11 +97,10 @@ store.inactiveUsers = inactive;    }
       <div className="min-h-screen bg-[#F5F4F4] border rounded-md relative">
         <div className="absolute right-7 top-0 -translate-y-full flex">
           <button
-            className={`w-52 h-16 border rounded-b-none focus:outline-none ${
-              usersTabStatus === UsersTab.PendingUsers
+            className={`w-52 h-16 border rounded-b-none focus:outline-none ${usersTabStatus === UsersTab.PendingUsers
                 ? "bg-[#F5F4F4] border-x-[#000000] border-t-[#000000]"
                 : "bg-[#F4F4F4] border-x-[#BFBBBB] border-t-[#BFBBBB] border-b-[#000000]"
-            }`}
+              }`}
             onClick={() => {
               setUsersTabStatus(UsersTab.PendingUsers);
               setCurrentPage(1);
@@ -109,11 +109,10 @@ store.inactiveUsers = inactive;    }
             Pending Users
           </button>
           <button
-            className={`w-52 h-16 border rounded-b-none ml-2 focus:outline-none ${
-              usersTabStatus === UsersTab.CurrentUsers
+            className={`w-52 h-16 border rounded-b-none ml-2 focus:outline-none ${usersTabStatus === UsersTab.CurrentUsers
                 ? "bg-[#F5F4F4] border-x-[#000000] border-t-[#000000]"
                 : "bg-[#F4F4F4] border-x-[#BFBBBB] border-t-[#BFBBBB] border-b-[#000000]"
-            }`}
+              }`}
             onClick={() => {
               setUsersTabStatus(UsersTab.CurrentUsers);
               setCurrentPage(1);
@@ -151,10 +150,10 @@ store.inactiveUsers = inactive;    }
               </div>
               {currentPageUsers.map((user) => (
                 <PendingUserCard
-                name={user.name}
-                email={user.email}
-                position={user.position}
-              />
+                  name={user.name}
+                  email={user.email}
+                  position={user.position}
+                />
               ))}
             </>
           )}

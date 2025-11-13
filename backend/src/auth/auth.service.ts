@@ -133,23 +133,36 @@ export class AuthService {
     }
   }
 
-  async addUserToGroup(username: string, groupName: string, requestedBy : string): Promise<void> {
+  async addUserToGroup(username: string, groupName: UserStatus, requestedBy : User): Promise<User> {
     const userPoolId = process.env.COGNITO_USER_POOL_ID;
-    if (
-      groupName !== "Employee" &&
-      groupName !== "Admin" &&
-      groupName !== "Inactive"
-    ) {
-      throw new Error(
-        "Invalid group name. Must be Employee, Admin, or Inactive."
-      );
-    }
     try {
       await this.cognito.adminAddUserToGroup({
-        GroupName: groupName,
+        GroupName: groupName as string,
         UserPoolId: userPoolId || "POOL_FAILURE",
         Username: username,
       });
+      const tableName = process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE";
+      
+      // Update the user's position in DynamoDB
+      const params = {
+        TableName: tableName,
+        Key: { userId: username },
+        UpdateExpression: "SET position = :position",
+        ExpressionAttributeValues: {
+          ":position": groupName as string,
+        },
+        ReturnValues: "ALL_NEW",
+      };
+
+      const result = await this.dynamoDb.update(params).promise();
+      
+      // TODO: Add more error handling to see if the user doesn't exist or is the requested by is invalid
+      this.logger.log(
+        `User ${username} added to group ${groupName} by ${requestedBy}.`
+      );
+
+      return result.Attributes as User;
+
     } catch (error) {
       if (error instanceof Error) {
         this.logger.error("Registration failed", error.stack);
@@ -411,7 +424,7 @@ export class AuthService {
     }
   }
 
-  async deleteUser(username: string): Promise<void> {
+  async deleteUser(username: string): Promise<User> {
     const userPoolId = process.env.COGNITO_USER_POOL_ID;
     const tableName = process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE";
 
@@ -428,18 +441,22 @@ export class AuthService {
         TableName: tableName,
         Key: {
           userId: username, // Your partition key
-        },
+        }, ReturnValues: "ALL_OLD"
       };
 
-      await this.dynamoDb.delete(params).promise();
+      let result = await this.dynamoDb.delete(params).promise();
       this.logger.log(
         `User ${username} deleted successfully from Cognito and DynamoDB.`
       );
+
+      return result.Attributes as User;
     } catch (error) {
       if (error instanceof Error) {
         this.logger.error("Deletion failed", error.stack);
         throw new Error(error.message || "Deletion failed");
       }
+            throw new Error("An unknown error occurred");
+
     }
   }
 }
