@@ -5,6 +5,7 @@ body {
   height: 100%;
   overflow-x: hidden;
   font-size: medium;
+  box-sizing: border-box;
 }
 
 /* Hide the default checkbox */
@@ -24,7 +25,7 @@ input[type="checkbox"] {
 
 /* Style the custom checkmark using a pseudo-element */
 input[type="checkbox"]::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -38,7 +39,7 @@ input[type="checkbox"]::before {
 
 input[type="checkbox"]:checked::before {
   display: block; /* Show the checkmark */
-  border-color:black;
+  border-color: black;
 }
 
 /* Main container styling */
@@ -66,7 +67,7 @@ input[type="checkbox"]:checked::before {
 }
 
 .kpi-card {
-  background-color: #FFd5C2;
+  background-color: #ffd5c2;
 }
 
 .tooltip {
@@ -86,14 +87,21 @@ input[type="checkbox"]:checked::before {
   border: 1px solid #ccc;
 }
 
-.my-custom-gantt-theme {
-  --wx-gantt-task-color: #4f81bd !important; /* persist bar color */
-  --wx-gantt-task-border: none !important;
-  --wx-gantt-bar-border-radius: 8px !important;
+#reactSchedulerOutsideWrapper {
+  overflow: hidden;
 }
 
-.my-custom-gantt-theme .wx-task {
-  background-color: var(--wx-gantt-task-color) !important;
-  border-radius: 8px !important;
-  overflow: hidden !important;
+#reactSchedulerOutsideWrapper:hover {
+  overflow-x: scroll;
+  overflow-y: scroll;
+}
+
+#reactSchedulerOutsideWrapper button {
+  overflow: hidden;
+  border-color: darkslategray;
+  color: black;
+}
+
+#reactSchedulerOutsideWrapper svg {
+  fill: darkslategray;
 }
