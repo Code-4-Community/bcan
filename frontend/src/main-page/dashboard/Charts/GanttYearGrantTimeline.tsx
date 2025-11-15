@@ -16,17 +16,25 @@ export const GanttYearGrantTimeline = observer(
     grants: Grant[];
     uniqueYears: number[];
   }) => {
-    //  Filter grants for the selected year
+    //  Filter grants for the max selected year
     // and if the current year is selected in the filter include that as well
     const filterYear =
       recentYear < new Date().getFullYear()
         ? recentYear
         : Math.min(recentYear, new Date().getFullYear());
-    const recentData = grants.filter(
-      (grant) =>
-        new Date(grant.application_deadline).getFullYear() <= recentYear &&
-        new Date(grant.application_deadline).getFullYear() >= filterYear
-    );
+
+    // If application deadline or any report deadline is in the range
+    const recentData = grants.filter((grant) => {
+      const appYear = new Date(grant.application_deadline).getFullYear();
+      const appInRange = appYear >= filterYear && appYear <= recentYear;
+
+      const reportInRange = grant.report_deadlines?.some((rd) => {
+        const year = new Date(rd).getFullYear();
+        return year >= filterYear && year <= recentYear;
+      });
+
+      return appInRange || reportInRange;
+    });
 
     // Formatting the data for SchedulerData
     const data: SchedulerData = recentData.map((grant) => {
