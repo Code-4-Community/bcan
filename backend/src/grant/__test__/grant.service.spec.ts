@@ -167,53 +167,43 @@ describe("GrantService", () => {
     });
   });
 
-  describe("unarchiveGrants()", () => {
-    it("should unarchive multiple grants and return their ids", async () => {
+  describe("makeGrantsInactive()", () => {
+    it("should inactivate multiple grants and return the updated grant objects", async () => {
+      // First two update() calls respond with DynamoDB Attributes
       mockPromise
-        .mockResolvedValueOnce({ Attributes: { isArchived: false } })
-        .mockResolvedValueOnce({ Attributes: { isArchived: false } });
-
-      const data = await grantService.unarchiveGrants([1, 2]);
-
-      expect(data).toEqual([1, 2]);
+        .mockResolvedValueOnce({ Attributes: { status: Status.Inactive } })
+        .mockResolvedValueOnce({ Attributes: { status: Status.Inactive } });
+  
+      // Next two calls are from getGrantById()
+      mockPromise
+        .mockResolvedValueOnce({ Item: mockGrants[0] })
+        .mockResolvedValueOnce({ Item: mockGrants[1] });
+  
+      const data = await grantService.makeGrantsInactive([1, 2]);
+  
+      expect(data).toEqual([mockGrants[0], mockGrants[1]]);
       expect(mockUpdate).toHaveBeenCalledTimes(2);
-
+  
       const firstCallArgs = mockUpdate.mock.calls[0][0];
       const secondCallArgs = mockUpdate.mock.calls[1][0];
-
+  
       expect(firstCallArgs).toMatchObject({
         TableName: "Grants",
         Key: { grantId: 1 },
-        UpdateExpression: "set isArchived = :archived",
-        ExpressionAttributeValues: { ":archived": false },
+        UpdateExpression: "SET #status = :inactiveStatus",
+        ExpressionAttributeNames: { "#status": "status" },
+        ExpressionAttributeValues: { ":inactiveStatus": Status.Inactive },
         ReturnValues: "UPDATED_NEW",
       });
+  
       expect(secondCallArgs).toMatchObject({
         TableName: "Grants",
         Key: { grantId: 2 },
-        UpdateExpression: "set isArchived = :archived",
-        ExpressionAttributeValues: { ":archived": false },
+        UpdateExpression: "SET #status = :inactiveStatus",
+        ExpressionAttributeNames: { "#status": "status" },
+        ExpressionAttributeValues: { ":inactiveStatus": Status.Inactive },
         ReturnValues: "UPDATED_NEW",
       });
-    });
-
-    it("should skip over grants that are already ", async () => {
-      mockPromise
-        .mockResolvedValueOnce({ Attributes: { isArchived: true } })
-        .mockResolvedValueOnce({ Attributes: { isArchived: false } });
-
-      const data = await grantService.unarchiveGrants([1, 2]);
-
-      expect(data).toEqual([2]);
-      expect(mockUpdate).toHaveBeenCalledTimes(2);
-    });
-
-    it("should throw an error if any update call fails", async () => {
-      mockPromise.mockRejectedValueOnce(new Error("DB Error"));
-
-      await expect(grantService.unarchiveGrants([90])).rejects.toThrow(
-        "Failed to update Grant 90 status."
-      );
     });
   });
 
