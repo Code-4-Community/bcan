@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import AWS from 'aws-sdk';
 import { Grant } from '../../../middle-layer/types/Grant';
-import { NotificationService } from '.././notifications/notifcation.service';
+import { NotificationService } from '../notifications/notification.service';
 import { Notification } from '../../../middle-layer/types/Notification';
 import { TDateISO } from '../utils/date';
 @Injectable()
@@ -165,7 +165,7 @@ export class GrantService {
   /* Deletes a grant from database based on its grant ID number
   * @param grantId
   */
-  async deleteGrantById(grantId: string): Promise<string> {
+  async deleteGrantById(grantId: number): Promise<string> {
     const params = {
         TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || "TABLE_FAILURE",
         Key: { grantId: grantId },

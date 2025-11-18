@@ -1,7 +1,6 @@
 // frontend/src/grant-info/components/NewGrantModal.tsx
 import React, { useState } from "react";
 import CurrencyInput from 'react-currency-input-field';
-import { fetchAllGrants } from "../../../external/bcanSatchel/actions";
 import "../styles/NewGrantModal.css";
 import { MdOutlinePerson2 } from "react-icons/md";
 import { FiUpload } from "react-icons/fi";
@@ -24,7 +23,8 @@ interface Attachment {
 }
 
 
-const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+
+const NewGrantModal: React.FC<{ grantToEdit : Grant | null , onClose: () => void }> = ({ grantToEdit, onClose }) => {
   /*
       grantId: number;
       organization: string;
@@ -46,55 +46,64 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   // Form fields, renamed to match your screenshot
 
   // Used
-  const [organization, _setOrganization] = useState<string>("");
+  const [organization, _setOrganization] = useState<string>(grantToEdit? grantToEdit.organization : "");
 
   // Used
-  const [applicationDate, _setApplicationDate] = useState<string>("");
+  const [applicationDate, _setApplicationDate] = useState<TDateISO | "">(
+  grantToEdit?.application_deadline || ""
+);
   // Used
-  const [grantStartDate, _setGrantStartDate] = useState<string>("");
+  const [grantStartDate, _setGrantStartDate] = useState<TDateISO | "">(
+  grantToEdit?.grant_start_date || ""
+);
   // Used
-  const [reportDates, setReportDates] = useState<string[]>([]);
+  const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(grantToEdit?.report_deadlines || []);
+  
 
   // Used
-  const [timelineInYears, _setTimelineInYears] = useState<number>(0);
+  const [timelineInYears, _setTimelineInYears] = useState<number>(grantToEdit? grantToEdit.timeline : 0);
 
   // Used
-  const [estimatedCompletionTimeInHours, _setEstimatedCompletionTimeInHours] = useState<number>(0);
+  const [estimatedCompletionTimeInHours, _setEstimatedCompletionTimeInHours] = useState<number>(grantToEdit? grantToEdit.estimated_completion_time : 10);
 
   // Used
-  const [doesBcanQualify, _setDoesBcanQualify] = useState<string>("");
+  const [doesBcanQualify, _setDoesBcanQualify] = useState<string>(
+  grantToEdit ? (grantToEdit.does_bcan_qualify ? "yes" : "no") : ""
+);
 
   // Used
-  const [isRestricted, _setIsRestricted] = useState<string>("");
+  const [isRestricted, _setIsRestricted] = useState<string>(grantToEdit? String(grantToEdit.isRestricted) : "");
 
   // Used
-  const [status, _setStatus] = useState<string>("");
+  const [status, _setStatus] = useState<Status | string>(
+  grantToEdit ? grantToEdit.status : ""
+);
 
   // Used
-  const [amount, _setAmount] = useState<number>(0);
+  const [amount, _setAmount] = useState<number>(grantToEdit? grantToEdit.amount : 0);
   // Used
-  const [description, _setDescription] = useState<string>("");
+  const [description, _setDescription] = useState<string>(grantToEdit? grantToEdit.description? grantToEdit.description : "" : "");
 
   // Attachments array
   // Used
-  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [attachments, setAttachments] = useState<(Attachment)[]>(grantToEdit?.attachments || []);
   // Used
   const [isAddingAttachment, setIsAddingAttachment] = useState(false);
 
   // Used
-  const [bcanPocName, setBcanPocName] = useState('');
+  const [bcanPocName, setBcanPocName] = useState(grantToEdit? grantToEdit.bcan_poc? grantToEdit.bcan_poc.POC_name: '' : '');
+  // Used?
+  const [bcanPocEmail, setBcanPocEmail] = useState(grantToEdit? grantToEdit.bcan_poc? grantToEdit.bcan_poc.POC_email : '' : '');
   // Used
-  const [bcanPocEmail, setBcanPocEmail] = useState('');
+  const [grantProviderPocName, setGrantProviderPocName] = useState(grantToEdit? grantToEdit.grantmaker_poc? grantToEdit.grantmaker_poc.POC_name: '' : '');
   // Used
-  const [grantProviderPocName, setGrantProviderPocName] = useState('');
-  // Used
-  const [grantProviderPocEmail, setGrantProviderPocEmail] = useState('');
+  const [grantProviderPocEmail, setGrantProviderPocEmail] = useState(grantToEdit? grantToEdit.grantmaker_poc? grantToEdit.grantmaker_poc.POC_email: '' : '');
 
 
   // For error handling
   // @ts-ignore
   const [_errorMessage, setErrorMessage] = useState<string>("");
-
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
   
 
   /* Add a new blank report date to the list */
@@ -150,60 +159,57 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       setErrorMessage("Organization Name is required.");
       return false;
     }
-    // removed check for report dates -- they can be empty (potential grants would have no report dates)
+    
     if (!applicationDate || !grantStartDate) {
       setErrorMessage("Please fill out all date fields.");
       return false;
     }
+    
     if (amount <= 0) {
       setErrorMessage("Amount must be greater than 0.");
       return false;
     }
-    if (doesBcanQualify == "") {
-      setErrorMessage("Set Does Bcan Qualify? to 'yes' or 'no' ");
+    
+    if (doesBcanQualify === "") {
+      setErrorMessage("Set Does Bcan Qualify? to 'yes' or 'no'");
+      return false;
     }
-    if (isRestricted == "") {
-      setErrorMessage("Set Restriction Type to 'restricted' or 'unrestricted' ");
+    
+    if (isRestricted === "") {
+      setErrorMessage("Set Restriction Type to 'restricted' or 'unrestricted'");
+      return false;
     }
-    if (status == "") {
+    
+    if (status === "" || status == null) {
       setErrorMessage("Set Status");
+      return false;
     }
+    
     return true;
   };
 
   /** On submit, POST the new grant, then re-fetch from the backend */
-  const handleSubmit = async () => {
-    if (!validateInputs()) return;
-
-    
-    // Convert attachments array
-    const attachmentsArray = attachments.map((att) => ({
-      attachment_name: att.attachment_name.trim(),
-      url: att.url.trim(),
-      type: att.type,
-    }));
-
-
-
-    /* Matches middle layer definition */
+  const createNewGrant = async () => {
     const newGrant: Grant = {
       grantId: -1,
       organization,
-      does_bcan_qualify: (doesBcanQualify == "yes" ? true : false),
+      does_bcan_qualify: (doesBcanQualify === "yes"),
       amount,
       grant_start_date: grantStartDate as TDateISO,
       application_deadline: applicationDate as TDateISO,
-      status: status as Status, // Potential = 0, Active = 1, Inactive = 2
+      status: status as Status, 
       bcan_poc: { POC_name: bcanPocName, POC_email: bcanPocEmail }, 
-      grantmaker_poc: { POC_name: grantProviderPocName, POC_email: grantProviderPocEmail }, // Just take the first for now
+      grantmaker_poc: { POC_name: grantProviderPocName, POC_email: grantProviderPocEmail },
       report_deadlines: reportDates as TDateISO[],
       timeline: timelineInYears,
       estimated_completion_time: estimatedCompletionTimeInHours,
       description,
-      attachments: attachmentsArray,
-      isRestricted: (isRestricted == "restricted" ? true : false), // Default to unrestricted for now
+      attachments: attachments,
+      isRestricted: (isRestricted === "restricted"),
     };
-    console.log(newGrant);
+
+    console.log("Creating new grant:", newGrant);
+    
     try {
       const response = await api("/grant/new-grant", {
         method: "POST",
@@ -214,22 +220,91 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       if (!response.ok) {
         const errorData = await response.json();
         setErrorMessage(errorData.errMessage || "Failed to add grant.");
+        setShowErrorPopup(true);
         return;
       }
 
       // Re-fetch the full list of grants
-      const grantsResponse = await api("/grant");
-      if (!grantsResponse.ok) {
-        throw new Error("Failed to re-fetch grants.");
-      }
-      const updatedGrants = await grantsResponse.json();
-      // Update the store
-      fetchAllGrants(updatedGrants);
+      // const grantsResponse = await api("/grant");
+      // if (!grantsResponse.ok) {
+      //   throw new Error("Failed to re-fetch grants.");
+      // }
+      // const updatedGrants = await grantsResponse.json();
+      
+      // // Update the store
+      // fetchAllGrants(updatedGrants);
 
       onClose();
     } catch (error) {
       setErrorMessage("Server error. Please try again.");
+      setShowErrorPopup(true);
       console.error(error);
+    }
+  };
+
+  const saveGrantEdits = async () => {
+    const updatedGrant: Grant = {
+      grantId: grantToEdit!.grantId,
+      organization,
+      does_bcan_qualify: (doesBcanQualify === "yes"),
+      amount,
+      grant_start_date: grantStartDate as TDateISO,
+      application_deadline: applicationDate as TDateISO,
+      status: status as Status, 
+      bcan_poc: { POC_name: bcanPocName, POC_email: bcanPocEmail }, 
+      grantmaker_poc: { POC_name: grantProviderPocName, POC_email: grantProviderPocEmail },
+      report_deadlines: reportDates as TDateISO[],
+      timeline: timelineInYears,
+      estimated_completion_time: estimatedCompletionTimeInHours,
+      description,
+      attachments: attachments,
+      isRestricted: (isRestricted === "restricted"),
+    };
+
+    console.log("Saving grant edits:", updatedGrant);
+    
+    try {
+      const response = await api("/grant/save", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedGrant),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setErrorMessage(errorData.errMessage || "Failed to update grant.");
+        setShowErrorPopup(true);
+        return;
+      }
+
+      // Re-fetch the full list of grants
+      // const grantsResponse = await api("/grant");
+      // if (!grantsResponse.ok) {
+      //   throw new Error("Failed to re-fetch grants.");
+      // }
+      // const updatedGrants = await grantsResponse.json();
+      
+      // // Update the store
+      // fetchAllGrants(updatedGrants);
+
+      onClose();
+    } catch (error) {
+      setErrorMessage("Server error. Please try again.");
+      setShowErrorPopup(true);
+      console.error(error);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!validateInputs()) {
+      setShowErrorPopup(true);
+      return;
+    }
+
+    if (grantToEdit) {
+      await saveGrantEdits();
+    } else {
+      await createNewGrant();
     }
   };
 
@@ -250,7 +325,8 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 className=" font-family-helvetica block w-full text-black placeholder:text-gray-400 border rounded py-3 px-4 mb-3 leading-tight" 
                 id="grid-first-name"
                  type="text" 
-                 placeholder="Type Here"
+                 placeholder = "Type Here"
+                 value = {organization}
                  onChange={(e) => _setOrganization(e.target.value)}/>
               </div>
 
@@ -271,8 +347,8 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     className="font-family-helvetica appearance-none block w-full border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
                     id="grid-city" 
                     type="date"
-
-                    onChange={(e) => _setApplicationDate(e.target.value)}/>
+                    value={applicationDate ? applicationDate.split('T')[0] : ""}
+                    onChange={(e) => _setApplicationDate(e.target.value as TDateISO)}/>
                   </div>
                   {/*Grant Start Date and input */}
                   <div className=" w-1/2">
@@ -283,7 +359,8 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       className="font-family-helvetica w-full appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
                       id="grid-city" 
                       type="date"
-                      onChange={(e) => _setGrantStartDate(e.target.value)}/>
+                      value={grantStartDate ? grantStartDate.split('T')[0] : ""}
+                    onChange={(e) => _setGrantStartDate(e.target.value as TDateISO)}/>
                   </div>
                 </div>
 
@@ -297,6 +374,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                   className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
                   id="grid-city"
+                  value = {estimatedCompletionTimeInHours}
                   onChange={(e) => _setEstimatedCompletionTimeInHours(Number(e.target.value))}/>
                 </div>
 
@@ -317,10 +395,10 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                             style={{height: "42px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                             className="font-family-helvetica flex-1 min-w-0 text-black rounded" 
                             type="date"
-                            value={date}
+                            value={date ? (date.includes('T') ? date.split('T')[0] : date) : ""}
                             onChange={(e) => {
                               const newDates = [...reportDates];
-                              newDates[index] = e.target.value;
+                              newDates[index] = e.target.value as TDateISO | "";
                               setReportDates(newDates);
                             }}
                           />
@@ -356,7 +434,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 </label>
                 <input  style={{height: "42px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                 className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                type="number" min = "0" placeholder="Type Here" onChange={(e) => _setTimelineInYears(Number(e.target.value))}/>
+                type="number" min = "0" placeholder="Type Here" value = {timelineInYears} onChange={(e) => _setTimelineInYears(Number(e.target.value))}/>
               </div>
 
               {/*Amount label and input */}
@@ -366,7 +444,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 </label>
                 <CurrencyInput style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                 className="font-family-helvetica appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                min={0} decimalsLimit={2} placeholder="Type Here" onValueChange={(value) => _setAmount(Number(value))}/>
+                min={0} decimalsLimit={2} placeholder="Type Here" value = {amount} onValueChange={(value) => _setAmount(Number(value))}/>
               </div>
 
           </div>
@@ -386,10 +464,11 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       <MdOutlinePerson2 className="w-1/4 h-full p-1"/>
                       <div className="w-3/4">
                         <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                        className="font-family-helvetica w-full text-gray-700 rounded" id="grid-city" placeholder="Name" value={bcanPocName} onChange={(e) => setBcanPocName(e.target.value)}/>
+                        className="font-family-helvetica w-full text-gray-700 rounded" id="grid-city" placeholder="Name" 
+                        value = {bcanPocName} onChange={(e) => setBcanPocName(e.target.value)}/>
                         <input style={{height: "48px",backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                         className="font-family-helvetica w-full text-gray-700 rounded"
-                         id="grid-city" placeholder="e-mail" value={bcanPocEmail} onChange={(e) => setBcanPocEmail(e.target.value)}/>
+                         id="grid-city" placeholder="e-mail"  value = {bcanPocEmail} onChange={(e) => setBcanPocEmail(e.target.value)}/>
                       </div> 
                   </div>
               </div>
@@ -404,9 +483,11 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                       <MdOutlinePerson2 className="p-1 w-1/4 h-full"/>
                       <div className="w-3/4">
                         <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                        className="font-family-helvetica w-full text-gray-700 rounded" id="grid-city" placeholder="Name" value={grantProviderPocName} onChange={(e) => setGrantProviderPocName(e.target.value)}/>
+                        className="font-family-helvetica w-full text-gray-700 rounded" id="grid-city" placeholder="Name" 
+                        value = {grantProviderPocName} onChange={(e) => setGrantProviderPocName(e.target.value)}/>
                         <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                        className="font-family-helvetica w-full text-gray-700 rounded" id="grid-city" placeholder="e-mail" value={grantProviderPocEmail} onChange={(e) => setGrantProviderPocEmail(e.target.value)}/>
+                        className="font-family-helvetica w-full text-gray-700 rounded" id="grid-city" placeholder="e-mail" 
+                        value = {grantProviderPocEmail} onChange={(e) => setGrantProviderPocEmail(e.target.value)}/>
                       </div> 
                   </div>
               </div>
@@ -435,15 +516,15 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
                       Status
                     </label>
-                    <select style={{height: "48px",  backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color : status == "" ? "gray" : "black"}}
+                    <select style={{height: "48px",  backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color : status == null ? "gray" : "black"}}
                       className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                      id="grid-first-name" value={status} onChange={(e) => _setStatus(e.target.value as Status)}>
+                      id="grid-first-name" value={status}  onChange={(e) => _setStatus(e.target.value as Status)}>
                       <option value="">Select...</option>
-                      <option value="potential">Potential</option>
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                      <option value="rejected">Rejected</option>
-                      <option value="pending">Pending</option>
+                      <option value="Potential">Potential</option>
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                      <option value="Rejected">Rejected</option>
+                      <option value="Pending">Pending</option>
                     </select>
                   </div>
 
@@ -631,6 +712,23 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
       {/*End modal content */}
       </div>
+
+      {/* Error Popup */}
+      {showErrorPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md mx-4" style={{borderStyle: 'solid', borderColor: 'black', borderWidth: '2px'}}>
+            <h3 className="font-family-helvetica text-xl font-bold mb-2">Error</h3>
+            <p className="font-family-helvetica mb-4">{_errorMessage}</p>
+            <button 
+              onClick={() => setShowErrorPopup(false)}
+              style={{backgroundColor: '#F58D5C', color: 'black', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+              className="font-family-helvetica px-4 py-2 rounded hover:opacity-80"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
 
     {/*End modal overlay */}
     </div>

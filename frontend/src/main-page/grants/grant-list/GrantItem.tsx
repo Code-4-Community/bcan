@@ -62,6 +62,31 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
     setStatusDropdownOpen(false);
   };
 
+  const deleteGrant = async () => {
+    setShowDeleteModal(false);
+    console.log(curGrant.organization);
+    try {
+      const response = await api(`/grant/${curGrant.grantId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        }
+        //body: JSON.stringify(curGrant.grantId),
+      });
+      
+      if (response.ok) {
+        console.log("Grant deleted successfully");
+        // Optionally trigger a callback to refresh the parent list or navigate away
+        // For example: onGrantDeleted?.(curGrant.id);
+      } else {
+        const error = await response.json();
+        console.error("Error deleting grant:", error);
+      }
+    } catch (err) {
+      console.error("Error deleting grant:", err);
+    }
+};
+
   {/* The popup that appears on delete */}
   const DeleteModal = ({ 
     isOpen, 
@@ -588,7 +613,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
                 isOpen={showDeleteModal}
                 onCloseDelete={() => setShowDeleteModal(false)}
                 onConfirmDelete={() => {
-                  setShowDeleteModal(false);
+                  deleteGrant();
                 }}
               />
             </>
@@ -631,7 +656,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
       <div className="hidden-features">
           {showNewGrantModal && (
             <NewGrantModal 
-              //grant={curGrant}
+              grantToEdit={curGrant}
               onClose={() => setShowNewGrantModal(false)} 
             />
           )}

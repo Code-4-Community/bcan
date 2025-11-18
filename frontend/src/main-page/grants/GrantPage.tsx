@@ -60,11 +60,11 @@ function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
       </div>
       <div className="hidden-features">
         {showNewGrantModal && (
-          <NewGrantModal onClose={() => setShowNewGrantModal(false)} />
+          <NewGrantModal grantToEdit={null} onClose={() => setShowNewGrantModal(false)} />
         )}
       </div>
     </div>
   );
-}
+} 
 
 export default GrantPage;

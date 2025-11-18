@@ -106,7 +106,7 @@ const GrantList: React.FC<GrantListProps> = observer(({ selectedGrantId, onClear
                 </ButtonGroup>
             </Pagination.Root>
             {showNewGrantModal && (
-                <NewGrantModal onClose={() => setShowNewGrantModal(false)} />
+                <NewGrantModal grantToEdit = {null} onClose={() => setShowNewGrantModal(false)} />
             )}
         </div>
         
