@@ -9,6 +9,7 @@ import { Grant } from "../../../../../middle-layer/types/Grant";
 import { TDateISO } from "../../../../../backend/src/utils/date";
 import { Status } from "../../../../../middle-layer/types/Status";
 import { api } from "../../../api";
+import UserDropdown from "./UserDropdown";
 
 /** Attachment type from your middle layer */
 enum AttachmentType {
@@ -385,11 +386,20 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   <div className="items-center flex p-3 rounded h-full" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}>
                       <MdOutlinePerson2 className="w-1/4 h-full p-1"/>
                       <div className="w-3/4">
-                        <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                        className="font-family-helvetica w-full text-gray-700 rounded" id="grid-city" placeholder="Name" value={bcanPocName} onChange={(e) => setBcanPocName(e.target.value)}/>
+                      <UserDropdown
+                      selectedUser={bcanPocName && bcanPocEmail ? {name: bcanPocName, email: bcanPocEmail } : null}
+                      onSelect={(user) => {
+                        setBcanPocName(user.name);
+                        setBcanPocEmail(user.email)
+                      }}
+                      placeholder="Name"
+                      />
                         <input style={{height: "48px",backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                         className="font-family-helvetica w-full text-gray-700 rounded"
-                         id="grid-city" placeholder="e-mail" value={bcanPocEmail} onChange={(e) => setBcanPocEmail(e.target.value)}/>
+                         placeholder="e-mail" 
+                         value={bcanPocEmail}
+                         readOnly
+                         />
                       </div> 
                   </div>
               </div>
