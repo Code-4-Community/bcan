@@ -58,6 +58,7 @@ const mockGet = vi.fn().mockReturnThis();
 const mockDelete = vi.fn().mockReturnThis();
 const mockUpdate = vi.fn().mockReturnThis();
 const mockPut = vi.fn().mockReturnThis();
+// const mockGetGrantById = vi.fn();
 
 const mockDocumentClient = {
   scan: mockScan,
@@ -99,6 +100,8 @@ describe("GrantService", () => {
         updateNotification: vi.fn() 
       }
     });
+
+    
     
     controller = module.get<GrantController>(GrantController);
     grantService = module.get<GrantService>(GrantService);
@@ -175,10 +178,13 @@ describe("GrantService", () => {
         .mockResolvedValueOnce({ Attributes: { status: Status.Inactive } });
   
       // Next two calls are from getGrantById()
-      mockPromise
-        .mockResolvedValueOnce({ Item: mockGrants[0] })
-        .mockResolvedValueOnce({ Item: mockGrants[1] });
+      // mockPromise
+       //  .mockResolvedValueOnce({ Item: mockGrants[0] })
+       //  .mockResolvedValueOnce({ Item: mockGrants[1] });
   
+      // mockGetGrantById
+       //  .mockResolvedValueOnce({ grantId: 1, status: Status.Inactive })
+        // .mockResolvedValueOnce({ grantId: 2, status: Status.Inactive });
       const data = await grantService.makeGrantsInactive([1, 2]);
   
       expect(data).toEqual([mockGrants[0], mockGrants[1]]);
