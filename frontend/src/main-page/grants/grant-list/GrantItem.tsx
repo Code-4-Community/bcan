@@ -10,6 +10,7 @@ import { api } from "../../../api";
 import { MdOutlinePerson2 } from "react-icons/md";
 import Attachment from "../../../../../middle-layer/types/Attachment";
 import NewGrantModal from "../new-grant/NewGrantModal";
+import ActionConfirmation from "../../../custom/ActionConfirmation";
 
 interface GrantItemProps {
   grant: Grant;
@@ -86,100 +87,6 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
       console.error("Error deleting grant:", err);
     }
 };
-
-  {/* The popup that appears on delete */}
-  const DeleteModal = ({ 
-    isOpen, 
-    onCloseDelete, 
-    onConfirmDelete, 
-    title = "Are you sure?",
-    message = "This action cannot be undone."
-  }: {
-    isOpen: boolean;
-    onCloseDelete: () => void;
-    onConfirmDelete: () => void;
-    title?: string;
-    message?: string;
-  }) => {
-    if (!isOpen) return null;
-
-    return (
-      <div 
-        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300"
-        onClick={onCloseDelete}
-      >
-        <div 
-          style={{
-            borderStyle: 'solid',
-            borderColor: 'black',
-            borderWidth: '2px'
-          }}
-          className="bg-white rounded-lg shadow-2xl p-8 max-w-md w-full mx-4 transform transition-all duration-300"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Icon */}
-          <div className="flex justify-center mb-4">
-            <div className="bg-red-100 rounded-full p-3">
-              <svg 
-                className="w-12 h-12 text-red-600" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" 
-                />
-              </svg>
-            </div>
-          </div>
-
-          {/* Title */}
-          <h3 className="text-2xl font-bold text-gray-900 text-center mb-2">
-            {title}
-          </h3>
-
-          {/* Message */}
-          <p className="text-gray-600 text-center mb-6">
-            {message}
-          </p>
-
-          {/* Buttons */}
-          <div className="flex gap-3">
-            <button
-              style={{
-                backgroundColor: '#F2EBE4',
-                borderStyle: 'solid',
-                borderColor: 'black',
-                borderWidth: '1px'
-              }}
-              className="flex-1 py-3 px-4 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
-              onClick={onCloseDelete}
-            >
-              Cancel
-            </button>
-            <button
-              style={{
-                backgroundColor: 'indianred',
-                borderStyle: 'solid',
-                borderColor: 'indianred',
-                borderWidth: '1px'
-              }}
-              className="flex-1 py-3 px-4 rounded-lg font-semibold text-white hover:bg-red-700 transition-colors"
-              onClick={() => {
-                onConfirmDelete();
-                onCloseDelete();
-              }}
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   function formatDate(isoString: string): string {
     const date = new Date(isoString);
@@ -609,12 +516,16 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
                 Delete
               </button>
 
-              <DeleteModal
+              <ActionConfirmation
                 isOpen={showDeleteModal}
                 onCloseDelete={() => setShowDeleteModal(false)}
                 onConfirmDelete={() => {
                   deleteGrant();
                 }}
+                title="Delete Grant"
+                subtitle={"Are you sure you want to delete"}
+                boldSubtitle={curGrant.organization}
+                warningMessage="By deleting this grant, they won't be available in the system anymore."
               />
             </>
 
