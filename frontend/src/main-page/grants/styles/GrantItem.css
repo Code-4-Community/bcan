@@ -55,7 +55,7 @@
 }
 
 .grant-body.expanded {
-    max-height: 100vh;
+    max-height: 100%;
     padding: 1rem;
     border: 0.1rem solid #F26624;
     border-top-width: 0cap;
