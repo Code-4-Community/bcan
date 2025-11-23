@@ -11,6 +11,8 @@ const Register = observer(() => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordRe, setPasswordRe] = useState("");
+  const [failure, setFailure] = useState({ state: false, message: "" });
   const navigate = useNavigate();
 
   const { register } = useAuthContext();
@@ -18,90 +20,162 @@ const Register = observer(() => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const success = await register(username, password, email);
-    if (success) {
-      navigate("/login");
+    if (!failure.state && success.state) {
+      navigate("/registered");
     } else {
+      setFailure({ state: true, message: "Registration failed: " + success.message });
       console.warn("Registration failed");
     }
   };
 
+  const handlePassword = (e: string) => {
+    setPassword(e);
+    if (e !== password && passwordRe !== "") {
+      setFailure({ state: true, message: "Passwords do not match" });
+    } else {
+      setFailure({ state: false, message: "" });
+    }
+  };
+
+  const handlePasswordMatch = (e: string) => {
+    setPasswordRe(e);
+    if (e !== password) {
+      setFailure({ state: true, message: "Passwords do not match" });
+    } else {
+      setFailure({ state: false, message: "" });
+    }
+  };
+
   return (
-    <div style={styles.pageContainer}>
-      {/* Blurred background layer */}
-      <div style={styles.backgroundLayer} />
-      {/* Foreground content (not blurred) */}
-      <div style={styles.foregroundContent}>
-      {/* Crest area */}
-      <div style={styles.logoContainer}>
-        <img className="logo" style={{
-            width: "200px",
-            height: "200px",
-            marginRight: "16px",
-        }} src={logo} alt="BCAN Logo" />
-       <h1 style={styles.appName}>Grant Portal</h1>
-      </div>
+    <div className="bg-white grid grid-cols-2" style={styles.pageContainer}>
+      <div className="sm:w-3/4 lg:w-1/2 h-full py-20 px-20 flex flex-col justify-center items-start">
+        <div className="mb-4">
+          <h1 className="text-[32px]">Get Started Now</h1>
+        </div>
+        <form onSubmit={handleSubmit} className="w-full">
+          <div className="grid grid-cols-1 gap-x-6 gap-y-4">
+            <div className="">
+              <label htmlFor="username" className="block">
+                User Name
+              </label>
+              <div className="flex items-center rounded-md pt-2">
+                <input
+                  id="username"
+                  type="text"
+                  name="username"
+                  value={username}
+                  required
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter your username"
+                  style={styles.inputContainer}
+                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-[#D9D9D9]"
+                />
+              </div>
+            </div>
+            <div className="">
+              <label htmlFor="email" className="block">
+                Email address
+              </label>
+              <div className="flex items-center rounded-md pt-2">
+                <input
+                  id="email"
+                  type="text"
+                  name="email"
+                  value={email}
+                  required
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  style={styles.inputContainer}
+                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-[#D9D9D9]"
+                />
+              </div>
+            </div>
+            <div className="">
+              <label htmlFor="password" className="block">
+                Password
+              </label>
+              <div className="flex items-center rounded-md pt-2">
+                <input
+                  id="password"
+                  type="password"
+                  name="password"
+                  value={password}
+                  required
+                  onChange={(e) => handlePassword(e.target.value)}
+                  placeholder="Enter your password"
+                  style={styles.inputContainer}
+                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-[#D9D9D9]"
+                />
+              </div>
+            </div>
+            <div className="">
+              <label htmlFor="password-re" className="block">
+                Confirm Password
+              </label>
+              <div className="flex items-center rounded-md pt-2">
+                <input
+                  id="password-re"
+                  type="password"
+                  name="password-re"
+                  value={passwordRe}
+                  onChange={(e) => handlePasswordMatch(e.target.value)}
+                  required
+                  placeholder="Re-enter your password"
+                  style={styles.inputContainer}
+                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-[#D9D9D9]"
+                />
+              </div>
+            </div>
+          </div>
+          <div className="items-center">
+            <div
+              className={`min-h-24 text-[#${
+                failure.state ? "D33221" : "616161"
+              }] mt-4 bg-[#${
+                failure.state ? "FFA399" : "E7E7E7"
+              }] text-sm rounded-md flex items-center justify-center p-4 whitespace-pre-line text-left`}
+            >
+              {failure.state ? failure.message : `• Passwords must have at least one special character (!@#$%^&*)
+• Passwords must have at least one digit character ('0'-'9')
+• Passwords must have at least one uppercase character ('A'-'Z')`}
+            </div>
+          </div>
 
-        {/* Form container with partial transparency */}
-        <form onSubmit={handleSubmit} style={styles.formContainer}>
-          <h2 style={styles.heading}>Register</h2>
-
-          {/* "Go Back to Sign In" button */}
           <button
-            type="button"
-            style={styles.backButton}
-            onClick={() => navigate("/login")}
+            type="submit"
+            className="w-full block mt-8 min-w-0 rounded-md grow bg-dark-orange text-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500"
+            style={{ ...styles.button, ...styles.helloButton }}
           >
-            ← Back to Sign In
-          </button>
-          
-
-          {/* Username field */}
-          <label htmlFor="username" style={styles.label}>
-            Username
-          </label>
-          <input
-            id="username"
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            style={styles.input}
-            placeholder="Create a username"
-          />
-
-          {/* Email field */}
-          <label htmlFor="email" style={styles.label}>
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={styles.input}
-            placeholder="Enter your email address"
-          />
-
-          {/* Password field */}
-          <label htmlFor="password" style={styles.label}>
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={styles.input}
-            placeholder="Create a password"
-          />
-
-          {/* Register button */}
-          <button type="submit" style={{ ...styles.button, ...styles.helloButton }}>
             Register
           </button>
+          <div className="flex items-center justify-between gap-4 mt-4">
+            <hr className="border-[#757575] w-[45%]" />
+            <div className="text-[#757575]">or</div>
+            <hr className="border-[#757575] w-[45%]" />
+          </div>
+
+          {/* Buttons row: Sign In, vertical separator, and Register */}
+          <div className="flex items-center mt-4 justify-center">
+            Don't have an account?{" "}
+            <button
+              type="button"
+              onClick={() => navigate("/login")}
+              className="inline ml-2 text-dark-blue text-left"
+            >
+              Sign in
+            </button>
+          </div>
         </form>
+      </div>
+
+      <div className="sm:w-1/4 lg:w-1/2 h-full flex flex-col justify-center items-center">
+        <div className="w-full h-full  bg-medium-orange rounded-l-4xl flex flex-col justify-center items-center">
+          <img
+            className="w-[60%] h-[60%] object-contain p-10"
+            src={logo}
+            alt="BCAN Logo"
+          />
+        </div>
       </div>
     </div>
   );
@@ -109,123 +183,17 @@ const Register = observer(() => {
 
 export default Register;
 
-// -- Inline style objects (mirroring Login.tsx) --
+// Inline style objects
 const styles: { [key: string]: React.CSSProperties } = {
   pageContainer: {
     position: "relative",
-    width: "100vw",
+    width: "100%",
     height: "100vh",
     margin: 0,
     padding: 0,
-    overflow: "hidden",
     display: "flex",
     justifyContent: "center",
-    alignItems: "center",
-  },
-  backgroundLayer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    zIndex: 0,
-    background: `
-    linear-gradient(135deg,
-     rgb(164, 183, 251) 0%,
-      rgb(212, 240, 255) 47%, rgb(111, 147, 237) 96%)
-    `,
-    backgroundSize: "cover",
-    backgroundBlendMode: "overlay",
-    filter: "blur(7px)", // blur only the background
-  },
-  foregroundContent: {
-    position: "relative",
-    zIndex: 1, // on top of the background layer
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    alignItems: "center",
-    width: "100%",
-  },
-  logoContainer: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: "2rem",
-    width: "50%",
-    wordSpacing: "4px",
-    flexDirection: "row",
-  },
-  logoSquare: {
-    width: "28px",
-    height: "28px",
-    backgroundColor: "#f25022",
-    marginRight: "10px",
-  },
-  logoText: {
-    fontSize: "1.6rem",
-    fontWeight: "bold",
-  },
-  formContainer: {
-    width: "500px",
-    padding: "3rem",
-    // Partially transparent background
-    backgroundColor: "rgba(255, 255, 255, 0.8)",
-    color: "#000", // ensure text is dark enough to stand out
-    borderRadius: "8px",
-    boxShadow: "0 2px 10px rgba(0,0,0,0.15)",
-    display: "flex",
-    flexDirection: "column",
-  },
-  heading: {
-    marginBottom: "1.2rem",
-    fontSize: "2.2rem",
-    fontWeight: 500,
-    textAlign: "left",
-  },
-  appName: {
-    marginBottom: "0.4rem",
-    fontSize: "2.2rem",
-    fontWeight: 700,
-    textAlign: "left",
-    color: "rgba(255, 105, 0, 1)",
-  },
-  backButton: {
-    background: "none",
-    border: "none",
-    color: "#0b303b",
-    cursor: "pointer",
-    fontSize: "1.1rem",
-    marginBottom: "2rem",
-    alignSelf: "flex-start",
-    padding: 0,
-  },
-  label: {
-    marginBottom: "0.75rem",
-    fontSize: "1.2rem",
-    textAlign: "left",
-  },
-  input: {
-    marginBottom: "1.75rem",
-    padding: "1rem",
-    fontSize: "1.2rem",
-    border: "1px solid #ccc",
-    borderRadius: "4px",
-    width: "100%",
-    boxSizing: "border-box",
-    color: "lightgray",
-  },
-  button: {
-    marginBottom: "1.2rem",
-    padding: "0.6rem",
-    fontSize: "1.2rem",
-    cursor: "pointer",
-    border: "2px solid",
-    borderRadius: "24px",
-  },
-  helloButton: {
-    backgroundColor: "#0b303b",
-    border: "1px solid #ccc",
-    color: "#fff",
+    alignItems: "start",
+    textAlign: "start",
   },
 };

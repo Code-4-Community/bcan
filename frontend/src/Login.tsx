@@ -29,10 +29,6 @@ const Login = observer(() => {
 
   return (
     <div className="bg-white grid grid-cols-2" style={styles.pageContainer}>
-      {/* Blurred background layer
-      <div style={styles.backgroundLayer} />
-
-      {/* Foreground content (not blurred) */}
       <div className="w-1/2 h-full py-20 px-24 flex flex-col justify-center items-start">
         <div className="mb-12">
           <h1 className="text-[32px] pb-4">Welcome back!</h1>
@@ -40,7 +36,6 @@ const Login = observer(() => {
             Enter your credentials to access your account
           </h2>
         </div>
-        {/* Single form container with both Sign In and Register */}
         <form onSubmit={handleSubmit} className="w-full">
           <div className="grid grid-cols-1 gap-x-6 gap-y-4">
             <div className="">
@@ -83,7 +78,7 @@ const Login = observer(() => {
           <div className="h-12 items-center">
             {failure ? (
               <div className="text-[#D33221] mt-4 bg-[#FFA399] h-full rounded-md text-center flex items-center justify-center p-2">
-                Invalid username or password. Please try again.
+                Your password is incorrect or this account doesn't exist
               </div>
             ) : (
               <div className="h-fit p-4 mt-4">{"    "}</div>
@@ -118,7 +113,7 @@ const Login = observer(() => {
       </div>
 
       <div className="w-1/2 h-full flex flex-col justify-center items-center">
-        <div className="w-full h-full bg-dark-orange rounded-l-4xl flex flex-col justify-center items-center">
+        <div className="w-full h-full  bg-medium-orange rounded-l-4xl flex flex-col justify-center items-center">
           <img
             className="w-[60%] h-[60%] object-contain p-10"
             src={logo}
