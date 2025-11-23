@@ -12,33 +12,50 @@ import { Grant } from "../../../../../middle-layer/types/Grant.ts";
 const ITEMS_PER_PAGE = 6;
 
 interface GrantListProps {
-    selectedGrantId?: number;
-    onClearSelectedGrant?: () => void;
-    showOnlyMyGrants?: boolean;
-    currentUserEmail?: string;
+  selectedGrantId?: number;
+  onClearSelectedGrant?: () => void;
+  showOnlyMyGrants?: boolean;
+  currentUserEmail?: string;
 }
 
-const GrantList: React.FC<GrantListProps> = observer(({ selectedGrantId, onClearSelectedGrant, showOnlyMyGrants = false, currentUserEmail }) => {
+const GrantList: React.FC<GrantListProps> = observer(
+  ({
+    selectedGrantId,
+    onClearSelectedGrant,
+    showOnlyMyGrants = false,
+    currentUserEmail,
+  }) => {
     const { grants, onSort } = ProcessGrantData();
     const [currentPage, setPage] = useState(1);
     const [showNewGrantModal, setShowNewGrantModal] = useState(false);
+    const [sortedGrants, setSortedGrants] = useState(grants);
 
-    const displayedGrants = showOnlyMyGrants ? grants.filter(
-        (grant: Grant) => grant.bcan_poc?.POC_email?.toLowerCase() === currentUserEmail?.toLowerCase()
-    )
-    : grants;
+    const handleSort = (header: keyof Grant, asc: boolean) => {
+      const sorted = onSort(header, asc);
+      setSortedGrants(sorted.length > 0 ? sorted : grants);
+    };
 
-     useEffect(() => {
-            if (selectedGrantId !== undefined && grants.length > 0) {
-                 const index = grants.findIndex(grant => grant.grantId === Number(selectedGrantId));
-                 if (index !== -1) {
-                     const targetPage = Math.floor(index / ITEMS_PER_PAGE) + 1;
-                     if (targetPage !== currentPage) {
-                         setPage(targetPage);
-                     }
-                 }
-              }
-         }, [selectedGrantId, grants, currentPage]);
+    const displayedGrants = showOnlyMyGrants
+      ? sortedGrants.filter(
+          (grant: Grant) =>
+            grant.bcan_poc?.POC_email?.toLowerCase() ===
+            currentUserEmail?.toLowerCase()
+        )
+      : sortedGrants;
+
+    useEffect(() => {
+      if (selectedGrantId !== undefined && grants.length > 0) {
+        const index = grants.findIndex(
+          (grant) => grant.grantId === Number(selectedGrantId)
+        );
+        if (index !== -1) {
+          const targetPage = Math.floor(index / ITEMS_PER_PAGE) + 1;
+          if (targetPage !== currentPage) {
+            setPage(targetPage);
+          }
+        }
+      }
+    }, [selectedGrantId, grants, currentPage, sortedGrants]);
 
     const count = displayedGrants.length;
     const startRange = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -46,70 +63,79 @@ const GrantList: React.FC<GrantListProps> = observer(({ selectedGrantId, onClear
     const visibleItems = displayedGrants.slice(startRange, endRange);
 
     return (
-        <div className="paginated-grant-list">
-            <div className="bg-light-orange rounded-[1.2rem] pt-2">
-                <GrantLabels onSort={onSort} />
-                <div className="grant-list p-4">
-                    {visibleItems.map((grant) => (
-                        <GrantItem key={grant.grantId}
-                         grant={grant}
-                        defaultExpanded={grant.grantId === Number(selectedGrantId)} />
-                    ))}
-                    {visibleItems.length === 0 && (
-                        <p className="text-center text-gray-500 py-6">
-                            {showOnlyMyGrants
-                            ? "You currently have no grants assigned as BCAN POC."
-                            : "No grants found>"}
-                        </p>
-                    )}
-                </div>
-            </div>
-            <Pagination.Root
-                className="pt-4"
-                count={count}
-                pageSize={ITEMS_PER_PAGE}
-                page={currentPage}
-                onClick={ () => {
-                    if (onClearSelectedGrant) { onClearSelectedGrant();}}}
-                onPageChange={(e) => { 
-                   setPage(e.page);}}
-            >
-                <ButtonGroup variant="ghost" size="md">
-                    <Pagination.PrevTrigger asChild>
-                        <IconButton>
-                            <HiChevronLeft />
-                        </IconButton>
-                    </Pagination.PrevTrigger>
-                    <Pagination.Context>
-                        {({ pages }) => 
-                            pages.map((page, index) =>
-                                page.type === "page" ? (
-                                    <IconButton
-                                        key={index}
-                                        className={currentPage === page.value ? "text-dark-blue underline" : "ghost"}
-                                        onClick={() => setPage(page.value)}
-                                        aria-label={`Go to page ${page.value}`}
-                                    >
-                                        {page.value}
-                                    </IconButton>
-                                ) : (
-                                    "..."
-                                )
-                            )
-                        }
-                    </Pagination.Context>
-                    <Pagination.NextTrigger asChild>
-                        <IconButton>
-                            <HiChevronRight />
-                        </IconButton>
-                    </Pagination.NextTrigger>
-                </ButtonGroup>
-            </Pagination.Root>
-            {showNewGrantModal && (
-                <NewGrantModal onClose={() => setShowNewGrantModal(false)} />
+      <div className="paginated-grant-list">
+        <div className="bg-light-orange rounded-[1.2rem] pt-2">
+          <GrantLabels onSort={handleSort} />
+          <div className="grant-list p-4">
+            {visibleItems.map((grant) => (
+              <GrantItem
+                key={grant.grantId}
+                grant={grant}
+                defaultExpanded={grant.grantId === Number(selectedGrantId)}
+              />
+            ))}
+            {visibleItems.length === 0 && (
+              <p className="text-center text-gray-500 py-6">
+                {showOnlyMyGrants
+                  ? "You currently have no grants assigned as BCAN POC."
+                  : "No grants found :("}
+              </p>
             )}
+          </div>
         </div>
-        
+        <Pagination.Root
+          className="pt-4"
+          count={count}
+          pageSize={ITEMS_PER_PAGE}
+          page={currentPage}
+          onClick={() => {
+            if (onClearSelectedGrant) {
+              onClearSelectedGrant();
+            }
+          }}
+          onPageChange={(e) => {
+            setPage(e.page);
+          }}
+        >
+          <ButtonGroup variant="ghost" size="md">
+            <Pagination.PrevTrigger asChild>
+              <IconButton>
+                <HiChevronLeft />
+              </IconButton>
+            </Pagination.PrevTrigger>
+            <Pagination.Context>
+              {({ pages }) =>
+                pages.map((page, index) =>
+                  page.type === "page" ? (
+                    <IconButton
+                      key={index}
+                      className={
+                        currentPage === page.value
+                          ? "text-dark-blue underline"
+                          : "ghost"
+                      }
+                      onClick={() => setPage(page.value)}
+                      aria-label={`Go to page ${page.value}`}
+                    >
+                      {page.value}
+                    </IconButton>
+                  ) : (
+                    "..."
+                  )
+                )
+              }
+            </Pagination.Context>
+            <Pagination.NextTrigger asChild>
+              <IconButton>
+                <HiChevronRight />
+              </IconButton>
+            </Pagination.NextTrigger>
+          </ButtonGroup>
+        </Pagination.Root>
+        {showNewGrantModal && (
+          <NewGrantModal onClose={() => setShowNewGrantModal(false)} />
+        )}
+      </div>
     );
   }
 );

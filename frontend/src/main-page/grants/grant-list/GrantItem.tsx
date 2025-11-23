@@ -194,58 +194,8 @@ const GrantItem: React.FC<GrantItemProps> = ({
             : "No date"}
         </li>
         <li className="amount">{formatCurrency(curGrant.amount)}</li>
-        <li className="does-bcan-qualify">
-          {isEditing ? (
-            <div
-              className="custom-dropdown-wrapper"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div onClick={() => setQualifyDropdownOpen(!qualifyDropdownOpen)}>
-                <RingButton
-                  text={
-                    curGrant.does_bcan_qualify
-                      ? DoesBcanQualifyText.Yes
-                      : DoesBcanQualifyText.No
-                  }
-                  color={
-                    curGrant.does_bcan_qualify
-                      ? ButtonColorOption.GREEN
-                      : ButtonColorOption.GRAY
-                  }
-                />
-              </div>
-              {qualifyDropdownOpen && (
-                <div className="custom-dropdown">
-                  <div
-                    className="custom-dropdown-option"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setCurGrant({ ...curGrant, does_bcan_qualify: true });
-                      setQualifyDropdownOpen(false);
-                    }}
-                  >
-                    <RingButton
-                      text={DoesBcanQualifyText.Yes}
-                      color={ButtonColorOption.GREEN}
-                    />
-                  </div>
-                  <div
-                    className="custom-dropdown-option"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setCurGrant({ ...curGrant, does_bcan_qualify: false });
-                      setQualifyDropdownOpen(false);
-                    }}
-                  >
-                    <RingButton
-                      text={DoesBcanQualifyText.No}
-                      color={ButtonColorOption.GRAY}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : curGrant.does_bcan_qualify ? (
+        <li className="does-bcan-qualify px-8" style={{ width: "100%" }}>
+          {curGrant.does_bcan_qualify ? (
             <RingButton
               text={DoesBcanQualifyText.Yes}
               color={ButtonColorOption.GREEN}
@@ -258,56 +208,7 @@ const GrantItem: React.FC<GrantItemProps> = ({
           )}
         </li>
         <li className="flex justify-center items-center text-center">
-          {isEditing ? (
-            <div
-              className="custom-dropdown-wrapper"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}>
-                <div className="status-button-preview">
-                  <StatusIndicator curStatus={curGrant.status} />
-                </div>
-              </div>
-              {statusDropdownOpen && (
-                <div className="custom-dropdown">
-                  <div
-                    className="custom-dropdown-option"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setCurGrant({ ...curGrant, status: Status.Active });
-                      setStatusDropdownOpen(false);
-                    }}
-                  >
-                    <div className="button-default green-button">Active</div>
-                  </div>
-                  <div
-                    className="custom-dropdown-option"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setCurGrant({ ...curGrant, status: Status.Inactive });
-                      setStatusDropdownOpen(false);
-                    }}
-                  >
-                    <div className="button-default gray-button">Inactive</div>
-                  </div>
-                  <div
-                    className="custom-dropdown-option"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setCurGrant({ ...curGrant, status: Status.Potential });
-                      setStatusDropdownOpen(false);
-                    }}
-                  >
-                    <div className="button-default orange-button">
-                      Potential
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : (
-            <StatusIndicator curStatus={curGrant.status} />
-          )}
+          <StatusIndicator curStatus={curGrant.status} />
         </li>
       </div>
 
@@ -335,7 +236,7 @@ const GrantItem: React.FC<GrantItemProps> = ({
                       {/*Application date*/}
                       <div className="w-1/2 mb-3">
                         <label
-                          className="flex block  tracking-wide text-gray-700 font-bold mb-2 text-left text-sm md:text-wrap lg:text-nowrap"
+                          className="flex block  tracking-wide text-gray-700 font-bold mb-2 text-left text-sm lg:text-wrap xl:text-nowrap"
                           htmlFor="grid-city"
                         >
                           Application Date
@@ -359,7 +260,7 @@ const GrantItem: React.FC<GrantItemProps> = ({
                           style={{ color: "black", backgroundColor: "#D3D3D3" }}
                           className="h-9 flex items-center justify-center w-full rounded-full px-4"
                         >
-                          {curGrant.grant_start_date}
+                          {formatDate(curGrant.grant_start_date)}
                         </div>
                       </div>
 
