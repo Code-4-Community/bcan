@@ -9,6 +9,7 @@ import { Grant } from "../../../../middle-layer/types/Grant.ts";
 import FilterBar from "./filter-bar/FilterBar.tsx";
 import { useAuthContext } from "../../context/auth/authContext";
 import { updateEndDateFilter, updateFilter, updateStartDateFilter, updateYearFilter } from "../../external/bcanSatchel/actions.ts";
+import { fetchGrants } from "./filter-bar/processGrantData.ts";
 
 
 interface GrantPageProps {
@@ -60,7 +61,7 @@ function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
       </div>
       <div className="hidden-features">
         {showNewGrantModal && (
-          <NewGrantModal grantToEdit={null} onClose={() => setShowNewGrantModal(false)} />
+          <NewGrantModal grantToEdit={null} onClose={async () => {setShowNewGrantModal(false); await fetchGrants();}} />
         )}
       </div>
     </div>

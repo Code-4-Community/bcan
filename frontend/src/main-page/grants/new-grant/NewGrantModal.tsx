@@ -7,7 +7,9 @@ import { FiUpload } from "react-icons/fi";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { TDateISO } from "../../../../../backend/src/utils/date";
 import { Status } from "../../../../../middle-layer/types/Status";
-import { api } from "../../../api";
+import { createNewGrant, saveGrantEdits } from "../new-grant/processGrantDataEditSave";
+import { observer } from "mobx-react-lite";
+import { fetchGrants } from "../filter-bar/processGrantData";
 
 /** Attachment type from your middle layer */
 enum AttachmentType {
@@ -21,10 +23,9 @@ interface Attachment {
   url: string;
   type: AttachmentType;
 }
+// const FilterBar: React.FC = observer(() => {
 
-
-
-const NewGrantModal: React.FC<{ grantToEdit : Grant | null , onClose: () => void }> = ({ grantToEdit, onClose }) => {
+const NewGrantModal: React.FC<{ grantToEdit : Grant | null , onClose: () => void }> = observer(({ grantToEdit, onClose }) => {
   /*
       grantId: number;
       organization: string;
@@ -48,18 +49,26 @@ const NewGrantModal: React.FC<{ grantToEdit : Grant | null , onClose: () => void
   // Used
   const [organization, _setOrganization] = useState<string>(grantToEdit? grantToEdit.organization : "");
 
+  // Helper function to normalize dates to YYYY-MM-DD format
+  const normalizeDateToISO = (date: TDateISO | ""): TDateISO | "" => {
+    if (!date) return "";
+    // If it has time component, extract just the date part
+    return date.split('T')[0] as TDateISO;
+  };
+
   // Used
   const [applicationDate, _setApplicationDate] = useState<TDateISO | "">(
-  grantToEdit?.application_deadline || ""
+  grantToEdit?.application_deadline ? normalizeDateToISO(grantToEdit.application_deadline) : ""
 );
-  // Used
-  const [grantStartDate, _setGrantStartDate] = useState<TDateISO | "">(
-  grantToEdit?.grant_start_date || ""
-);
-  // Used
-  const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(grantToEdit?.report_deadlines || []);
-  
 
+const [grantStartDate, _setGrantStartDate] = useState<TDateISO | "">(
+  grantToEdit?.grant_start_date ? normalizeDateToISO(grantToEdit.grant_start_date) : ""
+);
+
+const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
+  grantToEdit?.report_deadlines?.map(date => normalizeDateToISO(date)) || []
+);
+  
   // Used
   const [timelineInYears, _setTimelineInYears] = useState<number>(grantToEdit? grantToEdit.timeline : 0);
 
@@ -155,95 +164,180 @@ const NewGrantModal: React.FC<{ grantToEdit : Grant | null , onClose: () => void
 
   /** Basic validations based on your screenshot fields */
   const validateInputs = (): boolean => {
-    if (!organization) {
-      setErrorMessage("Organization Name is required.");
-      return false;
-    }
-    
-    if (!applicationDate || !grantStartDate) {
-      setErrorMessage("Please fill out all date fields.");
-      return false;
-    }
-    
-    if (amount <= 0) {
-      setErrorMessage("Amount must be greater than 0.");
-      return false;
-    }
-    
-    if (doesBcanQualify === "") {
-      setErrorMessage("Set Does Bcan Qualify? to 'yes' or 'no'");
-      return false;
-    }
-    
-    if (isRestricted === "") {
-      setErrorMessage("Set Restriction Type to 'restricted' or 'unrestricted'");
-      return false;
-    }
-    
-    if (status === "" || status == null) {
-      setErrorMessage("Set Status");
-      return false;
-    }
-    
-    return true;
-  };
+  // Organization validation
+  if (!organization || organization.trim() === "") {
+    setErrorMessage("Organization Name is required.");
+    return false;
+  }
+  // Does BCAN Qualify validation
+  if (doesBcanQualify === "") {
+    setErrorMessage("Set Does BCAN Qualify? to 'yes' or 'no'");
+    return false;
+  }
+  // Status validation
+  if (status === "" || status == null) {
+    setErrorMessage("Status is required.");
+    return false;
+  }
+  const validStatuses = [Status.Active, Status.Inactive, Status.Potential, Status.Pending, Status.Rejected];
+  if (!validStatuses.includes(status as Status)) {
+    setErrorMessage("Invalid status selected.");
+    return false;
+  }
+  // Amount validation
+  if (amount <= 0) {
+    setErrorMessage("Amount must be greater than 0.");
+    return false;
+  }
+  if (isNaN(amount) || !isFinite(amount)) {
+    setErrorMessage("Amount must be a valid number.");
+    return false;
+  }
+  // Date validations
+  if (!applicationDate || applicationDate.trim() === "") {
+    setErrorMessage("Application Deadline is required.");
+    return false;
+  }
+  if (!grantStartDate || grantStartDate.trim() === "") {
+    setErrorMessage("Grant Start Date is required.");
+    return false;
+  }
 
-  /** On submit, POST the new grant, then re-fetch from the backend */
-  const createNewGrant = async () => {
-    const newGrant: Grant = {
-      grantId: -1,
-      organization,
-      does_bcan_qualify: (doesBcanQualify === "yes"),
-      amount,
-      grant_start_date: grantStartDate as TDateISO,
-      application_deadline: applicationDate as TDateISO,
-      status: status as Status, 
-      bcan_poc: { POC_name: bcanPocName, POC_email: bcanPocEmail }, 
-      grantmaker_poc: { POC_name: grantProviderPocName, POC_email: grantProviderPocEmail },
-      report_deadlines: reportDates as TDateISO[],
-      timeline: timelineInYears,
-      estimated_completion_time: estimatedCompletionTimeInHours,
-      description,
-      attachments: attachments,
-      isRestricted: (isRestricted === "restricted"),
-    };
+  // const isoDateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  // if (!isoDateRegex.test(applicationDate)) {
+  //   setErrorMessage("Application Deadline must be in valid date format (YYYY-MM-DD). instead of " + applicationDate);
+  //   return false;
+  // }
+  // if (!isoDateRegex.test(grantStartDate)) {
+  //   setErrorMessage("Grant Start Date must be in valid date format (YYYY-MM-DD).");
+  //   return false;
+  // }
+  // Validate dates are actual valid dates
+  const appDate = new Date(applicationDate);
+  const startDate = new Date(grantStartDate);
+  if (isNaN(appDate.getTime())) {
+    setErrorMessage("Application Deadline is not a valid date.");
+    return false;
+  }
+  if (isNaN(startDate.getTime())) {
+    setErrorMessage("Grant Start Date is not a valid date.");
+    return false;
+  }
+  // Logical date validation - grant start should typically be after application deadline
+  if (startDate < appDate) {
+    setErrorMessage("Grant Start Date should typically be after Application Deadline.");
+    return false;
+  }
 
-    console.log("Creating new grant:", newGrant);
-    
-    try {
-      const response = await api("/grant/new-grant", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newGrant),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        setErrorMessage(errorData.errMessage || "Failed to add grant.");
-        setShowErrorPopup(true);
-        return;
-      }
-
-      // Re-fetch the full list of grants
-      // const grantsResponse = await api("/grant");
-      // if (!grantsResponse.ok) {
-      //   throw new Error("Failed to re-fetch grants.");
-      // }
-      // const updatedGrants = await grantsResponse.json();
+  // Report deadlines validation
+  if (reportDates && reportDates.length > 0) {
+    for (let i = 0; i < reportDates.length; i++) {
+      const reportDate = reportDates[i];
       
-      // // Update the store
-      // fetchAllGrants(updatedGrants);
-
-      onClose();
-    } catch (error) {
-      setErrorMessage("Server error. Please try again.");
-      setShowErrorPopup(true);
-      console.error(error);
+      // Skip empty entries (if you allow them)
+      if (!reportDate) {
+        setErrorMessage(`Report Date ${i + 1} cannot be empty. Remove it if not needed.`);
+        return false;
+      }
+      
+      const repDate = new Date(reportDate);
+      if (isNaN(repDate.getTime())) {
+        setErrorMessage(`Report Date ${i + 1} is not a valid date.`);
+        return false;
+      }
+      
+      // Report deadlines should be after grant start
+      if (repDate < startDate) {
+        setErrorMessage(`Report Date ${i + 1} should be after Grant Start Date.`);
+        return false;
+      }
     }
-  };
+  }
+  // Timeline validation
+  if (timelineInYears < 0) {
+    setErrorMessage("Timeline cannot be negative.");
+    return false;
+  }
+  // Estimated completion time validation
+  if (estimatedCompletionTimeInHours < 0) {
+    setErrorMessage("Estimated Completion Time cannot be negative.");
+    return false;
+  }
+  if (estimatedCompletionTimeInHours === 0) {
+    setErrorMessage("Estimated Completion Time must be greater than 0.");
+    return false;
+  }
+  // Restriction type validation
+  if (isRestricted === "") {
+    setErrorMessage("Set Restriction Type to 'restricted' or 'unrestricted'");
+    return false;
+  }
+  // BCAN POC validation
+  if (!bcanPocName || bcanPocName.trim() === "") {
+    setErrorMessage("BCAN Point of Contact Name is required.");
+    return false;
+  }
+  if (!bcanPocEmail || bcanPocEmail.trim() === "") {
+    setErrorMessage("BCAN Point of Contact Email is required.");
+    return false;
+  }
+  // Email format validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(bcanPocEmail)) {
+    setErrorMessage("BCAN Point of Contact Email must be a valid email address.");
+    return false;
+  }
+  // Grant Provider POC validation (optional, but if provided must be valid)
+  if (grantProviderPocName && grantProviderPocName.trim() !== "") {
+    if (grantProviderPocName.trim().length < 2) {
+      setErrorMessage("Grant Provider Point of Contact Name must be at least 2 characters.");
+      return false;
+    }
+  }
+  if (grantProviderPocEmail && grantProviderPocEmail.trim() !== "") {
+    if (!emailRegex.test(grantProviderPocEmail)) {
+      setErrorMessage("Grant Provider Point of Contact Email must be a valid email address.");
+      return false;
+    }
+  }
+  // Attachments validation
+  if (attachments && attachments.length > 0) {
+    for (let i = 0; i < attachments.length; i++) {
+      const attachment = attachments[i]; 
+      if (!attachment.attachment_name || attachment.attachment_name.trim() === "") {
+        setErrorMessage(`Attachment ${i + 1} must have a name.`);
+        return false;
+      }     
+      if (!attachment.url || attachment.url.trim() === "") {
+        setErrorMessage(`Attachment ${i + 1} must have a URL.`);
+        return false;
+      }    
+      // Basic URL validation
+      try {
+        new URL(attachment.url);
+      } catch {
+        setErrorMessage(`Attachment ${i + 1} URL is not valid.`);
+        return false;
+      }
+    }
+  }
+  // Description validation (optional but reasonable length if provided)
+  if (description && description.length > 5000) {
+    setErrorMessage("Description is too long (max 5000 characters).");
+    return false;
+  }
 
-  const saveGrantEdits = async () => {
-    const updatedGrant: Grant = {
+  return true;
+};
+
+
+  const handleSubmit = async () => {
+    if (!validateInputs()) {
+      setShowErrorPopup(true);
+      return;
+    }
+
+    const grantData: Grant = {
       grantId: grantToEdit!.grantId,
       organization,
       does_bcan_qualify: (doesBcanQualify === "yes"),
@@ -252,59 +346,25 @@ const NewGrantModal: React.FC<{ grantToEdit : Grant | null , onClose: () => void
       application_deadline: applicationDate as TDateISO,
       status: status as Status, 
       bcan_poc: { POC_name: bcanPocName, POC_email: bcanPocEmail }, 
-      grantmaker_poc: { POC_name: grantProviderPocName, POC_email: grantProviderPocEmail },
+      grantmaker_poc: (grantProviderPocName && grantProviderPocEmail) ? { POC_name: grantProviderPocName, POC_email: grantProviderPocEmail } : { POC_name: '', POC_email: '' },
       report_deadlines: reportDates as TDateISO[],
       timeline: timelineInYears,
       estimated_completion_time: estimatedCompletionTimeInHours,
-      description,
+      description : description? description : "",
       attachments: attachments,
       isRestricted: (isRestricted === "restricted"),
     };
 
-    console.log("Saving grant edits:", updatedGrant);
-    
-    try {
-      const response = await api("/grant/save", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedGrant),
-      });
+    const result = grantToEdit 
+      ? await saveGrantEdits(grantData)
+      : await createNewGrant(grantData);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        setErrorMessage(errorData.errMessage || "Failed to update grant.");
-        setShowErrorPopup(true);
-        return;
-      }
-
-      // Re-fetch the full list of grants
-      // const grantsResponse = await api("/grant");
-      // if (!grantsResponse.ok) {
-      //   throw new Error("Failed to re-fetch grants.");
-      // }
-      // const updatedGrants = await grantsResponse.json();
-      
-      // // Update the store
-      // fetchAllGrants(updatedGrants);
-
+    if (result.success) {
       onClose();
-    } catch (error) {
-      setErrorMessage("Server error. Please try again.");
-      setShowErrorPopup(true);
-      console.error(error);
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!validateInputs()) {
-      setShowErrorPopup(true);
-      return;
-    }
-
-    if (grantToEdit) {
-      await saveGrantEdits();
+      await fetchGrants(); // ← Call it here instead
     } else {
-      await createNewGrant();
+      setErrorMessage(result.error || "An error occurred");
+      setShowErrorPopup(true);
     }
   };
 
@@ -735,6 +795,6 @@ const NewGrantModal: React.FC<{ grantToEdit : Grant | null , onClose: () => void
     
     
   );
-};
+});
 
 export default NewGrantModal;

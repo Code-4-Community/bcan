@@ -11,13 +11,15 @@ import { MdOutlinePerson2 } from "react-icons/md";
 import Attachment from "../../../../../middle-layer/types/Attachment";
 import NewGrantModal from "../new-grant/NewGrantModal";
 import ActionConfirmation from "../../../custom/ActionConfirmation";
+import { observer } from "mobx-react-lite";
+import { fetchGrants } from "../filter-bar/processGrantData";
 
 interface GrantItemProps {
   grant: Grant;
   defaultExpanded?: boolean;
 }
 
-const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false }) => {
+const GrantItem: React.FC<GrantItemProps> = observer(({ grant, defaultExpanded = false }) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [isEditing, setIsEditing] = useState(false);
   const [curGrant, setCurGrant] = useState(grant);
@@ -65,26 +67,46 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
 
   const deleteGrant = async () => {
     setShowDeleteModal(false);
-    console.log(curGrant.organization);
+    
+    console.log("=== DELETE GRANT DEBUG ===");
+    console.log("Current grant:", curGrant);
+    console.log("Grant ID:", curGrant.grantId);
+    console.log("Organization:", curGrant.organization);
+    console.log("Full URL:", `/grant/${curGrant.grantId}`);
+    
     try {
       const response = await api(`/grant/${curGrant.grantId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         }
-        //body: JSON.stringify(curGrant.grantId),
       });
       
+      console.log("Response status:", response.status);
+      console.log("Response ok:", response.ok);
+      
       if (response.ok) {
-        console.log("Grant deleted successfully");
-        // Optionally trigger a callback to refresh the parent list or navigate away
-        // For example: onGrantDeleted?.(curGrant.id);
+        console.log("✅ Grant deleted successfully");
+        // Refetch grants to update UI
+        await fetchGrants();
       } else {
-        const error = await response.json();
-        console.error("Error deleting grant:", error);
+        // Get error details
+        const errorText = await response.text();
+        console.error("❌ Error response:", errorText);
+        
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+          console.error("Parsed error:", errorData);
+        } catch {
+          console.error("Could not parse error response");
+        }
       }
     } catch (err) {
-      console.error("Error deleting grant:", err);
+      console.error("=== EXCEPTION CAUGHT ===");
+      console.error("Error type:", err instanceof Error ? "Error" : typeof err);
+      console.error("Error message:", err instanceof Error ? err.message : err);
+      console.error("Full error:", err);
     }
 };
 
@@ -568,7 +590,7 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
           {showNewGrantModal && (
             <NewGrantModal 
               grantToEdit={curGrant}
-              onClose={() => setShowNewGrantModal(false)} 
+              onClose={async () => {setShowNewGrantModal(false); await fetchGrants();}}
             />
           )}
         </div>
@@ -576,6 +598,6 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
 
     </div>
   );
-};
+});
 
 export default GrantItem;
