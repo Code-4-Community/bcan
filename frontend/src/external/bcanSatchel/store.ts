@@ -14,8 +14,6 @@ export interface AppState {
   endDateFilter: Date | null;
   searchQuery: string;
   yearFilter:number[] | null;
-  activeUsers: User[] | [];
-  inactiveUsers: User[] | [];
   notifications: { id: number; title: string; message: string; }[];
 }
 
@@ -30,8 +28,6 @@ const initialState: AppState = {
   endDateFilter: null,
   searchQuery: '',
   yearFilter: null,
-    activeUsers: [],
-  inactiveUsers: [],
   notifications: []
 };
 
