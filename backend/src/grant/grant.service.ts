@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import AWS from 'aws-sdk';
+import AWS, { AWSError } from 'aws-sdk';
 import { Grant } from '../../../middle-layer/types/Grant';
-import { NotificationService } from '.././notifications/notifcation.service';
+import { NotificationService } from '../notifications/notification.service';
 import { Notification } from '../../../middle-layer/types/Notification';
 import { TDateISO } from '../utils/date';
 @Injectable()
@@ -92,36 +92,39 @@ export class GrantService {
      * @param grantData
      */
     async updateGrant(grantData: Grant): Promise<string> {
-        // dynamically creates the update expression/attribute names based on names of grant interface
-        // assumption: grant interface field names are exactly the same as db storage naming
-        this.logger.warn('here' + grantData.status);
-        const updateKeys = Object.keys(grantData).filter(
-            key => key != 'grantId'
-        );
-        const UpdateExpression = "SET " + updateKeys.map((key) => `#${key} = :${key}`).join(", ");
-        const ExpressionAttributeNames = updateKeys.reduce((acc, key) =>
-            ({ ...acc, [`#${key}`]: key }), {});
-        const ExpressionAttributeValues = updateKeys.reduce((acc, key) =>
-            ({ ...acc, [`:${key}`]: grantData[key as keyof typeof grantData] }), {});
+      
+      const updateKeys = Object.keys(grantData).filter(
+          key => key != 'grantId'
+      );
+      
+      this.logger.warn('Update keys: ' + JSON.stringify(updateKeys));
+      
+      const UpdateExpression = "SET " + updateKeys.map((key) => `#${key} = :${key}`).join(", ");
+      const ExpressionAttributeNames = updateKeys.reduce((acc, key) =>
+          ({ ...acc, [`#${key}`]: key }), {});
+      const ExpressionAttributeValues = updateKeys.reduce((acc, key) =>
+          ({ ...acc, [`:${key}`]: grantData[key as keyof typeof grantData] }), {});
 
-        const params = {
-            TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || "TABLE_FAILURE",
-            Key: { grantId: grantData.grantId },
-            UpdateExpression,
-            ExpressionAttributeNames,
-            ExpressionAttributeValues,
-            ReturnValues: "UPDATED_NEW",
-        };
+      const params = {
+          TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || "TABLE_FAILURE",
+          Key: { grantId: grantData.grantId },
+          UpdateExpression,
+          ExpressionAttributeNames,
+          ExpressionAttributeValues,
+          ReturnValues: "UPDATED_NEW",
+      };
 
-        try {
-            const result = await this.dynamoDb.update(params).promise();
-            await this.updateGrantNotifications(grantData);
-            return JSON.stringify(result); // returns the changed attributes stored in db
-        } catch(err) {
-            console.log(err);
-            throw new Error(`Failed to update Grant ${grantData.grantId}`)
-        }
-    }
+      try {
+          const result = await this.dynamoDb.update(params).promise();
+          this.logger.warn('✅ Update successful!');
+          //await this.updateGrantNotifications(grantData);
+          return JSON.stringify(result);
+      } catch(err: unknown) {
+          this.logger.error('=== DYNAMODB ERROR ===');
+          this.logger.error('Unknown error type: ' + JSON.stringify(err));
+          throw new Error(`Failed to update Grant ${grantData.grantId}: Unknown error`);
+      }
+  }
     
     // Add a new grant using the Grant interface from middleware.
   async addGrant(grant: Grant): Promise<number> {
@@ -165,17 +168,17 @@ export class GrantService {
   /* Deletes a grant from database based on its grant ID number
   * @param grantId
   */
-  async deleteGrantById(grantId: string): Promise<string> {
+  async deleteGrantById(grantId: number): Promise<string> {
     const params = {
         TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || "TABLE_FAILURE",
-        Key: { grantId: grantId },
+        Key: { grantId: Number(grantId) },
         ConditionExpression: "attribute_exists(grantId)", // ensures grant exists
     };
 
     try {
         await this.dynamoDb.delete(params).promise();
         this.logger.log(`Grant ${grantId} deleted successfully`);
-        return 'Grant ${grantId} deleted successfully';
+        return `Grant ${grantId} deleted successfully`;
     } catch (error: any) {
         if (error.code === "ConditionalCheckFailedException") {
             throw new Error(`Grant ${grantId} does not exist`);

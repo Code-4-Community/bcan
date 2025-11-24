@@ -10,13 +10,16 @@ import { api } from "../../../api";
 import { MdOutlinePerson2 } from "react-icons/md";
 import Attachment from "../../../../../middle-layer/types/Attachment";
 import NewGrantModal from "../new-grant/NewGrantModal";
+import ActionConfirmation from "../../../custom/ActionConfirmation";
+import { observer } from "mobx-react-lite";
+import { fetchGrants } from "../filter-bar/processGrantData";
 
 interface GrantItemProps {
   grant: Grant;
   defaultExpanded?: boolean;
 }
 
-const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false }) => {
+const GrantItem: React.FC<GrantItemProps> = observer(({ grant, defaultExpanded = false }) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [isEditing, setIsEditing] = useState(false);
   const [curGrant, setCurGrant] = useState(grant);
@@ -62,99 +65,50 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
     setStatusDropdownOpen(false);
   };
 
-  {/* The popup that appears on delete */}
-  const DeleteModal = ({ 
-    isOpen, 
-    onCloseDelete, 
-    onConfirmDelete, 
-    title = "Are you sure?",
-    message = "This action cannot be undone."
-  }: {
-    isOpen: boolean;
-    onCloseDelete: () => void;
-    onConfirmDelete: () => void;
-    title?: string;
-    message?: string;
-  }) => {
-    if (!isOpen) return null;
-
-    return (
-      <div 
-        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300"
-        onClick={onCloseDelete}
-      >
-        <div 
-          style={{
-            borderStyle: 'solid',
-            borderColor: 'black',
-            borderWidth: '2px'
-          }}
-          className="bg-white rounded-lg shadow-2xl p-8 max-w-md w-full mx-4 transform transition-all duration-300"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Icon */}
-          <div className="flex justify-center mb-4">
-            <div className="bg-red-100 rounded-full p-3">
-              <svg 
-                className="w-12 h-12 text-red-600" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" 
-                />
-              </svg>
-            </div>
-          </div>
-
-          {/* Title */}
-          <h3 className="text-2xl font-bold text-gray-900 text-center mb-2">
-            {title}
-          </h3>
-
-          {/* Message */}
-          <p className="text-gray-600 text-center mb-6">
-            {message}
-          </p>
-
-          {/* Buttons */}
-          <div className="flex gap-3">
-            <button
-              style={{
-                backgroundColor: '#F2EBE4',
-                borderStyle: 'solid',
-                borderColor: 'black',
-                borderWidth: '1px'
-              }}
-              className="flex-1 py-3 px-4 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
-              onClick={onCloseDelete}
-            >
-              Cancel
-            </button>
-            <button
-              style={{
-                backgroundColor: 'indianred',
-                borderStyle: 'solid',
-                borderColor: 'indianred',
-                borderWidth: '1px'
-              }}
-              className="flex-1 py-3 px-4 rounded-lg font-semibold text-white hover:bg-red-700 transition-colors"
-              onClick={() => {
-                onConfirmDelete();
-                onCloseDelete();
-              }}
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  };
+  const deleteGrant = async () => {
+    setShowDeleteModal(false);
+    
+    console.log("=== DELETE GRANT DEBUG ===");
+    console.log("Current grant:", curGrant);
+    console.log("Grant ID:", curGrant.grantId);
+    console.log("Organization:", curGrant.organization);
+    console.log("Full URL:", `/grant/${curGrant.grantId}`);
+    
+    try {
+      const response = await api(`/grant/${curGrant.grantId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+      
+      console.log("Response status:", response.status);
+      console.log("Response ok:", response.ok);
+      
+      if (response.ok) {
+        console.log("✅ Grant deleted successfully");
+        // Refetch grants to update UI
+        await fetchGrants();
+      } else {
+        // Get error details
+        const errorText = await response.text();
+        console.error("❌ Error response:", errorText);
+        
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+          console.error("Parsed error:", errorData);
+        } catch {
+          console.error("Could not parse error response");
+        }
+      }
+    } catch (err) {
+      console.error("=== EXCEPTION CAUGHT ===");
+      console.error("Error type:", err instanceof Error ? "Error" : typeof err);
+      console.error("Error message:", err instanceof Error ? err.message : err);
+      console.error("Full error:", err);
+    }
+};
 
   function formatDate(isoString: string): string {
     const date = new Date(isoString);
@@ -584,12 +538,16 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
                 Delete
               </button>
 
-              <DeleteModal
+              <ActionConfirmation
                 isOpen={showDeleteModal}
                 onCloseDelete={() => setShowDeleteModal(false)}
                 onConfirmDelete={() => {
-                  setShowDeleteModal(false);
+                  deleteGrant();
                 }}
+                title="Delete Grant"
+                subtitle={"Are you sure you want to delete"}
+                boldSubtitle={curGrant.organization}
+                warningMessage="By deleting this grant, they won't be available in the system anymore."
               />
             </>
 
@@ -631,8 +589,8 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
       <div className="hidden-features">
           {showNewGrantModal && (
             <NewGrantModal 
-              //grant={curGrant}
-              onClose={() => setShowNewGrantModal(false)} 
+              grantToEdit={curGrant}
+              onClose={async () => {setShowNewGrantModal(false); await fetchGrants();}}
             />
           )}
         </div>
@@ -640,6 +598,6 @@ const GrantItem: React.FC<GrantItemProps> = ({ grant, defaultExpanded = false })
 
     </div>
   );
-};
+});
 
 export default GrantItem;

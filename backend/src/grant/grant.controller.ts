@@ -44,7 +44,7 @@ export class GrantController {
     }
 
     @Delete(':grantId')
-    async deleteGrant(@Param('grantId') grantId: string) {
+    async deleteGrant(@Param('grantId') grantId: number) {
         return await this.grantService.deleteGrantById(grantId);
     }
 
