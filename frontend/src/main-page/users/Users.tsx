@@ -1,17 +1,88 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ApprovedUserCard from "./ApprovedUserCard";
 import PendingUserCard from "./PendingUserCard";
+import { User } from "../../../../middle-layer/types/User";
+import { Pagination, ButtonGroup, IconButton } from "@chakra-ui/react";
+import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
+import { observer } from "mobx-react-lite";
+import { getAppStore } from "../../external/bcanSatchel/store";
 
 // Represents a specific tab to show on the user page
 enum UsersTab {
   PendingUsers,
   CurrentUsers,
 }
+import { api } from "../../api"
+const fetchActiveUsers = async (): Promise<User[]> => {
+  try {
+    const response = await api("/user/active", {
+      method: 'GET'
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP Error, Status: ${response.status}`);
+    }
+    
+    const activeUsers = await response.json();
+    return activeUsers as User[];
+  } catch (error) {
+    console.error("Error fetching active users:", error);
+    return []; // Return empty array on error
+  }
+}
 
-function Users() {
+const fetchInactiveUsers = async () => {
+  try {
+    const response = await api("/user/inactive", {method : 'GET' });
+    if (!response.ok) {
+      throw new Error(`HTTP Error, Status: ${response.status}`);
+    }
+    const inactiveUsers = await response.json();
+    return inactiveUsers as User[];
+  }
+  catch (error) {
+    console.error("Error fetching active users:", error);
+  }
+}
+
+
+const ITEMS_PER_PAGE = 8;
+
+const Users = observer(() => {
+  const store = getAppStore();
+  
+  
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const active = await fetchActiveUsers();
+      const inactive = await fetchInactiveUsers();
+      if (active) {
+        store.activeUsers = active;
+      }
+      if (inactive) {
+store.inactiveUsers = inactive;    }
+    };
+    fetchUsers();
+  
+  }, []);
   const [usersTabStatus, setUsersTabStatus] = useState<UsersTab>(
     UsersTab.CurrentUsers
   );
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const filteredUsers =
+    usersTabStatus === UsersTab.PendingUsers
+      ? store.inactiveUsers
+      : store.activeUsers;
+
+  const numInactiveUsers = mockUsers.filter((user) => user.position === "Inactive").length;
+  const numUsers = filteredUsers.length;
+  const pageStartIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const pageEndIndex =
+    pageStartIndex + ITEMS_PER_PAGE > numUsers
+      ? numUsers
+      : pageStartIndex + ITEMS_PER_PAGE;
+  const currentPageUsers = filteredUsers.slice(pageStartIndex, pageEndIndex);
 
   return (
     <div className="p-8">
@@ -21,9 +92,9 @@ function Users() {
             ? "All Users"
             : "Pending Users"}
         </h1>
-        <p className="text-[#FF8476]"># new users</p>
+        <p className="text-[#FF8476]">{numInactiveUsers} new users</p>
       </div>
-      <div className="min-h-screen bg-[#F5F4F4] border rounded-md relative">
+      <div className="min-h-screen bg-[#F5F4F4] border rounded-md relative flex flex-col">
         <div className="absolute right-7 top-0 -translate-y-full flex">
           <button
             className={`w-52 h-16 border rounded-b-none focus:outline-none ${
@@ -31,7 +102,10 @@ function Users() {
                 ? "bg-[#F5F4F4] border-x-[#000000] border-t-[#000000]"
                 : "bg-[#F4F4F4] border-x-[#BFBBBB] border-t-[#BFBBBB] border-b-[#000000]"
             }`}
-            onClick={() => setUsersTabStatus(UsersTab.PendingUsers)}
+            onClick={() => {
+              setUsersTabStatus(UsersTab.PendingUsers);
+              setCurrentPage(1);
+            }}
           >
             Pending Users
           </button>
@@ -41,7 +115,10 @@ function Users() {
                 ? "bg-[#F5F4F4] border-x-[#000000] border-t-[#000000]"
                 : "bg-[#F4F4F4] border-x-[#BFBBBB] border-t-[#BFBBBB] border-b-[#000000]"
             }`}
-            onClick={() => setUsersTabStatus(UsersTab.CurrentUsers)}
+            onClick={() => {
+              setUsersTabStatus(UsersTab.CurrentUsers);
+              setCurrentPage(1);
+            }}
           >
             Current Users
           </button>
@@ -55,11 +132,14 @@ function Users() {
                 <p className="w-[140px] text-left">Email</p>
                 <p className="w-[140px] text-left">Position</p>
               </div>
-              <ApprovedUserCard
-                name="Aaron Ashby"
-                email="a.ashby@mit.edu"
-                position="Employee"
-              />
+              {currentPageUsers.map((user) => (
+                <ApprovedUserCard
+                  key={user.userId}
+                  name={user.name}
+                  email={user.email}
+                  position={user.position}
+                />
+              ))}
             </>
           ) : (
             <>
@@ -68,21 +148,65 @@ function Users() {
                 <p className="w-[140px] text-left">User ID</p>
                 <p className="w-[140px] text-left">Email</p>
                 <p className="w-[140px] text-left">Position</p>
-                <p className="w-[140px] text-left">Date Requested</p>
                 <div className="w-[140px]"></div>
               </div>
-              <PendingUserCard
-                name="Aaron Ashby"
-                email="a.ashby@uconn.edu"
-                position="Inactive"
-                dateRequested={new Date("02/14/2006")}
+              {currentPageUsers.map((user) => (
+                <PendingUserCard
+                name={user.name}
+                email={user.email}
+                position={user.position}
               />
+              ))}
             </>
           )}
         </div>
+        <Pagination.Root
+          className="pt-4 mt-auto pb-4"
+          count={numUsers}
+          pageSize={ITEMS_PER_PAGE}
+          page={currentPage}
+          onPageChange={(e) => {
+            setCurrentPage(e.page);
+          }}
+        >
+          <ButtonGroup variant="ghost" size="md">
+            <Pagination.PrevTrigger asChild>
+              <IconButton>
+                <HiChevronLeft />
+              </IconButton>
+            </Pagination.PrevTrigger>
+            <Pagination.Context>
+              {({ pages }) =>
+                pages.map((page, index) =>
+                  page.type === "page" ? (
+                    <IconButton
+                      key={index}
+                      className={
+                        currentPage === page.value
+                          ? "text-dark-blue underline"
+                          : "ghost"
+                      }
+                      onClick={() => setCurrentPage(page.value)}
+                      aria-label={`Go to page ${page.value}`}
+                    >
+                      {page.value}
+                    </IconButton>
+                  ) : (
+                    "..."
+                  )
+                )
+              }
+            </Pagination.Context>
+            <Pagination.NextTrigger asChild>
+              <IconButton>
+                <HiChevronRight />
+              </IconButton>
+            </Pagination.NextTrigger>
+          </ButtonGroup>
+        </Pagination.Root>
       </div>
     </div>
   );
-}
+})
 
 export default Users;

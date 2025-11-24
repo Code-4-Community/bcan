@@ -77,11 +77,11 @@ const BarYearGrantStatus = observer(
             </label>
           </div>
         </div>
-        <ResponsiveContainer width="100%" height={300} min-width={400}>
+        <ResponsiveContainer width="100%" height={450} min-width={400}>
           <BarChart
             data={checked ? data_money : data_count}
             layout="vertical"
-            margin={{ top: 10, right: 60, left: 20, bottom: 30 }}
+            margin={{ top: 10, right: 60, left: 40, bottom: 30 }}
           >
             <YAxis
               axisLine={false}
