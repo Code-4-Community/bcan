@@ -1,5 +1,5 @@
 import { Controller, Post, Body, Get, Query, Param, Patch, Put, Delete } from '@nestjs/common';
-import { NotificationService } from './notifcation.service';
+import { NotificationService } from './notification.service';
 import { Notification } from '../../../middle-layer/types/Notification';
 
 
