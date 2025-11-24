@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
 import logo from "./images/bcan_logo.svg";
 import { useAuthContext } from "./context/auth/authContext";
+import "./styles/index.css";
 
 /**
  * Register a new BCAN user
@@ -12,51 +13,94 @@ const Register = observer(() => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordRe, setPasswordRe] = useState("");
-  const [failure, setFailure] = useState({ state: false, message: "" });
+  const [failure, setFailure] = useState({
+    state: false,
+    message: "",
+    item: "",
+  });
   const navigate = useNavigate();
 
   const { register } = useAuthContext();
+  const passswordRegex: RegExp =
+    /^(?=.*[!@#$%^&*])(?=.*\d)(?=.*[A-Z])(?=.*[a-z]).{8,}$/;
+  const emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const defaultPasswordMessage: string = `• Passwords must have at least one special character (!@#$%^&*)
+• Passwords must have at least one digit character ('0'-'9')
+• Passwords must have at least one uppercase letter ('A'-'Z') and one lowercase letter ('a'-'z')
+• Passwords must be at least 8 characters long`;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Input validation
+    if (!emailRegex.test(email)) {
+      setFailure({
+        state: true,
+        message: "Please enter a valid email address.",
+        item: "email",
+      });
+      return;
+    }
+    if (!passswordRegex.test(password)) {
+      setFailure({
+        state: true,
+        message: defaultPasswordMessage,
+        item: "password",
+      });
+      return;
+    }
     const success = await register(username, password, email);
-    if (!failure.state && success.state) {
+    if (password === passwordRe && success.state) {
       navigate("/registered");
     } else {
-      setFailure({ state: true, message: "Registration failed: " + success.message });
+      setFailure({
+        state: true,
+        message: "Registration failed: " + success.message,
+        item: "registration",
+      });
       console.warn("Registration failed");
     }
   };
 
+  // Handlers for password and password confirmation inputs
   const handlePassword = (e: string) => {
     setPassword(e);
-    if (e !== password && passwordRe !== "") {
-      setFailure({ state: true, message: "Passwords do not match" });
+    if (e !== passwordRe && passwordRe !== "") {
+      setFailure({
+        state: true,
+        message: "Passwords do not match.",
+        item: "password",
+      });
     } else {
-      setFailure({ state: false, message: "" });
+      setFailure({ state: false, message: "", item: "" });
     }
   };
 
   const handlePasswordMatch = (e: string) => {
     setPasswordRe(e);
     if (e !== password) {
-      setFailure({ state: true, message: "Passwords do not match" });
+      setFailure({
+        state: true,
+        message: "Passwords do not match.",
+        item: "password",
+      });
     } else {
-      setFailure({ state: false, message: "" });
+      setFailure({ state: false, message: "", item: "" });
     }
   };
 
   return (
     <div className="bg-white grid grid-cols-2" style={styles.pageContainer}>
       <div className="sm:w-3/4 lg:w-1/2 h-full py-20 px-20 flex flex-col justify-center items-start">
-        <div className="mb-4">
+        {/*/ Left side: Registration form */}
+        <div className="mb-8">
           <h1 className="text-[32px]">Get Started Now</h1>
         </div>
+
         <form onSubmit={handleSubmit} className="w-full">
           <div className="grid grid-cols-1 gap-x-6 gap-y-4">
             <div className="">
               <label htmlFor="username" className="block">
-                User Name
+                Username
               </label>
               <div className="flex items-center rounded-md pt-2">
                 <input
@@ -85,7 +129,11 @@ const Register = observer(() => {
                   required
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
-                  style={styles.inputContainer}
+                  style={
+                    failure.item === "email"
+                      ? styles.errorItem
+                      : styles.inputContainer
+                  }
                   className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-[#D9D9D9]"
                 />
               </div>
@@ -103,7 +151,11 @@ const Register = observer(() => {
                   required
                   onChange={(e) => handlePassword(e.target.value)}
                   placeholder="Enter your password"
-                  style={styles.inputContainer}
+                  style={
+                    failure.item === "password"
+                      ? styles.errorItem
+                      : styles.inputContainer
+                  }
                   className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-[#D9D9D9]"
                 />
               </div>
@@ -121,7 +173,11 @@ const Register = observer(() => {
                   onChange={(e) => handlePasswordMatch(e.target.value)}
                   required
                   placeholder="Re-enter your password"
-                  style={styles.inputContainer}
+                  style={
+                    failure.item === "password"
+                      ? styles.errorItem
+                      : styles.inputContainer
+                  }
                   className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-[#D9D9D9]"
                 />
               </div>
@@ -129,15 +185,10 @@ const Register = observer(() => {
           </div>
           <div className="items-center">
             <div
-              className={`min-h-24 text-[#${
-                failure.state ? "D33221" : "616161"
-              }] mt-4 bg-[#${
-                failure.state ? "FFA399" : "E7E7E7"
-              }] text-sm rounded-md flex items-center justify-center p-4 whitespace-pre-line text-left`}
+              style={failure.state ? styles.error : styles.warning}
+              className={`min-h-28 mt-4 text-sm rounded-md flex items-center justify-center p-4 whitespace-pre-line text-left`}
             >
-              {failure.state ? failure.message : `• Passwords must have at least one special character (!@#$%^&*)
-• Passwords must have at least one digit character ('0'-'9')
-• Passwords must have at least one uppercase character ('A'-'Z')`}
+              {failure.state ? failure.message : defaultPasswordMessage}
             </div>
           </div>
 
@@ -153,8 +204,6 @@ const Register = observer(() => {
             <div className="text-[#757575]">or</div>
             <hr className="border-[#757575] w-[45%]" />
           </div>
-
-          {/* Buttons row: Sign In, vertical separator, and Register */}
           <div className="flex items-center mt-4 justify-center">
             Don't have an account?{" "}
             <button
@@ -167,11 +216,11 @@ const Register = observer(() => {
           </div>
         </form>
       </div>
-
+      {/*/ Right side: logo */}
       <div className="sm:w-1/4 lg:w-1/2 h-full flex flex-col justify-center items-center">
         <div className="w-full h-full  bg-medium-orange rounded-l-4xl flex flex-col justify-center items-center">
           <img
-            className="w-[60%] h-[60%] object-contain p-10"
+            className="w-[60%] h-[60%] object-contain p-10 mb-40"
             src={logo}
             alt="BCAN Logo"
           />
@@ -195,5 +244,16 @@ const styles: { [key: string]: React.CSSProperties } = {
     justifyContent: "center",
     alignItems: "start",
     textAlign: "start",
+  },
+  warning: {
+    color: "#616161",
+    backgroundColor: "#E7E7E7",
+  },
+  error: {
+    color: "#D33221",
+    backgroundColor: "#FFA399",
+  },
+  errorItem: {
+    borderColor: "#D33221",
   },
 };

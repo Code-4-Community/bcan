@@ -29,11 +29,12 @@ const Login = observer(() => {
 
   return (
     <div className="bg-white grid grid-cols-2" style={styles.pageContainer}>
+      {/*/ Left side: Registration form */}
       <div className="w-1/2 h-full py-20 px-24 flex flex-col justify-center items-start">
         <div className="mb-12">
           <h1 className="text-[32px] pb-4">Welcome back!</h1>
           <h2 className="text-lg">
-            Enter your credentials to access your account
+            Enter your credentials to access your account.
           </h2>
         </div>
         <form onSubmit={handleSubmit} className="w-full">
@@ -78,13 +79,12 @@ const Login = observer(() => {
           <div className="h-12 items-center">
             {failure ? (
               <div className="text-[#D33221] mt-4 bg-[#FFA399] h-full rounded-md text-center flex items-center justify-center p-2">
-                Your password is incorrect or this account doesn't exist
+                Your password is incorrect or this account doesn't exist.
               </div>
             ) : (
               <div className="h-fit p-4 mt-4">{"    "}</div>
             )}
           </div>
-
           <button
             type="submit"
             className="w-full block mt-8 min-w-0 rounded-md grow bg-dark-orange text-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500"
@@ -97,8 +97,6 @@ const Login = observer(() => {
             <div className="text-[#757575]">or</div>
             <hr className="border-[#757575] w-[45%]" />
           </div>
-
-          {/* Buttons row: Sign In, vertical separator, and Register */}
           <div className="flex items-center mt-8 justify-center">
             Don't have an account?{" "}
             <button
@@ -112,10 +110,11 @@ const Login = observer(() => {
         </form>
       </div>
 
+      {/*/ Right side: logo */}
       <div className="w-1/2 h-full flex flex-col justify-center items-center">
         <div className="w-full h-full  bg-medium-orange rounded-l-4xl flex flex-col justify-center items-center">
           <img
-            className="w-[60%] h-[60%] object-contain p-10"
+            className="w-[60%] h-[60%] object-contain p-10 mb-40"
             src={logo}
             alt="BCAN Logo"
           />
