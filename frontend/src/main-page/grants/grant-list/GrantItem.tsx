@@ -5,7 +5,6 @@ import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { DoesBcanQualifyText } from "../../../translations/general";
 import RingButton, { ButtonColorOption } from "../../../custom/RingButton";
-import { Status } from "../../../../../middle-layer/types/Status";
 import { api } from "../../../api";
 import { MdOutlinePerson2 } from "react-icons/md";
 import Attachment from "../../../../../middle-layer/types/Attachment";
@@ -22,13 +21,9 @@ const GrantItem: React.FC<GrantItemProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [isEditing, setIsEditing] = useState(false);
-  const [curGrant, setCurGrant] = useState(grant);
+  const curGrant = grant;
   const [showNewGrantModal, setShowNewGrantModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
-  // Track whether each custom dropdown is open.
-  const [qualifyDropdownOpen, setQualifyDropdownOpen] = useState(false);
-  const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
 
   const toggleExpand = () => {
     // Toggle edit mode off now that we are leaving this specific grant in view
@@ -61,8 +56,6 @@ const GrantItem: React.FC<GrantItemProps> = ({
       }
     }
     setIsEditing(!isEditing);
-    setQualifyDropdownOpen(false);
-    setStatusDropdownOpen(false);
   };
 
   {
