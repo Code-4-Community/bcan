@@ -90,9 +90,9 @@ const Register = observer(() => {
 
   return (
     <div className="bg-white grid grid-cols-2" style={styles.pageContainer}>
-      <div className="sm:w-3/4 lg:w-1/2 h-full py-20 px-20 flex flex-col justify-center items-start">
+      <div className="sm:w-3/4 lg:w-[60%] h-full py-20 px-20 flex flex-col justify-center items-start">
         {/*/ Left side: Registration form */}
-        <div className="mb-8">
+        <div className="mb-4">
           <h1 className="text-[32px]">Get Started Now</h1>
         </div>
 
@@ -217,7 +217,7 @@ const Register = observer(() => {
         </form>
       </div>
       {/*/ Right side: logo */}
-      <div className="sm:w-1/4 lg:w-1/2 h-full flex flex-col justify-center items-center">
+      <div className="sm:w-1/4 lg:w-[40%] h-full flex flex-col justify-center items-center">
         <div className="w-full h-full  bg-medium-orange rounded-l-4xl flex flex-col justify-center items-center">
           <img
             className="w-[60%] h-[60%] object-contain p-10 mb-40"

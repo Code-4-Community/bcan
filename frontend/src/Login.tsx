@@ -30,7 +30,7 @@ const Login = observer(() => {
   return (
     <div className="bg-white grid grid-cols-2" style={styles.pageContainer}>
       {/*/ Left side: Registration form */}
-      <div className="w-1/2 h-full py-20 px-24 flex flex-col justify-center items-start">
+      <div className="w-[60%] h-full py-20 px-24 flex flex-col justify-center items-start">
         <div className="mb-12">
           <h1 className="text-[32px] pb-4">Welcome back!</h1>
           <h2 className="text-lg">
@@ -111,7 +111,7 @@ const Login = observer(() => {
       </div>
 
       {/*/ Right side: logo */}
-      <div className="w-1/2 h-full flex flex-col justify-center items-center">
+      <div className="w-[40%] h-full flex flex-col justify-center items-center">
         <div className="w-full h-full  bg-medium-orange rounded-l-4xl flex flex-col justify-center items-center">
           <img
             className="w-[60%] h-[60%] object-contain p-10 mb-40"
