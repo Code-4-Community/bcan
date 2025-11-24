@@ -1,7 +1,8 @@
 // frontend/src/grant-info/components/NewGrantModal.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CurrencyInput from 'react-currency-input-field';
 import { fetchAllGrants } from "../../../external/bcanSatchel/actions";
+import { getAppStore } from "../../../external/bcanSatchel/store";
 import "../styles/NewGrantModal.css";
 import { MdOutlinePerson2 } from "react-icons/md";
 import { FiUpload } from "react-icons/fi";
@@ -96,7 +97,37 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   // @ts-ignore
   const [_errorMessage, setErrorMessage] = useState<string>("");
 
-  
+  const store = getAppStore();
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      console.log('Checking store for users...');
+      console.log('Current activeUsers in store:', store.activeUsers);
+      console.log('Length:', store.activeUsers.length);
+
+      if (store.activeUsers.length === 0) {
+        console.log('Fetching users...');
+        try {
+          const response = await api("/user/active", { method: 'GET' });
+          console.log('Response status:', response.status);
+
+          if (response.ok) {
+            const users = await response.json();
+            console.log('Fetched users:', users);
+            store.activeUsers = users;
+          } else {
+            console.log('Response not ok');
+          }
+        } catch (error) {
+          console.error("Error fetching users:", error);
+        }
+
+      } else {
+        console.log('Users already in store');
+      }
+    };
+    fetchUsers();
+  }, []);
 
   /* Add a new blank report date to the list */
   // Used
