@@ -5,12 +5,13 @@ import { useEffect, useState } from "react";
 import NotificationPopup from "../notifications/NotificationPopup";
 import { setNotifications as setNotificationsAction } from "../../external/bcanSatchel/actions";
 import { getAppStore } from "../../external/bcanSatchel/store";
+import { observer } from "mobx-react-lite";
 
 // get current user id
 // const currUserID = sessionStorage.getItem('userId');
 // const currUserID = "bcanuser33";
 
-const BellButton = () => {
+const BellButton =  observer(() => {
   // stores notifications for the current user
   const store = getAppStore();
   const notifications = store.notifications ?? [];
@@ -97,6 +98,6 @@ const BellButton = () => {
       )}
     </div>
   );
-};
+});
 
 export default BellButton;
