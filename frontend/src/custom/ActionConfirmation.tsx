@@ -1,6 +1,25 @@
 import { IoIosWarning } from "react-icons/io";
 
-{/* The popup that appears on delete */}
+{/* The popup that appears on delete 
+    isOpen
+    - boolean if this should be visible or not
+    title
+    - The bold text at the very top
+    - Ex: "Delete Grant"
+    subtitle and boldSubtitle
+      - The text on the next line and the text that should be bolded
+      - Ex: "Are you sure you want to delete" and "{grantText}"
+    warningMessage
+      - The text in the orange warning box
+      - Ex: "By deleting this grant, they won't be available in the system anymore"
+    onCloseDelete function 
+    - called when user clicks "No, cancel"
+    onConfirmDelete function
+    - called when user clicks "Yes, confirm"
+
+    For an example, see GrantItem.tsx
+  
+  */}
   const ActionConfirmation = ({ 
     isOpen, 
     onCloseDelete, 
