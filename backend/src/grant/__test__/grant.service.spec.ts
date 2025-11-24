@@ -206,11 +206,7 @@ describe("GrantService", () => {
 
   describe("makeGrantsInactive()", () => {
     it("should inactivate multiple grants and return the updated grant objects", async () => {
-      // First two update() calls respond with DynamoDB Attributes
 
-      const mockReturnGrants = [
-
-      ]
       mockPromise
         .mockResolvedValueOnce({ Attributes: {
           grantId: 3,
@@ -247,17 +243,46 @@ describe("GrantService", () => {
           isRestricted: true
         }, });
   
-      // Next two calls are from getGrantById()
-      // mockPromise
-       //  .mockResolvedValueOnce({ Item: mockGrants[0] })
-       //  .mockResolvedValueOnce({ Item: mockGrants[1] });
-  
-      // mockGetGrantById
-       //  .mockResolvedValueOnce({ grantId: 1, status: Status.Inactive })
-        // .mockResolvedValueOnce({ grantId: 2, status: Status.Inactive });
+
       const data = await grantService.makeGrantsInactive([3, 4]);
   
-      expect(data).toEqual([mockGrants[2], mockGrants[3]]);
+      expect(data).toEqual([
+        {
+          grantId: 3,
+          organization: "Test Organization",
+          does_bcan_qualify: true,
+          status: Status.Inactive,
+          amount: 1000,
+          grant_start_date: "2024-01-01",
+          application_deadline: "2025-01-01",
+          report_deadlines: ["2025-01-01"],
+          description: "Test Description",
+          timeline: 1,
+          estimated_completion_time: 100,
+          grantmaker_poc: { POC_name: "name", POC_email: "test@test.com" },
+          bcan_poc: { POC_name: "name", POC_email: "" },
+          attachments: [],
+          isRestricted: false
+        },
+        {
+          grantId: 4,
+          organization: "Test Organization 2",
+          does_bcan_qualify: false,
+          status: Status.Inactive,
+          amount: 1000,
+          grant_start_date: "2025-02-15",
+          application_deadline: "2025-02-01",
+          report_deadlines: ["2025-03-01", "2025-04-01"],
+          description: "Test Description 2",
+          timeline: 2,
+          estimated_completion_time: 300,
+          bcan_poc: { POC_name: "Allie", POC_email: "allie@gmail.com" },
+          grantmaker_poc: { POC_name: "Benjamin", POC_email: "benpetrillo@yahoo.com" },
+          attachments: [],
+          isRestricted: true
+        }
+      ]);
+      
       expect(mockUpdate).toHaveBeenCalledTimes(2);
   
       const firstCallArgs = mockUpdate.mock.calls[0][0];
