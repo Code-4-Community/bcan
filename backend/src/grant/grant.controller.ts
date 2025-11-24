@@ -11,10 +11,7 @@ export class GrantController {
         return await this.grantService.getAllGrants();
     }
 
-    @Get(':id')
-    async getGrantById(@Param('id') GrantId: string) {
-        return await this.grantService.getGrantById(parseInt(GrantId, 10));
-    }
+   
 
     @Put('inactivate')
     async inactivate(
@@ -40,5 +37,8 @@ export class GrantController {
     async deleteGrant(@Param('grantId') grantId: string) {
         return await this.grantService.deleteGrantById(grantId);
     }
-
+    @Get(':id')
+    async getGrantById(@Param('id') GrantId: string) {
+        return await this.grantService.getGrantById(parseInt(GrantId, 10));
+    }
 }

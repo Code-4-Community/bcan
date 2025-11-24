@@ -88,20 +88,20 @@ async makeGrantsInactive(grantIds: number[]): Promise<Grant[]> {
               "#status": "status",
           },
           ExpressionAttributeValues: {
-              ":inactiveStatus": Status.Inactive,
+              ":inactiveStatus": Status.Inactive as String,
           },
-          ReturnValues: "UPDATED_NEW",
+          ReturnValues: "ALL_NEW",
       };
 
       try {
           const res = await this.dynamoDb.update(params).promise();
-
+      
           if (res.Attributes?.status === Status.Inactive) {
               console.log(`Grant ${grantId} successfully marked as inactive.`);
 
-              const grant = await this.getGrantById(grantId);
-
-              updatedGrants.push(grant);
+              const currentGrant = res.Attributes as Grant;
+              console.log(currentGrant);
+              updatedGrants.push(currentGrant);
           } else {
               console.log(`Grant ${grantId} update failed or no change in status.`);
           }
