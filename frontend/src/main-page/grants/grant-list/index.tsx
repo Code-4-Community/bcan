@@ -57,6 +57,10 @@ const GrantList: React.FC<GrantListProps> = observer(
       }
     }, [selectedGrantId, grants, currentPage, sortedGrants]);
 
+    useEffect(() => {
+      setSortedGrants(sortedGrants.length > 0 ? sortedGrants : grants);
+    }, [grants]);
+
     const count = displayedGrants.length;
     const startRange = (currentPage - 1) * ITEMS_PER_PAGE;
     const endRange = startRange + ITEMS_PER_PAGE;
