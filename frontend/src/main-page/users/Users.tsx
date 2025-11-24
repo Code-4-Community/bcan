@@ -75,7 +75,7 @@ store.inactiveUsers = inactive;    }
       ? store.inactiveUsers
       : store.activeUsers;
 
-  const numInactiveUsers = mockUsers.filter((user) => user.position === "Inactive").length;
+  const numInactiveUsers = store.inactiveUsers.length;
   const numUsers = filteredUsers.length;
   const pageStartIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const pageEndIndex =
