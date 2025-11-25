@@ -10,11 +10,15 @@ const mockInitiateAuth = vi.fn().mockReturnThis();
 const mockGetUser = vi.fn().mockReturnThis();
 const mockRespondToAuthChallenge = vi.fn().mockReturnThis();
 const mockCognitoPromise = vi.fn();
+// adminAddUserToGroup is called without .promise() in the service; return a resolved promise so `await` works
+const mockAdminAddUserToGroup = vi.fn().mockResolvedValue({});
+
 
 // Create mock functions for DynamoDB operations
 const mockDynamoGet = vi.fn().mockReturnThis();
 const mockDynamoPut = vi.fn().mockReturnThis();
 const mockDynamoUpdate = vi.fn().mockReturnThis();
+const mockDynamoScan = vi.fn().mockReturnThis();
 const mockDynamoPromise = vi.fn();
 
 // Mock AWS SDK
@@ -26,6 +30,7 @@ vi.mock('aws-sdk', () => ({
       initiateAuth: mockInitiateAuth,
       getUser: mockGetUser,
       respondToAuthChallenge: mockRespondToAuthChallenge,
+      adminAddUserToGroup: mockAdminAddUserToGroup,
       promise: mockCognitoPromise,
     })),
     DynamoDB: {
@@ -34,6 +39,7 @@ vi.mock('aws-sdk', () => ({
         put: mockDynamoPut,
         update: mockDynamoUpdate,
         promise: mockDynamoPromise,
+        scan: mockDynamoScan
       }))
     }
   }
@@ -73,8 +79,11 @@ describe('AuthService', () => {
     // 4. Assert that Cognito methods were called with correct parameters
     // 5. Assert that DynamoDB put was called with correct user data
     it('should successfully register a user', async () => {
+      // Ensure scan returns no items (email not in use)
+      mockDynamoPromise.mockResolvedValueOnce({ Items: [] });
+
+      // Cognito promise chain (adminCreateUser().promise(), adminSetUserPassword().promise())
       mockCognitoPromise
-        .mockResolvedValueOnce({})
         .mockResolvedValueOnce({})
         .mockResolvedValueOnce({});
 
@@ -89,9 +98,33 @@ describe('AuthService', () => {
         ],
         MessageAction: 'SUPPRESS',
       });
-      expect(mockAdminSetUserPassword).toHaveBeenCalled();
-      expect(mockDynamoPut).toHaveBeenCalled();
+
+      expect(mockAdminSetUserPassword).toHaveBeenCalledWith({
+        UserPoolId: 'test-user-pool-id',
+        Username: 'c4c',
+        Password: 'Pass123!',
+        Permanent: true,
+      });
+
+      // adminAddUserToGroup is called without .promise() so verify invocation
+      expect(mockAdminAddUserToGroup).toHaveBeenCalledWith({
+        GroupName: 'Inactive',
+        UserPoolId: 'test-user-pool-id',
+        Username: 'c4c',
+      });
+
+      expect(mockDynamoPut).toHaveBeenCalledWith(
+        expect.objectContaining({
+          TableName: 'test-users-table',
+          Item: expect.objectContaining({ userId: 'c4c', email: 'c4c@example.com' }),
+        }),
+      );
     });
+
+
+    it("should deny someone from making an email when it is already in use", async () => {
+
+    })
   });
 
   describe('login', () => {
@@ -168,7 +201,7 @@ describe('AuthService', () => {
         expect(result.requiredAttributes).toEqual(['email']);
         expect(result.username).toBe('c4c');
         expect(result.access_token).toBeUndefined();
-        expect(result.user).toBeUndefined();
+        expect(result.user).toEqual({});
       });
 
       it('should create new DynamoDB user if not exists', async () => {
@@ -211,7 +244,8 @@ describe('AuthService', () => {
         expect(result.user).toEqual({
           userId: 'c4c',
           email: 'c4c@gmail.com',
-          biography: '',
+          name: "",
+          position: "Inactive"
         });
         expect(result.message).toBe('Login Successful!');
       

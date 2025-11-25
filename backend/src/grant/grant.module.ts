@@ -6,6 +6,7 @@ import { NotificationsModule } from '../notifications/notification.module';
 @Module({
     imports: [NotificationsModule],
     controllers: [GrantController],
-    providers: [GrantService]
+    providers: [GrantService],
+    imports: [NotificationsModule],
 })
 export class GrantModule { }
