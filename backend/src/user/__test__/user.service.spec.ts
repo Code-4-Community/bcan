@@ -21,10 +21,8 @@ vi.mock('aws-sdk', async () => {
   }));
 
   return {
-    default: {
-      DynamoDB: mockDynamoDB,
-      SES: mockSES
-    }
+    DynamoDB: mockDynamoDB,
+    SES: mockSES
   };
 });
 

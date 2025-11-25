@@ -23,29 +23,27 @@ const mockDynamoPromise = vi.fn();
 
 // Mock AWS SDK
 vi.mock('aws-sdk', () => ({
-  default: {
-    CognitoIdentityServiceProvider: vi.fn(() => ({
-      adminCreateUser: mockAdminCreateUser,
-      adminSetUserPassword: mockAdminSetUserPassword,
-      initiateAuth: mockInitiateAuth,
-      getUser: mockGetUser,
-      respondToAuthChallenge: mockRespondToAuthChallenge,
-      adminAddUserToGroup: mockAdminAddUserToGroup,
-      promise: mockCognitoPromise,
-    })),
-    DynamoDB: {
-      DocumentClient: vi.fn(() => ({
-        get: mockDynamoGet,
-        put: mockDynamoPut,
-        update: mockDynamoUpdate,
-        promise: mockDynamoPromise,
-        scan: mockDynamoScan
-      }))
-    },
-    SES: vi.fn(() => ({
-      // SES methods can be mocked here if needed
-    })),
-  }
+  CognitoIdentityServiceProvider: vi.fn(() => ({
+    adminCreateUser: mockAdminCreateUser,
+    adminSetUserPassword: mockAdminSetUserPassword,
+    initiateAuth: mockInitiateAuth,
+    getUser: mockGetUser,
+    respondToAuthChallenge: mockRespondToAuthChallenge,
+    adminAddUserToGroup: mockAdminAddUserToGroup,
+    promise: mockCognitoPromise,
+  })),
+  DynamoDB: {
+    DocumentClient: vi.fn(() => ({
+      get: mockDynamoGet,
+      put: mockDynamoPut,
+      update: mockDynamoUpdate,
+      promise: mockDynamoPromise,
+      scan: mockDynamoScan
+    }))
+  },
+  SES: vi.fn(() => ({
+    // SES methods can be mocked here if needed
+  })),
 }));
 
 describe('AuthService', () => {

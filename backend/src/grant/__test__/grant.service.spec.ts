@@ -70,10 +70,8 @@ const mockDocumentClient = {
 
 // Mock AWS SDK - Note the structure here
 vi.mock("aws-sdk", () => ({
-  default: {
-    DynamoDB: {
-      DocumentClient: vi.fn(() => mockDocumentClient),
-    },
+  DynamoDB: {
+    DocumentClient: vi.fn(() => mockDocumentClient),
   },
 }));
 
