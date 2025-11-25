@@ -16,6 +16,7 @@ export class UserService {
   private readonly logger = new Logger(UserService.name);
   private dynamoDb = new AWS.DynamoDB.DocumentClient();
   private ses = new AWS.SES({ region: process.env.AWS_REGION });
+  private cognito = new AWS.CognitoIdentityServiceProvider();
 
   async getAllUsers(): Promise<any> {
     const params = {
@@ -116,8 +117,75 @@ export class UserService {
     }
   }
 
+  async addUserToGroup(username: string, groupName: string, requestedBy : string): Promise<void> {
+    const userPoolId = process.env.COGNITO_USER_POOL_ID;
+    if (
+      groupName !== "Employee" &&
+      groupName !== "Admin" &&
+      groupName !== "Inactive"
+    ) {
+      throw new Error(
+        "Invalid group name. Must be Employee, Admin, or Inactive."
+      );
+    }
+    try {
+      // Check current groups before adding to new group
+      const listGroupsParams = {
+        UserPoolId: userPoolId || "POOL_FAILURE",
+        Username: username,
+      };
+      const userGroups = await this.cognito.adminListGroupsForUser(listGroupsParams).promise();
+      const wasInactive = userGroups.Groups?.some(group => group.GroupName === 'Inactive') ?? false;
+
+      // Remove user from all current groups to ensure single-group membership
+      if (userGroups.Groups && userGroups.Groups.length > 0) {
+        for (const group of userGroups.Groups) {
+          await this.cognito.adminRemoveUserFromGroup({
+            UserPoolId: userPoolId || "POOL_FAILURE",
+            Username: username,
+            GroupName: group.GroupName || '',
+          }).promise();
+          this.logger.log(`Removed ${username} from group ${group.GroupName}`);
+        }
+      }
+
+      // Now add user to the new group
+      await this.cognito.adminAddUserToGroup({
+        GroupName: groupName,
+        UserPoolId: userPoolId || "POOL_FAILURE",
+        Username: username,
+       });
+
+      if (groupName === "Employee" && wasInactive) {
+         // Fetch user email from DynamoDB
+        const params = {
+          TableName: process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE",
+          Key: {
+            userId: username,
+          },
+        };
+        const data = await this.dynamoDb.get(params).promise();
+        const userEmail = data.Item?.email;
+        if (userEmail) {
+          await this.sendVerificationEmail(userEmail);
+          this.logger.log(`Verification email sent to ${username} (${userEmail}) after activation from Inactive status`);
+        } else {
+          this.logger.warn(`Could not send verification email to ${username}: email not found`);
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+         this.logger.error("Registration failed", error.stack);
+         throw new Error(error.message || "Registration failed");
+       }
+       throw new Error("An unknown error occurred during registration");
+     }
+   }
+
+  // sends email to user once account is approved, used in method above when a user
+  // is added to the Employee or Admin group from Inactive
   async sendVerificationEmail(userEmail: string): Promise<AWS.SES.SendEmailResponse> {
-      // may want to have the default be the BCAN email
+      // may want to have the default be the BCAN email or something else
       const fromEmail = process.env.NOTIFICATION_EMAIL_SENDER ||
       'u&@nveR1ified-failure@dont-send.com';
 

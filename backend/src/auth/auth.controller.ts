@@ -16,17 +16,6 @@ export class AuthController {
     return { message: 'User registered successfully' };
   }
 
-  // Make sure to put a guard on this route
-  @Post('change-role')
-  async addToGroup(
-    @Body('username') username: string,
-    @Body('groupName') groupName: string,
-    @Body('requestedBy') requestedBy: string,
-  ): Promise<{ message: string }> {
-    await this.authService.addUserToGroup(username, groupName,requestedBy);
-    return { message: `User changed to ${groupName} successfully` };
-  }
-
   @Post('login')
   async login(
     @Body('username') username: string,

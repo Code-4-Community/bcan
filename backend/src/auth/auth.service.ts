@@ -21,6 +21,7 @@ export class AuthService {
 
   private cognito = new AWS.CognitoIdentityServiceProvider();
   private dynamoDb = new AWS.DynamoDB.DocumentClient();
+  private ses = new AWS.SES({ region: process.env.AWS_REGION });
 
   private computeHatch(
     username: string,
@@ -125,32 +126,6 @@ export class AuthService {
         this.logger.error("Email already in user", error.stack);
         throw error;
       }
-      if (error instanceof Error) {
-        this.logger.error("Registration failed", error.stack);
-        throw new Error(error.message || "Registration failed");
-      }
-      throw new Error("An unknown error occurred during registration");
-    }
-  }
-
-  async addUserToGroup(username: string, groupName: string, requestedBy : string): Promise<void> {
-    const userPoolId = process.env.COGNITO_USER_POOL_ID;
-    if (
-      groupName !== "Employee" &&
-      groupName !== "Admin" &&
-      groupName !== "Inactive"
-    ) {
-      throw new Error(
-        "Invalid group name. Must be Employee, Admin, or Inactive."
-      );
-    }
-    try {
-      await this.cognito.adminAddUserToGroup({
-        GroupName: groupName,
-        UserPoolId: userPoolId || "POOL_FAILURE",
-        Username: username,
-      });
-    } catch (error) {
       if (error instanceof Error) {
         this.logger.error("Registration failed", error.stack);
         throw new Error(error.message || "Registration failed");
