@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from '../user.controller';
 import { UserService } from '../user.service';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import AWS from 'aws-sdk';
+import AWS, { DynamoDB } from 'aws-sdk';
 
 // Mock AWS SDK
 vi.mock('aws-sdk', async () => {
@@ -24,7 +24,9 @@ vi.mock('aws-sdk', async () => {
     default: {
       DynamoDB: mockDynamoDB,
       SES: mockSES
-    }
+    },
+    DynamoDB: mockDynamoDB,
+    SES: mockSES
   };
 });
 
