@@ -15,6 +15,7 @@ import { UserStatus } from "../../../middle-layer/types/UserStatus";
 export class UserService {
   private readonly logger = new Logger(UserService.name);
   private dynamoDb = new AWS.DynamoDB.DocumentClient();
+  private ses = new AWS.SES({ region: process.env.AWS_REGION });
 
   async getAllUsers(): Promise<any> {
     const params = {
@@ -41,7 +42,7 @@ export class UserService {
       const data = await this.dynamoDb.get(params).promise();
       return data.Item;
     } catch (error) {
-      throw new Error("Could not retrieve user.");
+      throw new Error('Could not retrieve user.');
     }
   }
 
@@ -113,5 +114,35 @@ export class UserService {
         "Failed to retrieve inactive users."
       );
     }
+  }
+
+  async sendVerificationEmail(userEmail: string): Promise<AWS.SES.SendEmailResponse> {
+      // may want to have the default be the BCAN email
+      const fromEmail = process.env.NOTIFICATION_EMAIL_SENDER ||
+      'u&@nveR1ified-failure@dont-send.com';
+
+      const params: AWS.SES.SendEmailRequest = {
+        Source: fromEmail,
+        Destination: {
+          ToAddresses: [userEmail],
+        },
+        Message: {
+          // UTF-8 is a top reliable way to define special characters and symbols in emails
+          Subject: { Charset: 'UTF-8', Data: "BCAN Account Approval" },
+          Body: {
+            Text: { Charset: 'UTF-8', Data: "Your account has been approved; Try using your login credentials now!" },
+          },
+        },
+      };
+
+      try {
+        const result = await this.ses.sendEmail(params).promise();
+        this.logger.log(`Verification email sent to ${userEmail}`);
+        return result;
+      } catch (err: unknown) {
+        this.logger.error('Error sending email: ', err);
+        const errMessage = (err instanceof Error) ? err.message : 'Generic'; 
+        throw new Error(`Failed to send email: ${errMessage}`);
+      }
   }
 }
