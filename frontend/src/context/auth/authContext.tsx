@@ -4,6 +4,7 @@ import { setAuthState, logoutUser } from '../../external/bcanSatchel/actions';
 import { observer } from 'mobx-react-lite';
 import { User } from '../../../../middle-layer/types/User';
 import { api } from '../../api';
+import { fetchUsers } from '../../main-page/users/UserActions.ts';
 
 /**
  * Available authenticated user options
@@ -40,10 +41,10 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
       });
 
       const data = await response.json();
-
       if (response.ok && data.user) {
         console.log("Login successful:", data.user);
         setAuthState(true, data.user, null);
+        fetchUsers();
         return true;
       } else {
         console.warn('Login failed:', data.message || 'Unknown error');
