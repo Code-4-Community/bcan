@@ -34,8 +34,6 @@ export const saveGrantEdits = async (updatedGrant: Grant) => {
     console.log("Grant being sent:", updatedGrant);
     console.log("Grant ID:", updatedGrant.grantId);
     console.log("Stringified body:", JSON.stringify(updatedGrant));
-
-
     
     const response = await api("/grant/save", {
       method: "PUT",

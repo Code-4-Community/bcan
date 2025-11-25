@@ -4,7 +4,6 @@ import { GrantController } from './grant.controller';
 import { NotificationsModule } from '../notifications/notification.module';
 
 @Module({
-    imports: [NotificationsModule],
     controllers: [GrantController],
     providers: [GrantService],
     imports: [NotificationsModule],
