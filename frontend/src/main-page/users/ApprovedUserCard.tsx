@@ -8,7 +8,7 @@ interface ApprovedUserCardProps {
 
 const ApprovedUserCard = ({ name, email, position }: ApprovedUserCardProps) => {
   return (
-    <div className="bg-white text-lg border rounded-md m-8 p-6 flex justify-around items-center">
+    <div className="bg-white text-lg border rounded-md m-6 p-6 flex justify-around items-center">
       <p className="font-semibold w-[140px] text-left">{name}</p>
       <p className="w-[140px] text-left">xxxxxxx</p>
       <p className="w-[140px] text-left">{email}</p>

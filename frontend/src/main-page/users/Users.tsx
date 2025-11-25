@@ -75,6 +75,7 @@ store.inactiveUsers = inactive;    }
       ? store.inactiveUsers
       : store.activeUsers;
 
+  const numInactiveUsers = mockUsers.filter((user) => user.position === "Inactive").length;
   const numUsers = filteredUsers.length;
   const pageStartIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const pageEndIndex =
@@ -91,9 +92,9 @@ store.inactiveUsers = inactive;    }
             ? "All Users"
             : "Pending Users"}
         </h1>
-        <p className="text-[#FF8476]"># new users</p>
+        <p className="text-[#FF8476]">{numInactiveUsers} new users</p>
       </div>
-      <div className="min-h-screen bg-[#F5F4F4] border rounded-md relative">
+      <div className="min-h-screen bg-[#F5F4F4] border rounded-md relative flex flex-col">
         <div className="absolute right-7 top-0 -translate-y-full flex">
           <button
             className={`w-52 h-16 border rounded-b-none focus:outline-none ${
@@ -160,7 +161,7 @@ store.inactiveUsers = inactive;    }
           )}
         </div>
         <Pagination.Root
-          className="pt-4"
+          className="pt-4 mt-auto pb-4"
           count={numUsers}
           pageSize={ITEMS_PER_PAGE}
           page={currentPage}

@@ -33,13 +33,13 @@ export const downloadCsv = <DataItem = Record<string, unknown>>(
       const key = column.key as keyof DataItem;
 
       try {
-        value = item[key] ?? "-";
+        value = item[key] ?? "";
 
         if (typeof column.formatValue === "function") {
           value = column.formatValue(item[key], item);
         }
       } catch {
-        value = "-";
+        value = "";
       }
 
       return JSON.stringify(value, nullToEmptyReplacer);
