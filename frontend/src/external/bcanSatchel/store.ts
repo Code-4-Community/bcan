@@ -14,7 +14,9 @@ export interface AppState {
   startDateFilter: Date | null;
   endDateFilter: Date | null;
   searchQuery: string;
-  yearFilter:number[] | null;
+  yearFilter:number[] | [];
+  activeUsers: User[] | [];
+  inactiveUsers: User[] | [];
   notifications: Notification[];
 }
 
@@ -28,8 +30,11 @@ const initialState: AppState = {
   startDateFilter: null,
   endDateFilter: null,
   searchQuery: '',
-  yearFilter: null,
-  notifications: []
+  yearFilter: [],
+  activeUsers: [],
+  inactiveUsers: [],
+    notifications: []
+
 };
 
 const store = createStore<AppState>('appStore', initialState);
