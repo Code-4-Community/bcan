@@ -4,7 +4,7 @@ import {
   Logger,
   UnauthorizedException,
 } from "@nestjs/common";
-import AWS from "aws-sdk";
+import * as AWS from "aws-sdk";
 import { group, table } from "console";
 import * as crypto from "crypto";
 import { User } from "../../../middle-layer/types/User";
@@ -21,7 +21,6 @@ export class AuthService {
 
   private cognito = new AWS.CognitoIdentityServiceProvider();
   private dynamoDb = new AWS.DynamoDB.DocumentClient();
-  private ses = new AWS.SES({ region: process.env.AWS_REGION });
 
   private computeHatch(
     username: string,
