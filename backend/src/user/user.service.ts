@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from "@nestjs/common";
-import AWS from "aws-sdk";
+import * as AWS from "aws-sdk";
 import { User } from "../../../middle-layer/types/User";
 import { UserStatus } from "../../../middle-layer/types/UserStatus";
 

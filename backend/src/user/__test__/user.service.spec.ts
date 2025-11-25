@@ -16,9 +16,14 @@ vi.mock('aws-sdk', async () => {
     DocumentClient: vi.fn(() => mockDocumentClient)
   };
 
+  const mockSES = vi.fn(() => ({
+    // SES methods can be mocked here if needed
+  }));
+
   return {
     default: {
-      DynamoDB: mockDynamoDB
+      DynamoDB: mockDynamoDB,
+      SES: mockSES
     }
   };
 });

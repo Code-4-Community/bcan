@@ -41,7 +41,10 @@ vi.mock('aws-sdk', () => ({
         promise: mockDynamoPromise,
         scan: mockDynamoScan
       }))
-    }
+    },
+    SES: vi.fn(() => ({
+      // SES methods can be mocked here if needed
+    })),
   }
 }));
 
