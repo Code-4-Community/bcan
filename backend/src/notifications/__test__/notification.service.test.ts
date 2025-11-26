@@ -36,12 +36,10 @@ const mockSES = {
 
 // Mock AWS SDK - Note the structure here
 vi.mock('aws-sdk', () => ({
-  default: {
-    DynamoDB: {
-      DocumentClient: vi.fn(() => mockDocumentClient)
-    },
-    SES: vi.fn(() => mockSES)
-  }
+  DynamoDB: {
+    DocumentClient: vi.fn(() => mockDocumentClient)
+  },
+  SES: vi.fn(() => mockSES)
 }));
 
 describe('NotificationController', () => {

@@ -4,7 +4,7 @@ import {
   Logger,
   UnauthorizedException,
 } from "@nestjs/common";
-import AWS from "aws-sdk";
+import * as AWS from "aws-sdk";
 import { group, table } from "console";
 import * as crypto from "crypto";
 import { User } from "../../../middle-layer/types/User";
@@ -125,32 +125,6 @@ export class AuthService {
         this.logger.error("Email already in user", error.stack);
         throw error;
       }
-      if (error instanceof Error) {
-        this.logger.error("Registration failed", error.stack);
-        throw new Error(error.message || "Registration failed");
-      }
-      throw new Error("An unknown error occurred during registration");
-    }
-  }
-
-  async addUserToGroup(username: string, groupName: string, requestedBy : string): Promise<void> {
-    const userPoolId = process.env.COGNITO_USER_POOL_ID;
-    if (
-      groupName !== "Employee" &&
-      groupName !== "Admin" &&
-      groupName !== "Inactive"
-    ) {
-      throw new Error(
-        "Invalid group name. Must be Employee, Admin, or Inactive."
-      );
-    }
-    try {
-      await this.cognito.adminAddUserToGroup({
-        GroupName: groupName,
-        UserPoolId: userPoolId || "POOL_FAILURE",
-        Username: username,
-      });
-    } catch (error) {
       if (error instanceof Error) {
         this.logger.error("Registration failed", error.stack);
         throw new Error(error.message || "Registration failed");

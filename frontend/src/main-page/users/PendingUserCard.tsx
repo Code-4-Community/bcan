@@ -1,6 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserPositionCard from "./UserPositionCard";
 import { faCheck, faX } from "@fortawesome/free-solid-svg-icons";
+import { getAppStore } from "../../external/bcanSatchel/store";
+import { api } from "../../api"
+import { useState } from "react";
+
+
+const store = getAppStore();
 
 interface PendingUserCardProps {
   name: string;
@@ -13,6 +19,58 @@ const PendingUserCard = ({
   email,
   position,
 }: PendingUserCardProps) => {
+
+  const currentUsername = store.user?.name
+  const [isLoading, setIsLoading] = useState(false);
+
+  const approveUser = async () => {
+    setIsLoading(true);
+    try {
+      const response = await api("/user/change-role", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: name,
+          groupName: "Employee",
+          requestedBy: currentUsername,
+        }),
+      });
+      if (response.ok) {
+        alert(`${name} approved successfully`);
+      } else {
+        alert("Failed to approve user");
+      }
+    } catch (error) {
+      console.error("Error approving user:", error);
+      alert("Error approving user");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const rejectUser = async () => {
+    setIsLoading(true);
+    try {
+      const response = await api("auth/delete-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: name,
+        }),
+      });
+      if (response.ok) {
+        alert(`${name} rejected successfully`);
+      } else {
+        alert("Failed to reject user");
+      }
+    } catch (error) {
+      console.error("Error rejecting user:", error);
+      alert("Error rejecting user");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="bg-white text-lg border rounded-md m-6 p-6 flex justify-around items-center">
       <p className="font-semibold w-[140px] text-left">{name}</p>
@@ -22,10 +80,16 @@ const PendingUserCard = ({
         <UserPositionCard position={position} />
       </div>
       <div className="flex w-[140px] gap-3">
-        <button className="bg-[#c6fbd3] w-8 h-8 focus:outline-none rounded">
+        <button 
+          className="bg-[#c6fbd3] w-8 h-8 focus:outline-none rounded"
+          onClick={approveUser}
+          disabled={isLoading}>
           <FontAwesomeIcon icon={faCheck} style={{ color: "black" }} />
         </button>
-        <button className="bg-[#fe9d92] w-8 h-8 focus:outline-none rounded">
+        <button 
+        className="bg-[#fe9d92] w-8 h-8 focus:outline-none rounded"
+          onClick={rejectUser}
+          disabled={isLoading}>
           <FontAwesomeIcon icon={faX} style={{ color: "black" }} />
         </button>
       </div>
