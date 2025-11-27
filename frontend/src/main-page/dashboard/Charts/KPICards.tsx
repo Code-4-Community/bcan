@@ -1,5 +1,9 @@
 import { Grant } from "../../../../../middle-layer/types/Grant";
-import { aggregateMoneyGrantsByYear, YearAmount } from "../grantCalculations";
+import {
+  aggregateCountGrantsByYear,
+  aggregateMoneyGrantsByYear,
+  YearAmount,
+} from "../grantCalculations";
 import KPICard from "./KPICard";
 import "../styles/Dashboard.css";
 import { observer } from "mobx-react-lite";
@@ -15,6 +19,7 @@ const KPICards = observer(
     recentYear: number;
     priorYear: number;
   }) => {
+    
     // Helper to sum values for given statuses
     const sumByStatus = (data: Record<string, number>, statuses: string[]) =>
       Object.entries(data)
@@ -29,31 +34,32 @@ const KPICards = observer(
         unreceived: sumByStatus(grant.data, getListApplied(false)),
       })
     );
+    // Aggregate count by year
+    const dataCount = aggregateCountGrantsByYear(grants, "status").map(
+      (grant: YearAmount) => ({
+        year: grant.year,
+        receivedCount: sumByStatus(grant.data, getListApplied(true)),
+        unreceivedCount: sumByStatus(grant.data, getListApplied(false)),
+      })
+    );
 
-    // Get metrics for a specific year
+    // Get metrics for a specific year and merge money and count data
     const getYearMetrics = (year: number) => {
-      const entry = dataMoney.find((d) => d.year === year);
-      if (!entry)
-        return {
-          moneyReceived: 0,
-          moneyUnreceived: 0,
-          countReceived: 0,
-          countUnreceived: 0,
-        };
+      const money = dataMoney.find((d) => d.year === year);
+      const count = dataCount.find((d) => d.year === year);
 
-      const { received, unreceived } = entry;
       return {
-        moneyReceived: received,
-        moneyUnreceived: unreceived,
-        countReceived: received > 0 ? 1 : 0,
-        countUnreceived: unreceived > 0 ? 1 : 0,
+        moneyReceived: money?.received ?? 0,
+        moneyUnreceived: money?.unreceived ?? 0,
+        countReceived: count?.receivedCount ?? 0,
+        countUnreceived: count?.unreceivedCount ?? 0,
       };
     };
 
     const recent = getYearMetrics(recentYear);
     const prior = getYearMetrics(priorYear);
 
-    // Helper: percent change formula
+    // Percent change formula
     const percentChange = (current: number, previous: number) => {
       return previous === 0 ? 0 : ((current - previous) / previous) * 100;
     };

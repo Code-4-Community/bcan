@@ -18,7 +18,7 @@ const GrantLabels: React.FC<{
   }
 
   return (
-    <ul className="grant-labels grid grid-cols-5 justify-stretch font-semibold pt-4 px-4">
+    <ul className="grant-labels grid grid-cols-5 justify-stretch font-semibold pt-4 px-8">
       <li className="text-center">
         <button
           className="grant-name"

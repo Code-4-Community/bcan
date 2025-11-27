@@ -12,7 +12,7 @@ import { fetchUsers } from '../../main-page/users/UserActions.ts';
 interface AuthContextProps {
   isAuthenticated: boolean;
   login: (username: string, password: string) => Promise<boolean>;
-  register: (username: string, password: string, email: string) => Promise<boolean>;
+  register: (username: string, password: string, email: string) => Promise<{ state: boolean; message: String; }>;
   logout: () => void;
   user: User | null;
 }
@@ -59,7 +59,7 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
    /**
    * Register a new user and automatically log them in
    */
-   const register = async (username: string, password: string, email: string): Promise<boolean> => {
+   const register = async (username: string, password: string, email: string): Promise<{ state: boolean; message: String; }>=> {
     try {
       const response = await api('/auth/register', {
         method: 'POST',
@@ -71,24 +71,25 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
 
       if (response.ok) {
         const loggedIn = await login(username, password);
-        if (loggedIn) return true;
+        if (loggedIn) return {state: true, message: ''};
         console.warn('User registered but auto-login failed');
-        return false;
+        return {state: false, message: 'User registered but auto-login failed'};
       }
 
       if (response.status === 409 || data.message?.includes('exists')) {
-        alert('An account with this username or email already exists.');
+        //alert('An account with this username or email already exists.');
+              return {state: false, message: 'An account with this username or email already exists.'}
       } else if (response.status === 400) {
-        alert(data.message || 'Invalid registration details.');
+        //alert(data.message || 'Invalid registration details.');
+              return {state: false, message: 'Invalid registration details. ' + (data.message || '')}
       } else {
-        alert('Registration failed. Please try again later.');
+        //alert('Registration failed. Please try again later.');
+              return {state: false, message: 'Please try again later.'}
       }
-
-      return false;
     } catch (error) {
       console.error('Error during registration:', error);
-      alert('An unexpected error occurred. Please try again later.');
-      return false;
+      //alert('An unexpected error occurred. Please try again later.');
+      return {state: false, message: 'An unexpected error occurred. Please try again later.'}
     }
   };
 
