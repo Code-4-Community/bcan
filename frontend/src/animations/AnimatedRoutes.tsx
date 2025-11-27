@@ -10,6 +10,7 @@ import { useAuthContext } from "../context/auth/authContext";
 import MainPage from "../main-page/MainPage";
 import Login from "../Login";
 import Register from "../Register";
+import RegisterLanding from "../RegisterLanding";
 
 /**
  * AnimatedRoutes:
@@ -30,6 +31,12 @@ const AnimatedRoutes = observer(() => {
             path="/register"
             element={
               isAuthenticated ? <Navigate to="/account" /> : <Register />
+            }
+          /> 
+          <Route
+            path="/registered"
+            element={
+             <RegisterLanding />
             }
           /> 
           <Route
