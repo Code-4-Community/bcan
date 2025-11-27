@@ -18,6 +18,10 @@ import GanttYearGrantTimeline from "./Charts/GanttYearGrantTimeline";
 import DonutMoneyApplied from "./Charts/DonutMoneyApplied";
 import { ProcessGrantData } from "../grants/filter-bar/processGrantData";
 import KPICards from "./Charts/KPICards";
+import { useAuthContext } from "../../context/auth/authContext";
+import { toJS } from "mobx";
+import { Navigate } from "react-router-dom";
+import { UserStatus } from "../../../../middle-layer/types/UserStatus";
 
 const Dashboard = observer(() => {
   // reset filters on initial render
@@ -29,6 +33,18 @@ const Dashboard = observer(() => {
   }, []);
 
   const { yearFilter, allGrants } = getAppStore();
+  const { user } = useAuthContext();
+  const userObj = toJS(user);
+
+  console.log(userObj)
+
+  if (!userObj) {
+    return <Navigate to="/login" replace />
+  }
+
+  if (userObj?.position === UserStatus.Inactive) {
+    return <Navigate to="restricted" replace />
+  }
 
   const uniqueYears = Array.from(
     new Set(

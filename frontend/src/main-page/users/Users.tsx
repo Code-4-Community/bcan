@@ -6,52 +6,54 @@ import { Pagination, ButtonGroup, IconButton } from "@chakra-ui/react";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import { observer } from "mobx-react-lite";
 import { getAppStore } from "../../external/bcanSatchel/store";
+import { api } from "../../api";
+import { useAuthContext } from "../../context/auth/authContext";
+import { toJS } from "mobx";
+import { Navigate } from "react-router-dom";
+import { UserStatus } from "../../../../middle-layer/types/UserStatus";
 
 // Represents a specific tab to show on the user page
 enum UsersTab {
   PendingUsers,
   CurrentUsers,
 }
-import { api } from "../../api"
+
 const fetchActiveUsers = async (): Promise<User[]> => {
   try {
     const response = await api("/user/active", {
-      method: 'GET'
+      method: "GET",
     });
-    
+
     if (!response.ok) {
       throw new Error(`HTTP Error, Status: ${response.status}`);
     }
-    
+
     const activeUsers = await response.json();
     return activeUsers as User[];
   } catch (error) {
     console.error("Error fetching active users:", error);
     return []; // Return empty array on error
   }
-}
+};
 
 const fetchInactiveUsers = async () => {
   try {
-    const response = await api("/user/inactive", {method : 'GET' });
+    const response = await api("/user/inactive", { method: "GET" });
     if (!response.ok) {
       throw new Error(`HTTP Error, Status: ${response.status}`);
     }
     const inactiveUsers = await response.json();
     return inactiveUsers as User[];
-  }
-  catch (error) {
+  } catch (error) {
     console.error("Error fetching active users:", error);
   }
-}
-
+};
 
 const ITEMS_PER_PAGE = 8;
 
 const Users = observer(() => {
   const store = getAppStore();
-  
-  
+
   useEffect(() => {
     const fetchUsers = async () => {
       const active = await fetchActiveUsers();
@@ -60,11 +62,23 @@ const Users = observer(() => {
         store.activeUsers = active;
       }
       if (inactive) {
-store.inactiveUsers = inactive;    }
+        store.inactiveUsers = inactive;
+      }
     };
     fetchUsers();
-  
   }, []);
+
+  const { user } = useAuthContext();
+  const userObj = toJS(user);
+
+  if (!userObj) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (userObj?.position === UserStatus.Inactive) {
+    return <Navigate to="restricted" replace />;
+  }
+
   const [usersTabStatus, setUsersTabStatus] = useState<UsersTab>(
     UsersTab.CurrentUsers
   );
@@ -75,7 +89,7 @@ store.inactiveUsers = inactive;    }
       ? store.inactiveUsers
       : store.activeUsers;
 
-  const numInactiveUsers = mockUsers.filter((user) => user.position === "Inactive").length;
+  const numInactiveUsers = store.inactiveUsers.length;
   const numUsers = filteredUsers.length;
   const pageStartIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const pageEndIndex =
@@ -152,10 +166,10 @@ store.inactiveUsers = inactive;    }
               </div>
               {currentPageUsers.map((user) => (
                 <PendingUserCard
-                name={user.name}
-                email={user.email}
-                position={user.position}
-              />
+                  name={user.name}
+                  email={user.email}
+                  position={user.position}
+                />
               ))}
             </>
           )}
@@ -207,6 +221,6 @@ store.inactiveUsers = inactive;    }
       </div>
     </div>
   );
-})
+});
 
 export default Users;

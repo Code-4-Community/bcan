@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import logo from "../../images/bcan_logo.svg";
 
 function RestrictedPage() {
@@ -11,13 +12,11 @@ function RestrictedPage() {
         <p className="text-xl mb-9">
           Contact the admin if you think there's a mistake.
         </p>
-        <a href="/main">
-          <button
-            className="py-2 px-4 rounded bg-medium-orange border border-black"
-          >
-            Go Home
+        <Link to="/login">
+          <button className="py-2 px-4 rounded bg-medium-orange border border-black">
+            Back to Login
           </button>
-        </a>
+        </Link>
       </div>
       <img
         className="w-[400px] h-[400px] object-contain"
