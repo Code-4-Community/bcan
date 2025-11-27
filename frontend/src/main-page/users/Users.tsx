@@ -11,7 +11,6 @@ enum UsersTab {
   PendingUsers,
   CurrentUsers,
 }
-import { fetchUsers } from "./UserActions";
 
 
 
@@ -21,9 +20,7 @@ const ITEMS_PER_PAGE = 8;
 const Users = observer(() => {
 const store = getAppStore();
 
-  useEffect(() => {
-    fetchUsers();
-  });
+ 
   const [usersTabStatus, setUsersTabStatus] = useState<UsersTab>(
     UsersTab.CurrentUsers
   );

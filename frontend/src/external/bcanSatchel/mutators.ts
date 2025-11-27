@@ -11,6 +11,23 @@ import {
   setNotifications
 } from './actions';
 import { getAppStore } from './store';
+import { setActiveUsers, setInactiveUsers } from './actions';
+
+/** 
+ * setActiveUsers mutator
+*/
+mutator(setActiveUsers, (actionMessage) => {
+  const store = getAppStore();
+  store.activeUsers = actionMessage.users;
+});
+
+/** 
+ * setInactiveUsers mutator
+*/
+mutator(setInactiveUsers, (actionMessage) => {
+  const store = getAppStore();
+  store.inactiveUsers = actionMessage.users;
+});
 
 /**
  * setAuthState mutator

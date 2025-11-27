@@ -1,6 +1,7 @@
 import { api } from "../../api"
 import { User } from "../../../../middle-layer/types/User";
  import { getAppStore } from "../../external/bcanSatchel/store";
+import { setActiveUsers, setInactiveUsers } from "../../external/bcanSatchel/actions";
 export const fetchActiveUsers = async (): Promise<User[]> => {
   try {
     const response = await api("/user/active", {
@@ -35,13 +36,12 @@ export const fetchInactiveUsers = async () => {
 
 
 export const fetchUsers = async () => {
-  const store = getAppStore();
       const active = await fetchActiveUsers();
       const inactive = await fetchInactiveUsers();
       if (active) {
-        store.activeUsers = active;
+        setActiveUsers(active);
       }
       if (inactive) {
-        store.inactiveUsers = inactive;
+        setInactiveUsers(inactive);
       }
     };
