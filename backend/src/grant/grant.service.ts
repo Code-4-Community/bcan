@@ -122,7 +122,7 @@ export class GrantService {
       } catch(err: unknown) {
           this.logger.error('=== DYNAMODB ERROR ===');
           this.logger.error('Unknown error type: ' + JSON.stringify(err));
-          throw new Error(`Failed to update Grant ${grantData.grantId}: Unknown error`);
+          throw new Error(`Failed to update Grant ${grantData.grantId}`);
       }
   }
     
