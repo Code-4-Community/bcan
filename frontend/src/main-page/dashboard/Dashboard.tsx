@@ -18,8 +18,6 @@ import GanttYearGrantTimeline from "./Charts/GanttYearGrantTimeline";
 import DonutMoneyApplied from "./Charts/DonutMoneyApplied";
 import { ProcessGrantData } from "../grants/filter-bar/processGrantData";
 import KPICards from "./Charts/KPICards";
-import { useAuthContext } from "../../context/auth/authContext";
-import { toJS } from "mobx";
 import { Navigate } from "react-router-dom";
 import { UserStatus } from "../../../../middle-layer/types/UserStatus";
 
@@ -32,19 +30,7 @@ const Dashboard = observer(() => {
     updateStartDateFilter(null);
   }, []);
 
-  const { yearFilter, allGrants } = getAppStore();
-  const { user } = useAuthContext();
-  const userObj = toJS(user);
-
-  console.log(userObj)
-
-  if (!userObj) {
-    return <Navigate to="/login" replace />
-  }
-
-  if (userObj?.position === UserStatus.Inactive) {
-    return <Navigate to="restricted" replace />
-  }
+  const { yearFilter, allGrants, user } = getAppStore();
 
   const uniqueYears = Array.from(
     new Set(
@@ -59,7 +45,7 @@ const Dashboard = observer(() => {
 
   const { grants } = ProcessGrantData();
 
-  return (
+  return user?.position !== UserStatus.Inactive ? (
     <div className="dashboard-page px-12 py-4 mb-8 ">
       <div className="flex flex-row justify-end gap-4 mb-6">
         <CsvExportButton />
@@ -84,13 +70,19 @@ const Dashboard = observer(() => {
           <StackedBarMoneyReceived grants={grants} />
         </div>
         <div className="col-span-5">
-          <GanttYearGrantTimeline recentYear={recentYear} grants={grants} uniqueYears={uniqueYears} />
+          <GanttYearGrantTimeline
+            recentYear={recentYear}
+            grants={grants}
+            uniqueYears={uniqueYears}
+          />
         </div>
         <div className="col-span-2">
           <BarYearGrantStatus recentYear={recentYear} grants={grants} />
         </div>
       </div>
     </div>
+  ) : (
+    <Navigate to="restricted" replace />
   );
 });
 

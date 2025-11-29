@@ -7,10 +7,10 @@ import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import { observer } from "mobx-react-lite";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { api } from "../../api";
-import { useAuthContext } from "../../context/auth/authContext";
-import { toJS } from "mobx";
 import { Navigate } from "react-router-dom";
 import { UserStatus } from "../../../../middle-layer/types/UserStatus";
+import { useAuthContext } from "../../context/auth/authContext";
+import { toJS } from "mobx";
 
 // Represents a specific tab to show on the user page
 enum UsersTab {
@@ -52,6 +52,7 @@ const fetchInactiveUsers = async () => {
 const ITEMS_PER_PAGE = 8;
 
 const Users = observer(() => {
+  const { user } = useAuthContext();
   const store = getAppStore();
 
   useEffect(() => {
@@ -67,17 +68,6 @@ const Users = observer(() => {
     };
     fetchUsers();
   }, []);
-
-  const { user } = useAuthContext();
-  const userObj = toJS(user);
-
-  if (!userObj) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (userObj?.position === UserStatus.Inactive) {
-    return <Navigate to="restricted" replace />;
-  }
 
   const [usersTabStatus, setUsersTabStatus] = useState<UsersTab>(
     UsersTab.CurrentUsers
@@ -98,7 +88,7 @@ const Users = observer(() => {
       : pageStartIndex + ITEMS_PER_PAGE;
   const currentPageUsers = filteredUsers.slice(pageStartIndex, pageEndIndex);
 
-  return (
+  return user?.position !== UserStatus.Inactive ? (
     <div className="p-8">
       <div className="text-left mb-5">
         <h1 className="font-medium text-4xl">
@@ -220,6 +210,8 @@ const Users = observer(() => {
         </Pagination.Root>
       </div>
     </div>
+  ) : (
+    <Navigate to="restricted" replace />
   );
 });
 

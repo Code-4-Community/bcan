@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import logo from "../../images/bcan_logo.svg";
+import { ButtonColorOption } from "../../custom/RingButton";
 
 function RestrictedPage() {
   return (
-    <div className="flex justify-center items-center h-[100vh] text-left">
+    <div className="flex justify-center gap-20 items-center h-[100vh] text-left">
       <div>
         <h1 className="text-7xl font-bold mb-5">So Sorry!</h1>
         <p className="text-3xl font-bold mb-3">
@@ -13,7 +14,14 @@ function RestrictedPage() {
           Contact the admin if you think there's a mistake.
         </p>
         <Link to="/login">
-          <button className="py-2 px-4 rounded bg-medium-orange border border-black">
+          <button
+            style={{
+              backgroundColor: ButtonColorOption.ORANGE ,
+              color: 'black',
+              borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'
+            }}
+            className="py-2 px-4 rounded"
+          >
             Back to Login
           </button>
         </Link>

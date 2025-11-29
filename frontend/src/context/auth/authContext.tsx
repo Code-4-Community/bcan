@@ -11,7 +11,7 @@ import { api } from '../../api';
 interface AuthContextProps {
   isAuthenticated: boolean;
   login: (username: string, password: string) => Promise<boolean>;
-  register: (username: string, password: string, email: string) => Promise<{ state: boolean; message: String; }>;
+  register: (username: string, password: string, email: string) => Promise<{ state: boolean; message: string; }>;
   logout: () => void;
   user: User | null;
 }
@@ -58,7 +58,7 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
    /**
    * Register a new user and automatically log them in
    */
-   const register = async (username: string, password: string, email: string): Promise<{ state: boolean; message: String; }>=> {
+   const register = async (username: string, password: string, email: string): Promise<{ state: boolean; message: string; }>=> {
     try {
       const response = await api('/auth/register', {
         method: 'POST',

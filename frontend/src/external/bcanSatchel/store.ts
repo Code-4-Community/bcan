@@ -32,8 +32,7 @@ const initialState: AppState = {
   yearFilter: [],
   activeUsers: [],
   inactiveUsers: [],
-    notifications: []
-
+  notifications: []
 };
 
 const store = createStore<AppState>('appStore', initialState);
