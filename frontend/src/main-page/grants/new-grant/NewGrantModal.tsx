@@ -1,5 +1,5 @@
 // frontend/src/grant-info/components/NewGrantModal.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CurrencyInput from 'react-currency-input-field';
 import "../styles/NewGrantModal.css";
 import { MdOutlinePerson2 } from "react-icons/md";
@@ -8,8 +8,8 @@ import { Grant } from "../../../../../middle-layer/types/Grant";
 import { TDateISO } from "../../../../../backend/src/utils/date";
 import { Status } from "../../../../../middle-layer/types/Status";
 import { createNewGrant, saveGrantEdits } from "../new-grant/processGrantDataEditSave";
-import { observer } from "mobx-react-lite";
 import { fetchGrants } from "../filter-bar/processGrantData";
+import { observer } from "mobx-react-lite";
 
 /** Attachment type from your middle layer */
 enum AttachmentType {
@@ -25,7 +25,7 @@ interface Attachment {
 }
 // const FilterBar: React.FC = observer(() => {
 
-const NewGrantModal: React.FC<{ grantToEdit : Grant | null , onClose: () => void }> = observer(({ grantToEdit, onClose }) => {
+const NewGrantModal: React.FC<{ grantToEdit : Grant | null , onClose: () => void, isOpen : boolean }> = observer(({ grantToEdit, onClose, isOpen }) => {
   /*
       grantId: number;
       organization: string;
@@ -98,6 +98,12 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
   const [attachments, setAttachments] = useState<(Attachment)[]>(grantToEdit?.attachments || []);
   // Used
   const [isAddingAttachment, setIsAddingAttachment] = useState(false);
+  const [currentAttachment, setCurrentAttachment] = useState<Attachment>({
+                                                                          attachment_name: "",
+                                                                          url: "",
+                                                                          type: AttachmentType.SCOPE_DOCUMENT,
+                                                                        });
+
 
   // Used
   const [bcanPocName, setBcanPocName] = useState(grantToEdit? grantToEdit.bcan_poc? grantToEdit.bcan_poc.POC_name: '' : '');
@@ -114,6 +120,16 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
   const [_errorMessage, setErrorMessage] = useState<string>("");
   const [showErrorPopup, setShowErrorPopup] = useState(false);
   
+  // State to track if form was submitted successfully
+  const [wasSubmitted, setWasSubmitted] = useState(false);
+
+  // Add the useEffect
+  useEffect(() => {
+    if (!isOpen && wasSubmitted) {
+      fetchGrants();
+      setWasSubmitted(false); // Reset for next time
+    }
+  }, [isOpen, wasSubmitted]);
 
   /* Add a new blank report date to the list */
   // Used
@@ -130,36 +146,32 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
 
   // Used
   const _addAttachment = () => {
-    setAttachments([
-      ...attachments,
-      {
-        attachment_name: "",
-        url: "",
-        type: AttachmentType.SCOPE_DOCUMENT,
-      },
-    ]);
     setIsAddingAttachment(true);
+    // Validate fields are not empty
+    if (!currentAttachment.attachment_name || !currentAttachment.url) {
+      // Optional: show error message
+      return;
+    }
+
+    // Add the current attachment to the list
+    setAttachments([...attachments, currentAttachment]);
+
+    // Clear the input fields
+    setCurrentAttachment({
+      attachment_name: "",
+      url: "",
+      type: AttachmentType.SCOPE_DOCUMENT,
+    });
   };
+
 
   // Used
   const _removeAttachment = (index: number) => {
-    const updated = [...attachments];
-    updated.splice(index, 1);
+    const updated = attachments.filter((_, i) => i !== index);
     setAttachments(updated);
-    if (updated.length === 0) setIsAddingAttachment(false);
-  };
-
-  // Update a field in one attachment
-  // Used
-  const _handleAttachmentChange = (
-    index: number,
-    field: keyof Attachment,
-    value: string | AttachmentType
-  ) => {
-    const updated = [...attachments];
-    // @ts-expect-error - Keeping for future use
-    updated[index][field] = value;
-    setAttachments(updated);
+    if (updated.length === 0) {
+      setIsAddingAttachment(false);
+    }
   };
 
   /** Basic validations based on your screenshot fields */
@@ -246,11 +258,7 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
         return false;
       }
       
-      // Report deadlines should be after grant start
-      if (repDate < startDate) {
-        setErrorMessage(`Report Date ${i + 1} should be after Grant Start Date.`);
-        return false;
-      }
+
     }
   }
   // Timeline validation
@@ -338,8 +346,8 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
     }
 
     const grantData: Grant = {
-      grantId: grantToEdit!.grantId,
-      organization,
+      grantId: grantToEdit ? grantToEdit.grantId : 0,
+      organization : organization,
       does_bcan_qualify: (doesBcanQualify === "yes"),
       amount,
       grant_start_date: grantStartDate as TDateISO,
@@ -360,12 +368,16 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
       : await createNewGrant(grantData);
 
     if (result.success) {
+      console.log("Handle submit success in NewGrantModal");
+      setWasSubmitted(true);
+      isOpen = false;
       onClose();
-      await fetchGrants(); // ← Call it here instead
+      //await fetchGrants(); // ← Call it here instead
     } else {
       setErrorMessage(result.error || "An error occurred");
       setShowErrorPopup(true);
     }
+    // onClose();
   };
 
   return (
@@ -632,16 +644,15 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
                 {/* Editable attachment rows */}
                 {isAddingAttachment && (
                   <div className="  mt-1 mb-2">
-                    {attachments.map((attachment, index) => (
-                      <div key={index} className="gap-2 items-center">
+                      <div className="gap-2 items-center">
                         <input
                           type="text"
                           placeholder="Name"
                           className="flex-1 px-2 border border-black rounded"
                           style={{ backgroundColor: "#F2EBE4", height: "42px" }}
-                          value={attachment.attachment_name}
+                          value={currentAttachment.attachment_name}
                           onChange={(e) =>
-                            _handleAttachmentChange(index, "attachment_name", e.target.value)
+                            setCurrentAttachment({ ...currentAttachment, attachment_name: e.target.value })
                           }
                         />
                         <input
@@ -649,21 +660,20 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
                           placeholder="URL"
                           className="h-12 flex-1 px-2 border border-black rounded"
                           style={{ backgroundColor: "#F2EBE4", height: "42px" }}
-                          value={attachment.url}
+                          value={currentAttachment.url}
                           onChange={(e) =>
-                            _handleAttachmentChange(index, "url", e.target.value)
+                            setCurrentAttachment({ ...currentAttachment, url: e.target.value })
                           }
                         />
                         <select
                           className="h-12 border border-black rounded px-2 items-center justify-center"
                           style={{ backgroundColor: "#F2EBE4", height: "42px" }}
-                          value={attachment.type}
+                          value={currentAttachment.type}
                           onChange={(e) =>
-                            _handleAttachmentChange(
-                              index,
-                              "type",
-                              Number(e.target.value) as AttachmentType
-                            )
+                            setCurrentAttachment({
+                              ...currentAttachment,
+                              type: Number(e.target.value) as AttachmentType,
+                            })
                           }
                         >
                           <option  value={AttachmentType.SCOPE_DOCUMENT}>Scope</option>
@@ -676,9 +686,9 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
 
                           <button
                             type="button"
-                            onClick={() => _removeAttachment(index)}
                             style={{backgroundColor: "#D3D3D3", color : "black", height: "21px"}}
                             className="mr-2 border border-black rounded  flex items-center justify-center"
+                            onClick={() => setIsAddingAttachment(false)}
                           >
                             Close
                           </button>
@@ -695,7 +705,7 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
                         </div>
                         
                       </div>
-                    ))}
+  
                       
 
                   </div>
@@ -743,6 +753,13 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
                             )
                           </span>
                         </div>
+                        <button
+                              style={{height: "42px",backgroundColor: '#FF6B6B', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                              className="font-family-helvetica w-5 flex-shrink-0 rounded text-white font-bold flex items-center justify-center"
+                              onClick={() => _removeAttachment(index)}
+                            >
+                              ✕
+                        </button>
                       </div>
                     ))}
                 </div>

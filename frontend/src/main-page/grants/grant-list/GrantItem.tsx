@@ -24,6 +24,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant, defaultExpanded =
   const [isEditing, setIsEditing] = useState(false);
   const [curGrant, setCurGrant] = useState(grant);
   const [showNewGrantModal, setShowNewGrantModal] = useState(false);
+  const [wasGrantSubmitted, setWasGrantSubmitted] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Track whether each custom dropdown is open.
@@ -42,6 +43,40 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant, defaultExpanded =
   useEffect(() => {
     setIsExpanded(defaultExpanded);
   }, [defaultExpanded]);
+
+  useEffect(() => {
+  const updateGrant = async () => {
+    if (!showNewGrantModal && wasGrantSubmitted) {
+      // Only fetch the specific grant if we were editing
+      console.log("Use effect called in GrantItem while editing");
+      try {
+        const response = await api(`/grant/${grant.grantId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          }
+        });
+
+        if (response.ok) {
+          const updatedGrant = await response.json();
+          setCurGrant(updatedGrant);
+          console.log("✅ Grant refreshed:", updatedGrant);
+        } else {
+          console.error("❌ Failed to fetch updated grant");
+        }
+      } catch (err) {
+        console.error("Error fetching updated grant:", err);
+      }
+      
+       // Always refetch all grants to update the list
+      await fetchGrants();
+      setWasGrantSubmitted(false);
+      
+    }
+  };
+  
+  updateGrant();
+}, [showNewGrantModal, wasGrantSubmitted, isEditing]);
 
   const toggleEdit = async () => {
     if (isEditing) {
@@ -274,10 +309,10 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant, defaultExpanded =
                         Grant Start Date
                         </label>
                         <div 
-                          style={{color: "black", backgroundColor: "#D3D3D3"}}
+                          style={{color: "black", backgroundColor: "#D3D3D3", fontStyle : curGrant.grant_start_date? "normal" : "italic"}}
                           className="h-9 flex items-center justify-center w-full rounded-full px-4"
                           >
-                          {curGrant.grant_start_date}
+                          {curGrant.grant_start_date? formatDate(curGrant.grant_start_date) : "Unknown"}
                         </div>
                     </div>
 
@@ -290,10 +325,10 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant, defaultExpanded =
                       Estimated Completion Time
                     </label>
                     <div 
-                      style={{color: "black"}}
+                      style={{color: "black", fontStyle: curGrant.estimated_completion_time? "normal" : "italic"}}
                       className="text-left text-lg h-10 flex w-2/3  "
                     >
-                      {curGrant.estimated_completion_time + " hours"}
+                      {curGrant.estimated_completion_time? curGrant.estimated_completion_time + " hours" : "No est completion time"}
                     </div>
                   </div>
 
@@ -345,10 +380,12 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant, defaultExpanded =
                   Timeline 
                   </label>
                   <div 
-                    style={{color: "black"}}
+                    style={{color: "black",
+                            fontStyle: curGrant.timeline? "normal" : "italic"
+                    }}
                     className="text-left text-lg h-10 w-full"
                   >
-                    {curGrant.timeline + " years"}
+                    {curGrant.timeline? curGrant.timeline + " years" : "No timeline"}
                   </div>
                 </div>
                 {/*Amount */}
@@ -385,9 +422,9 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant, defaultExpanded =
                       <MdOutlinePerson2 className="w-1/4 h-full "/>
                       <div style={{ backgroundColor : '#F2EBE4' }} className="w-3/4 border-l border-black bg-[#FFCEB6] ">
                         <h2
-                        className="px-2 text-left font-bold h-14 w-full text-gray-700 rounded flex items-center" id="grid-city"> {curGrant.bcan_poc?.POC_name ?? 'Unknown'} </h2>
+                        className="truncate px-2 text-left font-bold h-14 w-full text-gray-700 rounded flex items-center" id="grid-city"> {curGrant.bcan_poc?.POC_name ?? 'Unknown'} </h2>
                         <h2 
-                        className="px-2 text-left h-14 w-full text-gray-700 rounded flex items-center" id="grid-city" > {curGrant.bcan_poc?.POC_email ?? '----------'} </h2>
+                        className="truncate px-2 text-left h-14 w-full text-gray-700 rounded flex items-center" id="grid-city" > {curGrant.bcan_poc?.POC_email ?? '----------'} </h2>
                       </div> 
                   </div>
                 </div>
@@ -402,9 +439,9 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant, defaultExpanded =
                       <MdOutlinePerson2 className="w-1/4 h-full"/>
                       <div style={{ backgroundColor : '#F2EBE4' }} className="w-3/4 border-l border-black bg-[#FFCEB6] ">
                         <h2 
-                        className="px-2 text-left font-bold h-14 w-full text-gray-700 rounded flex items-center" id="grid-city"  > {curGrant.grantmaker_poc?.POC_name ?? 'Unknown'}</h2>
+                        className="truncate px-2 text-left font-bold h-14 w-full text-gray-700 rounded flex items-center" id="grid-city"  > {curGrant.grantmaker_poc?.POC_name ?? 'Unknown'}</h2>
                         <h2
-                        className="px-2 text-left h-14 w-full text-gray-700 rounded flex items-center" id="grid-city"> {curGrant.grantmaker_poc?.POC_email ?? '----------'} </h2>
+                        className="truncate px-2 text-left h-14 w-full text-gray-700 rounded flex items-center" id="grid-city"> {curGrant.grantmaker_poc?.POC_email ?? '----------'} </h2>
                       </div> 
                   </div>
                 </div>
@@ -471,7 +508,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant, defaultExpanded =
                       Scope Documents
                     </label>
                     <div
-                      className="p-2 rounded h-48"
+                      className="p-2 rounded h-48 overflow-y-scroll"
                       style={{
                         backgroundColor: ButtonColorOption.GRAY, borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'
                       }}
@@ -480,16 +517,17 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant, defaultExpanded =
                       If no deadlines, add "No deadlines" text */}
                       {curGrant.attachments && curGrant.attachments.length > 0 ? (
                         curGrant.attachments.map((attachment: Attachment, index: number) => (
-                          <div
+                          <a
                             key={index}
                             style={{
                               color: "black",
                               borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'
                             }}
-                            className="h-10 flex items-center justify-center w-full rounded-lg mb-2 px-4 bg-tan"
+                            className="font-normaltruncate h-10 flex items-center justify-center w-full rounded-lg mb-2 px-4 bg-tan"
+                            href = {attachment.url}
                           >
-                            {attachment.url}
-                          </div>
+                            {attachment.attachment_name || "Untitled"}
+                          </a>
                         ))
                       ) : (
                         <div className="text-center text-gray-700 italic">No documents</div>
@@ -590,7 +628,8 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant, defaultExpanded =
           {showNewGrantModal && (
             <NewGrantModal 
               grantToEdit={curGrant}
-              onClose={async () => {setShowNewGrantModal(false); await fetchGrants();}}
+              onClose={async () => {setShowNewGrantModal(false); setWasGrantSubmitted(true);}}
+              isOpen={showNewGrantModal}
             />
           )}
         </div>

@@ -137,7 +137,7 @@ export class GrantService {
         grantId: newGrantId,
         organization: grant.organization,
         does_bcan_qualify: grant.does_bcan_qualify,
-        status: grant.status, // Expected to be 0 (Potential), 1 (Active), or 2 (Inactive)
+        status: grant.status,
         amount: grant.amount,
         grant_start_date: grant.grant_start_date,
         application_deadline: grant.application_deadline,
@@ -155,10 +155,17 @@ export class GrantService {
     try {
       await this.dynamoDb.put(params).promise();
       this.logger.log(`Uploaded grant from ${grant.organization}`);
+      
       const userId = grant.bcan_poc.POC_email;
-      await this.createGrantNotifications({ ...grant, grantId: newGrantId }, userId);
+      this.logger.log(`Creating notifications for user: ${userId}`);
+      
+      //await this.createGrantNotifications({ ...grant, grantId: newGrantId }, userId);
+      
+      this.logger.log(`Successfully created notifications for grant ${newGrantId}`);
     } catch (error: any) {
-      this.logger.error(`Failed to upload new grant from ${grant.organization}`, error.stack);
+      this.logger.error(`Failed to upload new grant from ${grant.organization}`);
+      this.logger.error(`Error details: ${error.message}`);
+      this.logger.error(`Stack trace: ${error.stack}`);
       throw new Error(`Failed to upload new grant from ${grant.organization}`);
     }
 

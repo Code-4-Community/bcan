@@ -22,6 +22,7 @@ const GrantList: React.FC<GrantListProps> = observer(({ selectedGrantId, onClear
     const { grants, onSort } = ProcessGrantData();
     const [currentPage, setPage] = useState(1);
     const [showNewGrantModal, setShowNewGrantModal] = useState(false);
+    const [wasGrantSubmitted, setWasGrantSubmitted] = useState(false);
 
     const displayedGrants = showOnlyMyGrants ? grants.filter(
         (grant: Grant) => grant.bcan_poc?.POC_email?.toLowerCase() === currentUserEmail?.toLowerCase()
@@ -39,6 +40,15 @@ const GrantList: React.FC<GrantListProps> = observer(({ selectedGrantId, onClear
                  }
               }
          }, [selectedGrantId, grants, currentPage]);
+
+    useEffect(() => {
+    if (!showNewGrantModal && wasGrantSubmitted) {
+        console.log("UseEffect called in Index");
+        grants.findIndex(grant => grant.grantId === Number(selectedGrantId));
+        fetchGrants();
+        setWasGrantSubmitted(false);
+    }
+}, [showNewGrantModal, wasGrantSubmitted, grants]);
 
     const count = displayedGrants.length;
     const startRange = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -106,7 +116,7 @@ const GrantList: React.FC<GrantListProps> = observer(({ selectedGrantId, onClear
                 </ButtonGroup>
             </Pagination.Root>
             {showNewGrantModal && (
-                <NewGrantModal grantToEdit = {null} onClose={async () => {setShowNewGrantModal(false); await fetchGrants(); }} />
+                <NewGrantModal grantToEdit = {null} onClose={async () => {setShowNewGrantModal(false); setWasGrantSubmitted(true); }} isOpen={showNewGrantModal} />
             )}
         </div>
         
