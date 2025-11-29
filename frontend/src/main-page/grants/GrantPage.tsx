@@ -10,6 +10,8 @@ import FilterBar from "./filter-bar/FilterBar.tsx";
 import { useAuthContext } from "../../context/auth/authContext";
 import { updateEndDateFilter, updateFilter, updateStartDateFilter, updateYearFilter } from "../../external/bcanSatchel/actions.ts";
 import { toJS } from "mobx";
+import { fetchGrants } from "./filter-bar/processGrantData.ts";
+
 
 interface GrantPageProps {
   showOnlyMyGrants?: boolean; //if true, filters grants by user email
@@ -18,6 +20,7 @@ interface GrantPageProps {
 
 function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
   const [showNewGrantModal, setShowNewGrantModal] = useState(false);
+  const [wasGrantSubmitted, setWasGrantSubmitted] = useState(false);
   const [selectedGrant, setSelectedGrant] = useState<Grant | null>(null);
 
   const { user } = useAuthContext(); //gets current logged in user
@@ -34,6 +37,14 @@ function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
             updateEndDateFilter(null);
             updateStartDateFilter(null);
         }, []);
+
+  useEffect(() => {
+    if (!showNewGrantModal && wasGrantSubmitted) {
+      fetchGrants();
+      setWasGrantSubmitted(false);
+      console.log("Use effect called in GrantPage");
+    }
+  }, [showNewGrantModal, wasGrantSubmitted]);
 
   return (
     <div className="grant-page px-8">
@@ -62,11 +73,11 @@ function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
       </div>
       <div className="hidden-features">
         {showNewGrantModal && (
-          <NewGrantModal onClose={() => setShowNewGrantModal(false)} />
+          <NewGrantModal grantToEdit={null} onClose={async () => {setShowNewGrantModal(false); setWasGrantSubmitted(true);} } isOpen={showNewGrantModal}  />
         )}
       </div>
     </div>
   );
-}
+} 
 
 export default GrantPage;

@@ -5,7 +5,7 @@ import GrantItem from "./GrantItem.tsx";
 import GrantLabels from "./GrantLabels.tsx";
 import { ButtonGroup, IconButton, Pagination } from "@chakra-ui/react";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
-import { ProcessGrantData } from "../filter-bar/processGrantData.ts";
+import { fetchGrants, ProcessGrantData } from "../filter-bar/processGrantData.ts";
 import NewGrantModal from "../new-grant/NewGrantModal.tsx";
 import { Grant } from "../../../../../middle-layer/types/Grant.ts";
 
@@ -22,6 +22,7 @@ const GrantList: React.FC<GrantListProps> = observer(({ selectedGrantId, onClear
     const { grants, onSort } = ProcessGrantData();
     const [currentPage, setPage] = useState(1);
     const [showNewGrantModal, setShowNewGrantModal] = useState(false);
+    const [wasGrantSubmitted, setWasGrantSubmitted] = useState(false);
 
     const displayedGrants = showOnlyMyGrants ? grants.filter(
         (grant: Grant) => grant.bcan_poc?.POC_email?.toLowerCase() === currentUserEmail?.toLowerCase()
@@ -39,6 +40,15 @@ const GrantList: React.FC<GrantListProps> = observer(({ selectedGrantId, onClear
                  }
               }
          }, [selectedGrantId, grants, currentPage]);
+
+    useEffect(() => {
+    if (!showNewGrantModal && wasGrantSubmitted) {
+        console.log("UseEffect called in Index");
+        grants.findIndex(grant => grant.grantId === Number(selectedGrantId));
+        fetchGrants();
+        setWasGrantSubmitted(false);
+    }
+}, [showNewGrantModal, wasGrantSubmitted, grants]);
 
     const count = displayedGrants.length;
     const startRange = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -106,7 +116,7 @@ const GrantList: React.FC<GrantListProps> = observer(({ selectedGrantId, onClear
                 </ButtonGroup>
             </Pagination.Root>
             {showNewGrantModal && (
-                <NewGrantModal onClose={() => setShowNewGrantModal(false)} />
+                <NewGrantModal grantToEdit = {null} onClose={async () => {setShowNewGrantModal(false); setWasGrantSubmitted(true); }} isOpen={showNewGrantModal} />
             )}
         </div>
         

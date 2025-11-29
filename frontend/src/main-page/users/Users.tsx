@@ -13,6 +13,7 @@ enum UsersTab {
   CurrentUsers,
 }
 import { api } from "../../api"
+import { UserStatus } from "../../../../middle-layer/types/UserStatus";
 const fetchActiveUsers = async (): Promise<User[]> => {
   try {
     const response = await api("/user/active", {
@@ -74,6 +75,81 @@ store.inactiveUsers = inactive;    }
     usersTabStatus === UsersTab.PendingUsers
       ? store.inactiveUsers
       : store.activeUsers;
+
+  const mockUsers: User[] = [
+      {
+        userId: "id1",
+        position: UserStatus.Admin,
+        email: "email1",
+        name: "name1",
+      },
+      {
+        userId: "id2",
+        position: UserStatus.Employee,
+        email: "email2",
+        name: "name2",
+      },
+      {
+        userId: "id3",
+        position: UserStatus.Inactive,
+        email: "email3",
+        name: "name3",
+      },
+      {
+        userId: "id4",
+        position: UserStatus.Admin,
+        email: "email4",
+        name: "name4",
+      },
+      {
+        userId: "id5",
+        position: UserStatus.Employee,
+        email: "email5",
+        name: "name5",
+      },
+      {
+        userId: "id6",
+        position: UserStatus.Inactive,
+        email: "email6",
+        name: "name6",
+      },
+      {
+        userId: "id7",
+        position: UserStatus.Admin,
+        email: "email7",
+        name: "name7",
+      },
+      {
+        userId: "id8",
+        position: UserStatus.Employee,
+        email: "email8",
+        name: "name8",
+      },
+      {
+        userId: "id9",
+        position: UserStatus.Inactive,
+        email: "email9",
+        name: "name9",
+      },
+      {
+        userId: "id10",
+        position: UserStatus.Admin,
+        email: "email10",
+        name: "name10",
+      },
+      {
+        userId: "id11",
+        position: UserStatus.Employee,
+        email: "email11",
+        name: "name11",
+      },
+      {
+        userId: "id12",
+        position: UserStatus.Admin,
+        email: "email12",
+        name: "name12",
+      },
+    ];
 
   const numInactiveUsers = mockUsers.filter((user) => user.position === "Inactive").length;
   const numUsers = filteredUsers.length;

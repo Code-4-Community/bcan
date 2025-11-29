@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { NotificationController } from './notification.controller';
-import { NotificationService } from './notifcation.service';
+import { NotificationService } from './notification.service';
 
 @Module({
  providers: [NotificationService], // providers perform business logic
