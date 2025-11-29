@@ -40,8 +40,8 @@ function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
     updateStartDateFilter(null);
   }, []);
 
-  return (
-    userObj?.position !== UserStatus.Inactive ? (
+  return user ? (
+    user?.position !== UserStatus.Inactive ? (
       <div className="grant-page px-8">
         <div className="top-half"></div>
         <div className="flex justify-end align-middle p-4 gap-4">
@@ -73,6 +73,8 @@ function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
       </div>
     ) :
     <Navigate to="restricted" replace />
+  ) : (
+    <Navigate to="/login" replace />
   );
 }
 
