@@ -76,7 +76,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant, defaultExpanded =
   };
   
   updateGrant();
-}, [showNewGrantModal, wasGrantSubmitted, isEditing]);
+}, [showNewGrantModal, wasGrantSubmitted]);
 
   const toggleEdit = async () => {
     if (isEditing) {
