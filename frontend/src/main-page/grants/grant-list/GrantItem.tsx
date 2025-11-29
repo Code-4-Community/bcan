@@ -44,11 +44,11 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant, defaultExpanded =
     setIsExpanded(defaultExpanded);
   }, [defaultExpanded]);
 
+  // If the NewGrantModal has been closed and a new grant submitted (or existing grant edited),
+  // fetch the grant at this index so that all new changes are immediately reflected
   useEffect(() => {
   const updateGrant = async () => {
     if (!showNewGrantModal && wasGrantSubmitted) {
-      // Only fetch the specific grant if we were editing
-      console.log("Use effect called in GrantItem while editing");
       try {
         const response = await api(`/grant/${grant.grantId}`, {
           method: "GET",
@@ -67,11 +67,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant, defaultExpanded =
       } catch (err) {
         console.error("Error fetching updated grant:", err);
       }
-      
-       // Always refetch all grants to update the list
-      await fetchGrants();
       setWasGrantSubmitted(false);
-      
     }
   };
   
