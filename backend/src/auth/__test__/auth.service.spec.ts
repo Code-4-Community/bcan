@@ -128,7 +128,6 @@ describe("AuthService", () => {
             userId: "c4c",
             email: "c4c@example.com",
             position: "Inactive",
-            name: "",
           }),
         })
       );
@@ -257,7 +256,6 @@ describe("AuthService", () => {
       expect(result.user).toEqual({
         userId: "c4c",
         email: "c4c@gmail.com",
-        name: "",
         position: "Inactive",
       });
       expect(result.message).toBe("Login Successful!");
