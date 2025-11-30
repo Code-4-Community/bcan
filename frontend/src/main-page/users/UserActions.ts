@@ -2,7 +2,7 @@ import { api } from "../../api"
 import { User } from "../../../../middle-layer/types/User";
 import { setActiveUsers, setInactiveUsers } from "../../external/bcanSatchel/actions";
 import { getAppStore } from "../../external/bcanSatchel/store";
-import { set, toJS } from "mobx";
+import { toJS } from "mobx";
 export const fetchActiveUsers = async (): Promise<User[]> => {
   try {
     const response = await api("/user/active", {

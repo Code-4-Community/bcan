@@ -1,4 +1,4 @@
-import { useContext, createContext, ReactNode, useEffect } from 'react';
+import { useContext, createContext, ReactNode } from 'react';
 import { getAppStore } from '../../external/bcanSatchel/store';
 import { setAuthState, logoutUser } from '../../external/bcanSatchel/actions';
 import { observer } from 'mobx-react-lite';
