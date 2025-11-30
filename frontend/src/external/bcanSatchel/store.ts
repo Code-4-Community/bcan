@@ -32,8 +32,7 @@ const initialState: AppState = {
   yearFilter: [],
   activeUsers: [],
   inactiveUsers: [],
-    notifications: []
-
+  notifications: []
 };
 
 /**
