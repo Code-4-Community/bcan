@@ -5,7 +5,6 @@ import { observer } from 'mobx-react-lite';
 import { User } from '../../../../middle-layer/types/User';
 import { api } from '../../api';
 import { fetchUsers } from '../../main-page/users/UserActions.ts';
-import { toJS } from 'mobx';
 
 
 /**
