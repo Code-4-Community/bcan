@@ -1,7 +1,8 @@
 import { api } from "../../api"
 import { User } from "../../../../middle-layer/types/User";
- import { getAppStore } from "../../external/bcanSatchel/store";
 import { setActiveUsers, setInactiveUsers } from "../../external/bcanSatchel/actions";
+import { getAppStore } from "../../external/bcanSatchel/store";
+import { toJS } from "mobx";
 export const fetchActiveUsers = async (): Promise<User[]> => {
   try {
     const response = await api("/user/active", {
@@ -20,7 +21,7 @@ export const fetchActiveUsers = async (): Promise<User[]> => {
   }
 }
 
-export const fetchInactiveUsers = async () => {
+export const fetchInactiveUsers = async (): Promise<User[]> => {
   try {
     const response = await api("/user/inactive", { method: 'GET' });
     if (!response.ok && response.status !== 200) {
@@ -31,17 +32,22 @@ export const fetchInactiveUsers = async () => {
   }
   catch (error) {
     console.error("Error fetching active users:", error);
+        return []; // Return empty array on error
+
   }
 }
 
 
 export const fetchUsers = async () => {
+  console.log("Fetching users...");
       const active = await fetchActiveUsers();
       const inactive = await fetchInactiveUsers();
       if (active) {
         setActiveUsers(active);
+        console.log("Active users fetched:", toJS(getAppStore().activeUsers));
       }
       if (inactive) {
         setInactiveUsers(inactive);
+        console.log("Inactive users fetched:", toJS(getAppStore().inactiveUsers));
       }
     };

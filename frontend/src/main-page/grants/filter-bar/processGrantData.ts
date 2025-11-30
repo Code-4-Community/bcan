@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { getAppStore } from "../../../external/bcanSatchel/store";
+import { fetchUsers } from "../../users/UserActions.ts";
 import { fetchAllGrants } from "../../../external/bcanSatchel/actions";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import {
