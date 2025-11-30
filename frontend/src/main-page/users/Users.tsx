@@ -5,7 +5,6 @@ import { Pagination, ButtonGroup, IconButton } from "@chakra-ui/react";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import { observer } from "mobx-react-lite";
 import { getAppStore } from "../../external/bcanSatchel/store";
-import { api } from "../../api";
 import { Navigate } from "react-router-dom";
 import { UserStatus } from "../../../../middle-layer/types/UserStatus";
 import { useAuthContext } from "../../context/auth/authContext";
@@ -99,7 +98,7 @@ const { user } = useAuthContext();
                 {currentPageUsers.map((user) => (
                   <ApprovedUserCard
                     key={user.userId}
-                    name={user.name}
+                    name={user.userId}
                     email={user.email}
                     position={user.position}
                   />
@@ -116,7 +115,7 @@ const { user } = useAuthContext();
                 </div>
                 {currentPageUsers.map((user) => (
                   <PendingUserCard
-                    name={user.name}
+                    name={user.userId}
                     email={user.email}
                     position={user.position}
                   />
