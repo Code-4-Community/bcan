@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ApprovedUserCard from "./ApprovedUserCard";
 import PendingUserCard from "./PendingUserCard";
 import { Pagination, ButtonGroup, IconButton } from "@chakra-ui/react";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import { observer } from "mobx-react-lite";
 import { getAppStore } from "../../external/bcanSatchel/store";
-import { fetchUsers } from "./UserActions";
+// import { fetchUsers } from "./UserActions";
 
 // Represents a specific tab to show on the user page
 enum UsersTab {
@@ -21,9 +21,9 @@ const ITEMS_PER_PAGE = 8;
 const Users = observer(() => {
 const store = getAppStore();
 
-useEffect(() => {
-    fetchUsers()
-  }, []);
+// useEffect(() => {
+//     fetchUsers()
+//   }, []);
 
  
   const [usersTabStatus, setUsersTabStatus] = useState<UsersTab>(
@@ -94,7 +94,7 @@ useEffect(() => {
               {currentPageUsers.map((user) => (
                 <ApprovedUserCard
                   key={user.userId}
-                  name={user.name}
+                  name={user.userId}
                   email={user.email}
                   position={user.position}
                 />
@@ -111,7 +111,7 @@ useEffect(() => {
               </div>
               {currentPageUsers.map((user) => (
                 <PendingUserCard
-                  name={user.name}
+                  name={user.userId}
                   email={user.email}
                   position={user.position}
                 />

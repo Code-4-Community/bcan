@@ -13,7 +13,7 @@ import { fetchUsers } from '../../main-page/users/UserActions.ts';
 interface AuthContextProps {
   isAuthenticated: boolean;
   login: (username: string, password: string) => Promise<boolean>;
-  register: (username: string, password: string, email: string) => Promise<{ state: boolean; message: String; }>;
+  register: (username: string, password: string, email: string) => Promise<{ state: boolean; message: string; }>;
   logout: () => void;
   user: User | null;
 }
@@ -60,7 +60,7 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
    /**
    * Register a new user and automatically log them in
    */
-   const register = async (username: string, password: string, email: string): Promise<{ state: boolean; message: String; }>=> {
+   const register = async (username: string, password: string, email: string): Promise<{ state: boolean; message: string; }>=> {
     try {
       const response = await api('/auth/register', {
         method: 'POST',
@@ -103,12 +103,12 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
   };
 
   /** Restore user session on refresh */
-  useEffect(() => {
-    api('/auth/session')
-      .then(r => (r.ok ? r.json() : Promise.reject()))
-      .then(({ user }) => setAuthState(true, user, null))
-      .catch(() => logoutUser());
-  }, []);
+  // useEffect(() => {
+  //   api('/auth/session')
+  //     .then(r => (r.ok ? r.json() : Promise.reject()))
+  //     .then(({ user }) => setAuthState(true, user, null))
+  //     .catch(() => logoutUser());
+  // }, []);
 
   return (
     <AuthContext.Provider

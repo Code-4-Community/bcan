@@ -2,7 +2,7 @@ import { api } from "../../api"
 import { User } from "../../../../middle-layer/types/User";
 import { setActiveUsers, setInactiveUsers } from "../../external/bcanSatchel/actions";
 import { getAppStore } from "../../external/bcanSatchel/store";
-import { toJS } from "mobx";
+import { set, toJS } from "mobx";
 export const fetchActiveUsers = async (): Promise<User[]> => {
   try {
     const response = await api("/user/active", {
@@ -51,3 +51,8 @@ export const fetchUsers = async () => {
         console.log("Inactive users fetched:", toJS(getAppStore().inactiveUsers));
       }
     };
+
+export const moveUserToActive = (user: User) => {
+  setActiveUsers([...getAppStore().activeUsers, user]);
+  setInactiveUsers(getAppStore().inactiveUsers.filter(u => u.userId !== user.userId));
+}
