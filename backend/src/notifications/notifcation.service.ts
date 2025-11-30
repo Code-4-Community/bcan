@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import AWS from 'aws-sdk';
 import { Notification } from '../../../middle-layer/types/Notification';
 
@@ -7,6 +7,8 @@ export class NotificationService {
 
   private dynamoDb = new AWS.DynamoDB.DocumentClient();
   private ses = new AWS.SES({ region: process.env.AWS_REGION });
+    private readonly logger = new Logger(NotificationService.name);
+
 
   // function to create a notification
   // Should this have a check to prevent duplicate notifications?
@@ -33,8 +35,15 @@ export class NotificationService {
     // ExpressionAttributeValues specifies the actual value of the key
     // IndexName specifies our Global Secondary Index, which was created in the BCANNotifs table to 
     // allow for querying by userId, as it is not a primary/partition key
+    const notificationTableName = process.env.DYNAMODB_NOTIFICATION_TABLE_NAME;
+    this.logger.log(`Fetching notifications for userId: ${userId} from table: ${notificationTableName}`);
+
+        if (!notificationTableName) {
+            this.logger.error('DYNAMODB_NOTIFICATION_TABLE_NAME is not defined in environment variables');
+            throw new Error("Internal Server Error")
+        }
     const params = {
-      TableName: process.env.DYNAMODB_NOTIFICATION_TABLE_NAME || 'TABLE_FAILURE',
+      TableName: notificationTableName,
       IndexName: 'userId-alertTime-index',
       KeyConditionExpression: 'userId = :userId',
       ExpressionAttributeValues: {
@@ -47,14 +56,16 @@ export class NotificationService {
 
       
       const data = await this.dynamoDb.query(params).promise();
+
       // This is never hit, because no present userId throws an error
       if (!data || !data.Items || data.Items.length == 0) {
-        throw new Error('No notifications with user id ' + userId + ' found.');
+        this.logger.warn(`No notifications found for userId: ${userId}`);
+        return [] as Notification[];
       }
 
       return data.Items as Notification[];
     } catch (error) {
-      console.log(error)
+      this.logger.error(`Error retrieving notifications for userId: ${userId}`, error as string);
       throw new Error('Failed to retrieve notifications.');
     }
   }

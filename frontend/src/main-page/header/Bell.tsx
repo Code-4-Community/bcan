@@ -31,7 +31,6 @@ const BellButton = () => {
   const handleClick = async () => {
     // TODO: Remove hardcoded userId after /auth/session endpoint is fixed
 
-    const testUserId = "bcanuser33"; //hardcoded for testing
 
     // don't fetch if user isn't logged in (safe fallback)
     //if (!user?.userId) {
@@ -43,7 +42,7 @@ const BellButton = () => {
     try {
       // call backend route
       const response = await api(
-        `/notifications/user/${testUserId}`,
+        `/notifications/user/${user?.userId}`,
         {
           method: "GET",
         }
