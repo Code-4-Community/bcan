@@ -1,70 +1,31 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ApprovedUserCard from "./ApprovedUserCard";
 import PendingUserCard from "./PendingUserCard";
-import { User } from "../../../../middle-layer/types/User";
 import { Pagination, ButtonGroup, IconButton } from "@chakra-ui/react";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import { observer } from "mobx-react-lite";
 import { getAppStore } from "../../external/bcanSatchel/store";
+// import { fetchUsers } from "./UserActions";
 
 // Represents a specific tab to show on the user page
 enum UsersTab {
   PendingUsers,
   CurrentUsers,
 }
-import { api } from "../../api"
-const fetchActiveUsers = async (): Promise<User[]> => {
-  try {
-    const response = await api("/user/active", {
-      method: 'GET'
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP Error, Status: ${response.status}`);
-    }
-    
-    const activeUsers = await response.json();
-    return activeUsers as User[];
-  } catch (error) {
-    console.error("Error fetching active users:", error);
-    return []; // Return empty array on error
-  }
-}
 
-const fetchInactiveUsers = async () => {
-  try {
-    const response = await api("/user/inactive", {method : 'GET' });
-    if (!response.ok) {
-      throw new Error(`HTTP Error, Status: ${response.status}`);
-    }
-    const inactiveUsers = await response.json();
-    return inactiveUsers as User[];
-  }
-  catch (error) {
-    console.error("Error fetching active users:", error);
-  }
-}
 
 
 const ITEMS_PER_PAGE = 8;
 
+
 const Users = observer(() => {
-  const store = getAppStore();
-  
-  
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const active = await fetchActiveUsers();
-      const inactive = await fetchInactiveUsers();
-      if (active) {
-        store.activeUsers = active;
-      }
-      if (inactive) {
-store.inactiveUsers = inactive;    }
-    };
-    fetchUsers();
-  
-  }, []);
+const store = getAppStore();
+
+// useEffect(() => {
+//     fetchUsers()
+//   }, []);
+
+ 
   const [usersTabStatus, setUsersTabStatus] = useState<UsersTab>(
     UsersTab.CurrentUsers
   );
@@ -75,7 +36,7 @@ store.inactiveUsers = inactive;    }
       ? store.inactiveUsers
       : store.activeUsers;
 
-  const numInactiveUsers = mockUsers.filter((user) => user.position === "Inactive").length;
+  const numInactiveUsers = store.inactiveUsers.length;
   const numUsers = filteredUsers.length;
   const pageStartIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const pageEndIndex =
@@ -97,11 +58,10 @@ store.inactiveUsers = inactive;    }
       <div className="min-h-screen bg-[#F5F4F4] border rounded-md relative flex flex-col">
         <div className="absolute right-7 top-0 -translate-y-full flex">
           <button
-            className={`w-52 h-16 border rounded-b-none focus:outline-none ${
-              usersTabStatus === UsersTab.PendingUsers
+            className={`w-52 h-16 border rounded-b-none focus:outline-none ${usersTabStatus === UsersTab.PendingUsers
                 ? "bg-[#F5F4F4] border-x-[#000000] border-t-[#000000]"
                 : "bg-[#F4F4F4] border-x-[#BFBBBB] border-t-[#BFBBBB] border-b-[#000000]"
-            }`}
+              }`}
             onClick={() => {
               setUsersTabStatus(UsersTab.PendingUsers);
               setCurrentPage(1);
@@ -110,11 +70,10 @@ store.inactiveUsers = inactive;    }
             Pending Users
           </button>
           <button
-            className={`w-52 h-16 border rounded-b-none ml-2 focus:outline-none ${
-              usersTabStatus === UsersTab.CurrentUsers
+            className={`w-52 h-16 border rounded-b-none ml-2 focus:outline-none ${usersTabStatus === UsersTab.CurrentUsers
                 ? "bg-[#F5F4F4] border-x-[#000000] border-t-[#000000]"
                 : "bg-[#F4F4F4] border-x-[#BFBBBB] border-t-[#BFBBBB] border-b-[#000000]"
-            }`}
+              }`}
             onClick={() => {
               setUsersTabStatus(UsersTab.CurrentUsers);
               setCurrentPage(1);
@@ -135,7 +94,7 @@ store.inactiveUsers = inactive;    }
               {currentPageUsers.map((user) => (
                 <ApprovedUserCard
                   key={user.userId}
-                  name={user.name}
+                  name={user.userId}
                   email={user.email}
                   position={user.position}
                 />
@@ -152,10 +111,10 @@ store.inactiveUsers = inactive;    }
               </div>
               {currentPageUsers.map((user) => (
                 <PendingUserCard
-                name={user.name}
-                email={user.email}
-                position={user.position}
-              />
+                  name={user.userId}
+                  email={user.email}
+                  position={user.position}
+                />
               ))}
             </>
           )}
