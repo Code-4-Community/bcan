@@ -212,7 +212,6 @@ export class AuthService {
       userId: username,
       position: UserStatus.Inactive,
       email: email,
-      name: "",
     };
 
     try {
@@ -273,44 +272,7 @@ private isValidEmail(email: string): boolean {
   return emailRegex.test(email);
 }
 
-  async addUserToGroup(username: string, groupName: UserStatus, requestedBy : User): Promise<User> {
-    const userPoolId = process.env.COGNITO_USER_POOL_ID;
-    try {
-      await this.cognito.adminAddUserToGroup({
-        GroupName: groupName as string,
-        UserPoolId: userPoolId || "POOL_FAILURE",
-        Username: username,
-      });
-      const tableName = process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE";
-      
-      // Update the user's position in DynamoDB
-      const params = {
-        TableName: tableName,
-        Key: { userId: username },
-        UpdateExpression: "SET position = :position",
-        ExpressionAttributeValues: {
-          ":position": groupName as string,
-        },
-        ReturnValues: "ALL_NEW",
-      };
-
-      const result = await this.dynamoDb.update(params).promise();
-      
-      // TODO: Add more error handling to see if the user doesn't exist or is the requested by is invalid
-      this.logger.log(
-        `User ${username} added to group ${groupName} by ${requestedBy}.`
-      );
-
-      return result.Attributes as User;
-
-    } catch (error) {
-      if (error instanceof Error) {
-        this.logger.error("Registration failed", error.stack);
-        throw new Error(error.message || "Registration failed");
-      }
-      throw new Error("An unknown error occurred during registration");
-    }
-  }
+ 
 
   // Overall, needs better undefined handling and optional adding
   async login(
@@ -429,7 +391,6 @@ private isValidEmail(email: string): boolean {
           userId: username,
           email: email,
           position: UserStatus.Inactive,
-          name: "",
         };
 
         await this.dynamoDb
