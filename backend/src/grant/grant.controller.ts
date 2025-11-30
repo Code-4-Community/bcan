@@ -11,23 +11,13 @@ export class GrantController {
         return await this.grantService.getAllGrants();
     }
 
-    @Get(':id')
-    async getGrantById(@Param('id') GrantId: string) {
-        return await this.grantService.getGrantById(parseInt(GrantId, 10));
-    }
+   
 
-    @Put('archive')
-    async archive(
+    @Put('inactivate')
+    async inactivate(
         @Body('grantIds') grantIds: number[]
-    ): Promise<number[]> {
-        return await this.grantService.unarchiveGrants(grantIds)
-    }
-
-    @Put('unarchive')
-    async unarchive(
-        @Body('grantIds') grantIds: number[]
-    ): Promise<number[]> {
-        return await this.grantService.unarchiveGrants(grantIds)
+    ): Promise<Grant[]> {
+        return await this.grantService.makeGrantsInactive(grantIds)
     }
 
     @Post('new-grant')
@@ -47,5 +37,8 @@ export class GrantController {
     async deleteGrant(@Param('grantId') grantId: string) {
         return await this.grantService.deleteGrantById(grantId);
     }
-
+    @Get(':id')
+    async getGrantById(@Param('id') GrantId: string) {
+        return await this.grantService.getGrantById(parseInt(GrantId, 10));
+    }
 }
