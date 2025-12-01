@@ -23,7 +23,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
 
   // Filter users based on search
   const filteredUsers = activeUsers.filter((user: User) =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.userId.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -40,7 +40,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
   }, []);
 
   const handleUserSelect = (user: User) => {
-    onSelect({ name: user.name, email: user.email });
+    onSelect({ name: user.userId, email: user.email });
     setIsOpen(false);
     setSearchTerm('');
   };
@@ -70,7 +70,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
                 onClick={() => handleUserSelect(user)}
                 className="user-dropdown-item"
               >
-                <div className="user-dropdown-name">{user.name}</div>
+                <div className="user-dropdown-name">{user.userId}</div>
                 <div className="user-dropdown-email">{user.email}</div>
               </div>
             ))
