@@ -1,0 +1,23 @@
+.cost-benefit-analysis {
+    width: 100%;
+}
+
+.cost-benefit-container {
+    min-height: 200px;
+}
+
+.cost-benefit-analysis input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.cost-benefit-analysis input[type="number"]::-webkit-outer-spin-button,
+.cost-benefit-analysis input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.cost-benefit-analysis button:hover {
+    opacity: 0.9;
+    transition: opacity 0.2s;
+}

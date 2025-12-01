@@ -9,6 +9,7 @@ import { api } from "../../../api";
 import { MdOutlinePerson2 } from "react-icons/md";
 import Attachment from "../../../../../middle-layer/types/Attachment";
 import NewGrantModal from "../new-grant/NewGrantModal";
+import { CostBenefitAnalysis } from '../grant-details/CostBenefitAnalysis';
 
 interface GrantItemProps {
   grant: Grant;
@@ -24,11 +25,13 @@ const GrantItem: React.FC<GrantItemProps> = ({
   const curGrant = grant;
   const [showNewGrantModal, setShowNewGrantModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [netBenefit, setNetBenefit] = useState<number | null>(null);
 
   const toggleExpand = () => {
     // Toggle edit mode off now that we are leaving this specific grant in view
     if (isExpanded) {
       toggleEdit();
+      setNetBenefit(null);
     }
     setIsExpanded(!isExpanded);
   };
@@ -277,10 +280,10 @@ const GrantItem: React.FC<GrantItemProps> = ({
                           : "N/A"}
                       </div>
                     </div>
-                    {/*Timeline and Amount row*/}
+                    {/*Timeline, Amount, Cost-benefit row*/}
                     <div className="flex space-x-4 mt-5 w-full">
                       {/*Timeline*/}
-                      <div className="w-full">
+                      <div className="w-1/3">
                         <label
                           className="text-md flex block tracking-wide text-gray-700 font-bold mb-2"
                           htmlFor="grid-city"
@@ -297,7 +300,7 @@ const GrantItem: React.FC<GrantItemProps> = ({
                         </div>
                       </div>
                       {/*Amount */}
-                      <div className=" w-full">
+                      <div className=" w-1/3">
                         <label
                           className="text-md flex block tracking-wide text-gray-700 font-bold mb-2"
                           htmlFor="grid-state"
@@ -311,7 +314,19 @@ const GrantItem: React.FC<GrantItemProps> = ({
                           {formatCurrency(curGrant.amount)}
                         </div>
                       </div>
-                      {/*End timeline and amount row */}
+                      {/*Cost-benefit*/}
+                      <div className="w-1/3">
+                      <label className="text-md flex block tracking-wide text-gray-700 font-bold mb-2" style={{whiteSpace: 'nowrap'}}>
+                        Cost-benefit
+                      </label>
+                      <div
+                        style={{color: "black"}}
+                        className="text-left text-lg h-10 w-full"
+                        >
+                          {netBenefit !== null ? formatCurrency(netBenefit) : '--'}
+                          </div>
+                        </div>
+                      {/*End timeline, amount, cost-benefit row */}
                     </div>
 
                     {/*End column of gray labels */}
@@ -574,8 +589,15 @@ const GrantItem: React.FC<GrantItemProps> = ({
               {/*End two main left right columns */}
             </div>
 
-            {/*Description*/}
-            <div className="w-full mb-3">
+            {/*Cost Benefit Analysis and Description Row*/}
+            <div className="flex w-full mb-3 space-x-4 items-stretch">
+              {/* Cost Benefit Analysis */}
+              <div className="w-1/3">
+                <CostBenefitAnalysis grant={curGrant} onCalculate={setNetBenefit} />
+                </div>
+              
+              {/*Description */}
+              <div className="w-2/3">
               <label
                 className="text-lg flex block  tracking-wide text-gray-700  font-bold mb-2"
                 htmlFor="grid-city"
@@ -589,9 +611,10 @@ const GrantItem: React.FC<GrantItemProps> = ({
                   borderColor: "black",
                   borderWidth: "1px",
                 }}
-                className=" h-32 bg-tan flex  w-full rounded-md  p-5 overflow-auto"
+                className=" h-72 bg-tan flex  w-full rounded-md  p-5 overflow-auto"
               >
                 {curGrant.description}
+                </div>
               </div>
             </div>
 
