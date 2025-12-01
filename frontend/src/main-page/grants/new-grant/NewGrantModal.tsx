@@ -1,7 +1,8 @@
 // frontend/src/grant-info/components/NewGrantModal.tsx
-import React, { useState } from "react";
-import CurrencyInput from "react-currency-input-field";
+import React, { useState, useEffect } from "react";
+import CurrencyInput from 'react-currency-input-field';
 import { fetchAllGrants } from "../../../external/bcanSatchel/actions";
+import { getAppStore } from "../../../external/bcanSatchel/store";
 import "../styles/NewGrantModal.css";
 import { MdOutlinePerson2 } from "react-icons/md";
 import { FiUpload } from "react-icons/fi";
@@ -9,6 +10,7 @@ import { Grant } from "../../../../../middle-layer/types/Grant";
 import { TDateISO } from "../../../../../backend/src/utils/date";
 import { Status } from "../../../../../middle-layer/types/Status";
 import { api } from "../../../api";
+import UserDropdown from "./UserDropdown";
 
 /** Attachment type from your middle layer */
 enum AttachmentType {
@@ -22,6 +24,7 @@ interface Attachment {
   url: string;
   type: AttachmentType;
 }
+
 
 const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   /*
@@ -58,8 +61,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [timelineInYears, _setTimelineInYears] = useState<number>(0);
 
   // Used
-  const [estimatedCompletionTimeInHours, _setEstimatedCompletionTimeInHours] =
-    useState<number>(0);
+  const [estimatedCompletionTimeInHours, _setEstimatedCompletionTimeInHours] = useState<number>(0);
 
   // Used
   const [doesBcanQualify, _setDoesBcanQualify] = useState<string>("");
@@ -82,17 +84,48 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [isAddingAttachment, setIsAddingAttachment] = useState(false);
 
   // Used
-  const [bcanPocName, setBcanPocName] = useState("");
+  const [bcanPocName, setBcanPocName] = useState('');
   // Used
-  const [bcanPocEmail, setBcanPocEmail] = useState("");
+  const [bcanPocEmail, setBcanPocEmail] = useState('');
   // Used
-  const [grantProviderPocName, setGrantProviderPocName] = useState("");
+  const [grantProviderPocName, setGrantProviderPocName] = useState('');
   // Used
-  const [grantProviderPocEmail, setGrantProviderPocEmail] = useState("");
+  const [grantProviderPocEmail, setGrantProviderPocEmail] = useState('');
+
 
   // For error handling
-  // @ts-ignore
-  const [_errorMessage, setErrorMessage] = useState<string>("");
+
+  const store = getAppStore();
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      console.log('Checking store for users...');
+      console.log('Current activeUsers in store:', store.activeUsers);
+      console.log('Length:', store.activeUsers.length);
+
+      if (store.activeUsers.length === 0) {
+        console.log('Fetching users...');
+        try {
+          const response = await api("/user/active", { method: 'GET' });
+          console.log('Response status:', response.status);
+
+          if (response.ok) {
+            const users = await response.json();
+            console.log('Fetched users:', users);
+            store.activeUsers = users;
+          } else {
+            console.log('Response not ok');
+          }
+        } catch (error) {
+          console.error("Error fetching users:", error);
+        }
+
+      } else {
+        console.log('Users already in store');
+      }
+    };
+    fetchUsers();
+  }, []);
 
   /* Add a new blank report date to the list */
   // Used
@@ -144,28 +177,29 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   /** Basic validations based on your screenshot fields */
   const validateInputs = (): boolean => {
     if (!organization) {
-      setErrorMessage("Organization Name is required.");
+      alert("Organization Name is required.");
       return false;
     }
     // removed check for report dates -- they can be empty (potential grants would have no report dates)
     if (!applicationDate || !grantStartDate) {
-      setErrorMessage("Please fill out all date fields.");
+      alert("Please fill out all date fields.");
       return false;
     }
     if (amount <= 0) {
-      setErrorMessage("Amount must be greater than 0.");
+      alert("Amount must be greater than 0.");
       return false;
     }
     if (doesBcanQualify == "") {
-      setErrorMessage("Set Does Bcan Qualify? to 'yes' or 'no' ");
+      alert("Set Does Bcan Qualify? to 'yes' or 'no' ");
+      return false;
     }
     if (isRestricted == "") {
-      setErrorMessage(
-        "Set Restriction Type to 'restricted' or 'unrestricted' "
-      );
+      alert("Set Restriction Type to 'restricted' or 'unrestricted' ");
+      return false;
     }
     if (status == "") {
-      setErrorMessage("Set Status");
+      alert("Set Status");
+      return false;
     }
     return true;
   };
@@ -174,6 +208,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const handleSubmit = async () => {
     if (!validateInputs()) return;
 
+    
     // Convert attachments array
     const attachmentsArray = attachments.map((att) => ({
       attachment_name: att.attachment_name.trim(),
@@ -181,26 +216,25 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       type: att.type,
     }));
 
+
+
     /* Matches middle layer definition */
     const newGrant: Grant = {
       grantId: -1,
       organization,
-      does_bcan_qualify: doesBcanQualify == "yes" ? true : false,
-      amount,
+      does_bcan_qualify: (doesBcanQualify == "yes" ? true : false),
+      amount : amount,
       grant_start_date: grantStartDate as TDateISO,
       application_deadline: applicationDate as TDateISO,
       status: status as Status, // Potential = 0, Active = 1, Inactive = 2
-      bcan_poc: { POC_name: bcanPocName, POC_email: bcanPocEmail },
-      grantmaker_poc: {
-        POC_name: grantProviderPocName,
-        POC_email: grantProviderPocEmail,
-      }, // Just take the first for now
+      bcan_poc: { POC_name: bcanPocName, POC_email: bcanPocEmail }, 
+      grantmaker_poc: { POC_name: grantProviderPocName, POC_email: grantProviderPocEmail }, // Just take the first for now
       report_deadlines: reportDates as TDateISO[],
       timeline: timelineInYears,
       estimated_completion_time: estimatedCompletionTimeInHours,
-      description,
+      description: description,
       attachments: attachmentsArray,
-      isRestricted: isRestricted == "restricted" ? true : false, // Default to unrestricted for now
+      isRestricted: (isRestricted == "restricted" ? true : false), // Default to unrestricted for now
     };
     console.log(newGrant);
     try {
@@ -212,7 +246,8 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        setErrorMessage(errorData.errMessage || "Failed to add grant.");
+        console.error("Failed to add grant:", errorData.message);
+        alert("Failed to add grant")
         return;
       }
 
@@ -227,458 +262,252 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
       onClose();
     } catch (error) {
-      setErrorMessage("Server error. Please try again.");
+alert("Server error please try again.");
       console.error(error);
     }
   };
 
   return (
-    <div className="modal-overlay">
-      {/*Greyed out background */}
-      <div className="modal-content ">
-        {/*Popup container */}
+
+    <div className="modal-overlay"> {/*Greyed out background */}
+      <div className="modal-content "> {/*Popup container */}
         <h2 className="font-family-helvetica">New Grant</h2>
-        <div className="flex">
-          {/* Major components in two columns */}
+        <div className="flex">  {/* Major components in two columns */}
           {/*left column */}
-          <div className="w-1/2  pr-5">
-            {/*Organization name and input */}
-            <div className="w-full md:mb-0">
-              <label
-                className="font-family-helvetica text-lg flex block text-black  mb-1"
-                htmlFor="grid-first-name"
-              >
-                Organization Name
-              </label>
-              <input
-                style={{
-                  height: "48px",
-                  backgroundColor: "#F2EBE4",
-                  borderStyle: "solid",
-                  borderColor: "black",
-                  borderWidth: "1px",
-                }}
-                className=" font-family-helvetica block w-full text-black placeholder:text-gray-400 border rounded py-3 px-4 mb-3 leading-tight"
+          <div className='w-1/2  pr-5'>
+              {/*Organization name and input */}
+              <div className="w-full md:mb-0">
+                <label className="font-family-helvetica text-lg flex block text-black  mb-1" htmlFor="grid-first-name">
+                  Organization Name
+                </label>
+                <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                className=" font-family-helvetica block w-full text-black placeholder:text-gray-400 border rounded py-3 px-4 mb-3 leading-tight" 
                 id="grid-first-name"
-                type="text"
-                placeholder="Type Here"
-                onChange={(e) => _setOrganization(e.target.value)}
-              />
-            </div>
+                 type="text" 
+                 placeholder="Type Here"
+                 onChange={(e) => _setOrganization(e.target.value)}/>
+              </div>
 
             {/*Top left quadrant - from app date, start date, report deadlines, est completion time*/}
             <div className="flex  w-full space-x-4 mt-5 ">
+
               {/* Left column: Application + Grant Start row */}
               <div className="w-2/3">
+
                 {/*Application date and grant start date */}
                 <div className="flex space-x-4">
                   {/*Application date and input */}
                   <div className="w-1/2">
-                    <label
-                      className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1 text-left"
-                      htmlFor="grid-city"
-                    >
-                      Application Date
+                    <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-city">
+                    Application Date
                     </label>
-                    <input
-                      style={{
-                        height: "48px",
-                        backgroundColor: "#F2EBE4",
-                        borderStyle: "solid",
-                        borderColor: "black",
-                        borderWidth: "1px",
-                        color: applicationDate ? "black" : "gray",
-                      }}
-                      className="font-family-helvetica appearance-none block w-full border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                      id="grid-city"
-                      type="date"
-                      onChange={(e) => _setApplicationDate(e.target.value)}
-                    />
+                    <input style={{height: "48px", backgroundColor: '#F2EBE4',borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color: applicationDate ? "black" : "gray"}}
+                    className="font-family-helvetica appearance-none block w-full border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+                    id="grid-city" 
+                    type="date"
+
+                    onChange={(e) => _setApplicationDate(e.target.value)}/>
                   </div>
                   {/*Grant Start Date and input */}
                   <div className=" w-1/2">
-                    <label
-                      className="font-family-helvetica flex block tracking-wide text-black text-black text-lg mb-1 text-left"
-                      htmlFor="grid-state"
-                    >
+                    <label className="font-family-helvetica flex block tracking-wide text-black text-black text-lg mb-1" htmlFor="grid-state">
                       Grant Start Date
                     </label>
-                    <input
-                      style={{
-                        height: "48px",
-                        backgroundColor: "#F2EBE4",
-                        borderStyle: "solid",
-                        borderColor: "black",
-                        borderWidth: "1px",
-                        color: grantStartDate ? "black" : "gray",
-                      }}
-                      className="font-family-helvetica w-full appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                      id="grid-city"
+                      <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color: grantStartDate ? "black" : "gray"}}
+                      className="font-family-helvetica w-full appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+                      id="grid-city" 
                       type="date"
-                      onChange={(e) => _setGrantStartDate(e.target.value)}
-                    />
+                      onChange={(e) => _setGrantStartDate(e.target.value)}/>
                   </div>
                 </div>
 
                 {/*Estimated completition time and input - need to make wider (length of application date and grant start date)*/}
                 <div className="w-full mt-10">
-                  <label
-                    className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1 text-left"
-                    htmlFor="grid-state"
-                  >
-                    Estimated Completion Time (in hours)
+                  <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-state">
+                  Estimated Completion Time (in hours)
                   </label>
-                  <input
-                    type="number"
-                    min="0"
-                    style={{
-                      height: "48px",
-                      backgroundColor: "#F2EBE4",
-                      borderStyle: "solid",
-                      borderColor: "black",
-                      borderWidth: "1px",
-                    }}
-                    className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                    id="grid-city"
-                    onChange={(e) =>
-                      _setEstimatedCompletionTimeInHours(Number(e.target.value))
-                    }
-                  />
+                  <input type="number" 
+                  min = "0"
+                  style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                  className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+                  id="grid-city"
+                  onChange={(e) => _setEstimatedCompletionTimeInHours(Number(e.target.value))}/>
                 </div>
+
               </div>
 
               {/*Right column*/}
-              <div className="w-1/3 sm:pl-4 lg:pl-4">
+              <div className="w-1/3 ">
                 {/*Report deadlines label and grey box */}
-                <div className="h-full">
-                  <label
-                    className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1 text-left"
-                    htmlFor="grid-zip"
-                  >
-                    Report Deadlines
-                  </label>
-                  <div
-                    className="p-2 rounded h-56 overflow-y-auto overflow-x-hidden"
-                    style={{
-                      backgroundColor: "#D3D3D3",
-                      borderStyle: "solid",
-                      borderColor: "black",
-                      borderWidth: "1px",
-                      borderRadius: "1.2rem",
-                    }}
-                  >
-                    {reportDates.map((date, index) => (
-                      <div key={index} className="flex gap-2 mb-2 w-full">
-                        <input
-                          key={index}
-                          style={{
-                            height: "42px",
-                            backgroundColor: "#F2EBE4",
-                            borderStyle: "solid",
-                            borderColor: "black",
-                            borderWidth: "1px",
-                          }}
-                          className="font-family-helvetica flex-1 min-w-0 text-black rounded"
-                          type="date"
-                          value={date}
-                          onChange={(e) => {
-                            const newDates = [...reportDates];
-                            newDates[index] = e.target.value;
-                            setReportDates(newDates);
-                          }}
-                        />
-                        {reportDates.length > 0 && (
-                          <button
-                            style={{
-                              height: "42px",
-                              backgroundColor: "#FF6B6B",
-                              borderStyle: "solid",
-                              borderColor: "black",
-                              borderWidth: "1px",
+                <div className="h-full" >
+                  <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-zip">
+                      Report Deadlines
+                  </label> 
+                  <div className="p-2 rounded h-56 overflow-y-auto overflow-x-hidden" style={{backgroundColor: '#D3D3D3', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}>
+                      {reportDates.map((date, index) => (
+                        <div key={index} className="flex gap-2 mb-2 w-full">
+                          <input 
+                            key={index}
+                            style={{height: "42px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                            className="font-family-helvetica flex-1 min-w-0 text-black rounded" 
+                            type="date"
+                            value={date}
+                            onChange={(e) => {
+                              const newDates = [...reportDates];
+                              newDates[index] = e.target.value;
+                              setReportDates(newDates);
                             }}
-                            className="font-family-helvetica w-5 flex-shrink-0 rounded text-white font-bold flex items-center justify-center"
-                            onClick={() => _removeReportDate(index)}
-                          >
-                            ✕
-                          </button>
-                        )}
+                          />
+                          {reportDates.length > 0 && (
+                            <button
+                              style={{height: "42px",backgroundColor: '#FF6B6B', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                              className="font-family-helvetica w-5 flex-shrink-0 rounded text-white font-bold flex items-center justify-center"
+                              onClick={() => _removeReportDate(index)}
+                            >
+                              ✕
+                            </button>
+                          )}
                       </div>
-                    ))}
-                    <button
-                      style={{
-                        color: "black",
-                        backgroundColor: "#F58D5C",
-                        borderStyle: "solid",
-                        borderColor: "black",
-                        borderWidth: "1px",
-                        padding: "12px",
-                      }}
-                      className="font-family-helvetica w-full text-xs flex items-center justify-center"
-                      onClick={_addReportDate}
-                    >
-                      Add Deadline +
-                    </button>
-                  </div>
+
+                      ))}
+                      <button 
+                        style={{height: "42px", color: "black", backgroundColor: "#F58D5C", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}} 
+                        className="font-family-helvetica w-full mt-2 flex items-center justify-center"
+                        onClick={_addReportDate}
+                      >
+                        Add Deadline +
+                      </button>
+                    </div>
                 </div>
               </div>
+              
             </div>
 
-            {/*Timeline label and input */}
-            <div className="w-full -mt-4">
-              <label
-                className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1"
-                htmlFor="grid-first-name"
-              >
-                Timeline (in years)
-              </label>
-              <input
-                style={{
-                  height: "42px",
-                  backgroundColor: "#F2EBE4",
-                  borderStyle: "solid",
-                  borderColor: "black",
-                  borderWidth: "1px",
-                }}
-                className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                type="number"
-                min="0"
-                placeholder="Type Here"
-                onChange={(e) => _setTimelineInYears(Number(e.target.value))}
-              />
-            </div>
+              {/*Timeline label and input */}
+              <div className="w-full -mt-4">
+                <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
+                  Timeline (in years)
+                </label>
+                <input  style={{height: "42px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                type="number" min = "0" placeholder="Type Here" onChange={(e) => _setTimelineInYears(Number(e.target.value))}/>
+              </div>
 
-            {/*Amount label and input */}
-            <div className="w-full mt-5 md:mb-0 ">
-              <label
-                className="font-family-helvetica flex block tracking-wide text-black placeholder:text-gray-400 text-lg mb-1"
-                htmlFor="grid-first-name"
-              >
-                Amount (in $)
-              </label>
-              <CurrencyInput
-                style={{
-                  height: "48px",
-                  backgroundColor: "#F2EBE4",
-                  borderStyle: "solid",
-                  borderColor: "black",
-                  borderWidth: "1px",
-                }}
-                className="font-family-helvetica appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                min={0}
-                decimalsLimit={2}
-                placeholder="Type Here"
-                onValueChange={(value) => _setAmount(Number(value))}
-              />
-            </div>
+              {/*Amount label and input */}
+              <div className="w-full mt-5 md:mb-0 ">
+                <label className="font-family-helvetica flex block tracking-wide text-black placeholder:text-gray-400 text-lg mb-1" htmlFor="grid-first-name">
+                  Amount (in $)
+                </label>
+                <CurrencyInput style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                className="font-family-helvetica appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                min={0} decimalsLimit={2} placeholder="Type Here" onValueChange={(value) => _setAmount(Number(value))}/>
+              </div>
+
           </div>
+
           {/*Right column */}
-          <div className="w-1/2 pl-5">
+          <div className='w-1/2 pl-5'>
+
             {/*POC row */}
             <div className="flex w-full mb-[74px]">
               {/*BCAN POC div*/}
               <div className="w-full pr-3">
-                <label
-                  className="font-family-helvetica mb-1 flex block tracking-wide text-black text-lg"
-                  htmlFor="grid-zip"
-                >
-                  BCAN POC
-                </label>
-                {/*Box div*/}
-                <div
-                  className="items-center flex p-3 rounded h-full"
-                  style={{
-                    backgroundColor: "#F58D5C",
-                    borderColor: "black",
-                    borderWidth: "1px",
-                    borderRadius: "1.2rem",
-                  }}
-                >
-                  <MdOutlinePerson2 className="w-1/4 h-full p-2" />
-                  <div className="w-3/4">
-                    <input
-                      style={{
-                        height: "48px",
-                        backgroundColor: "#F2EBE4",
-                        borderStyle: "solid",
-                        borderColor: "black",
-                        borderWidth: "1px",
+                  <label className="font-family-helvetica mb-1 flex block tracking-wide text-black text-lg" htmlFor="grid-zip">
+                      BCAN POC
+                  </label>
+                  {/*Box div*/} 
+                  <div className="items-center flex p-3 rounded h-full" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}>
+                      <MdOutlinePerson2 className="w-1/4 h-full p-1"/>
+                      <div className="w-3/4">
+                      <UserDropdown
+                      selectedUser={bcanPocName && bcanPocEmail ? {name: bcanPocName, email: bcanPocEmail } : null}
+                      onSelect={(user) => {
+                        setBcanPocName(user.name);
+                        setBcanPocEmail(user.email)
                       }}
-                      className="font-family-helvetica w-full text-gray-700 rounded"
-                      id="grid-city"
                       placeholder="Name"
-                      value={bcanPocName}
-                      onChange={(e) => setBcanPocName(e.target.value)}
-                    />
-                    <input
-                      style={{
-                        height: "48px",
-                        backgroundColor: "#F2EBE4",
-                        borderStyle: "solid",
-                        borderColor: "black",
-                        borderWidth: "1px",
-                      }}
-                      className="font-family-helvetica w-full text-gray-700 rounded"
-                      id="grid-city"
-                      placeholder="e-mail"
-                      value={bcanPocEmail}
-                      onChange={(e) => setBcanPocEmail(e.target.value)}
-                    />
+                      />
+                        <input style={{height: "48px",backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        className="font-family-helvetica w-full text-gray-700 rounded"
+                         placeholder="e-mail" 
+                         value={bcanPocEmail}
+                         readOnly
+                         />
+                      </div> 
                   </div>
-                </div>
               </div>
 
               {/*Grant Provider POC div*/}
               <div className="w-full pl-3">
-                <label
-                  className="font-family-helvetica mb-1 flex block tracking-wide text-black text-lg mb-1 text-left"
-                  htmlFor="grid-zip"
-                >
-                  Grant Provider POC
-                </label>
-                {/*Box div*/}
-                <div
-                  className="flex p-3 rounded  items-center h-full"
-                  style={{
-                    backgroundColor: "#F58D5C",
-                    borderColor: "black",
-                    borderWidth: "1px",
-                    borderRadius: "1.2rem",
-                  }}
-                >
-                  <MdOutlinePerson2 className="p-2 w-1/4 h-full" />
-                  <div className="w-3/4">
-                    <input
-                      style={{
-                        height: "48px",
-                        backgroundColor: "#F2EBE4",
-                        borderStyle: "solid",
-                        borderColor: "black",
-                        borderWidth: "1px",
-                      }}
-                      className="font-family-helvetica w-full text-gray-700 rounded"
-                      id="grid-city"
-                      placeholder="Name"
-                      value={grantProviderPocName}
-                      onChange={(e) => setGrantProviderPocName(e.target.value)}
-                    />
-                    <input
-                      style={{
-                        height: "48px",
-                        backgroundColor: "#F2EBE4",
-                        borderStyle: "solid",
-                        borderColor: "black",
-                        borderWidth: "1px",
-                      }}
-                      className="font-family-helvetica w-full text-gray-700 rounded"
-                      id="grid-city"
-                      placeholder="e-mail"
-                      value={grantProviderPocEmail}
-                      onChange={(e) => setGrantProviderPocEmail(e.target.value)}
-                    />
+                  <label className="font-family-helvetica mb-1 flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-zip">
+                      Grant Provider POC
+                  </label>
+                  {/*Box div*/}
+                  <div className="flex p-3 rounded  items-center h-full" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}>
+                      <MdOutlinePerson2 className="p-1 w-1/4 h-full"/>
+                      <div className="w-3/4">
+                        <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        className="font-family-helvetica w-full text-gray-700 rounded" id="grid-city" placeholder="Name" value={grantProviderPocName} onChange={(e) => setGrantProviderPocName(e.target.value)}/>
+                        <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        className="font-family-helvetica w-full text-gray-700 rounded" id="grid-city" placeholder="e-mail" value={grantProviderPocEmail} onChange={(e) => setGrantProviderPocEmail(e.target.value)}/>
+                      </div> 
                   </div>
-                </div>
               </div>
             </div>
 
             {/*bottom  right row*/}
             <div className="flex w-full ">
-              {/* Select option menus */}
-              <div className="w-1/2 flex-col pr-3">
-                {/*Qualify label and input */}
-                <div className="w-full ">
-                  <label
-                    className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1 text-left"
-                    htmlFor="grid-first-name"
-                  >
-                    Does BCAN qualify?
-                  </label>
-                  <select
-                    style={{
-                      height: "48px",
-                      backgroundColor: "#F2EBE4",
-                      borderStyle: "solid",
-                      borderColor: "black",
-                      borderWidth: "1px",
-                      color: doesBcanQualify == "" ? "gray" : "black",
-                    }}
-                    className="font-family-helvetica appearance-none block w-full bg-gray-200 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                    id="grid-first-name"
-                    value={doesBcanQualify}
-                    onChange={(e) => _setDoesBcanQualify(e.target.value)}
-                  >
-                    <option value="">Select...</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                  </select>
-                </div>
+               {/* Select option menus */}
+                <div className="w-1/2 flex-col pr-3">
+                  {/*Qualify label and input */}
+                  <div className="w-full ">
+                    <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
+                      Does BCAN qualify?
+                    </label>
+                    <select style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color : doesBcanQualify == "" ? "gray" : "black"}}
+                      className="font-family-helvetica appearance-none block w-full bg-gray-200 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                      id="grid-first-name" value={doesBcanQualify} onChange={(e) => _setDoesBcanQualify(e.target.value)}>
+                      <option value="">Select...</option>
+                      <option value="yes">Yes</option>
+                      <option value="no">No</option>
+                    </select>
+                  </div>
 
-                {/*Status label and input */}
-                <div className="w-full mt-5 ">
-                  <label
-                    className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1"
-                    htmlFor="grid-first-name"
-                  >
-                    Status
-                  </label>
-                  <select
-                    style={{
-                      height: "48px",
-                      backgroundColor: "#F2EBE4",
-                      borderStyle: "solid",
-                      borderColor: "black",
-                      borderWidth: "1px",
-                      color: status == "" ? "gray" : "black",
-                    }}
-                    className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                    id="grid-first-name"
-                    value={status}
-                    onChange={(e) => _setStatus(e.target.value as Status)}
-                  >
-                    <option value="">Select...</option>
-                    <option value="potential">Potential</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                    <option value="rejected">Rejected</option>
-                    <option value="pending">Pending</option>
-                  </select>
-                </div>
+                  {/*Status label and input */}
+                  <div className="w-full mt-5 ">
+                    <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
+                      Status
+                    </label>
+                    <select style={{height: "48px",  backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color : status == "" ? "gray" : "black"}}
+                      className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                      id="grid-first-name" value={status} onChange={(e) => _setStatus(e.target.value as Status)}>
+                      <option value="">Select...</option>
+                      <option value="potential">Potential</option>
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                      <option value="rejected">Rejected</option>
+                      <option value="pending">Pending</option>
+                    </select>
+                  </div>
 
-                {/*Restriction types label and input */}
-                <div className="w-full  md:mb-0 mt-5">
-                  <label
-                    className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1 text-left"
-                    htmlFor="grid-first-name"
-                  >
-                    Restriction types
-                  </label>
-                  <select
-                    style={{
-                      height: "48px",
-                      backgroundColor: "#F2EBE4",
-                      borderStyle: "solid",
-                      borderColor: "black",
-                      borderWidth: "1px",
-                      color: isRestricted == "" ? "gray" : "black",
-                    }}
-                    className="font-family-helvetica appearance-none block w-full bg-gray-200 border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
-                    id="grid-first-name"
-                    value={isRestricted}
-                    onChange={(e) => _setIsRestricted(e.target.value)}
-                  >
-                    <option value="">Select...</option>
-                    <option style={{ color: "black" }} value="unrestricted">
-                      Unrestricted
-                    </option>
-                    <option style={{ color: "black" }} value="restricted">
-                      Restricted
-                    </option>
-                  </select>
+                  {/*Restriction types label and input */}
+                  <div className="w-full  md:mb-0 mt-5">
+                    <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
+                      Restriction types
+                    </label>
+                    <select style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color : isRestricted == "" ? "gray" : "black"}}
+                      className="font-family-helvetica appearance-none block w-full bg-gray-200 border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" 
+                      id="grid-first-name" value={isRestricted} onChange={(e) => _setIsRestricted(e.target.value)}>
+                      <option value="">Select...</option>
+                      <option style={{color:"black"}} value="unrestricted">Unrestricted</option>
+                      <option style={{color:"black"}} value="restricted">Restricted</option>
+                    </select>
+                  </div>
                 </div>
-              </div>
 
               {/*Scope Documents div p-2 h-full w-1/2 flex-col*/}
               <div className="w-1/2 flex-col pl-3">
-                <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1 text-start">
+                <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1">
                   Scope Documents
                 </label>
 
@@ -714,11 +543,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                           style={{ backgroundColor: "#F2EBE4", height: "42px" }}
                           value={attachment.attachment_name}
                           onChange={(e) =>
-                            _handleAttachmentChange(
-                              index,
-                              "attachment_name",
-                              e.target.value
-                            )
+                            _handleAttachmentChange(index, "attachment_name", e.target.value)
                           }
                         />
                         <input
@@ -728,11 +553,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                           style={{ backgroundColor: "#F2EBE4", height: "42px" }}
                           value={attachment.url}
                           onChange={(e) =>
-                            _handleAttachmentChange(
-                              index,
-                              "url",
-                              e.target.value
-                            )
+                            _handleAttachmentChange(index, "url", e.target.value)
                           }
                         />
                         <select
@@ -747,23 +568,18 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                             )
                           }
                         >
-                          <option value={AttachmentType.SCOPE_DOCUMENT}>
-                            Scope
-                          </option>
-                          <option value={AttachmentType.SUPPORTING_RESOURCE}>
+                          <option  value={AttachmentType.SCOPE_DOCUMENT}>Scope</option>
+                          <option  value={AttachmentType.SUPPORTING_RESOURCE}>
                             Supporting
                           </option>
                         </select>
 
                         <div className="flex justify-end">
+
                           <button
                             type="button"
                             onClick={() => _removeAttachment(index)}
-                            style={{
-                              backgroundColor: "#D3D3D3",
-                              color: "black",
-                              height: "21px",
-                            }}
+                            style={{backgroundColor: "#D3D3D3", color : "black", height: "21px"}}
                             className="mr-2 border border-black rounded  flex items-center justify-center"
                           >
                             Close
@@ -772,18 +588,18 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                           <button
                             type="button"
                             onClick={_addAttachment}
-                            style={{
-                              backgroundColor: "#F58D5C",
-                              color: "black",
-                              height: "21px",
-                            }}
+                            style={{backgroundColor: "#F58D5C", color : "black", height: "21px"}}
                             className="border border-black rounded flex items-center justify-center"
                           >
-                            Add +
+                            Add + 
                           </button>
+
                         </div>
+                        
                       </div>
                     ))}
+                      
+
                   </div>
                 )}
 
@@ -796,16 +612,13 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     borderColor: "black",
                     borderWidth: "1px",
                     borderRadius: "1.2rem",
-                    height: isAddingAttachment ? "77px" : "192px",
+                    height: isAddingAttachment ? "77px" : "192px" 
                   }}
                 >
                   {attachments
                     .filter((a) => a.url) // show only filled ones
                     .map((attachment, index) => (
-                      <div
-                        key={index}
-                        className="flex gap-2 mb-2 w-full items-center"
-                      >
+                      <div key={index} className="flex gap-2 mb-2 w-full items-center">
                         <div
                           style={{
                             height: "42px",
@@ -826,8 +639,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                             {attachment.attachment_name || "Untitled"}
                           </a>
                           <span className="ml-2 text-xs text-gray-600">
-                            (
-                            {attachment.type === AttachmentType.SCOPE_DOCUMENT
+                            ({attachment.type === AttachmentType.SCOPE_DOCUMENT
                               ? "Scope"
                               : "Supporting"}
                             )
@@ -837,65 +649,36 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                     ))}
                 </div>
               </div>
-              {/*End bottom right row */}
+            {/*End bottom right row */}
             </div>
-            {/*End right column */}
+          {/*End right column */}
           </div>
-          {/*End grid content*/}
+ 
+        {/*End grid content*/}
         </div>
+
         {/*Description and input */}
-        <div className="w-full mt-5 p-2">
-          <label
-            className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1"
-            htmlFor="grid-first-name"
-          >
-            Description
-          </label>
-          <textarea
-            style={{
-              backgroundColor: "#F2EBE4",
-              borderStyle: "solid",
-              borderColor: "black",
-              borderWidth: "1px",
-            }}
-            className="font-family-helvetica h-48 block w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight"
-            id="grid-first-name"
-            value={description}
-            onChange={(e) => _setDescription(e.target.value)}
-          />
-        </div>
+              <div className="w-full mt-5 p-2">
+                <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
+                  Description
+                </label>
+                <textarea style={{backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                className="font-family-helvetica h-48 block w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight" id="grid-first-name" 
+                value={description} onChange={(e) => _setDescription(e.target.value)}/>
+              </div>
+      
         <div className="button-row">
-          <button
-            style={{
-              fontFamily: "helvetica",
-              color: "black",
-              backgroundColor: "white",
-              borderStyle: "solid",
-              borderColor: "black",
-              borderWidth: "1px",
-            }}
-            onClick={onClose}
-          >
-            Close
-          </button>
-          <button
-            style={{
-              fontFamily: "helvetica",
-              color: "black",
-              backgroundColor: "#F58D5C",
-              borderStyle: "solid",
-              borderColor: "black",
-              borderWidth: "1px",
-            }}
-            onClick={handleSubmit}
-          >
-            Save
-          </button>
+          <button style={{fontFamily : "helvetica", color : "black", backgroundColor: "white", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}} onClick={onClose} >Close</button>
+          <button style={{fontFamily : "helvetica", color : "black", backgroundColor: "#F58D5C", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}onClick={handleSubmit}>Save</button>
         </div>
-        {/*End modal content */}
+
+      {/*End modal content */}
       </div>
-      {/*End modal overlay */}
+
+    {/*End modal overlay */}
     </div>
+    
+    
   );
 };
 
