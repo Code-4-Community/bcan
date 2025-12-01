@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { UserStatus } from "../../../../middle-layer/types/UserStatus";
 
 interface UserPositionCardProps {
   position: string;
@@ -7,13 +8,13 @@ interface UserPositionCardProps {
 const UserPositionCard = ({ position }: UserPositionCardProps) => {
   const cardStyles = useMemo(() => {
     switch (position.toLowerCase()) {
-      case "admin":
+      case "Admin" as UserStatus:
         return "bg-[#BCFFD8] border-[#119548] text-[#119548]";
-      case "employee":
+      case "Employee"  as UserStatus:
         return "bg-[#FFF8CA] border-[#F8CC16] text-[#8a710c]";
       case "deactive":
         return "bg-[#FFB0B0] border-[#DF0404] text-[#DF0404]";
-      case "inactive":
+      case "Inactive"  as UserStatus:
       default:
         return "bg-[#D3D3D3] border-[#666666] text-[#666666]";
     }
