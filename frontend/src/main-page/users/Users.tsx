@@ -85,7 +85,6 @@ const Users = observer(() => {
             {usersTabStatus === UsersTab.CurrentUsers ? (
               <>
                 <div className="flex px-9 pb-3 m-7 border-b border-b-[#BFBBBB] font-semibold justify-around">
-                  <p className="w-[140px] text-left">User Name</p>
                   <p className="w-[140px] text-left">User ID</p>
                   <p className="w-[140px] text-left">Email</p>
                   <p className="w-[140px] text-left">Position</p>
@@ -93,7 +92,6 @@ const Users = observer(() => {
                 {currentPageUsers.map((user) => (
                   <ApprovedUserCard
                     key={user.userId}
-                    name={user.userId}
                     userId={user.userId}
                     email={user.email}
                     position={user.position}
@@ -103,7 +101,6 @@ const Users = observer(() => {
             ) : (
               <>
                 <div className="flex px-9 pb-3 m-7 border-b border-b-[#BFBBBB] font-semibold justify-around">
-                  <p className="w-[140px] text-left">User Name</p>
                   <p className="w-[140px] text-left">User ID</p>
                   <p className="w-[140px] text-left">Email</p>
                   <p className="w-[140px] text-left">Position</p>
@@ -111,7 +108,8 @@ const Users = observer(() => {
                 </div>
                 {currentPageUsers.map((user) => (
                   <PendingUserCard
-                    name={user.userId}
+                    key={user.userId}
+                    userId={user.userId}
                     email={user.email}
                     position={user.position}
                   />

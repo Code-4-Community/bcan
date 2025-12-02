@@ -6,13 +6,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 interface ApprovedUserCardProps {
-  name: string;
   userId: string;
   email: string;
   position: string;
 }
 
-const ApprovedUserCard = ({ name, email, position }: ApprovedUserCardProps) => {
+const ApprovedUserCard = ({ userId, email, position }: ApprovedUserCardProps) => {
   const handleClickChangePosition = () => {
     // Open modal to confirm position change
   };
@@ -23,8 +22,7 @@ const ApprovedUserCard = ({ name, email, position }: ApprovedUserCardProps) => {
 
   return (
     <div className="bg-white text-lg border rounded-md m-6 p-6 flex justify-around items-center">
-      <p className="font-semibold w-[140px] text-left">{name}</p>
-      <p className="w-[140px] text-left">xxxxxxx</p>
+      <p className="font-semibold w-[140px] text-left">{userId}</p>
       <p className="w-[140px] text-left">{email}</p>
       <div className="w-[140px]">
         <UserPositionCard position={position} />
