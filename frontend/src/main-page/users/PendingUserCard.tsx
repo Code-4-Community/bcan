@@ -17,6 +17,9 @@ interface PendingUserCardProps {
   email: string;
   position: string;
 }
+
+
+
 const approveInactiveUser = async (user: User) => {
   const store = getAppStore();
   console.log("Approving user:", user);
@@ -39,28 +42,12 @@ const approveInactiveUser = async (user: User) => {
     }
 
     const updatedUser = await response.json();
-    moveUserToActive(updatedUser);
-  }
-  catch (error) {
-    console.error("Error activating user:", error);
-  }
-}
-
-
-const deleteUser = async (username: string) => {
-  const store = getAppStore();
-  try {
-    const response = await api("/auth/delete-user", {
-      method: 'POST', body: JSON.stringify({
-        username: username,
-      })
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP Error, Status: ${response.status}`);
-    }
-
-    const updatedUser = await response.json();
-    store.inactiveUsers = store.inactiveUsers.filter((user) => user.userId !== updatedUser.userId);
+    if (response.ok) {
+        alert(`${name} approved successfully`);
+        moveUserToActive(updatedUser);
+      } else {
+        alert("Failed to approve user");
+      }
   }
   catch (error) {
     console.error("Error activating user:", error);
