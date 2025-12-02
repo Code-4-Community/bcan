@@ -2,9 +2,6 @@ import { useState } from "react";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AccountInfo from "./AccountInfo";
-import {
-  logoutUser,
-} from "../../external/bcanSatchel/actions.ts";
 
 import "./styles/UserButton.css";
 import { useAuthContext } from "../../context/auth/authContext";
@@ -27,12 +24,14 @@ const UserButton = () => {
       </button>
 
       {showAccountInfo && (
-        <AccountInfo
-          email={user?.email ?? ""}
-          username={user?.userId ?? ""}
-          role={user?.position ?? ""}
-        />
-      )}
+  <AccountInfo
+    email={user?.email ?? ""}
+    username={user?.userId ?? ""}
+    role={user?.position ?? ""}
+    setShowAccountInfo={setShowAccountInfo}
+  />
+)}
+
     </div>
   );
 };
