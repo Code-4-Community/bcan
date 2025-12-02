@@ -15,18 +15,13 @@ enum UsersTab {
   CurrentUsers,
 }
 
-
-
 const ITEMS_PER_PAGE = 8;
 
-
 const Users = observer(() => {
-const store = getAppStore();
+  const store = getAppStore();
 
-const { user } = useAuthContext();
+  const { user } = useAuthContext();
 
-
- 
   const [usersTabStatus, setUsersTabStatus] = useState<UsersTab>(
     UsersTab.CurrentUsers
   );
@@ -99,6 +94,7 @@ const { user } = useAuthContext();
                   <ApprovedUserCard
                     key={user.userId}
                     name={user.userId}
+                    userId={user.userId}
                     email={user.email}
                     position={user.position}
                   />
