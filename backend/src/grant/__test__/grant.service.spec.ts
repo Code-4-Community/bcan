@@ -49,6 +49,40 @@ const mockGrants: Grant[] = [
     attachments: [],
     isRestricted: true
   },
+  {
+    grantId: 3,
+    organization: "Test Organization",
+    does_bcan_qualify: true,
+    status: Status.Active,
+    amount: 1000,
+    grant_start_date: "2024-01-01",
+    application_deadline: "2025-01-01",
+    report_deadlines: ["2025-01-01"],
+    description: "Test Description",
+    timeline: 1,
+    estimated_completion_time: 100,
+    grantmaker_poc: { POC_name: "name", POC_email: "test@test.com" },
+    bcan_poc: { POC_name: "name", POC_email: ""},
+    attachments: [],
+    isRestricted: false
+  },
+  {
+    grantId: 4,
+    organization: "Test Organization 2",
+    does_bcan_qualify: false,
+    status: Status.Active,
+    amount: 1000,
+    grant_start_date: "2025-02-15",
+    application_deadline: "2025-02-01",
+    report_deadlines: ["2025-03-01", "2025-04-01"],
+    description: "Test Description 2",
+    timeline: 2,
+    estimated_completion_time: 300,
+    bcan_poc:  { POC_name: "Allie", POC_email: "allie@gmail.com" },
+    grantmaker_poc: { POC_name: "Benjamin", POC_email: "benpetrillo@yahoo.com" },
+    attachments: [],
+    isRestricted: true
+  },
 ];
 
 // Create mock functions that we can reference
@@ -58,6 +92,7 @@ const mockGet = vi.fn().mockReturnThis();
 const mockDelete = vi.fn().mockReturnThis();
 const mockUpdate = vi.fn().mockReturnThis();
 const mockPut = vi.fn().mockReturnThis();
+// const mockGetGrantById = vi.fn();
 
 const mockDocumentClient = {
   scan: mockScan,
@@ -99,6 +134,8 @@ describe("GrantService", () => {
         updateNotification: vi.fn() 
       }
     });
+
+    
     
     controller = module.get<GrantController>(GrantController);
     grantService = module.get<GrantService>(GrantService);
@@ -167,53 +204,44 @@ describe("GrantService", () => {
     });
   });
 
-  describe("unarchiveGrants()", () => {
-    it("should unarchive multiple grants and return their ids", async () => {
-      mockPromise
-        .mockResolvedValueOnce({ Attributes: { isArchived: false } })
-        .mockResolvedValueOnce({ Attributes: { isArchived: false } });
+  describe("makeGrantsInactive()", () => {
+    it("should inactivate multiple grants and return the updated grant objects", async () => {
+      const inactiveGrant3 = {
+        grantId: 3,
+        organization: "Test Organization",
+        does_bcan_qualify: true,
+        status: Status.Inactive,
+        amount: 1000,
+        grant_start_date: "2024-01-01",
+        application_deadline: "2025-01-01",
+        report_deadlines: ["2025-01-01"],
+        description: "Test Description",
+        timeline: 1,
+        estimated_completion_time: 100,
+        grantmaker_poc: { POC_name: "name", POC_email: "test@test.com" },
+        bcan_poc: { POC_name: "name", POC_email: ""},
+        attachments: [],
+        isRestricted: false
+      };
 
-      const data = await grantService.unarchiveGrants([1, 2]);
+      mockPromise.mockResolvedValueOnce({ Attributes: inactiveGrant3 });
 
-      expect(data).toEqual([1, 2]);
-      expect(mockUpdate).toHaveBeenCalledTimes(2);
-
-      const firstCallArgs = mockUpdate.mock.calls[0][0];
-      const secondCallArgs = mockUpdate.mock.calls[1][0];
-
-      expect(firstCallArgs).toMatchObject({
+      const data = await grantService.makeGrantsInactive(3);
+  
+      expect(data).toEqual(inactiveGrant3);
+      
+      expect(mockUpdate).toHaveBeenCalledTimes(1);
+  
+      const callArgs = mockUpdate.mock.calls[0][0];
+  
+      expect(callArgs).toMatchObject({
         TableName: "Grants",
-        Key: { grantId: 1 },
-        UpdateExpression: "set isArchived = :archived",
-        ExpressionAttributeValues: { ":archived": false },
-        ReturnValues: "UPDATED_NEW",
+        Key: { grantId: 3 },
+        UpdateExpression: "SET #status = :inactiveStatus",
+        ExpressionAttributeNames: { "#status": "status" },
+        ExpressionAttributeValues: { ":inactiveStatus": Status.Inactive },
+        ReturnValues: "ALL_NEW",
       });
-      expect(secondCallArgs).toMatchObject({
-        TableName: "Grants",
-        Key: { grantId: 2 },
-        UpdateExpression: "set isArchived = :archived",
-        ExpressionAttributeValues: { ":archived": false },
-        ReturnValues: "UPDATED_NEW",
-      });
-    });
-
-    it("should skip over grants that are already ", async () => {
-      mockPromise
-        .mockResolvedValueOnce({ Attributes: { isArchived: true } })
-        .mockResolvedValueOnce({ Attributes: { isArchived: false } });
-
-      const data = await grantService.unarchiveGrants([1, 2]);
-
-      expect(data).toEqual([2]);
-      expect(mockUpdate).toHaveBeenCalledTimes(2);
-    });
-
-    it("should throw an error if any update call fails", async () => {
-      mockPromise.mockRejectedValueOnce(new Error("DB Error"));
-
-      await expect(grantService.unarchiveGrants([90])).rejects.toThrow(
-        "Failed to update Grant 90 status."
-      );
     });
   });
 
@@ -364,7 +392,9 @@ describe("GrantService", () => {
   // Tests for deleteGrantById method
 describe('deleteGrantById', () => {
   it('should call DynamoDB delete with the correct params and return success message', async () => {
-    mockPromise.mockResolvedValueOnce({});
+    mockDelete.mockReturnValue({
+      promise: vi.fn().mockResolvedValue({})
+    });
 
     const result = await grantService.deleteGrantById(123);
 
@@ -387,14 +417,18 @@ describe('deleteGrantById', () => {
     const conditionalError = new Error('Conditional check failed');
     (conditionalError as any).code = 'ConditionalCheckFailedException';
 
-    mockPromise.mockRejectedValueOnce(conditionalError);
+    mockDelete.mockReturnValue({
+      promise: vi.fn().mockRejectedValue(conditionalError)
+    });
 
     await expect(grantService.deleteGrantById(999))
     .rejects.toThrow(/does not exist/);
   });
 
   it('should throw a generic failure when DynamoDB fails for other reasons', async () => {
-    mockPromise.mockRejectedValueOnce(new Error('Some other DynamoDB error'));
+    mockDelete.mockReturnValue({
+      promise: vi.fn().mockRejectedValue(new Error('Some other DynamoDB error'))
+    });
 
     await expect(grantService.deleteGrantById(123))
     .rejects.toThrow(/Failed to delete/);

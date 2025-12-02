@@ -1,5 +1,5 @@
 // frontend/src/grant-info/components/NewGrantModal.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CurrencyInput from 'react-currency-input-field';
 import "../styles/NewGrantModal.css";
 import { MdOutlinePerson2 } from "react-icons/md";
