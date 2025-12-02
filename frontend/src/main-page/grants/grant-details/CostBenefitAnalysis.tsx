@@ -30,7 +30,7 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({ grant,
 
     const reportCount = grant.report_deadlines?.length ?? 0;
     const grantAmount = grant.amount;
-    const estimatedTime = grant.estimated_completion_time;
+    const estimatedTime = grant.estimated_completion_time | 5;
 
     console.log('Grant values - Amount:', grantAmount, 'EstTime:', estimatedTime, 'ReportCount:', reportCount);
 
