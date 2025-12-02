@@ -32,7 +32,10 @@ const ApprovedUserCard = ({ name, email, position }: ApprovedUserCardProps) => {
       <div className="absolute right-14">
         <Menu.Root>
           <Menu.Trigger>
-            <Button variant="ghost" className="focus:outline-none">
+            <Button
+              variant="ghost"
+              className="focus:outline-none hover:border-none transition-none"
+            >
               <FaEllipsisVertical />
             </Button>
           </Menu.Trigger>
