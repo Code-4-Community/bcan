@@ -206,100 +206,37 @@ describe("GrantService", () => {
 
   describe("makeGrantsInactive()", () => {
     it("should inactivate multiple grants and return the updated grant objects", async () => {
+      const inactiveGrant3 = {
+        grantId: 3,
+        organization: "Test Organization",
+        does_bcan_qualify: true,
+        status: Status.Inactive,
+        amount: 1000,
+        grant_start_date: "2024-01-01",
+        application_deadline: "2025-01-01",
+        report_deadlines: ["2025-01-01"],
+        description: "Test Description",
+        timeline: 1,
+        estimated_completion_time: 100,
+        grantmaker_poc: { POC_name: "name", POC_email: "test@test.com" },
+        bcan_poc: { POC_name: "name", POC_email: ""},
+        attachments: [],
+        isRestricted: false
+      };
 
-      mockPromise
-        .mockResolvedValueOnce({ Attributes: {
-          grantId: 3,
-          organization: "Test Organization",
-          does_bcan_qualify: true,
-          status: Status.Inactive,
-          amount: 1000,
-          grant_start_date: "2024-01-01",
-          application_deadline: "2025-01-01",
-          report_deadlines: ["2025-01-01"],
-          description: "Test Description",
-          timeline: 1,
-          estimated_completion_time: 100,
-          grantmaker_poc: { POC_name: "name", POC_email: "test@test.com" },
-          bcan_poc: { POC_name: "name", POC_email: ""},
-          attachments: [],
-          isRestricted: false
-        }, })
-        .mockResolvedValueOnce({ Attributes: {
-          grantId: 4,
-          organization: "Test Organization 2",
-          does_bcan_qualify: false,
-          status: Status.Inactive,
-          amount: 1000,
-          grant_start_date: "2025-02-15",
-          application_deadline: "2025-02-01",
-          report_deadlines: ["2025-03-01", "2025-04-01"],
-          description: "Test Description 2",
-          timeline: 2,
-          estimated_completion_time: 300,
-          bcan_poc:  { POC_name: "Allie", POC_email: "allie@gmail.com" },
-          grantmaker_poc: { POC_name: "Benjamin", POC_email: "benpetrillo@yahoo.com" },
-          attachments: [],
-          isRestricted: true
-        }, });
-  
+      mockPromise.mockResolvedValueOnce({ Attributes: inactiveGrant3 });
 
-      const data = await grantService.makeGrantsInactive([3, 4]);
+      const data = await grantService.makeGrantsInactive(3);
   
-      expect(data).toEqual([
-        {
-          grantId: 3,
-          organization: "Test Organization",
-          does_bcan_qualify: true,
-          status: Status.Inactive,
-          amount: 1000,
-          grant_start_date: "2024-01-01",
-          application_deadline: "2025-01-01",
-          report_deadlines: ["2025-01-01"],
-          description: "Test Description",
-          timeline: 1,
-          estimated_completion_time: 100,
-          grantmaker_poc: { POC_name: "name", POC_email: "test@test.com" },
-          bcan_poc: { POC_name: "name", POC_email: "" },
-          attachments: [],
-          isRestricted: false
-        },
-        {
-          grantId: 4,
-          organization: "Test Organization 2",
-          does_bcan_qualify: false,
-          status: Status.Inactive,
-          amount: 1000,
-          grant_start_date: "2025-02-15",
-          application_deadline: "2025-02-01",
-          report_deadlines: ["2025-03-01", "2025-04-01"],
-          description: "Test Description 2",
-          timeline: 2,
-          estimated_completion_time: 300,
-          bcan_poc: { POC_name: "Allie", POC_email: "allie@gmail.com" },
-          grantmaker_poc: { POC_name: "Benjamin", POC_email: "benpetrillo@yahoo.com" },
-          attachments: [],
-          isRestricted: true
-        }
-      ]);
+      expect(data).toEqual(inactiveGrant3);
       
-      expect(mockUpdate).toHaveBeenCalledTimes(2);
+      expect(mockUpdate).toHaveBeenCalledTimes(1);
   
-      const firstCallArgs = mockUpdate.mock.calls[0][0];
-      const secondCallArgs = mockUpdate.mock.calls[1][0];
+      const callArgs = mockUpdate.mock.calls[0][0];
   
-      expect(firstCallArgs).toMatchObject({
+      expect(callArgs).toMatchObject({
         TableName: "Grants",
         Key: { grantId: 3 },
-        UpdateExpression: "SET #status = :inactiveStatus",
-        ExpressionAttributeNames: { "#status": "status" },
-        ExpressionAttributeValues: { ":inactiveStatus": Status.Inactive },
-        ReturnValues: "ALL_NEW",
-      });
-  
-      expect(secondCallArgs).toMatchObject({
-        TableName: "Grants",
-        Key: { grantId: 4 },
         UpdateExpression: "SET #status = :inactiveStatus",
         ExpressionAttributeNames: { "#status": "status" },
         ExpressionAttributeValues: { ":inactiveStatus": Status.Inactive },
@@ -455,7 +392,9 @@ describe("GrantService", () => {
   // Tests for deleteGrantById method
 describe('deleteGrantById', () => {
   it('should call DynamoDB delete with the correct params and return success message', async () => {
-    mockPromise.mockResolvedValueOnce({});
+    mockDelete.mockReturnValue({
+      promise: vi.fn().mockResolvedValue({})
+    });
 
     const result = await grantService.deleteGrantById('123');
 
@@ -478,14 +417,18 @@ describe('deleteGrantById', () => {
     const conditionalError = new Error('Conditional check failed');
     (conditionalError as any).code = 'ConditionalCheckFailedException';
 
-    mockPromise.mockRejectedValueOnce(conditionalError);
+    mockDelete.mockReturnValue({
+      promise: vi.fn().mockRejectedValue(conditionalError)
+    });
 
     await expect(grantService.deleteGrantById('999'))
     .rejects.toThrow(/does not exist/);
   });
 
   it('should throw a generic failure when DynamoDB fails for other reasons', async () => {
-    mockPromise.mockRejectedValueOnce(new Error('Some other DynamoDB error'));
+    mockDelete.mockReturnValue({
+      promise: vi.fn().mockRejectedValue(new Error('Some other DynamoDB error'))
+    });
 
     await expect(grantService.deleteGrantById('123'))
     .rejects.toThrow(/Failed to delete/);

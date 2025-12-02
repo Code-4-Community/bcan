@@ -17,7 +17,13 @@ export class GrantController {
     async inactivate(
         @Body('grantIds') grantIds: number[]
     ): Promise<Grant[]> {
-        return await this.grantService.makeGrantsInactive(grantIds)
+        let grants: Grant[] = [];
+        for(const id of grantIds){
+            Logger.log(`Inactivating grant with ID: ${id}`);
+            let newGrant = await this.grantService.makeGrantsInactive(id)
+            grants.push(newGrant);
+        }
+        return grants;
     }
 
     @Post('new-grant')

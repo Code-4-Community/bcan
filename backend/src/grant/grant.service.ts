@@ -37,11 +37,13 @@ export class GrantService {
   
                   if (now >= endDate) {
                       inactiveGrantIds.push(grant.grantId);
+                      let newGrant = this.makeGrantsInactive(grant.grantId)
+                      grants.filter(g => g.grantId !== grant.grantId);
+                      grants.push(await newGrant);
+
                   }
                 }
               }
-              const updatedGrants = this.makeGrantsInactive(inactiveGrantIds);
-              grants.push(...await updatedGrants);
               return grants;
         } catch (error) {
             console.log(error)
@@ -76,10 +78,9 @@ export class GrantService {
     }
 
     // Method to make grants inactive
-async makeGrantsInactive(grantIds: number[]): Promise<Grant[]> {
-  const updatedGrants: Grant[] = [];
+async makeGrantsInactive(grantId: number): Promise<Grant> {
+  let updatedGrant: Grant = {} as Grant;
 
-  for (const grantId of grantIds) {
       const params = {
           TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || "TABLE_FAILURE",
           Key: { grantId },
@@ -101,7 +102,7 @@ async makeGrantsInactive(grantIds: number[]): Promise<Grant[]> {
 
               const currentGrant = res.Attributes as Grant;
               console.log(currentGrant);
-              updatedGrants.push(currentGrant);
+              updatedGrant = currentGrant
           } else {
               console.log(`Grant ${grantId} update failed or no change in status.`);
           }
@@ -109,9 +110,8 @@ async makeGrantsInactive(grantIds: number[]): Promise<Grant[]> {
           console.log(err);
           throw new Error(`Failed to update Grant ${grantId} status.`);
       }
-  }
 
-  return updatedGrants;
+  return updatedGrant;
 }
 
 
@@ -203,7 +203,7 @@ async makeGrantsInactive(grantIds: number[]): Promise<Grant[]> {
     try {
         await this.dynamoDb.delete(params).promise();
         this.logger.log(`Grant ${grantId} deleted successfully`);
-        return 'Grant ${grantId} deleted successfully';
+        return `Grant ${grantId} deleted successfully`;
     } catch (error: any) {
         if (error.code === "ConditionalCheckFailedException") {
             throw new Error(`Grant ${grantId} does not exist`);
@@ -211,7 +211,6 @@ async makeGrantsInactive(grantIds: number[]): Promise<Grant[]> {
         this.logger.error(`Failed to delete Grant ${grantId}`, error.stack);
         throw new Error(`Failed to delete Grant ${grantId}`);
     }
-    
   }
 
   /*
