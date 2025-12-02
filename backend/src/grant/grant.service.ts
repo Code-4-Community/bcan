@@ -4,6 +4,7 @@ import { Grant } from '../../../middle-layer/types/Grant';
 import { NotificationService } from '.././notifications/notifcation.service';
 import { Notification } from '../../../middle-layer/types/Notification';
 import { TDateISO } from '../utils/date';
+import { Status } from '../../../middle-layer/types/Status';
 @Injectable()
 export class GrantService {
     private readonly logger = new Logger(GrantService.name);
@@ -19,9 +20,31 @@ export class GrantService {
         };
 
         try {
-            const data = await this.dynamoDb.scan(params).promise();
+          const data = await this.dynamoDb.scan(params).promise();
+          const grants = (data.Items as Grant[]) || [];
+          const inactiveGrantIds: number[] = [];
+          const now = new Date();
+  
+          for (const grant of grants) {
+              if (grant.status === "Active") {
+                  const startDate = new Date(grant.grant_start_date);
+  
+                  // add timeline years to start date
+                  const endDate = new Date(startDate);
+                  endDate.setFullYear(
+                      endDate.getFullYear() + grant.timeline
+                  );
+  
+                  if (now >= endDate) {
+                      inactiveGrantIds.push(grant.grantId);
+                      let newGrant = this.makeGrantsInactive(grant.grantId)
+                      grants.filter(g => g.grantId !== grant.grantId);
+                      grants.push(await newGrant);
 
-            return data.Items as Grant[] || [];
+                  }
+                }
+              }
+              return grants;
         } catch (error) {
             console.log(error)
             throw new Error('Could not retrieve grants.');
@@ -54,38 +77,43 @@ export class GrantService {
         }
     }
 
-    // Method to unarchive grants takes in array 
-    async unarchiveGrants(grantIds :number[]) : Promise<number[]> {
-        let successfulUpdates: number[] = [];
-        for (const grantId of grantIds) {
-            const params = {
-                TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
-                Key: {
-                    grantId: grantId,
-                },
-                UpdateExpression: "set isArchived = :archived",
-                ExpressionAttributeValues: { ":archived": false },
-                ReturnValues: "UPDATED_NEW",
-              };
+    // Method to make grants inactive
+async makeGrantsInactive(grantId: number): Promise<Grant> {
+  let updatedGrant: Grant = {} as Grant;
 
-              try{
-                const res = await this.dynamoDb.update(params).promise();
-                console.log(res)
+      const params = {
+          TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || "TABLE_FAILURE",
+          Key: { grantId },
+          UpdateExpression: "SET #status = :inactiveStatus",
+          ExpressionAttributeNames: {
+              "#status": "status",
+          },
+          ExpressionAttributeValues: {
+              ":inactiveStatus": Status.Inactive as String,
+          },
+          ReturnValues: "ALL_NEW",
+      };
 
-                if (res.Attributes && res.Attributes.isArchived === false) {
-                    console.log(`Grant ${grantId} successfully un-archived.`);
-                    successfulUpdates.push(grantId);
-                } else {
-                    console.log(`Grant ${grantId} update failed or no change in status.`);
-                }
-              }
-              catch(err){
-                console.log(err);
-                throw new Error(`Failed to update Grant ${grantId} status.`);
-              }
-        };
-        return successfulUpdates;
-    }
+      try {
+          const res = await this.dynamoDb.update(params).promise();
+      
+          if (res.Attributes?.status === Status.Inactive) {
+              console.log(`Grant ${grantId} successfully marked as inactive.`);
+
+              const currentGrant = res.Attributes as Grant;
+              console.log(currentGrant);
+              updatedGrant = currentGrant
+          } else {
+              console.log(`Grant ${grantId} update failed or no change in status.`);
+          }
+      } catch (err) {
+          console.log(err);
+          throw new Error(`Failed to update Grant ${grantId} status.`);
+      }
+
+  return updatedGrant;
+}
+
 
     /**
      * Will push or overwrite new grant data to database
@@ -175,7 +203,7 @@ export class GrantService {
     try {
         await this.dynamoDb.delete(params).promise();
         this.logger.log(`Grant ${grantId} deleted successfully`);
-        return 'Grant ${grantId} deleted successfully';
+        return `Grant ${grantId} deleted successfully`;
     } catch (error: any) {
         if (error.code === "ConditionalCheckFailedException") {
             throw new Error(`Grant ${grantId} does not exist`);
@@ -183,7 +211,6 @@ export class GrantService {
         this.logger.error(`Failed to delete Grant ${grantId}`, error.stack);
         throw new Error(`Failed to delete Grant ${grantId}`);
     }
-    
   }
 
   /*
