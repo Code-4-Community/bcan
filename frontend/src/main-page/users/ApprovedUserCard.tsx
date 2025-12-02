@@ -8,7 +8,7 @@ import { faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
 interface ApprovedUserCardProps {
   userId: string;
   email: string;
-  position: string;
+  position: UserStatus;
 }
 
 const ApprovedUserCard = ({ userId, email, position }: ApprovedUserCardProps) => {

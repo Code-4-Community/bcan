@@ -11,7 +11,7 @@ import { moveUserToActive } from "./UserActions";
 interface PendingUserCardProps {
   userId: string;
   email: string;
-  position: string;
+  position: UserStatus;
 }
 const approveInactiveUser = async (user: User) => {
   const store = getAppStore();
