@@ -1,7 +1,8 @@
 // frontend/src/grant-info/components/NewGrantModal.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CurrencyInput from 'react-currency-input-field';
 import { fetchAllGrants } from "../../../external/bcanSatchel/actions";
+import { getAppStore } from "../../../external/bcanSatchel/store";
 import "../styles/NewGrantModal.css";
 import { MdOutlinePerson2 } from "react-icons/md";
 import { FiUpload } from "react-icons/fi";
@@ -9,6 +10,7 @@ import { Grant } from "../../../../../middle-layer/types/Grant";
 import { TDateISO } from "../../../../../backend/src/utils/date";
 import { Status } from "../../../../../middle-layer/types/Status";
 import { api } from "../../../api";
+import UserDropdown from "./UserDropdown";
 
 /** Attachment type from your middle layer */
 enum AttachmentType {
@@ -92,10 +94,38 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
 
   // For error handling
-  // @ts-ignore
-  const [_errorMessage, setErrorMessage] = useState<string>("");
 
-  
+  const store = getAppStore();
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      console.log('Checking store for users...');
+      console.log('Current activeUsers in store:', store.activeUsers);
+      console.log('Length:', store.activeUsers.length);
+
+      if (store.activeUsers.length === 0) {
+        console.log('Fetching users...');
+        try {
+          const response = await api("/user/active", { method: 'GET' });
+          console.log('Response status:', response.status);
+
+          if (response.ok) {
+            const users = await response.json();
+            console.log('Fetched users:', users);
+            store.activeUsers = users;
+          } else {
+            console.log('Response not ok');
+          }
+        } catch (error) {
+          console.error("Error fetching users:", error);
+        }
+
+      } else {
+        console.log('Users already in store');
+      }
+    };
+    fetchUsers();
+  }, []);
 
   /* Add a new blank report date to the list */
   // Used
@@ -147,26 +177,29 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   /** Basic validations based on your screenshot fields */
   const validateInputs = (): boolean => {
     if (!organization) {
-      setErrorMessage("Organization Name is required.");
+      alert("Organization Name is required.");
       return false;
     }
     // removed check for report dates -- they can be empty (potential grants would have no report dates)
     if (!applicationDate || !grantStartDate) {
-      setErrorMessage("Please fill out all date fields.");
+      alert("Please fill out all date fields.");
       return false;
     }
     if (amount <= 0) {
-      setErrorMessage("Amount must be greater than 0.");
+      alert("Amount must be greater than 0.");
       return false;
     }
     if (doesBcanQualify == "") {
-      setErrorMessage("Set Does Bcan Qualify? to 'yes' or 'no' ");
+      alert("Set Does Bcan Qualify? to 'yes' or 'no' ");
+      return false;
     }
     if (isRestricted == "") {
-      setErrorMessage("Set Restriction Type to 'restricted' or 'unrestricted' ");
+      alert("Set Restriction Type to 'restricted' or 'unrestricted' ");
+      return false;
     }
     if (status == "") {
-      setErrorMessage("Set Status");
+      alert("Set Status");
+      return false;
     }
     return true;
   };
@@ -190,7 +223,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       grantId: -1,
       organization,
       does_bcan_qualify: (doesBcanQualify == "yes" ? true : false),
-      amount,
+      amount : amount,
       grant_start_date: grantStartDate as TDateISO,
       application_deadline: applicationDate as TDateISO,
       status: status as Status, // Potential = 0, Active = 1, Inactive = 2
@@ -199,7 +232,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       report_deadlines: reportDates as TDateISO[],
       timeline: timelineInYears,
       estimated_completion_time: estimatedCompletionTimeInHours,
-      description,
+      description: description,
       attachments: attachmentsArray,
       isRestricted: (isRestricted == "restricted" ? true : false), // Default to unrestricted for now
     };
@@ -213,7 +246,8 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        setErrorMessage(errorData.errMessage || "Failed to add grant.");
+        console.error("Failed to add grant:", errorData.message);
+        alert("Failed to add grant")
         return;
       }
 
@@ -228,7 +262,7 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
       onClose();
     } catch (error) {
-      setErrorMessage("Server error. Please try again.");
+alert("Server error please try again.");
       console.error(error);
     }
   };
@@ -385,11 +419,20 @@ const NewGrantModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   <div className="items-center flex p-3 rounded h-full" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}>
                       <MdOutlinePerson2 className="w-1/4 h-full p-1"/>
                       <div className="w-3/4">
-                        <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
-                        className="font-family-helvetica w-full text-gray-700 rounded" id="grid-city" placeholder="Name" value={bcanPocName} onChange={(e) => setBcanPocName(e.target.value)}/>
+                      <UserDropdown
+                      selectedUser={bcanPocName && bcanPocEmail ? {name: bcanPocName, email: bcanPocEmail } : null}
+                      onSelect={(user) => {
+                        setBcanPocName(user.name);
+                        setBcanPocEmail(user.email)
+                      }}
+                      placeholder="Name"
+                      />
                         <input style={{height: "48px",backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                         className="font-family-helvetica w-full text-gray-700 rounded"
-                         id="grid-city" placeholder="e-mail" value={bcanPocEmail} onChange={(e) => setBcanPocEmail(e.target.value)}/>
+                         placeholder="e-mail" 
+                         value={bcanPocEmail}
+                         readOnly
+                         />
                       </div> 
                   </div>
               </div>
