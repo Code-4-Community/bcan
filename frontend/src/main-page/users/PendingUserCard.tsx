@@ -1,8 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import UserPositionCard from "./UserPositionCard";
 import { faCheck, faX } from "@fortawesome/free-solid-svg-icons";
-import { getAppStore } from "../../external/bcanSatchel/store";
 import { api } from "../../api"
+import { UserStatus } from "../../../../middle-layer/types/UserStatus";
+import { getAppStore } from "../../external/bcanSatchel/store";
+import { User } from "../../../../middle-layer/types/User";
+import { toJS } from "mobx";
+import { moveUserToActive } from "./UserActions";
 import { useState } from "react";
 
 
@@ -13,6 +17,56 @@ interface PendingUserCardProps {
   email: string;
   position: string;
 }
+const approveInactiveUser = async (user: User) => {
+  const store = getAppStore();
+  console.log("Approving user:", user);
+  console.log("requested user", store.user);
+  try {
+    const body = JSON.stringify({
+      user: user as User,
+      groupName: "Employee" as UserStatus,
+      requestedBy: toJS(store.user)
+    })
+    console.log("Request body:", body);
+    const response = await api("/user/change-role", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'  // ← Add this!
+      }, body: body
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP Error, Status: ${response.status}`);
+    }
+
+    const updatedUser = await response.json();
+    moveUserToActive(updatedUser);
+  }
+  catch (error) {
+    console.error("Error activating user:", error);
+  }
+}
+
+
+const deleteUser = async (username: string) => {
+  const store = getAppStore();
+  try {
+    const response = await api("/auth/delete-user", {
+      method: 'POST', body: JSON.stringify({
+        username: username,
+      })
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP Error, Status: ${response.status}`);
+    }
+
+    const updatedUser = await response.json();
+    store.inactiveUsers = store.inactiveUsers.filter((user) => user.userId !== updatedUser.userId);
+  }
+  catch (error) {
+    console.error("Error activating user:", error);
+  }
+}
+
 
 const PendingUserCard = ({
   name,
@@ -20,7 +74,7 @@ const PendingUserCard = ({
   position,
 }: PendingUserCardProps) => {
 
-  const currentUsername = store.user?.name
+  const currentUsername = store.user?.userId
   const [isLoading, setIsLoading] = useState(false);
 
   const approveUser = async () => {

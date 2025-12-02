@@ -1,6 +1,7 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { User } from '../types/User';
+import { UserStatus } from '../../../middle-layer/types/UserStatus';
 
 @Controller('auth')
 export class AuthController {
@@ -55,9 +56,9 @@ export class AuthController {
     @Post('delete-user')
     async deleteUser(
       @Body('username') username: string,
-    ): Promise<{ message: string }> {
-      await this.authService.deleteUser(username);
-      return { message: `${username} has been deleted` };
+    ): Promise<User> {
+      let user = await this.authService.deleteUser(username);
+      return user;
     }
     
     

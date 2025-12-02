@@ -10,16 +10,39 @@ import {
   updateYearFilter,
   setNotifications
 } from './actions';
-import { getAppStore } from './store';
+import { getAppStore, persistToSessionStorage } from './store';
+import { setActiveUsers, setInactiveUsers } from './actions';
+
+/** 
+ * setActiveUsers mutator
+*/
+mutator(setActiveUsers, (actionMessage) => {
+  const store = getAppStore();
+  store.activeUsers = actionMessage.users;
+  persistToSessionStorage();
+});
+
+/** 
+ * setInactiveUsers mutator
+*/
+mutator(setInactiveUsers, (actionMessage) => {
+  const store = getAppStore();
+  store.inactiveUsers = actionMessage.users;
+  persistToSessionStorage();
+});
 
 /**
  * setAuthState mutator
  */
 mutator(setAuthState, (actionMessage) => {
+  console.log('=== setAuthState MUTATOR CALLED ===');
   const store = getAppStore();
+  console.log('Setting user:', actionMessage.user);
   store.isAuthenticated = actionMessage.isAuthenticated;
   store.user = actionMessage.user;
   store.accessToken = actionMessage.accessToken;
+  console.log('Calling persistToSessionStorage...');
+  persistToSessionStorage();
 });
 
 /**
@@ -32,6 +55,7 @@ mutator(updateUserProfile, (actionMessage) => {
       ...store.user,
       ...actionMessage.user,
     };
+    persistToSessionStorage();
   }
 });
 
@@ -43,6 +67,7 @@ mutator(logoutUser, () => {
   store.isAuthenticated = false;
   store.user = null;
   store.accessToken = null;
+  sessionStorage.removeItem('bcanAppStore');
 });
 
 

@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from '../../../middle-layer/types/User';
+import { UserStatus } from '../../../middle-layer/types/UserStatus';
 
 @Controller('user')
 export class UserController {
@@ -22,21 +23,22 @@ export class UserController {
     console.log("Fetching all active users");
     return await this.userService.getAllActiveUsers();
   }
+   // Make sure to put a guard on this route
+    @Post('change-role')
+    async addToGroup(
+      @Body('user') user: User,
+      @Body('groupName') groupName: UserStatus,
+      @Body('requestedBy') requestedBy: User,
+    ): Promise< User > {
+      let newUser:User = await this.userService.addUserToGroup(user, groupName,requestedBy);
+      return newUser as User;
+    }
 
    @Get(':id')
   async getUserById(@Param('id') userId: string) {
     return await this.userService.getUserById(userId);
   }
 
-  // Make sure to put a guard on this route
-  @Post('change-role')
-  async addToGroup(
-    @Body('username') username: string,
-    @Body('groupName') groupName: string,
-    @Body('requestedBy') requestedBy: string,
-  ): Promise<{ message: string }> {
-    await this.userService.addUserToGroup(username, groupName,requestedBy);
-    return { message: `User changed to ${groupName} successfully` };
-  }
+
 
 }
