@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import './styles/AccountInfo.css';
-import {
-  logoutUser,
+import { logoutUser,
 } from "../../external/bcanSatchel/actions.ts";
 interface AccountInfoProps {
   email: string;
