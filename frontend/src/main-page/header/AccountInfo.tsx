@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './styles/AccountInfo.css';
 import { logoutUser,
 } from "../../external/bcanSatchel/actions.ts";
+import { Link } from 'react-router-dom';
 interface AccountInfoProps {
   email: string;
   username: string;
@@ -15,13 +16,11 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
   role,
   setShowAccountInfo,
 }) => {
-  const handleOverlayClick = () => {
-    setShowAccountInfo(false); // closes the modal
-  };
+
 
   const handleUserListClick = () => {
-    console.log("Navigate to user list");
-    setShowAccountInfo(false); // close modal if navigating
+    <Link to="users">
+      
   };
 
   const handleLogoutClick = () => {
