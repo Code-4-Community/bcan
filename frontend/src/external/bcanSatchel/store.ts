@@ -17,6 +17,7 @@ export interface AppState {
   activeUsers: User[] | [];
   inactiveUsers: User[] | [];
   notifications: { id: number; title: string; message: string; }[];
+  sort: {header: keyof Grant, asc: boolean} | null;
 }
 
 // Define initial state
@@ -32,7 +33,8 @@ const initialState: AppState = {
   yearFilter: [],
   activeUsers: [],
   inactiveUsers: [],
-  notifications: []
+  notifications: [],
+  sort: null,
 };
 
 /**

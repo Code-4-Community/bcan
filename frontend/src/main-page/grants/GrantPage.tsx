@@ -1,5 +1,5 @@
 import "./styles/GrantPage.css";
-import GrantList from "./grant-list/index.tsx";
+import GrantList from "./grant-list/GrantList.tsx";
 
 import AddGrantButton from "./new-grant/AddGrant.tsx";
 import GrantSearch from "./filter-bar/GrantSearch.tsx";

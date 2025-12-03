@@ -59,6 +59,11 @@ export const updateYearFilter = action(
   (yearFilter: number[] | []) => ({ yearFilter })
 );
 
+export const updateSort = action(
+  "updateSort",
+  (sort: {header: keyof Grant, asc: boolean}) => ({ sort, })
+);
+
 /**
  * Append a new grant to the current list of grants.
  */
