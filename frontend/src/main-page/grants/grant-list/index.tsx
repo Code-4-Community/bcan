@@ -31,10 +31,10 @@ const GrantList: React.FC<GrantListProps> = observer(
     const [wasGrantSubmitted, setWasGrantSubmitted] = useState(false);
     const [sortedGrants, setSortedGrants] = useState(grants);
 
-    const handleSort = (header: keyof Grant, asc: boolean) => {
-      const sorted = onSort(header, asc);
-      setSortedGrants(sorted.length > 0 ? sorted : grants);
-    };
+    // const handleSort = (header: keyof Grant, asc: boolean) => {
+    //   const sorted = onSort(header, asc);
+    //   setSortedGrants(sorted.length > 0 ? sorted : grants);
+    // };
 
     const displayedGrants = showOnlyMyGrants
       ? sortedGrants.filter(

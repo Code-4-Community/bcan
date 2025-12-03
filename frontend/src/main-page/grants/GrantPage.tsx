@@ -15,8 +15,7 @@ import {
   updateYearFilter,
 } from "../../external/bcanSatchel/actions.ts";
 import { toJS } from "mobx";
-import { UserStatus } from "../../../../middle-layer/types/UserStatus.ts";
-import { Navigate } from "react-router-dom";
+
 import { fetchGrants } from "./filter-bar/processGrantData.ts";
 
 
