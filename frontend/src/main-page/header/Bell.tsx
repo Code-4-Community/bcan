@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 //import { api } from "../../api"; //todo: swap out dummy data with real api fetch when backend is ready
 import NotificationPopup from "../notifications/NotificationPopup";
 import { setNotifications as setNotificationsAction } from "../../external/bcanSatchel/actions";

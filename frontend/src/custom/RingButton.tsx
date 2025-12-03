@@ -1,4 +1,3 @@
-import { Button } from "@chakra-ui/react";
 import "../styles/button.css";
 
 /* Maintained with button.css */
