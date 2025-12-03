@@ -20,7 +20,8 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 
   const handleUserListClick = () => {
     <Link to="users">
-      
+      </Link>
+
   };
 
   const handleLogoutClick = () => {
