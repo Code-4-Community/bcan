@@ -23,42 +23,160 @@ export class UserService {
   private dynamoDb = new AWS.DynamoDB.DocumentClient();
   private ses = new AWS.SES({ region: process.env.AWS_REGION });
 
-  async deleteUser(username: string): Promise<User> {
-    const userPoolId = process.env.COGNITO_USER_POOL_ID;
-    const tableName = process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE";
+ async deleteUser(user: User, requestedBy: User): Promise<User> {
+  const userPoolId = process.env.COGNITO_USER_POOL_ID;
+  const tableName = process.env.DYNAMODB_USER_TABLE_NAME;
+  const username = user.userId;
 
-    if (!userPoolId) {
-      this.logger.error("Cognito User Pool ID is not defined.");
-      throw new Error("Cognito User Pool ID is not defined.");
+  // 1. Validate environment variables
+  if (!userPoolId) {
+    this.logger.error("Cognito User Pool ID is not defined in environment variables");
+    throw new InternalServerErrorException("Server configuration error");
+  }
+
+  if (!tableName) {
+    this.logger.error("DynamoDB User Table Name is not defined in environment variables");
+    throw new InternalServerErrorException("Server configuration error");
+  }
+
+  // 2. Validate input
+  if (!user || !user.userId) {
+    throw new BadRequestException("Valid user object is required");
+  }
+
+  if (!requestedBy || !requestedBy.userId) {
+    throw new BadRequestException("Valid requesting user is required");
+  }
+
+  // 3. Authorization check
+  if (requestedBy.position !== UserStatus.Admin) {
+    this.logger.warn(
+      `Unauthorized deletion attempt: ${requestedBy.userId} tried to delete ${username}`
+    );
+    throw new UnauthorizedException("Only administrators can delete users");
+  }
+
+  // 4. Prevent self-deletion
+  if (requestedBy.userId === username) {
+    throw new BadRequestException("Administrators cannot delete their own account");
+  }
+
+  // 5. Verify user exists in DynamoDB (data might be stale)
+  let userToDelete: User;
+  try {
+    const params = {
+      TableName: tableName,
+      Key: { userId: username },
+    };
+
+    const result = await this.dynamoDb.get(params).promise();
+
+    if (!result.Item) {
+      this.logger.warn(`User ${username} not found in database`);
+      throw new NotFoundException(`User '${username}' does not exist`);
     }
-    try {
-      await this.cognito.adminDeleteUser({
+
+    userToDelete = result.Item as User;
+  } catch (error) {
+    if (error instanceof HttpException) {
+      throw error;
+    }
+    this.logger.error(`Error checking user existence: ${username}`, error);
+    throw new InternalServerErrorException("Failed to verify user existence");
+  }
+
+  // 6. Delete from DynamoDB first (easier to rollback Cognito than DynamoDB)
+  let dynamoDeleted = false;
+  try {
+    const deleteParams = {
+      TableName: tableName,
+      Key: { userId: username },
+      ReturnValues: "ALL_OLD" as const,
+    };
+
+    const deleteResult = await this.dynamoDb.delete(deleteParams).promise();
+
+    if (!deleteResult.Attributes) {
+      throw new InternalServerErrorException(
+        "Failed to delete user from database"
+      );
+    }
+
+    dynamoDeleted = true;
+    this.logger.log(`✓ User ${username} deleted from DynamoDB`);
+  } catch (error: any) {
+    this.logger.error(`Failed to delete ${username} from DynamoDB:`, error);
+
+    if (error instanceof HttpException) {
+      throw error;
+    }
+
+    throw new InternalServerErrorException(
+      "Failed to delete user from database"
+    );
+  }
+
+  // 7. Delete from Cognito
+  try {
+    await this.cognito
+      .adminDeleteUser({
         UserPoolId: userPoolId,
         Username: username,
-      });
-      const params = {
-        TableName: tableName,
-        Key: {
-          userId: username, // Your partition key
-        }, ReturnValues: "ALL_OLD"
-      };
+      })
+      .promise();
 
-      let result = await this.dynamoDb.delete(params).promise();
-      this.logger.log(
-        `User ${username} deleted successfully from Cognito and DynamoDB.`
+    this.logger.log(`✓ User ${username} deleted from Cognito`);
+  } catch (cognitoError: any) {
+    this.logger.error(
+      `Failed to delete ${username} from Cognito:`,
+      cognitoError
+    );
+
+    // Rollback: Restore user in DynamoDB
+    if (dynamoDeleted) {
+      this.logger.warn(
+        `Attempting rollback: restoring ${username} to DynamoDB...`
       );
 
-      return result.Attributes as User;
-    } catch (error) {
-      if (error instanceof Error) {
-        this.logger.error("Deletion failed", error.stack);
-        throw new Error(error.message || "Deletion failed");
-      }
-            throw new Error("An unknown error occurred");
+      try {
+        await this.dynamoDb
+          .put({
+            TableName: tableName,
+            Item: userToDelete,
+          })
+          .promise();
 
+        this.logger.log(`✓ Rollback successful: User ${username} restored`);
+      } catch (rollbackError) {
+        this.logger.error(
+          `Rollback failed: Could not restore ${username}`,
+          rollbackError
+        );
+        this.logger.error(
+          `CRITICAL: User ${username} deleted from DynamoDB but not from Cognito - manual sync required`
+        );
+      }
     }
+
+    // Handle specific Cognito errors
+    if (cognitoError.code === "UserNotFoundException") {
+      throw new NotFoundException(
+        `User '${username}' not found in authentication system`
+      );
+    }
+
+    throw new InternalServerErrorException(
+      "Failed to delete user from authentication system"
+    );
   }
-  
+
+  this.logger.log(
+    `✅ User ${username} deleted successfully by ${requestedBy.userId}`
+  );
+
+  return userToDelete;
+}
+
   async getAllUsers(): Promise<any> {
     const params = {
       TableName: process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE",

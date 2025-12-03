@@ -25,7 +25,6 @@ const PendingUserCard = ({
   position,
 }: PendingUserCardProps) => {
 
-  const currentUsername = store.user?.userId
   const [isLoading, setIsLoading] = useState(false);
 
   const approveUser = async () => {
@@ -45,7 +44,7 @@ const PendingUserCard = ({
         }),
       });
       if (response.ok) {
-        alert(`${name} approved successfully`);
+        alert(`User ${name} has been approved successfully`);
         const body = await response.json();
         moveUserToActive(body as User)
       } else {
@@ -62,17 +61,20 @@ const PendingUserCard = ({
   const rejectUser = async () => {
     setIsLoading(true);
     try {
-      const response = await api("auth/delete-user", {
+      const response = await api("user/delete-user", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          username: name,
-          groupName: "Employee",
-          requestedBy: currentUsername,
+          user: {
+            userId: name,
+            email: email,
+            position: position as UserStatus,
+          } as User,
+          requestedBy: toJS(store.user) as User,
         }),
       });
       if (response.ok) {
-        alert(`${name} rejected successfully`);
+        alert(`User ${name} has been deleted successfully`);
         const body = await response.json();
         removeUser(body)
       } else {

@@ -36,9 +36,10 @@ export class UserController {
 
     @Post('delete-user')
     async deleteUser(
-      @Body('username') username: string,
+      @Body('user') user: User,
+      @Body('requestedBy') requestedBy: User,
     ): Promise<User> {
-      let user = await this.userService.deleteUser(username);
+      let deletedUser = await this.userService.deleteUser(user, requestedBy);
       return user as User;
     }
 
