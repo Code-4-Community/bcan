@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useEffect, useState } from "react";
 import ApprovedUserCard from "./ApprovedUserCard";
 import PendingUserCard from "./PendingUserCard";
@@ -76,82 +77,7 @@ store.inactiveUsers = inactive;    }
       ? store.inactiveUsers
       : store.activeUsers;
 
-  const mockUsers: User[] = [
-      {
-        userId: "id1",
-        position: UserStatus.Admin,
-        email: "email1",
-        name: "name1",
-      },
-      {
-        userId: "id2",
-        position: UserStatus.Employee,
-        email: "email2",
-        name: "name2",
-      },
-      {
-        userId: "id3",
-        position: UserStatus.Inactive,
-        email: "email3",
-        name: "name3",
-      },
-      {
-        userId: "id4",
-        position: UserStatus.Admin,
-        email: "email4",
-        name: "name4",
-      },
-      {
-        userId: "id5",
-        position: UserStatus.Employee,
-        email: "email5",
-        name: "name5",
-      },
-      {
-        userId: "id6",
-        position: UserStatus.Inactive,
-        email: "email6",
-        name: "name6",
-      },
-      {
-        userId: "id7",
-        position: UserStatus.Admin,
-        email: "email7",
-        name: "name7",
-      },
-      {
-        userId: "id8",
-        position: UserStatus.Employee,
-        email: "email8",
-        name: "name8",
-      },
-      {
-        userId: "id9",
-        position: UserStatus.Inactive,
-        email: "email9",
-        name: "name9",
-      },
-      {
-        userId: "id10",
-        position: UserStatus.Admin,
-        email: "email10",
-        name: "name10",
-      },
-      {
-        userId: "id11",
-        position: UserStatus.Employee,
-        email: "email11",
-        name: "name11",
-      },
-      {
-        userId: "id12",
-        position: UserStatus.Admin,
-        email: "email12",
-        name: "name12",
-      },
-    ];
-
-  const numInactiveUsers = mockUsers.filter((user) => user.position === "Inactive").length;
+  const numInactiveUsers = store.inactiveUsers.length;
   const numUsers = filteredUsers.length;
   const pageStartIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const pageEndIndex =
@@ -211,7 +137,7 @@ store.inactiveUsers = inactive;    }
               {currentPageUsers.map((user) => (
                 <ApprovedUserCard
                   key={user.userId}
-                  name={user.name}
+                  name={user.userId}
                   email={user.email}
                   position={user.position}
                 />
@@ -228,7 +154,7 @@ store.inactiveUsers = inactive;    }
               </div>
               {currentPageUsers.map((user) => (
                 <PendingUserCard
-                name={user.name}
+                name={user.userId}
                 email={user.email}
                 position={user.position}
               />

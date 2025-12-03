@@ -8,8 +8,15 @@ import { useEffect, useState } from "react";
 import { Grant } from "../../../../middle-layer/types/Grant.ts";
 import FilterBar from "./filter-bar/FilterBar.tsx";
 import { useAuthContext } from "../../context/auth/authContext";
-import { updateEndDateFilter, updateFilter, updateStartDateFilter, updateYearFilter } from "../../external/bcanSatchel/actions.ts";
+import {
+  updateEndDateFilter,
+  updateFilter,
+  updateStartDateFilter,
+  updateYearFilter,
+} from "../../external/bcanSatchel/actions.ts";
 import { toJS } from "mobx";
+import { UserStatus } from "../../../../middle-layer/types/UserStatus.ts";
+import { Navigate } from "react-router-dom";
 import { fetchGrants } from "./filter-bar/processGrantData.ts";
 
 
@@ -17,26 +24,24 @@ interface GrantPageProps {
   showOnlyMyGrants?: boolean; //if true, filters grants by user email
 }
 
-
 function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
   const [showNewGrantModal, setShowNewGrantModal] = useState(false);
   const [wasGrantSubmitted, setWasGrantSubmitted] = useState(false);
   const [selectedGrant, setSelectedGrant] = useState<Grant | null>(null);
 
   const { user } = useAuthContext(); //gets current logged in user
-   const userObj = toJS(user);
-
+  const userObj = toJS(user);
 
   const currentUserEmail = userObj?.email || ""; //safe fallback
 
   console.log("Current logged-in user:", userObj);
   // reset filters on initial render
   useEffect(() => {
-            updateYearFilter([]);
-            updateFilter(null);
-            updateEndDateFilter(null);
-            updateStartDateFilter(null);
-        }, []);
+    updateYearFilter([]);
+    updateFilter(null);
+    updateEndDateFilter(null);
+    updateStartDateFilter(null);
+  }, []);
 
   useEffect(() => {
     if (!showNewGrantModal && wasGrantSubmitted) {

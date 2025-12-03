@@ -4,7 +4,7 @@ import {
   Logger,
   UnauthorizedException,
 } from "@nestjs/common";
-import AWS from "aws-sdk";
+import * as AWS from "aws-sdk";
 import { group, table } from "console";
 import * as crypto from "crypto";
 import { User } from "../../../middle-layer/types/User";
@@ -37,127 +37,242 @@ export class AuthService {
       .digest("base64");
   }
 
-  async register(
-    username: string,
-    password: string,
-    email: string
-  ): Promise<void> {
-    const userPoolId = process.env.COGNITO_USER_POOL_ID;
+ async register(
+  username: string,
+  password: string,
+  email: string
+): Promise<void> {
+  const userPoolId = process.env.COGNITO_USER_POOL_ID;
+  const tableName = process.env.DYNAMODB_USER_TABLE_NAME;
 
-    if (!userPoolId) {
-      this.logger.error("Cognito User Pool ID is not defined.");
-      throw new Error("Cognito User Pool ID is not defined.");
+  // Validate environment variables
+  if (!userPoolId) {
+    this.logger.error("Cognito User Pool ID is not defined in environment variables.");
+    throw new InternalServerErrorException("Server configuration error");
+  }
+
+  if (!tableName) {
+    this.logger.error("DynamoDB User Table Name is not defined in environment variables.");
+    throw new InternalServerErrorException("Server configuration error");
+  }
+
+  // Validate input parameters
+  if (!username || username.trim().length === 0) {
+    throw new BadRequestException("Username is required");
+  }
+
+  if (!password || password.length < 8) {
+    throw new BadRequestException("Password must be at least 8 characters long");
+  }
+
+  if (!email || !this.isValidEmail(email)) {
+    throw new BadRequestException("Valid email address is required");
+  }
+
+  this.logger.log(`Starting registration for username: ${username}, email: ${email}`);
+
+  try {
+    // Step 1: Check if email already exists in DynamoDB
+    this.logger.log(`Checking if email ${email} is already in use...`);
+    
+    const emailCheckParams = {
+      TableName: tableName,
+      FilterExpression: "#email = :email",
+      ExpressionAttributeNames: {
+        "#email": "email",
+      },
+      ExpressionAttributeValues: {
+        ":email": email,
+      },
+    };
+
+    const emailCheckResult = await this.dynamoDb.scan(emailCheckParams).promise();
+
+    if (emailCheckResult.Items && emailCheckResult.Items.length > 0) {
+      this.logger.warn(`Registration failed: Email ${email} already exists`);
+      throw new ConflictException("An account with this email already exists");
     }
 
-    try {
-      // Check to see if the inputted email already exists in the user table
-      this.logger.log(`Checking if email ${email} is already in use.`);
-      const paramEmailCheck = {
-        TableName: process.env.DYNAMODB_USER_TABLE_NAME as string,
-        FilterExpression: "#email = :email",
-        ExpressionAttributeNames: {
-          "#email": "email",
-        },
-        ExpressionAttributeValues: {
-          ":email": email,
-        },
-      };
-      let uniqueEmailCheck = await this.dynamoDb
-        .scan(paramEmailCheck)
-        .promise();
+    // Step 2: Check if username already exists in DynamoDB
+    this.logger.log(`Checking if username ${username} is already in use...`);
+    
+    const usernameCheckParams = {
+      TableName: tableName,
+      Key: { userId: username },
+    };
 
-      if (uniqueEmailCheck.Items && uniqueEmailCheck.Items.length > 0) {
-        throw new ConflictException("Email already in use."); // 409 status
+    const usernameCheckResult = await this.dynamoDb.get(usernameCheckParams).promise();
+
+    if (usernameCheckResult.Item) {
+      this.logger.warn(`Registration failed: Username ${username} already exists`);
+      throw new ConflictException("This username is already taken");
+    }
+
+    this.logger.log(`Email and username are unique. Proceeding with Cognito user creation...`);
+
+    // Step 3: Create user in Cognito
+    let cognitoUserCreated = false;
+    
+    try {
+      await this.cognito.adminCreateUser({
+        UserPoolId: userPoolId,
+        Username: username,
+        UserAttributes: [
+          { Name: "email", Value: email },
+          { Name: "email_verified", Value: "true" },
+        ],
+        MessageAction: "SUPPRESS",
+      }).promise();
+
+      cognitoUserCreated = true;
+      this.logger.log(`✓ Cognito user created successfully for ${username}`);
+
+    } catch (cognitoError: any) {
+      this.logger.error(`Cognito user creation failed for ${username}:`, cognitoError);
+
+      // Handle specific Cognito errors
+      if (cognitoError.code === 'UsernameExistsException') {
+        throw new ConflictException("Username already exists in authentication system");
+      } else if (cognitoError.code === 'InvalidPasswordException') {
+        throw new BadRequestException("Password does not meet security requirements");
+      } else if (cognitoError.code === 'InvalidParameterException') {
+        throw new BadRequestException(`Invalid registration parameters: ${cognitoError.message}`);
+      } else {
+        throw new InternalServerErrorException("Failed to create user account");
       }
-      this.logger.log(`Email ${email} is unique. Proceeding with registration.`);
-      let createUserRes = await this.cognito
-        .adminCreateUser({
-          UserPoolId: userPoolId,
-          Username: username,
-          UserAttributes: [
-            { Name: "email", Value: email },
-            { Name: "email_verified", Value: "true" },
-          ],
-          MessageAction: "SUPPRESS",
-        })
-        .promise();
-        this.logger.log(`Cognito user created:`);
-      await this.cognito
-        .adminSetUserPassword({
-          UserPoolId: userPoolId,
-          Username: username,
-          Password: password,
-          Permanent: true,
-        })
-        .promise();
-        this.logger.log(`Password set for user ${username}.`);
+    }
+
+    // Step 4: Set user password
+    try {
+      await this.cognito.adminSetUserPassword({
+        UserPoolId: userPoolId,
+        Username: username,
+        Password: password,
+        Permanent: true,
+      }).promise();
+
+      this.logger.log(`✓ Password set successfully for ${username}`);
+
+    } catch (passwordError: any) {
+      this.logger.error(`Failed to set password for ${username}:`, passwordError);
+
+      // Rollback: Delete Cognito user if password setting fails
+      if (cognitoUserCreated) {
+        this.logger.warn(`Rolling back: Deleting Cognito user ${username}...`);
+        try {
+          await this.cognito.adminDeleteUser({
+            UserPoolId: userPoolId,
+            Username: username,
+          }).promise();
+          this.logger.log(`Rollback successful: Cognito user ${username} deleted`);
+        } catch (rollbackError) {
+          this.logger.error(`Rollback failed: Could not delete Cognito user ${username}`, rollbackError);
+        }
+      }
+
+      if (passwordError.code === 'InvalidPasswordException') {
+        throw new BadRequestException("Password does not meet requirements: must be at least 8 characters with uppercase, lowercase, and numbers");
+      }
+      throw new InternalServerErrorException("Failed to set user password");
+    }
+
+    // Step 5: Add user to Inactive group
+    try {
       await this.cognito.adminAddUserToGroup({
         GroupName: "Inactive",
         UserPoolId: userPoolId,
         Username: username,
-      });
-      this.logger.log(`User ${username} added to Inactive group.`);
-      const tableName = process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE";
+      }).promise();
 
-      // Change this so it adds a user object
-      const user: User = {
-        userId: username,
-        position: UserStatus.Inactive,
-        email: email,
-        name: "",
-      };
+      this.logger.log(`✓ User ${username} added to Inactive group`);
 
-      // Spread operator to add the user object
-      const params = {
-        TableName: tableName,
-        Item: {
-          ...user,
-        },
-      };
+    } catch (groupError: any) {
+      this.logger.error(`Failed to add ${username} to Inactive group:`, groupError);
 
-      await this.dynamoDb.put(params).promise();
-
-      this.logger.log(
-        `User ${username} registered successfully and added to DynamoDB.`
-      );
-    } catch (error) {
-      if (error instanceof ConflictException) {
-        this.logger.error("Email already in user", error.stack);
-        throw error;
+      // Rollback: Delete Cognito user
+      this.logger.warn(`Rolling back: Deleting Cognito user ${username}...`);
+      try {
+        await this.cognito.adminDeleteUser({
+          UserPoolId: userPoolId,
+          Username: username,
+        }).promise();
+        this.logger.log(`Rollback successful: Cognito user ${username} deleted`);
+      } catch (rollbackError) {
+        this.logger.error(`Rollback failed: Could not delete Cognito user ${username}`, rollbackError);
       }
-      if (error instanceof Error) {
-        this.logger.error("Registration failed", error.stack);
-        throw new Error(error.message || "Registration failed");
-      }
-      throw new Error("An unknown error occurred during registration");
-    }
-  }
 
-  async addUserToGroup(username: string, groupName: string, requestedBy : string): Promise<void> {
-    const userPoolId = process.env.COGNITO_USER_POOL_ID;
-    if (
-      groupName !== "Employee" &&
-      groupName !== "Admin" &&
-      groupName !== "Inactive"
-    ) {
-      throw new Error(
-        "Invalid group name. Must be Employee, Admin, or Inactive."
-      );
+      if (groupError.code === 'ResourceNotFoundException') {
+        throw new InternalServerErrorException("User group 'Inactive' does not exist in the system");
+      }
+      throw new InternalServerErrorException("Failed to assign user group");
     }
+
+    // Step 6: Save user to DynamoDB
+    const user: User = {
+      userId: username,
+      position: UserStatus.Inactive,
+      email: email,
+    };
+
     try {
-      await this.cognito.adminAddUserToGroup({
-        GroupName: groupName,
-        UserPoolId: userPoolId || "POOL_FAILURE",
-        Username: username,
-      });
-    } catch (error) {
-      if (error instanceof Error) {
-        this.logger.error("Registration failed", error.stack);
-        throw new Error(error.message || "Registration failed");
+      await this.dynamoDb.put({
+        TableName: tableName,
+        Item: user,
+      }).promise();
+
+      this.logger.log(`✓ User ${username} saved to DynamoDB successfully`);
+
+    } catch (dynamoError: any) {
+      this.logger.error(`Failed to save ${username} to DynamoDB:`, dynamoError);
+
+      // Rollback: Delete Cognito user
+      this.logger.warn(`Rolling back: Deleting Cognito user ${username}...`);
+      try {
+        await this.cognito.adminDeleteUser({
+          UserPoolId: userPoolId,
+          Username: username,
+        }).promise();
+        this.logger.log(`Rollback successful: Cognito user ${username} deleted`);
+      } catch (rollbackError) {
+        this.logger.error(`Rollback failed: Could not delete Cognito user ${username}`, rollbackError);
+        // Critical: User exists in Cognito but not in DynamoDB
+        this.logger.error(`CRITICAL: User ${username} exists in Cognito but not in DynamoDB - manual cleanup required`);
       }
-      throw new Error("An unknown error occurred during registration");
+
+      throw new InternalServerErrorException("Failed to save user data to database");
     }
+
+    this.logger.log(`✅ Registration completed successfully for ${username}`);
+
+  } catch (error) {
+    // Re-throw known HTTP exceptions
+    if (error instanceof HttpException) {
+      throw error;
+    }
+
+    // Handle unexpected errors
+    if (error instanceof Error) {
+      this.logger.error(`Unexpected error during registration for ${username}:`, error.stack);
+      throw new InternalServerErrorException(
+        `Registration failed: ${error.message}`
+      );
+    }
+
+    // Handle completely unknown errors
+    this.logger.error(`Unknown error during registration for ${username}:`, error);
+    throw new InternalServerErrorException(
+      "An unexpected error occurred during registration"
+    );
   }
+}
+
+// Helper method for email validation
+private isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+ 
 
   // Overall, needs better undefined handling and optional adding
   async login(
@@ -276,7 +391,6 @@ export class AuthService {
           userId: username,
           email: email,
           position: UserStatus.Inactive,
-          name: "",
         };
 
         await this.dynamoDb
@@ -411,35 +525,5 @@ export class AuthService {
     }
   }
 
-  async deleteUser(username: string): Promise<void> {
-    const userPoolId = process.env.COGNITO_USER_POOL_ID;
-    const tableName = process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE";
-
-    if (!userPoolId) {
-      this.logger.error("Cognito User Pool ID is not defined.");
-      throw new Error("Cognito User Pool ID is not defined.");
-    }
-    try {
-      await this.cognito.adminDeleteUser({
-        UserPoolId: userPoolId,
-        Username: username,
-      });
-      const params = {
-        TableName: tableName,
-        Key: {
-          userId: username, // Your partition key
-        },
-      };
-
-      await this.dynamoDb.delete(params).promise();
-      this.logger.log(
-        `User ${username} deleted successfully from Cognito and DynamoDB.`
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        this.logger.error("Deletion failed", error.stack);
-        throw new Error(error.message || "Deletion failed");
-      }
-    }
-  }
+  
 }

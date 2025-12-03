@@ -18,6 +18,8 @@ import GanttYearGrantTimeline from "./Charts/GanttYearGrantTimeline";
 import DonutMoneyApplied from "./Charts/DonutMoneyApplied";
 import { ProcessGrantData } from "../grants/filter-bar/processGrantData";
 import KPICards from "./Charts/KPICards";
+import { Navigate } from "react-router-dom";
+import { UserStatus } from "../../../../middle-layer/types/UserStatus";
 
 const Dashboard = observer(() => {
   // reset filters on initial render
@@ -28,7 +30,7 @@ const Dashboard = observer(() => {
     updateStartDateFilter(null);
   }, []);
 
-  const { yearFilter, allGrants } = getAppStore();
+  const { yearFilter, allGrants, user } = getAppStore();
 
   const uniqueYears = Array.from(
     new Set(
@@ -43,38 +45,48 @@ const Dashboard = observer(() => {
 
   const { grants } = ProcessGrantData();
 
-  return (
-    <div className="dashboard-page px-12 py-4 mb-8 ">
-      <div className="flex flex-row justify-end gap-4 mb-6">
-        <CsvExportButton />
-        <DateFilter />
-      </div>
+  return user ? (
+    user?.position !== UserStatus.Inactive ? (
+      <div className="dashboard-page px-12 py-4 mb-8 ">
+        <div className="flex flex-row justify-end gap-4 mb-6">
+          <CsvExportButton />
+          <DateFilter />
+        </div>
 
-      <div className=" gap-6 grid grid-cols-7">
-        <div className="col-span-3 h-full">
-          <KPICards
-            grants={grants}
-            recentYear={recentYear}
-            priorYear={priorYear}
-          />
-        </div>
-        <div className="col-span-4">
-          <LineChartSuccessRate grants={grants} />
-        </div>
-        <div className="col-span-3">
-          <DonutMoneyApplied grants={grants} />
-        </div>
-        <div className="col-span-4">
-          <StackedBarMoneyReceived grants={grants} />
-        </div>
-        <div className="col-span-5">
-          <GanttYearGrantTimeline recentYear={recentYear} grants={grants} uniqueYears={uniqueYears} />
-        </div>
-        <div className="col-span-2">
-          <BarYearGrantStatus recentYear={recentYear} grants={grants} />
+        <div className=" gap-6 grid grid-cols-7">
+          <div className="col-span-3 h-full">
+            <KPICards
+              grants={grants}
+              recentYear={recentYear}
+              priorYear={priorYear}
+            />
+          </div>
+          <div className="col-span-4">
+            <LineChartSuccessRate grants={grants} />
+          </div>
+          <div className="col-span-3">
+            <DonutMoneyApplied grants={grants} />
+          </div>
+          <div className="col-span-4">
+            <StackedBarMoneyReceived grants={grants} />
+          </div>
+          <div className="col-span-5">
+            <GanttYearGrantTimeline
+              recentYear={recentYear}
+              grants={grants}
+              uniqueYears={uniqueYears}
+            />
+          </div>
+          <div className="col-span-2">
+            <BarYearGrantStatus recentYear={recentYear} grants={grants} />
+          </div>
         </div>
       </div>
-    </div>
+    ) : (
+      <Navigate to="restricted" replace />
+    )
+  ) : (
+    <Navigate to="/login" replace />
   );
 });
 

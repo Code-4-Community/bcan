@@ -9,5 +9,4 @@ export interface User {
     userId: string,
     position: UserStatus,
     email: string,
-    name: string,
 }

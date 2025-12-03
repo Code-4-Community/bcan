@@ -12,43 +12,55 @@ import { Grant } from "../../../../../middle-layer/types/Grant.ts";
 const ITEMS_PER_PAGE = 6;
 
 interface GrantListProps {
-    selectedGrantId?: number;
-    onClearSelectedGrant?: () => void;
-    showOnlyMyGrants?: boolean;
-    currentUserEmail?: string;
+  selectedGrantId?: number;
+  onClearSelectedGrant?: () => void;
+  showOnlyMyGrants?: boolean;
+  currentUserEmail?: string;
 }
 
-const GrantList: React.FC<GrantListProps> = observer(({ selectedGrantId, onClearSelectedGrant, showOnlyMyGrants = false, currentUserEmail }) => {
+const GrantList: React.FC<GrantListProps> = observer(
+  ({
+    selectedGrantId,
+    onClearSelectedGrant,
+    showOnlyMyGrants = false,
+    currentUserEmail,
+  }) => {
     const { grants, onSort } = ProcessGrantData();
     const [currentPage, setPage] = useState(1);
     const [showNewGrantModal, setShowNewGrantModal] = useState(false);
     const [wasGrantSubmitted, setWasGrantSubmitted] = useState(false);
+    const [sortedGrants, setSortedGrants] = useState(grants);
 
-    const displayedGrants = showOnlyMyGrants ? grants.filter(
-        (grant: Grant) => grant.bcan_poc?.POC_email?.toLowerCase() === currentUserEmail?.toLowerCase()
-    )
-    : grants;
+    const handleSort = (header: keyof Grant, asc: boolean) => {
+      const sorted = onSort(header, asc);
+      setSortedGrants(sorted.length > 0 ? sorted : grants);
+    };
 
-     useEffect(() => {
-            if (selectedGrantId !== undefined && grants.length > 0) {
-                 const index = grants.findIndex(grant => grant.grantId === Number(selectedGrantId));
-                 if (index !== -1) {
-                     const targetPage = Math.floor(index / ITEMS_PER_PAGE) + 1;
-                     if (targetPage !== currentPage) {
-                         setPage(targetPage);
-                     }
-                 }
-              }
-         }, [selectedGrantId, grants, currentPage]);
+    const displayedGrants = showOnlyMyGrants
+      ? sortedGrants.filter(
+          (grant: Grant) =>
+            grant.bcan_poc?.POC_email?.toLowerCase() ===
+            currentUserEmail?.toLowerCase()
+        )
+      : sortedGrants;
 
     useEffect(() => {
-    if (!showNewGrantModal && wasGrantSubmitted) {
-        console.log("UseEffect called in Index");
-        grants.findIndex(grant => grant.grantId === Number(selectedGrantId));
-        fetchGrants();
-        setWasGrantSubmitted(false);
-    }
-}, [showNewGrantModal, wasGrantSubmitted, grants]);
+      if (selectedGrantId !== undefined && grants.length > 0) {
+        const index = grants.findIndex(
+          (grant) => grant.grantId === Number(selectedGrantId)
+        );
+        if (index !== -1) {
+          const targetPage = Math.floor(index / ITEMS_PER_PAGE) + 1;
+          if (targetPage !== currentPage) {
+            setPage(targetPage);
+          }
+        }
+      }
+    }, [selectedGrantId, grants, currentPage, sortedGrants]);
+
+    useEffect(() => {
+      setSortedGrants(sortedGrants.length > 0 ? sortedGrants : grants);
+    }, [grants]);
 
     const count = displayedGrants.length;
     const startRange = (currentPage - 1) * ITEMS_PER_PAGE;
