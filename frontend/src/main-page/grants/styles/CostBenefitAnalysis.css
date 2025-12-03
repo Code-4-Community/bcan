@@ -21,3 +21,7 @@
     opacity: 0.9;
     transition: opacity 0.2s;
 }
+
+.cost-benefit-analysis button::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Opera */
+}

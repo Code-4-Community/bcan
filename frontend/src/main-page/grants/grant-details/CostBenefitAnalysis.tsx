@@ -4,10 +4,9 @@ import '../styles/CostBenefitAnalysis.css';
 
 interface CostBenefitAnalysisProps {
   grant: Grant;
-  onCalculate: (value: number | null) => void;
 }
 
-export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({ grant, onCalculate }) => {
+export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({ grant }) => {
   const [hourlyRate, setHourlyRate] = useState<string>('');
   const [timePerReport, setTimePerReport] = useState<string>('');
   const [netBenefit, setNetBenefit] = useState<number | null>(null);
@@ -30,7 +29,7 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({ grant,
 
     const reportCount = grant.report_deadlines?.length ?? 0;
     const grantAmount = grant.amount;
-    const estimatedTime = grant.estimated_completion_time;
+    const estimatedTime = grant.estimated_completion_time | 5;
 
     console.log('Grant values - Amount:', grantAmount, 'EstTime:', estimatedTime, 'ReportCount:', reportCount);
 
@@ -40,7 +39,6 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({ grant,
     console.log('Final result:', result);
 
     setNetBenefit(result);
-    onCalculate(result); 
   };
 
   const formatCurrency = (amount: number): string => {
@@ -81,7 +79,7 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({ grant,
         {/* Time Per Report Input */}
         <div className="mb-3">
           <label className="block text-left text-gray-700 text-sm mb-1">
-            Time per report
+            Time per report (in hours)
           </label>
           <input
             type="number"
@@ -112,20 +110,26 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({ grant,
         </button>
 
         {/* Analysis Button - Shows the net benefit result */}
-        <div className="flex justify-end">
-        <button
+        <div className="flex justify-end items-center gap-2">
+            <span className="text-sm font-semibold"> Net Benefit:</span>
+        <div
           onClick={calculateNetBenefit}
           className="w-1/2 py-2 px-4 rounded"
           style={{
             backgroundColor: '#F2EBE4',
-            color: 'gray',
+            color: netBenefit !== null ? 'black' : 'gray',
             borderStyle: 'solid',
             borderColor: 'black',
-            borderWidth: '1px'
+            borderWidth: '1px',
+            overflow: 'auto',
+            textAlign: 'center',
+            whiteSpace: 'nowrap',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none'
           }}
         >
           {netBenefit !== null ? formatCurrency(netBenefit) : 'Analysis'}
-        </button>
+        </div>
         </div>
       </div>
     </div>

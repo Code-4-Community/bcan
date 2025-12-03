@@ -25,13 +25,11 @@ const GrantItem: React.FC<GrantItemProps> = ({
   const curGrant = grant;
   const [showNewGrantModal, setShowNewGrantModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [netBenefit, setNetBenefit] = useState<number | null>(null);
 
   const toggleExpand = () => {
     // Toggle edit mode off now that we are leaving this specific grant in view
     if (isExpanded) {
       toggleEdit();
-      setNetBenefit(null);
     }
     setIsExpanded(!isExpanded);
   };
@@ -280,10 +278,10 @@ const GrantItem: React.FC<GrantItemProps> = ({
                           : "N/A"}
                       </div>
                     </div>
-                    {/*Timeline, Amount, Cost-benefit row*/}
+                    {/*Timeline and Amount row*/}
                     <div className="flex space-x-4 mt-5 w-full">
                       {/*Timeline*/}
-                      <div className="w-1/3">
+                      <div className="w-1/2">
                         <label
                           className="text-md flex block tracking-wide text-gray-700 font-bold mb-2"
                           htmlFor="grid-city"
@@ -300,7 +298,7 @@ const GrantItem: React.FC<GrantItemProps> = ({
                         </div>
                       </div>
                       {/*Amount */}
-                      <div className=" w-1/3">
+                      <div className=" w-1/2">
                         <label
                           className="text-md flex block tracking-wide text-gray-700 font-bold mb-2"
                           htmlFor="grid-state"
@@ -314,19 +312,8 @@ const GrantItem: React.FC<GrantItemProps> = ({
                           {formatCurrency(curGrant.amount)}
                         </div>
                       </div>
-                      {/*Cost-benefit*/}
-                      <div className="w-1/3">
-                      <label className="text-md flex block tracking-wide text-gray-700 font-bold mb-2" style={{whiteSpace: 'nowrap'}}>
-                        Cost-benefit
-                      </label>
-                      <div
-                        style={{color: "black"}}
-                        className="text-left text-lg h-10 w-full"
-                        >
-                          {netBenefit !== null ? formatCurrency(netBenefit) : '--'}
-                          </div>
-                        </div>
-                      {/*End timeline, amount, cost-benefit row */}
+
+                      {/*End timeline and amount row */}
                     </div>
 
                     {/*End column of gray labels */}
@@ -593,7 +580,7 @@ const GrantItem: React.FC<GrantItemProps> = ({
             <div className="flex w-full mb-3 space-x-4 items-stretch">
               {/* Cost Benefit Analysis */}
               <div className="w-1/3">
-                <CostBenefitAnalysis grant={curGrant} onCalculate={setNetBenefit} />
+                <CostBenefitAnalysis grant={curGrant} />
                 </div>
               
               {/*Description */}
