@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useEffect, useState } from "react";
 import ApprovedUserCard from "./ApprovedUserCard";
 import PendingUserCard from "./PendingUserCard";
@@ -14,7 +13,7 @@ enum UsersTab {
   CurrentUsers,
 }
 import { api } from "../../api"
-import { UserStatus } from "../../../../middle-layer/types/UserStatus";
+
 const fetchActiveUsers = async (): Promise<User[]> => {
   try {
     const response = await api("/user/active", {
