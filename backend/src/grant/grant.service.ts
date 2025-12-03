@@ -1,7 +1,8 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
+//import AWS, { AWSError } from 'aws-sdk';
 import { Grant } from '../../../middle-layer/types/Grant';
-import { NotificationService } from '.././notifications/notifcation.service';
+import { NotificationService } from '../notifications/notification.service';
 import { Notification } from '../../../middle-layer/types/Notification';
 import { TDateISO } from '../utils/date';
 import { Status } from '../../../middle-layer/types/Status';
@@ -120,36 +121,39 @@ async makeGrantsInactive(grantId: number): Promise<Grant> {
      * @param grantData
      */
     async updateGrant(grantData: Grant): Promise<string> {
-        // dynamically creates the update expression/attribute names based on names of grant interface
-        // assumption: grant interface field names are exactly the same as db storage naming
-        this.logger.warn('here' + grantData.status);
-        const updateKeys = Object.keys(grantData).filter(
-            key => key != 'grantId'
-        );
-        const UpdateExpression = "SET " + updateKeys.map((key) => `#${key} = :${key}`).join(", ");
-        const ExpressionAttributeNames = updateKeys.reduce((acc, key) =>
-            ({ ...acc, [`#${key}`]: key }), {});
-        const ExpressionAttributeValues = updateKeys.reduce((acc, key) =>
-            ({ ...acc, [`:${key}`]: grantData[key as keyof typeof grantData] }), {});
+      
+      const updateKeys = Object.keys(grantData).filter(
+          key => key != 'grantId'
+      );
+      
+      this.logger.warn('Update keys: ' + JSON.stringify(updateKeys));
+      
+      const UpdateExpression = "SET " + updateKeys.map((key) => `#${key} = :${key}`).join(", ");
+      const ExpressionAttributeNames = updateKeys.reduce((acc, key) =>
+          ({ ...acc, [`#${key}`]: key }), {});
+      const ExpressionAttributeValues = updateKeys.reduce((acc, key) =>
+          ({ ...acc, [`:${key}`]: grantData[key as keyof typeof grantData] }), {});
 
-        const params = {
-            TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || "TABLE_FAILURE",
-            Key: { grantId: grantData.grantId },
-            UpdateExpression,
-            ExpressionAttributeNames,
-            ExpressionAttributeValues,
-            ReturnValues: "UPDATED_NEW",
-        };
+      const params = {
+          TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || "TABLE_FAILURE",
+          Key: { grantId: grantData.grantId },
+          UpdateExpression,
+          ExpressionAttributeNames,
+          ExpressionAttributeValues,
+          ReturnValues: "UPDATED_NEW",
+      };
 
-        try {
-            const result = await this.dynamoDb.update(params).promise();
-            await this.updateGrantNotifications(grantData);
-            return JSON.stringify(result); // returns the changed attributes stored in db
-        } catch(err) {
-            console.log(err);
-            throw new Error(`Failed to update Grant ${grantData.grantId}`)
-        }
-    }
+      try {
+          const result = await this.dynamoDb.update(params).promise();
+          this.logger.warn('✅ Update successful!');
+          //await this.updateGrantNotifications(grantData);
+          return JSON.stringify(result);
+      } catch(err: unknown) {
+          this.logger.error('=== DYNAMODB ERROR ===');
+          this.logger.error('Unknown error type: ' + JSON.stringify(err));
+          throw new Error(`Failed to update Grant ${grantData.grantId}`);
+      }
+  }
     
     // Add a new grant using the Grant interface from middleware.
   async addGrant(grant: Grant): Promise<number> {
@@ -162,7 +166,7 @@ async makeGrantsInactive(grantId: number): Promise<Grant> {
         grantId: newGrantId,
         organization: grant.organization,
         does_bcan_qualify: grant.does_bcan_qualify,
-        status: grant.status, // Expected to be 0 (Potential), 1 (Active), or 2 (Inactive)
+        status: grant.status,
         amount: grant.amount,
         grant_start_date: grant.grant_start_date,
         application_deadline: grant.application_deadline,
@@ -180,10 +184,17 @@ async makeGrantsInactive(grantId: number): Promise<Grant> {
     try {
       await this.dynamoDb.put(params).promise();
       this.logger.log(`Uploaded grant from ${grant.organization}`);
+      
       const userId = grant.bcan_poc.POC_email;
-      await this.createGrantNotifications({ ...grant, grantId: newGrantId }, userId);
+      this.logger.log(`Creating notifications for user: ${userId}`);
+      
+      //await this.createGrantNotifications({ ...grant, grantId: newGrantId }, userId);
+      
+      this.logger.log(`Successfully created notifications for grant ${newGrantId}`);
     } catch (error: any) {
-      this.logger.error(`Failed to upload new grant from ${grant.organization}`, error.stack);
+      this.logger.error(`Failed to upload new grant from ${grant.organization}`);
+      this.logger.error(`Error details: ${error.message}`);
+      this.logger.error(`Stack trace: ${error.stack}`);
       throw new Error(`Failed to upload new grant from ${grant.organization}`);
     }
 
@@ -193,10 +204,10 @@ async makeGrantsInactive(grantId: number): Promise<Grant> {
   /* Deletes a grant from database based on its grant ID number
   * @param grantId
   */
-  async deleteGrantById(grantId: string): Promise<string> {
+  async deleteGrantById(grantId: number): Promise<string> {
     const params = {
         TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || "TABLE_FAILURE",
-        Key: { grantId: grantId },
+        Key: { grantId: Number(grantId) },
         ConditionExpression: "attribute_exists(grantId)", // ensures grant exists
     };
 

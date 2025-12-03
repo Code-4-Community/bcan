@@ -394,7 +394,7 @@ describe('deleteGrantById', () => {
       promise: vi.fn().mockResolvedValue({})
     });
 
-    const result = await grantService.deleteGrantById('123');
+    const result = await grantService.deleteGrantById(123);
 
     expect(mockDelete).toHaveBeenCalledTimes(1); //ensures delete() was called once
 
@@ -402,7 +402,7 @@ describe('deleteGrantById', () => {
     expect(mockDelete).toHaveBeenCalledWith(
       expect.objectContaining({
         TableName: expect.any(String),
-        Key: {grantId: '123'},
+        Key: {grantId: 123},
         ConditionExpression: 'attribute_exists(grantId)'
       }),
     );
@@ -419,7 +419,7 @@ describe('deleteGrantById', () => {
       promise: vi.fn().mockRejectedValue(conditionalError)
     });
 
-    await expect(grantService.deleteGrantById('999'))
+    await expect(grantService.deleteGrantById(999))
     .rejects.toThrow(/does not exist/);
   });
 
@@ -428,7 +428,7 @@ describe('deleteGrantById', () => {
       promise: vi.fn().mockRejectedValue(new Error('Some other DynamoDB error'))
     });
 
-    await expect(grantService.deleteGrantById('123'))
+    await expect(grantService.deleteGrantById(123))
     .rejects.toThrow(/Failed to delete/);
   });
 });
