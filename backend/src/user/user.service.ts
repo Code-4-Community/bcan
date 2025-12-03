@@ -3,6 +3,10 @@ import {
   Logger,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
+  BadRequestException,
+  ConflictException,
+  HttpException,
 } from "@nestjs/common";
 import AWS from "aws-sdk";
 import { User } from "../../../middle-layer/types/User";
@@ -13,6 +17,8 @@ import { UserStatus } from "../../../middle-layer/types/UserStatus";
  */
 @Injectable()
 export class UserService {
+  private cognito = new AWS.CognitoIdentityServiceProvider();
+
   private readonly logger = new Logger(UserService.name);
   private dynamoDb = new AWS.DynamoDB.DocumentClient();
 
@@ -26,6 +32,232 @@ export class UserService {
       return data.Items;
     } catch (error) {
       throw new Error("Could not retrieve users.");
+    }
+  }
+  async addUserToGroup(
+    user: User,
+    groupName: UserStatus,
+    requestedBy: User
+  ): Promise<User> {
+    const userPoolId = process.env.COGNITO_USER_POOL_ID;
+    const tableName = process.env.DYNAMODB_USER_TABLE_NAME;
+    const username = user.userId;
+    const previousGroup = user.position; // Store the old group for rollback
+
+    // 1. Validate environment variables
+    if (!userPoolId) {
+      this.logger.error(
+        "Cognito User Pool ID is not defined in environment variables"
+      );
+      throw new InternalServerErrorException("Server configuration error");
+    }
+
+    if (!tableName) {
+      this.logger.error(
+        "DynamoDB User Table Name is not defined in environment variables"
+      );
+      throw new InternalServerErrorException("Server configuration error");
+    }
+
+    // 2. Authorization check
+    if (requestedBy.position !== UserStatus.Admin) {
+      this.logger.warn(
+        `Unauthorized access attempt: ${requestedBy.userId} tried to add ${username} to ${groupName}`
+      );
+      throw new UnauthorizedException(
+        "Only administrators can modify user groups"
+      );
+    }
+
+    // 3. Validate group name is a valid UserStatus
+    const validStatuses = Object.values(UserStatus);
+    if (!validStatuses.includes(groupName)) {
+      throw new BadRequestException(
+        `Invalid group name. Must be one of: ${validStatuses.join(", ")}`
+      );
+    }
+
+    // 4. Check if user exists in DynamoDB first
+    try {
+      const userCheckParams = {
+        TableName: tableName,
+        Key: { userId: username },
+      };
+
+      const existingUser = await this.dynamoDb.get(userCheckParams).promise();
+
+      if (!existingUser.Item) {
+        this.logger.warn(`User ${username} not found in database`);
+        throw new NotFoundException(`User '${username}' does not exist`);
+      }
+
+      // 5. Check if user is already in the requested group
+      const currentUser = existingUser.Item as User;
+      if (currentUser.position === groupName) {
+        this.logger.log(`User ${username} is already in group ${groupName}`);
+        return currentUser; // No change needed
+      }
+
+      // 6. Prevent self-demotion for admins
+      if (
+        requestedBy.userId === username &&
+        requestedBy.position === UserStatus.Admin &&
+        groupName !== UserStatus.Admin
+      ) {
+        throw new BadRequestException(
+          "Administrators cannot demote themselves"
+        );
+      }
+    } catch (error) {
+      // Re-throw known exceptions
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      this.logger.error(`Error checking user existence: ${username}`, error);
+      throw new InternalServerErrorException("Failed to verify user existence");
+    }
+
+    try {
+      // 7. Remove user from old Cognito group
+      if (previousGroup) {
+        try {
+          await this.cognito
+            .adminRemoveUserFromGroup({
+              GroupName: previousGroup as string,
+              UserPoolId: userPoolId,
+              Username: username,
+            })
+            .promise();
+
+          this.logger.log(
+            `✓ User ${username} removed from Cognito group ${previousGroup}`
+          );
+        } catch (removeError: any) {
+          // Log but don't fail if user wasn't in the old group
+          this.logger.warn(
+            `Could not remove ${username} from old group ${previousGroup}: ${removeError.message}`
+          );
+        }
+      }
+
+      // 8. Add user to new Cognito group
+      await this.cognito
+        .adminAddUserToGroup({
+          GroupName: groupName as string,
+          UserPoolId: userPoolId,
+          Username: username,
+        })
+        .promise();
+
+      this.logger.log(`✓ User ${username} added to Cognito group ${groupName}`);
+    } catch (cognitoError: any) {
+      this.logger.error(
+        `Failed to add ${username} to Cognito group ${groupName}:`,
+        cognitoError
+      );
+
+      // Handle specific Cognito errors
+      if (cognitoError.code === "UserNotFoundException") {
+        throw new NotFoundException(
+          `User '${username}' not found in authentication system`
+        );
+      } else if (cognitoError.code === "ResourceNotFoundException") {
+        throw new InternalServerErrorException(
+          `Group '${groupName}' does not exist in the system`
+        );
+      } else if (cognitoError.code === "InvalidParameterException") {
+        throw new BadRequestException(
+          `Invalid parameters: ${cognitoError.message}`
+        );
+      }
+
+      throw new InternalServerErrorException(
+        "Failed to update user group in authentication system"
+      );
+    }
+
+    try {
+      // 9. Update user's position in DynamoDB
+      const params = {
+        TableName: tableName,
+        Key: { userId: username },
+        UpdateExpression: "SET #position = :position",
+        ExpressionAttributeNames: {
+          "#position": "position", // Add this to handle reserved keyword
+        },
+        ExpressionAttributeValues: {
+          ":position": groupName as string,
+        },
+        ReturnValues: "ALL_NEW" as const,
+      };
+
+      const result = await this.dynamoDb.update(params).promise();
+
+      if (!result.Attributes) {
+        throw new InternalServerErrorException(
+          "Failed to retrieve updated user data"
+        );
+      }
+
+      this.logger.log(
+        `✅ User ${username} successfully moved from ${previousGroup} to ${groupName} by ${requestedBy.userId}`
+      );
+
+      return result.Attributes as User;
+    } catch (dynamoError: any) {
+      this.logger.error(
+        `Failed to update ${username} in DynamoDB:`,
+        dynamoError
+      );
+
+      // Attempt rollback: revert Cognito group change
+      this.logger.warn(
+        `Attempting rollback: reverting Cognito group for ${username} back to ${previousGroup}...`
+      );
+
+      try {
+        // Remove from new group
+        await this.cognito
+          .adminRemoveUserFromGroup({
+            GroupName: groupName as string,
+            UserPoolId: userPoolId,
+            Username: username,
+          })
+          .promise();
+
+        // Add back to old group
+        if (previousGroup) {
+          await this.cognito
+            .adminAddUserToGroup({
+              GroupName: previousGroup as string,
+              UserPoolId: userPoolId,
+              Username: username,
+            })
+            .promise();
+
+          this.logger.log(
+            `✓ Rollback successful: User ${username} restored to group ${previousGroup}`
+          );
+        }
+      } catch (rollbackError: any) {
+        this.logger.error(
+          `Rollback failed: Could not restore ${username} to group ${previousGroup}`,
+          rollbackError
+        );
+        this.logger.error(
+          `CRITICAL: User ${username} group updated in Cognito to ${groupName} but not in DynamoDB - manual sync required`
+        );
+      }
+
+      if (dynamoError.code === "ConditionalCheckFailedException") {
+        throw new ConflictException(
+          "User data was modified by another process"
+        );
+      }
+
+      throw new InternalServerErrorException(
+        "Failed to update user data in database"
+      );
     }
   }
 

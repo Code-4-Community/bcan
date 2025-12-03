@@ -6,15 +6,14 @@ import NotificationPopup from "../notifications/NotificationPopup";
 import { setNotifications as setNotificationsAction } from "../../external/bcanSatchel/actions";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { useAuthContext } from "../../context/auth/authContext";
+import { observer } from "mobx-react-lite";
 
 // get current user id
 // const currUserID = sessionStorage.getItem('userId');
 // const currUserID = "bcanuser33";
 
-const BellButton = () => {
-  // gets current user from auth context
-  const { user } = useAuthContext();
-
+const BellButton =  observer(() => {
+   const { user } = useAuthContext();
   // stores notifications for the current user
   const store = getAppStore();
   const notifications = store.notifications ?? [];
@@ -74,21 +73,45 @@ const BellButton = () => {
 
   return (
     <div className="bell-container">
-      <button
-        className={`bell-button ${isClicked ? "hovered" : ""}`}
-        onClick={handleClick}
+      <div
+        className="bell-wrapper"
+        style={{ position: "relative", display: "inline-block" }}
       >
-        <FontAwesomeIcon icon={faBell} style={{ color: "black" }} />
-      </button>
+        <button
+          className={`bell-button ${isClicked ? "hovered" : ""}`}
+          onClick={handleClick}
+          style={{ background: "none", position: "relative" }}
+        >
+          <FontAwesomeIcon
+            icon={faBell}
+            style={{ color: "black"}}
+          />
+        </button>
+
+        {notifications.length > 0 && (
+          <span
+            style={{
+              position: "absolute",
+              top: "0px",
+              right: "0px",
+              width: "10px",
+              height: "10px",
+              backgroundColor: "red",
+              borderRadius: "50%",
+              border: "2px solid white",
+            }}
+          />
+        )}
+      </div>
 
       {isClicked && (
         <NotificationPopup
-        notifications={notifications}
-        onClose={handleClose}
+          notifications={notifications}
+          onClose={handleClose}
         />
       )}
     </div>
   );
-};
+});
 
 export default BellButton;
