@@ -15,7 +15,7 @@ const NotificationPopup: React.FC<NotificationPopupProps> = observer(({
     setOpenModal
 }) => {
     const store = getAppStore();
-    const liveNotifications = store.notifications ?? [];
+    const liveNotifications: Notification[] = store.notifications ?? [];
 
     const handleDelete = async (notificationId: string) => {
         try {
