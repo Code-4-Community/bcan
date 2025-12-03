@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Notification } from '../../../../middle-layer/types/Notification';
 import { NotificationController } from '../notification.controller';
-import { NotificationService } from '../notifcation.service';
+import { NotificationService } from '../notification.service';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { servicesVersion } from 'typescript';
 import { TDateISO } from '../../utils/date';
@@ -36,12 +36,10 @@ const mockSES = {
 
 // Mock AWS SDK - Note the structure here
 vi.mock('aws-sdk', () => ({
-  default: {
-    DynamoDB: {
-      DocumentClient: vi.fn(() => mockDocumentClient)
-    },
-    SES: vi.fn(() => mockSES)
-  }
+  DynamoDB: {
+    DocumentClient: vi.fn(() => mockDocumentClient)
+  },
+  SES: vi.fn(() => mockSES)
 }));
 
 describe('NotificationController', () => {

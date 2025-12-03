@@ -53,13 +53,7 @@ export class AuthController {
       return { message: 'Profile has been updated' };
     }
 
-    @Post('delete-user')
-    async deleteUser(
-      @Body('username') username: string,
-    ): Promise<User> {
-      let user = await this.authService.deleteUser(username);
-      return user;
-    }
+    
     
     
   
