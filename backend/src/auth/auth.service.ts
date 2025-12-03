@@ -4,7 +4,7 @@ import {
   Logger,
   UnauthorizedException,
 } from "@nestjs/common";
-import AWS from "aws-sdk";
+import * as AWS from "aws-sdk";
 import { group, table } from "console";
 import * as crypto from "crypto";
 import { User } from "../../../middle-layer/types/User";
@@ -525,39 +525,5 @@ private isValidEmail(email: string): boolean {
     }
   }
 
-  async deleteUser(username: string): Promise<User> {
-    const userPoolId = process.env.COGNITO_USER_POOL_ID;
-    const tableName = process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE";
-
-    if (!userPoolId) {
-      this.logger.error("Cognito User Pool ID is not defined.");
-      throw new Error("Cognito User Pool ID is not defined.");
-    }
-    try {
-      await this.cognito.adminDeleteUser({
-        UserPoolId: userPoolId,
-        Username: username,
-      });
-      const params = {
-        TableName: tableName,
-        Key: {
-          userId: username, // Your partition key
-        }, ReturnValues: "ALL_OLD"
-      };
-
-      let result = await this.dynamoDb.delete(params).promise();
-      this.logger.log(
-        `User ${username} deleted successfully from Cognito and DynamoDB.`
-      );
-
-      return result.Attributes as User;
-    } catch (error) {
-      if (error instanceof Error) {
-        this.logger.error("Deletion failed", error.stack);
-        throw new Error(error.message || "Deletion failed");
-      }
-            throw new Error("An unknown error occurred");
-
-    }
-  }
+  
 }

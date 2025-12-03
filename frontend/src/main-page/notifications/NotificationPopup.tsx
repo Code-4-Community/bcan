@@ -3,21 +3,17 @@ import GrantNotification from "./GrantNotification";
 import '../../styles/notification.css';
 import { api } from "../../api";
 import { setNotifications as setNotificationsAction } from "../../external/bcanSatchel/actions";
-import { useAuthContext } from "../../context/auth/authContext";
 import { Notification } from "../../../../middle-layer/types/Notification";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { observer } from 'mobx-react-lite';
 
 interface NotificationPopupProps {
-    notifications: Notification[];
-    onClose: () => void;
+    setOpenModal: (value: string | null) => void;
 }
 
 const NotificationPopup: React.FC<NotificationPopupProps> = observer(({
-    notifications,
-    onClose
+    setOpenModal
 }) => {
-    const { user } = useAuthContext();
     const store = getAppStore();
     const liveNotifications = store.notifications ?? [];
 
@@ -35,11 +31,9 @@ const NotificationPopup: React.FC<NotificationPopupProps> = observer(({
             return;
         }
 
-        // TODO: Remove hardcoded userId after /auth/session endpoint is fixed
-        const testUserId = "bcanuser33"; //hardcode userid for refetch (test)
 
         const fetchResponse = await api(
-            `/notifications/user/${testUserId}`,
+            `/notifications/user/${store.user?.userId}`,
             {
                 method: "GET",
             }
@@ -55,13 +49,12 @@ const NotificationPopup: React.FC<NotificationPopupProps> = observer(({
         }
     };
 
-    console.log("Live notifications:", liveNotifications);
 
     return createPortal(
         <div className="notification-popup" role="dialog" aria-label="Notifications">
             <div className="popup-header">
                 <h3>Alerts</h3>
-                <button className="close-button" onClick={onClose} aria-label="Close notifications">
+                <button className="close-button" onClick={() => setOpenModal(null)} aria-label="Close notifications">
                     ✕
                 </button>
             </div>

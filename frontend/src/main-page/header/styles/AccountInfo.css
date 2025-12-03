@@ -1,0 +1,125 @@
+
+.account-modal {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  z-index: 9999;
+  min-width: 350px;
+  max-width: 480px;
+}
+
+.account-popup {
+  position: absolute;
+  padding: 20px 40px;
+  background-color: white;
+  border: 3px solid #2d2d2d;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+}
+
+.popup-header {
+  color: #000;
+  font-family: Montserrat;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 100;
+  line-height: normal;
+  margin-bottom: 16px;
+  margin-top: 0;
+  letter-spacing: -0.5px;
+  z-index: 1000;
+}
+
+.account-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+  border-left: 4px solid #ff6b35;
+  padding-left: 20px;
+  z-index: 1000;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  gap: 12px;
+  z-index: 1000;
+}
+
+.info-label {
+  color: #646464;
+  font-family: Montserrat;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  z-index: 1000;
+}
+
+.info-value {
+  color: #000;
+font-family: Montserrat;
+font-size: 15px;
+font-style: normal;
+font-weight: 400;
+line-height: normal;
+z-index: 1000;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+  z-index: 1000;
+}
+
+.user-list-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: white;
+  border: 2px solid #2d2d2d;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #2d2d2d;
+}
+
+.user-list-btn:hover {
+  background: #f8f8f8;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.logout-btn {
+  padding: 10px 26px;
+  background: #ffb3b3;
+  border: 2px solid #ff8888;
+  border-radius: 10px;
+  color: #d63031;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+  background: #ff9999;
+  color: white;
+  border-color: #ff7777;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 119, 119, 0.3);
+}

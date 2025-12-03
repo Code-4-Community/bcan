@@ -1,4 +1,3 @@
-import { Button } from "@chakra-ui/react";
 import "../styles/button.css";
 
 /* Maintained with button.css */
@@ -25,28 +24,28 @@ export default function RingButton({ text, color }: RingButtonProps) {
   return (
     <>
       {ButtonColorOption.GREEN === color && (
-        <Button
+        <div
           className="green-button button-default"
           style={{ width: "100%", border: "none", cursor: "default" }}
         >
           {text}
-        </Button>
+        </div>
       )}
       {ButtonColorOption.ORANGE === color && (
-        <Button
+        <div
           className="orange-button button-default"
           style={{ width: "100%", border: "none", cursor: "default" }}
         >
           {text}
-        </Button>
+        </div>
       )}
       {ButtonColorOption.GRAY === color && (
-        <Button
+        <div
           className="gray-button button-default"
           style={{ width: "100%", border: "none", cursor: "default" }}
         >
           {text}
-        </Button>
+        </div>
       )}
     </>
   );

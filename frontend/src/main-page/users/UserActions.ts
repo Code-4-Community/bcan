@@ -56,3 +56,7 @@ export const moveUserToActive = (user: User) => {
   setActiveUsers([...getAppStore().activeUsers, user]);
   setInactiveUsers(getAppStore().inactiveUsers.filter(u => u.userId !== user.userId));
 }
+
+export const removeUser = (user: User) => {
+  setInactiveUsers(getAppStore().inactiveUsers.filter(u => u.userId !== user.userId));
+}

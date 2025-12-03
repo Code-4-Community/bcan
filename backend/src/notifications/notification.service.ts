@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import AWS from 'aws-sdk';
+import * as AWS from 'aws-sdk';
 import { Notification } from '../../../middle-layer/types/Notification';
 
 @Injectable()
