@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import './styles/AccountInfo.css';
 import { logoutUser,
 } from "../../external/bcanSatchel/actions.ts";
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
+
+
 interface AccountInfoProps {
   email: string;
   username: string;
@@ -17,11 +20,10 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
   setShowAccountInfo,
 }) => {
 
+  const navigate = useNavigate();
 
   const handleUserListClick = () => {
-    <Link to="users">
-      </Link>
-
+    navigate('users');
   };
 
   const handleLogoutClick = () => {
