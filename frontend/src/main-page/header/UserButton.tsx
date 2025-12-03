@@ -14,24 +14,30 @@ const UserButton = () => {
     setShowAccountInfo(!showAccountInfo);
   };
   
+
   return (
     <div className="user-container">
-      <button
-        className={`user-button ${showAccountInfo ? "hovered" : ""}`}
-        onClick={toggleAccountInfo}
+      <div
+        className="user-wrapper"
+        style={{ position: "relative", display: "inline-block" }}
       >
-        <FontAwesomeIcon icon={faUser} style={{ color: "black" }} />
-      </button>
+        <button
+          className={`user-button ${showAccountInfo ? "hovered" : ""}`}
+          onClick={toggleAccountInfo}
+          style={{ background: "none", position: "relative" }}
+        >
+          <FontAwesomeIcon icon={faUser} style={{ color: "black" }} />
+        </button>
 
-      {showAccountInfo && (
-  <AccountInfo
-    email={user?.email ?? ""}
-    username={user?.userId ?? ""}
-    role={user?.position ?? ""}
-    setShowAccountInfo={setShowAccountInfo}
-  />
-)}
-
+        {showAccountInfo && (
+          <AccountInfo
+            email={user?.email ?? ""}
+            username={user?.userId ?? ""}
+            role={user?.position ?? ""}
+            setShowAccountInfo={setShowAccountInfo}
+          />
+        )}
+      </div>
     </div>
   );
 };

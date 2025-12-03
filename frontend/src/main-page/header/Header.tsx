@@ -7,11 +7,8 @@ import {
 } from "../../../../middle-layer/types/Status.ts";
 import {
   updateFilter,
-  logoutUser,
 } from "../../external/bcanSatchel/actions.ts";
 import { observer } from "mobx-react-lite";
-import { Menu, Button } from "@chakra-ui/react";
-import { FaCog } from "react-icons/fa";
 import BellButton from "./Bell.tsx";
 import { useLocation } from 'react-router-dom';
 import UserButton from "./UserButton.tsx";
@@ -45,10 +42,7 @@ const Header: React.FC = observer(() => {
     }
   }
 
-  const handleLogout = () => {
-    logoutUser();
-  };
-
+  
   return (
     <header className="header bg-pale-orange drop-shadow-md">
       <div className="header-left-comp">
@@ -77,25 +71,6 @@ const Header: React.FC = observer(() => {
           <div className="bell-container">
             <BellButton />
           </div>
-          <Menu.Root>
-            <Menu.Trigger asChild>
-              <Button variant="ghost" p={1}>
-                <FaCog size={24} />
-              </Button>
-            </Menu.Trigger>
-            <Menu.Positioner>
-              <Menu.Content>
-                <Menu.Item value="account">
-                  <Link to="/account">My Account</Link>
-                </Menu.Item>
-                <Menu.Item value="logout">
-                  <Link onClick={handleLogout} to="/login">
-                    Logout
-                  </Link>
-                </Menu.Item>
-              </Menu.Content>
-            </Menu.Positioner>
-          </Menu.Root>
           <UserButton />
         </div>
       </div>
