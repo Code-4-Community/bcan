@@ -6,7 +6,7 @@ import { UserStatus } from "../../../../middle-layer/types/UserStatus";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { User } from "../../../../middle-layer/types/User";
 import { toJS } from "mobx";
-import { moveUserToActive } from "./UserActions";
+import { moveUserToActive, removeUser } from "./UserActions";
 import { useState } from "react";
 
 
@@ -16,42 +16,6 @@ interface PendingUserCardProps {
   name: string;
   email: string;
   position: string;
-}
-
-
-
-const approveInactiveUser = async (user: User) => {
-  const store = getAppStore();
-  console.log("Approving user:", user);
-  console.log("requested user", store.user);
-  try {
-    const body = JSON.stringify({
-      user: user as User,
-      groupName: "Employee" as UserStatus,
-      requestedBy: toJS(store.user)
-    })
-    console.log("Request body:", body);
-    const response = await api("/user/change-role", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'  // ← Add this!
-      }, body: body
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP Error, Status: ${response.status}`);
-    }
-
-    const updatedUser = await response.json();
-    if (response.ok) {
-        alert(`${name} approved successfully`);
-        moveUserToActive(updatedUser);
-      } else {
-        alert("Failed to approve user");
-      }
-  }
-  catch (error) {
-    console.error("Error activating user:", error);
-  }
 }
 
 
@@ -71,13 +35,19 @@ const PendingUserCard = ({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          username: name,
+          user: {
+            userId: name,
+            email: email,
+            position: position as UserStatus,
+          } as User,
           groupName: "Employee",
-          requestedBy: currentUsername,
+          requestedBy: toJS(store.user) as User,
         }),
       });
       if (response.ok) {
         alert(`${name} approved successfully`);
+        const body = await response.json();
+        moveUserToActive(body as User)
       } else {
         alert("Failed to approve user");
       }
@@ -97,10 +67,14 @@ const PendingUserCard = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: name,
+          groupName: "Employee",
+          requestedBy: currentUsername,
         }),
       });
       if (response.ok) {
         alert(`${name} rejected successfully`);
+        const body = await response.json();
+        removeUser(body)
       } else {
         alert("Failed to reject user");
       }

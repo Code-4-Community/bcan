@@ -34,6 +34,14 @@ export class UserController {
       return newUser as User;
     }
 
+    @Post('delete-user')
+    async deleteUser(
+      @Body('username') username: string,
+    ): Promise<User> {
+      let user = await this.userService.deleteUser(username);
+      return user as User;
+    }
+
    @Get(':id')
   async getUserById(@Param('id') userId: string) {
     return await this.userService.getUserById(userId);
