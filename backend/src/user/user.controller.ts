@@ -1,4 +1,4 @@
-import { Controller, Get, Param,Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from '../../../middle-layer/types/User';
 import { UserStatus } from '../../../middle-layer/types/UserStatus';
@@ -34,8 +34,20 @@ export class UserController {
       return newUser as User;
     }
 
+    @Post('delete-user')
+    async deleteUser(
+      @Body('user') user: User,
+      @Body('requestedBy') requestedBy: User,
+    ): Promise<User> {
+      let deletedUser = await this.userService.deleteUser(user, requestedBy);
+      return user as User;
+    }
+
    @Get(':id')
   async getUserById(@Param('id') userId: string) {
     return await this.userService.getUserById(userId);
   }
+
+
+
 }
