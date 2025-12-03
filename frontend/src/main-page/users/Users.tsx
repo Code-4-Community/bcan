@@ -1,26 +1,75 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ApprovedUserCard from "./ApprovedUserCard";
 import PendingUserCard from "./PendingUserCard";
+import { User } from "../../../../middle-layer/types/User";
 import { Pagination, ButtonGroup, IconButton } from "@chakra-ui/react";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import { observer } from "mobx-react-lite";
 import { getAppStore } from "../../external/bcanSatchel/store";
-import { Navigate } from "react-router-dom";
-import { UserStatus } from "../../../../middle-layer/types/UserStatus";
-import { useAuthContext } from "../../context/auth/authContext";
 
 // Represents a specific tab to show on the user page
 enum UsersTab {
   PendingUsers,
   CurrentUsers,
 }
+import { api } from "../../api"
+import { Navigate } from "react-router-dom";
+import { UserStatus } from "../../../../middle-layer/types/UserStatus";
+import { useAuthContext } from "@/context/auth/authContext";
+
+const fetchActiveUsers = async (): Promise<User[]> => {
+  try {
+    const response = await api("/user/active", {
+      method: 'GET'
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP Error, Status: ${response.status}`);
+    }
+    
+    const activeUsers = await response.json();
+    return activeUsers as User[];
+  } catch (error) {
+    console.error("Error fetching active users:", error);
+    return []; // Return empty array on error
+  }
+}
+
+const fetchInactiveUsers = async () => {
+  try {
+    const response = await api("/user/inactive", {method : 'GET' });
+    if (!response.ok) {
+      throw new Error(`HTTP Error, Status: ${response.status}`);
+    }
+    const inactiveUsers = await response.json();
+    return inactiveUsers as User[];
+  }
+  catch (error) {
+    console.error("Error fetching active users:", error);
+  }
+}
+
 
 const ITEMS_PER_PAGE = 8;
 
 const Users = observer(() => {
   const store = getAppStore();
-
-  const { user } = useAuthContext();
+  const { user } = useAuthContext()
+  
+  
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const active = await fetchActiveUsers();
+      const inactive = await fetchInactiveUsers();
+      if (active) {
+        store.activeUsers = active;
+      }
+      if (inactive) {
+store.inactiveUsers = inactive;    }
+    };
+    fetchUsers();
+  
+  }, []);
 
   const [usersTabStatus, setUsersTabStatus] = useState<UsersTab>(
     UsersTab.CurrentUsers
@@ -169,6 +218,6 @@ const Users = observer(() => {
   ) : (
     <Navigate to="/login" replace />
   );
-});
+})
 
 export default Users;

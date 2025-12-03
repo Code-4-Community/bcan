@@ -6,61 +6,16 @@ import { UserStatus } from "../../../../middle-layer/types/UserStatus";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { User } from "../../../../middle-layer/types/User";
 import { toJS } from "mobx";
-import { moveUserToActive } from "./UserActions";
+import { moveUserToActive, removeUser } from "./UserActions";
+import { useState } from "react";
+
+
+const store = getAppStore();
 
 interface PendingUserCardProps {
   userId: string;
   email: string;
   position: UserStatus;
-}
-const approveInactiveUser = async (user: User) => {
-  const store = getAppStore();
-  console.log("Approving user:", user);
-  console.log("requested user", store.user);
-  try {
-    const body = JSON.stringify({
-      user: user as User,
-      groupName: "Employee" as UserStatus,
-      requestedBy: toJS(store.user)
-    })
-    console.log("Request body:", body);
-    const response = await api("/user/change-role", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'  // ← Add this!
-      }, body: body
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP Error, Status: ${response.status}`);
-    }
-
-    const updatedUser = await response.json();
-    moveUserToActive(updatedUser);
-  }
-  catch (error) {
-    console.error("Error activating user:", error);
-  }
-}
-
-
-const deleteUser = async (username: string) => {
-  const store = getAppStore();
-  try {
-    const response = await api("/auth/delete-user", {
-      method: 'POST', body: JSON.stringify({
-        username: username,
-      })
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP Error, Status: ${response.status}`);
-    }
-
-    const updatedUser = await response.json();
-    store.inactiveUsers = store.inactiveUsers.filter((user) => user.userId !== updatedUser.userId);
-  }
-  catch (error) {
-    console.error("Error activating user:", error);
-  }
 }
 
 
@@ -69,6 +24,70 @@ const PendingUserCard = ({
   email,
   position,
 }: PendingUserCardProps) => {
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const approveUser = async () => {
+    setIsLoading(true);
+    try {
+      const response = await api("/user/change-role", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user: {
+            userId,
+            email,
+            position
+          } as User,
+          groupName: "Employee",
+          requestedBy: toJS(store.user) as User,
+        }),
+      });
+      if (response.ok) {
+        alert(`User ${name} has been approved successfully`);
+        const body = await response.json();
+        moveUserToActive(body as User)
+      } else {
+        alert("Failed to approve user");
+      }
+    } catch (error) {
+      console.error("Error approving user:", error);
+      alert("Error approving user");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const rejectUser = async () => {
+    setIsLoading(true);
+    try {
+      const response = await api("user/delete-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user: {
+            userId,
+            email: email,
+            position,
+          } as User,
+          requestedBy: toJS(store.user) as User,
+        }),
+      });
+      if (response.ok) {
+        alert(`User ${name} has been deleted successfully`);
+        const body = await response.json();
+        removeUser(body)
+      } else {
+        alert("Failed to reject user");
+      }
+    } catch (error) {
+      console.error("Error rejecting user:", error);
+      alert("Error rejecting user");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="bg-white text-lg border rounded-md m-6 p-6 flex justify-around items-center">
       <p className="font-semibold w-[140px] text-left">{userId}</p>
@@ -77,10 +96,16 @@ const PendingUserCard = ({
         <UserPositionCard position={position} />
       </div>
       <div className="flex w-[140px] gap-3">
-        <button className="bg-[#c6fbd3] w-8 h-8 focus:outline-none rounded" onClick={() => approveInactiveUser({ userId: userId, email: email, position: position as UserStatus } as User)}>
+        <button 
+          className="bg-[#c6fbd3] w-8 h-8 focus:outline-none rounded"
+          onClick={approveUser}
+          disabled={isLoading}>
           <FontAwesomeIcon icon={faCheck} style={{ color: "black" }} />
         </button>
-        <button className="bg-[#fe9d92] w-8 h-8 focus:outline-none rounded" onClick={() => deleteUser(userId)}>
+        <button 
+        className="bg-[#fe9d92] w-8 h-8 focus:outline-none rounded"
+          onClick={rejectUser}
+          disabled={isLoading}>
           <FontAwesomeIcon icon={faX} style={{ color: "black" }} />
         </button>
       </div>

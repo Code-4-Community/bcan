@@ -8,7 +8,7 @@ import {
   ConflictException,
   HttpException,
 } from "@nestjs/common";
-import AWS from "aws-sdk";
+import * as AWS from "aws-sdk";
 import { User } from "../../../middle-layer/types/User";
 import { UserStatus } from "../../../middle-layer/types/UserStatus";
 
@@ -21,6 +21,161 @@ export class UserService {
 
   private readonly logger = new Logger(UserService.name);
   private dynamoDb = new AWS.DynamoDB.DocumentClient();
+  private ses = new AWS.SES({ region: process.env.AWS_REGION });
+
+ async deleteUser(user: User, requestedBy: User): Promise<User> {
+  const userPoolId = process.env.COGNITO_USER_POOL_ID;
+  const tableName = process.env.DYNAMODB_USER_TABLE_NAME;
+  const username = user.userId;
+
+  // 1. Validate environment variables
+  if (!userPoolId) {
+    this.logger.error("Cognito User Pool ID is not defined in environment variables");
+    throw new InternalServerErrorException("Server configuration error");
+  }
+
+  if (!tableName) {
+    this.logger.error("DynamoDB User Table Name is not defined in environment variables");
+    throw new InternalServerErrorException("Server configuration error");
+  }
+
+  // 2. Validate input
+  if (!user || !user.userId) {
+    throw new BadRequestException("Valid user object is required");
+  }
+
+  if (!requestedBy || !requestedBy.userId) {
+    throw new BadRequestException("Valid requesting user is required");
+  }
+
+  // 3. Authorization check
+  if (requestedBy.position !== UserStatus.Admin) {
+    this.logger.warn(
+      `Unauthorized deletion attempt: ${requestedBy.userId} tried to delete ${username}`
+    );
+    throw new UnauthorizedException("Only administrators can delete users");
+  }
+
+  // 4. Prevent self-deletion
+  if (requestedBy.userId === username) {
+    throw new BadRequestException("Administrators cannot delete their own account");
+  }
+
+  // 5. Verify user exists in DynamoDB (data might be stale)
+  let userToDelete: User;
+  try {
+    const params = {
+      TableName: tableName,
+      Key: { userId: username },
+    };
+
+    const result = await this.dynamoDb.get(params).promise();
+
+    if (!result.Item) {
+      this.logger.warn(`User ${username} not found in database`);
+      throw new NotFoundException(`User '${username}' does not exist`);
+    }
+
+    userToDelete = result.Item as User;
+  } catch (error) {
+    if (error instanceof HttpException) {
+      throw error;
+    }
+    this.logger.error(`Error checking user existence: ${username}`, error);
+    throw new InternalServerErrorException("Failed to verify user existence");
+  }
+
+  // 6. Delete from DynamoDB first (easier to rollback Cognito than DynamoDB)
+  let dynamoDeleted = false;
+  try {
+    const deleteParams = {
+      TableName: tableName,
+      Key: { userId: username },
+      ReturnValues: "ALL_OLD" as const,
+    };
+
+    const deleteResult = await this.dynamoDb.delete(deleteParams).promise();
+
+    if (!deleteResult.Attributes) {
+      throw new InternalServerErrorException(
+        "Failed to delete user from database"
+      );
+    }
+
+    dynamoDeleted = true;
+    this.logger.log(`✓ User ${username} deleted from DynamoDB`);
+  } catch (error: any) {
+    this.logger.error(`Failed to delete ${username} from DynamoDB:`, error);
+
+    if (error instanceof HttpException) {
+      throw error;
+    }
+
+    throw new InternalServerErrorException(
+      "Failed to delete user from database"
+    );
+  }
+
+  // 7. Delete from Cognito
+  try {
+    await this.cognito
+      .adminDeleteUser({
+        UserPoolId: userPoolId,
+        Username: username,
+      })
+      .promise();
+
+    this.logger.log(`✓ User ${username} deleted from Cognito`);
+  } catch (cognitoError: any) {
+    this.logger.error(
+      `Failed to delete ${username} from Cognito:`,
+      cognitoError
+    );
+
+    // Rollback: Restore user in DynamoDB
+    if (dynamoDeleted) {
+      this.logger.warn(
+        `Attempting rollback: restoring ${username} to DynamoDB...`
+      );
+
+      try {
+        await this.dynamoDb
+          .put({
+            TableName: tableName,
+            Item: userToDelete,
+          })
+          .promise();
+
+        this.logger.log(`✓ Rollback successful: User ${username} restored`);
+      } catch (rollbackError) {
+        this.logger.error(
+          `Rollback failed: Could not restore ${username}`,
+          rollbackError
+        );
+        this.logger.error(
+          `CRITICAL: User ${username} deleted from DynamoDB but not from Cognito - manual sync required`
+        );
+      }
+    }
+
+    // Handle specific Cognito errors
+    if (cognitoError.code === "UserNotFoundException") {
+      throw new NotFoundException(
+        `User '${username}' not found in authentication system`
+      );
+    }
+
+    throw new InternalServerErrorException(
+      "Failed to delete user from authentication system"
+    );
+  }
+
+  this.logger.log(
+    `✅ User ${username} deleted successfully by ${requestedBy.userId}`
+  );
+
+  return userToDelete;
+}
 
   async getAllUsers(): Promise<any> {
     const params = {
@@ -273,7 +428,7 @@ export class UserService {
       const data = await this.dynamoDb.get(params).promise();
       return data.Item;
     } catch (error) {
-      throw new Error("Could not retrieve user.");
+      throw new Error('Could not retrieve user.');
     }
   }
 
@@ -345,5 +500,39 @@ export class UserService {
         "Failed to retrieve inactive users."
       );
     }
+  }
+
+
+
+  // sends email to user once account is approved, used in method above when a user
+  // is added to the Employee or Admin group from Inactive
+  async sendVerificationEmail(userEmail: string): Promise<AWS.SES.SendEmailResponse> {
+      // may want to have the default be the BCAN email or something else
+      const fromEmail = process.env.NOTIFICATION_EMAIL_SENDER ||
+      'u&@nveR1ified-failure@dont-send.com';
+
+      const params: AWS.SES.SendEmailRequest = {
+        Source: fromEmail,
+        Destination: {
+          ToAddresses: [userEmail],
+        },
+        Message: {
+          // UTF-8 is a top reliable way to define special characters and symbols in emails
+          Subject: { Charset: 'UTF-8', Data: "BCAN Account Approval" },
+          Body: {
+            Text: { Charset: 'UTF-8', Data: "Your account has been approved; Try using your login credentials now!" },
+          },
+        },
+      };
+
+      try {
+        const result = await this.ses.sendEmail(params).promise();
+        this.logger.log(`Verification email sent to ${userEmail}`);
+        return result;
+      } catch (err: unknown) {
+        this.logger.error('Error sending email: ', err);
+        const errMessage = (err instanceof Error) ? err.message : 'Generic'; 
+        throw new Error(`Failed to send email: ${errMessage}`);
+      }
   }
 }

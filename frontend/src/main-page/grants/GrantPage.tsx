@@ -15,8 +15,9 @@ import {
   updateYearFilter,
 } from "../../external/bcanSatchel/actions.ts";
 import { toJS } from "mobx";
-import { UserStatus } from "../../../../middle-layer/types/UserStatus.ts";
-import { Navigate } from "react-router-dom";
+
+import { fetchGrants } from "./filter-bar/processGrantData.ts";
+
 
 interface GrantPageProps {
   showOnlyMyGrants?: boolean; //if true, filters grants by user email
@@ -24,6 +25,7 @@ interface GrantPageProps {
 
 function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
   const [showNewGrantModal, setShowNewGrantModal] = useState(false);
+  const [wasGrantSubmitted, setWasGrantSubmitted] = useState(false);
   const [selectedGrant, setSelectedGrant] = useState<Grant | null>(null);
 
   const { user } = useAuthContext(); //gets current logged in user
@@ -40,42 +42,46 @@ function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
     updateStartDateFilter(null);
   }, []);
 
-  return user ? (
-    user?.position !== UserStatus.Inactive ? (
-      <div className="grant-page px-8">
-        <div className="top-half"></div>
+  useEffect(() => {
+    if (!showNewGrantModal && wasGrantSubmitted) {
+      fetchGrants();
+      setWasGrantSubmitted(false);
+      console.log("Use effect called in GrantPage");
+    }
+  }, [showNewGrantModal, wasGrantSubmitted]);
+
+  return (
+    <div className="grant-page px-8">
+      <div className="top-half">
+      </div>
         <div className="flex justify-end align-middle p-4 gap-4">
           <GrantSearch />
           <AddGrantButton onClick={() => setShowNewGrantModal(true)} />
         </div>
-        <div className="grid grid-cols-5 gap-8 px-4">
-          <div className="col-span-1">
-            <FilterBar />
-          </div>
-          <div className="bot-half col-span-4">
-            <div className="grant-list-container">
-              <GrantList
-                selectedGrantId={
-                  selectedGrant ? selectedGrant.grantId : undefined
-                }
-                onClearSelectedGrant={() => setSelectedGrant(null)}
-                currentUserEmail={currentUserEmail}
-                showOnlyMyGrants={showOnlyMyGrants}
-              />
-            </div>
-          </div>
+      <div className="grid grid-cols-5 gap-8 px-4">
+        <div className="col-span-1">
+          <FilterBar/>
         </div>
-        <div className="hidden-features">
-          {showNewGrantModal && (
-            <NewGrantModal onClose={() => setShowNewGrantModal(false)} />
-          )}
+        <div className="bot-half col-span-4">
+          <div className="grant-list-container">
+            <GrantList
+              selectedGrantId={
+                selectedGrant ? selectedGrant.grantId : undefined
+              }
+              onClearSelectedGrant={() => setSelectedGrant(null)}
+              currentUserEmail={currentUserEmail}
+              showOnlyMyGrants={showOnlyMyGrants}
+            />
+          </div>
         </div>
       </div>
-    ) :
-    <Navigate to="restricted" replace />
-  ) : (
-    <Navigate to="/login" replace />
+      <div className="hidden-features">
+        {showNewGrantModal && (
+          <NewGrantModal grantToEdit={null} onClose={async () => {setShowNewGrantModal(false); setWasGrantSubmitted(true);} } isOpen={showNewGrantModal}  />
+        )}
+      </div>
+    </div>
   );
-}
+} 
 
 export default GrantPage;
