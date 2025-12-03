@@ -19,6 +19,7 @@
 }
 
 .account-popup {
+  position: relative;
   padding: 20px 40px;
   background-color: white;
   border: 3px solid #2d2d2d;
