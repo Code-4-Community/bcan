@@ -70,7 +70,7 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
 );
   
   // Used
-  const [timelineInYears, _setTimelineInYears] = useState<number>(grantToEdit? grantToEdit.timeline : 0);
+  const [timelineInYears, _setTimelineInYears] = useState<number>(grantToEdit? grantToEdit.timeline : 1);
 
   // Used
   const [estimatedCompletionTimeInHours, _setEstimatedCompletionTimeInHours] = useState<number>(grantToEdit? grantToEdit.estimated_completion_time : 10);
@@ -89,7 +89,7 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
 );
 
   // Used
-  const [amount, _setAmount] = useState<number>(grantToEdit? grantToEdit.amount : 0);
+  const [amount, _setAmount] = useState<number>(grantToEdit? grantToEdit.amount : 1000);
   // Used
   const [description, _setDescription] = useState<string>(grantToEdit? grantToEdit.description? grantToEdit.description : "" : "");
 
@@ -391,7 +391,7 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
               {/*Organization name and input */}
               <div className="w-full md:mb-0">
                 <label className="font-family-helvetica text-lg flex block text-black  mb-1" htmlFor="grid-first-name">
-                  Organization Name
+                  Organization Name *
                 </label>
                 <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                 className=" font-family-helvetica block w-full text-black placeholder:text-gray-400 border rounded py-3 px-4 mb-3 leading-tight" 
@@ -413,7 +413,7 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
                   {/*Application date and input */}
                   <div className="w-1/2">
                     <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-city">
-                    Application Date
+                    Application Date *
                     </label>
                     <input style={{height: "48px", backgroundColor: '#F2EBE4',borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color: applicationDate ? "black" : "gray"}}
                     className="font-family-helvetica appearance-none block w-full border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
@@ -425,7 +425,7 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
                   {/*Grant Start Date and input */}
                   <div className=" w-1/2">
                     <label className="font-family-helvetica flex block tracking-wide text-black text-black text-lg mb-1" htmlFor="grid-state">
-                      Grant Start Date
+                      Grant Start Date *
                     </label>
                       <input style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color: grantStartDate ? "black" : "gray"}}
                       className="font-family-helvetica w-full appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
@@ -439,7 +439,7 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
                 {/*Estimated completition time and input - need to make wider (length of application date and grant start date)*/}
                 <div className="w-full mt-10">
                   <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-state">
-                  Estimated Completion Time (in hours)
+                  Estimated Completion Time (in hours) *
                   </label>
                   <input type="number" 
                   min = "0"
@@ -502,7 +502,7 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
               {/*Timeline label and input */}
               <div className="w-full -mt-4">
                 <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
-                  Timeline (in years)
+                  Timeline (in years) *
                 </label>
                 <input  style={{height: "42px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                 className="font-family-helvetica appearance-none block w-full bg-gray-200 text-black placeholder:text-gray-400 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
@@ -512,7 +512,7 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
               {/*Amount label and input */}
               <div className="w-full mt-5 md:mb-0 ">
                 <label className="font-family-helvetica flex block tracking-wide text-black placeholder:text-gray-400 text-lg mb-1" htmlFor="grid-first-name">
-                  Amount (in $)
+                  Amount (in $) *
                 </label>
                 <CurrencyInput style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                 className="font-family-helvetica appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
@@ -529,7 +529,7 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
               {/*BCAN POC div*/}
               <div className="w-full pr-3">
                   <label className="font-family-helvetica mb-1 flex block tracking-wide text-black text-lg" htmlFor="grid-zip">
-                      BCAN POC
+                      BCAN POC *
                   </label>
                   {/*Box div*/} 
                   <div className="items-center flex p-3 rounded h-full" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}>
@@ -572,7 +572,7 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
                   {/*Qualify label and input */}
                   <div className="w-full ">
                     <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
-                      Does BCAN qualify?
+                      Does BCAN qualify? *
                     </label>
                     <select style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color : doesBcanQualify == "" ? "gray" : "black"}}
                       className="font-family-helvetica appearance-none block w-full bg-gray-200 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
@@ -603,7 +603,7 @@ const [reportDates, setReportDates] = useState<(TDateISO | "")[]>(
                   {/*Restriction types label and input */}
                   <div className="w-full  md:mb-0 mt-5">
                     <label className="font-family-helvetica flex block tracking-wide text-black text-lg mb-1" htmlFor="grid-first-name">
-                      Restriction types
+                      Restriction type *
                     </label>
                     <select style={{height: "48px", backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px', color : isRestricted == "" ? "gray" : "black"}}
                       className="font-family-helvetica appearance-none block w-full bg-gray-200 border border-red-500 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white" 
