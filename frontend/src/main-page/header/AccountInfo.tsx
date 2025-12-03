@@ -10,14 +10,14 @@ interface AccountInfoProps {
   email: string;
   username: string;
   role: string;
-  setShowAccountInfo: (show: boolean) => void;
+  setOpenModal: (modal: string | null) => void;
 }
 
 const AccountInfo: React.FC<AccountInfoProps> = ({
   email,
   username,
   role,
-  setShowAccountInfo,
+  setOpenModal,
 }) => {
 
   const navigate = useNavigate();
@@ -27,12 +27,12 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
 
   const handleUserListClick = () => {
     navigate('users');
-    setShowAccountInfo(false);
+    setOpenModal(null);
   };
 
   const handleLogoutClick = () => {
     logoutUser();
-    setShowAccountInfo(false);
+    setOpenModal(null);
   };
 
   return createPortal(

@@ -4,18 +4,18 @@ import '../../styles/notification.css';
 
 interface NotificationPopupProps {
     notifications: { id: number; title: string; message: string }[];
-    onClose: () => void;
+    setOpenModal: (value: string | null) => void;
 }
 
 const NotificationPopup: React.FC<NotificationPopupProps> = ({
     notifications,
-    onClose
+    setOpenModal
 }) => {
     return createPortal(
         <div className="notification-popup" role="dialog" aria-label="Notifications">
             <div className="popup-header">
                 <h3>Alerts</h3>
-                <button className="close-button" onClick={onClose} aria-label="Close notifications">
+                <button className="close-button" onClick={() => setOpenModal(null)} aria-label="Close notifications">
                     ✕
                 </button>
             </div>

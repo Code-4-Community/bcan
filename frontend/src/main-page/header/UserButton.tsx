@@ -6,12 +6,15 @@ import AccountInfo from "./AccountInfo";
 import "./styles/UserButton.css";
 import { useAuthContext } from "../../context/auth/authContext";
 
+interface UserButtonProps {
+  setOpenModal: (modal: string | null) => void;
+  openModal: string | null;
+}
 
-const UserButton = () => {
-  const [showAccountInfo, setShowAccountInfo] = useState(false);
+const UserButton: React.FC<UserButtonProps> = ({ setOpenModal, openModal }) => {
   const { user } = useAuthContext();
   const toggleAccountInfo = () => {
-    setShowAccountInfo(!showAccountInfo);
+    setOpenModal(openModal === "user" ? null : "user");
   };
   
 
@@ -22,19 +25,19 @@ const UserButton = () => {
         style={{ position: "relative", display: "inline-block" }}
       >
         <button
-          className={`user-button ${showAccountInfo ? "hovered" : ""}`}
+          className={`user-button ${openModal === "user" ? "hovered" : ""}`}
           onClick={toggleAccountInfo}
           style={{ background: "none", position: "relative" }}
         >
           <FontAwesomeIcon icon={faUser} style={{ color: "black" }} />
         </button>
 
-        {showAccountInfo && (
+        {openModal === "user" && (
           <AccountInfo
             email={user?.email ?? ""}
             username={user?.userId ?? ""}
             role={user?.position ?? ""}
-            setShowAccountInfo={setShowAccountInfo}
+            setOpenModal={setOpenModal}
           />
         )}
       </div>

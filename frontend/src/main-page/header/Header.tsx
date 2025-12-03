@@ -12,6 +12,7 @@ import { observer } from "mobx-react-lite";
 import BellButton from "./Bell.tsx";
 import { useLocation } from 'react-router-dom';
 import UserButton from "./UserButton.tsx";
+import { useState } from "react";
 
 interface NavBarProps {
   name: string;
@@ -30,6 +31,7 @@ const linkList: NavBarProps[] = [
  * The cog displays a dropdown with "My Account" and "Logout" options.
  */
 const Header: React.FC = observer(() => {
+  const [openModal, setOpenModal] = useState<string | null>(null);
 
   function categoryClicked(
     e: React.MouseEvent,
@@ -68,10 +70,12 @@ const Header: React.FC = observer(() => {
           ))}
         </ul>
         <div className="header-right-controls flex items-center gap-2">
-          <div className="bell-container">
-            <BellButton />
+          <div className="bell-container" onClick={() => setOpenModal(openModal === "bell" ? null : "bell")}>
+            <BellButton setOpenModal={setOpenModal} openModal={openModal} />
           </div>
-          <UserButton />
+          <div className="user-container" onClick={() => setOpenModal(openModal === "user" ? null : "user")}>
+            <UserButton setOpenModal={setOpenModal} openModal={openModal} />
+          </div>
         </div>
       </div>
     </header>
