@@ -2,6 +2,7 @@ import { createStore } from 'satcheljs';
 import { User } from '../../../../middle-layer/types/User'
 import { Grant } from '../../../../middle-layer/types/Grant'
 import { Status } from '../../../../middle-layer/types/Status'
+import { Notification } from '../../../../middle-layer/types/Notification'
 
 export interface AppState {
   isAuthenticated: boolean;
@@ -16,7 +17,7 @@ export interface AppState {
   yearFilter:number[] | [];
   activeUsers: User[] | [];
   inactiveUsers: User[] | [];
-  notifications: { id: number; title: string; message: string; }[];
+  notifications: Notification[];
 }
 
 // Define initial state
