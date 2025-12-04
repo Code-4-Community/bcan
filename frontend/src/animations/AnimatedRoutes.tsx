@@ -10,6 +10,8 @@ import MainPage from "../main-page/MainPage";
 import Login from "../Login";
 import Register from "../Register";
 import RegisterLanding from "../RegisterLanding";
+import { getAppStore } from "../external/bcanSatchel/store"
+import RestrictedPage from "../main-page/restricted/RestrictedPage";
 
 /**
  * AnimatedRoutes:
@@ -19,33 +21,43 @@ import RegisterLanding from "../RegisterLanding";
 const AnimatedRoutes = observer(() => {
   const location = useLocation();
   const { isAuthenticated } = useAuthContext();
+  const user = getAppStore().user;
 
   return (
     <Routes location={location}>
-          <Route
-            path="/login"
-            element={isAuthenticated ? <Navigate to="/main/all-grants" /> : <Login />}
-          />
-          <Route
-            path="/register"
-            element={
-              isAuthenticated ? <Navigate to="/main/all-grants" /> : <Register />
-            }
-          /> 
-          <Route
-            path="/registered"
-            element={
-             <RegisterLanding />
-            }
-          /> 
-          <Route path="/main/*" element={<MainPage/>} />
-          <Route
-            path="*"
-            element={
-              <Navigate to={isAuthenticated ? "/main/all-grants" : "/login"} />
-            }
-          />
-        </Routes>
+      <Route
+        path="/login"
+        element={isAuthenticated ? <Navigate to="/main/all-grants" /> : <Login />}
+      />
+      <Route
+        path="/register"
+        element={
+          isAuthenticated ? <Navigate to="/main/all-grants" /> : <Register />
+        }
+      /> 
+      <Route
+        path="/registered"
+        element={<RegisterLanding />}
+      />
+      <Route path="/restricted" element={<RestrictedPage/>} />
+      
+      {/* Check user status and render MainPage or redirect */}
+      <Route 
+        path="/main/*" 
+        element={
+          user?.position === "Inactive" 
+            ? <Navigate to="/restricted" replace /> 
+            : <MainPage />
+        } 
+      />
+      
+      <Route
+        path="*"
+        element={
+          <Navigate to={isAuthenticated ? "/main/all-grants" : "/login"} />
+        }
+      />
+    </Routes>
   );
 });
 
