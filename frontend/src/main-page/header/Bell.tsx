@@ -1,23 +1,26 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
-//import { api } from "../../api"; //todo: swap out dummy data with real api fetch when backend is ready
+import { useEffect } from "react";
 import NotificationPopup from "../notifications/NotificationPopup";
 import { setNotifications as setNotificationsAction } from "../../external/bcanSatchel/actions";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { observer } from "mobx-react-lite";
+import { api } from "../../api";
 
 // get current user id
 // const currUserID = sessionStorage.getItem('userId');
 // const currUserID = "bcanuser33";
 
-const BellButton =  observer(() => {
+interface BellButtonProps {
+  // onClick handler to open notification popup
+  setOpenModal: (modal: string | null) => void;
+  openModal: string | null;
+}
+
+const BellButton: React.FC<BellButtonProps> = observer(({ setOpenModal, openModal }) => {
   // stores notifications for the current user
   const store = getAppStore();
   const notifications = store.notifications ?? [];
-
-  // determines whether bell has been clicked
-  const [isClicked, setClicked] = useState(false);
 
   // logs the notifications for the current user whenever they are fetched
   useEffect(() => {
@@ -26,36 +29,18 @@ const BellButton =  observer(() => {
 
   // function that handles when button is clicked and fetches notifications
   const handleClick = async () => {
-    //temporary dummy data for now
-    const dummyNotifications = [
-      {
-        id: 1,
-        title: "Grant Deadline",
-        message: "Grant A deadline approaching in 3 days",
-      },
-      { id: 2, title: "Grant Deadline", message: "Grant B deadline tomorrow!" },
-      {
-        id: 3,
-        title: "Grant Deadline",
-        message: "Grant C deadline passed yesterday!",
-      },
-      { id: 4, title: "Grant Deadline", message: "Grant D deadline tomorrow!" },
-    ];
-    //previous api logic (for later)
-    //const response = await api(
-    //`/notifications/user/${currUserID}`,
-    //{
-    //method: "GET",
-    //}
-    //);
-    //console.log(response);
-    //const currNotifications = await response.json();
-    setNotificationsAction(dummyNotifications);
-    setClicked(!isClicked);
+    const response = await api(
+    `/notifications/user/${store.user?.userId}/current`,
+    {
+    method: "GET",
+    }
+    );
+    console.log(response);
+    const currNotifications = await response.json();
+    setNotificationsAction(currNotifications);
+    setOpenModal(openModal === "bell" ? null : "bell");
     return notifications;
   };
-
-  const handleClose = () => setClicked(false);
 
   return (
     <div className="bell-container">
@@ -64,7 +49,7 @@ const BellButton =  observer(() => {
         style={{ position: "relative", display: "inline-block" }}
       >
         <button
-          className={`bell-button ${isClicked ? "hovered" : ""}`}
+          className={`bell-button ${openModal === "bell" ? "hovered" : ""}`}
           onClick={handleClick}
           style={{ background: "none", position: "relative" }}
         >
@@ -90,12 +75,11 @@ const BellButton =  observer(() => {
         )}
       </div>
 
-      {isClicked && (
+      {(openModal === "bell" ? (
         <NotificationPopup
-          notifications={notifications}
-          onClose={handleClose}
+          setOpenModal={setOpenModal}
         />
-      )}
+      ) : null)}
     </div>
   );
 });

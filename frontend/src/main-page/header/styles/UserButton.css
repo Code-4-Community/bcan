@@ -1,0 +1,23 @@
+
+.user-container {
+    display: inline-block;
+}
+
+.user-container button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    padding: 8px;
+    border-radius: 5px;
+}
+
+.user-button.hovered {
+    background-color: #f39c12;
+    color: white;
+}
+
+.user-button:hover {
+    background-color: #f39c12;
+    color: white;
+} 
