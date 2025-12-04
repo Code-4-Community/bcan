@@ -305,6 +305,29 @@ export class UserService {
         .promise();
 
       this.logger.log(`✓ User ${username} added to Cognito group ${groupName}`);
+
+      // Send verification email if moving from Inactive to employee group
+      if (
+        previousGroup === UserStatus.Inactive &&
+        groupName === UserStatus.Employee
+      ) {
+        try {
+          await this.sendVerificationEmail(user.email);
+          this.logger.log(
+            `✓ Verification email sent to ${user.email} upon group change to ${groupName}`
+          );
+        } catch (emailError) {
+          this.logger.error(
+            `Failed to send verification email to ${username}:`,
+            emailError
+          );
+        }
+      }
+      else {
+        this.logger.log(
+          `No verification email sent to ${username}. Previous group: ${previousGroup}, New group: ${groupName}`
+        );
+      }
     } catch (cognitoError: any) {
       this.logger.error(
         `Failed to add ${username} to Cognito group ${groupName}:`,
@@ -507,9 +530,9 @@ export class UserService {
   // sends email to user once account is approved, used in method above when a user
   // is added to the Employee or Admin group from Inactive
   async sendVerificationEmail(userEmail: string): Promise<AWS.SES.SendEmailResponse> {
-      // may want to have the default be the BCAN email or something else
+      // remove actual email and add to env later!!
       const fromEmail = process.env.NOTIFICATION_EMAIL_SENDER ||
-      'u&@nveR1ified-failure@dont-send.com';
+      'c4cneu.bcan@gmail.com';
 
       const params: AWS.SES.SendEmailRequest = {
         Source: fromEmail,
