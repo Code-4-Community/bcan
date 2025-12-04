@@ -2,6 +2,7 @@ import { createStore } from 'satcheljs';
 import { User } from '../../../../middle-layer/types/User'
 import { Grant } from '../../../../middle-layer/types/Grant'
 import { Status } from '../../../../middle-layer/types/Status'
+import { Notification } from '../../../../middle-layer/types/Notification'
 
 export interface AppState {
   isAuthenticated: boolean;
@@ -16,8 +17,8 @@ export interface AppState {
   yearFilter:number[] | [];
   activeUsers: User[] | [];
   inactiveUsers: User[] | [];
-  notifications: { id: number; title: string; message: string; }[];
   sort: {header: keyof Grant, asc: boolean} | null;
+  notifications: Notification[];
 }
 
 // Define initial state
@@ -93,6 +94,5 @@ export function persistToSessionStorage() {
  */
 export function getAppStore() {
   const state = store();
-  console.log('Current store.user:', state.user); // Debug: log current user when accessed
   return state;
 }
