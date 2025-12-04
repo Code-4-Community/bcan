@@ -8,4 +8,5 @@ export interface Notification {
     userId: string;
     message: string;
     alertTime: TDateISO; // Sort
+    sent: boolean; // email has been sent for this notification
   }
