@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { getAppStore } from "../../../external/bcanSatchel/store";
 import { fetchAllGrants } from "../../../external/bcanSatchel/actions";
 import { Grant } from "../../../../../middle-layer/types/Grant";

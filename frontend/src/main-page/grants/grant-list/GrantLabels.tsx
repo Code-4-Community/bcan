@@ -1,4 +1,3 @@
-import React from "react";
 import "../styles/GrantLabels.css";
 import { useState } from "react";
 import { Grant } from "../../../../../middle-layer/types/Grant";
