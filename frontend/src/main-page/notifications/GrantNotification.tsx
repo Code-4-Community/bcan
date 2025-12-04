@@ -3,11 +3,22 @@ import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { FaTrash } from "react-icons/fa";
 
 interface GrantNotificationProps {
+    notificationId: string;
     title: string;
     message: string;
+    onDelete: (notificationId: string) => void;
 }
 
-const GrantNotification: React.FC<GrantNotificationProps> = ({ title, message }) => {
+const GrantNotification: React.FC<GrantNotificationProps> = ({
+    notificationId, 
+    title, 
+    message, 
+    onDelete 
+}) => {
+    const handleDelete = () => {
+        onDelete(notificationId);
+    };
+
     return (
         <div className="grant-notification" role="listitem">
             <div className="bell-notif">
@@ -20,6 +31,8 @@ const GrantNotification: React.FC<GrantNotificationProps> = ({ title, message })
             <FaTrash
                 className="notification-trash-icon"
                 title="Delete notification"
+                onClick={handleDelete}
+                style={{ cursor: "pointer" }}
             />
             </div>
     );

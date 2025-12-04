@@ -1,7 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
-//import { api } from "../../api"; //todo: swap out dummy data with real api fetch when backend is ready
 import NotificationPopup from "../notifications/NotificationPopup";
 import { setNotifications as setNotificationsAction } from "../../external/bcanSatchel/actions";
 import { getAppStore } from "../../external/bcanSatchel/store";
@@ -30,23 +29,8 @@ const BellButton: React.FC<BellButtonProps> = observer(({ setOpenModal, openModa
 
   // function that handles when button is clicked and fetches notifications
   const handleClick = async () => {
-    //temporary dummy data for now
-    // const dummyNotifications = [
-    //   {
-    //     id: 1,
-    //     title: "Grant Deadline",
-    //     message: "Grant A deadline approaching in 3 days",
-    //   },
-    //   { id: 2, title: "Grant Deadline", message: "Grant B deadline tomorrow!" },
-    //   {
-    //     id: 3,
-    //     title: "Grant Deadline",
-    //     message: "Grant C deadline passed yesterday!",
-    //   },
-    //   { id: 4, title: "Grant Deadline", message: "Grant D deadline tomorrow!" },
-    // ];
     const response = await api(
-    `/notifications/user/${store.user?.userId}`,
+    `/notifications/user/${store.user?.userId}/current`,
     {
     method: "GET",
     }
@@ -93,7 +77,6 @@ const BellButton: React.FC<BellButtonProps> = observer(({ setOpenModal, openModa
 
       {(openModal === "bell" ? (
         <NotificationPopup
-          notifications={notifications}
           setOpenModal={setOpenModal}
         />
       ) : null)}
