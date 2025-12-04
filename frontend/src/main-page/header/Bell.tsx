@@ -30,7 +30,7 @@ const BellButton: React.FC<BellButtonProps> = observer(({ setOpenModal, openModa
   // function that handles when button is clicked and fetches notifications
   const handleClick = async () => {
     const response = await api(
-    `/notifications/user/${store.user?.userId}`,
+    `/notifications/user/${store.user?.userId}/current`,
     {
     method: "GET",
     }

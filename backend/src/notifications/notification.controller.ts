@@ -21,6 +21,11 @@ export class NotificationController {
     return await this.notificationService.getNotificationByNotificationId(notificationId);
   }
 
+  @Get('/user/:userId/current')
+  async findCurrentByUser(@Param('userId') userId: string) {
+    return await this.notificationService.getCurrentNotificationsByUserId(userId);
+  }
+
   // gets notifications by user id (sorted by most recent notifications first)
   @Get('/user/:userId')
   async findByUser(@Param('userId') userId: string) {

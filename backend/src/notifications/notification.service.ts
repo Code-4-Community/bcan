@@ -27,6 +27,14 @@ export class NotificationService {
     return notification;
   }
 
+  async  getCurrentNotificationsByUserId(userId: string): Promise<Notification[]> {
+    const notifactions = await this.getNotificationByUserId(userId);
+    
+    const currentTime = new Date();
+
+    return notifactions.filter(notification => new Date(notification.alertTime) <= currentTime);
+  }
+
 
   // function that returns array of notifications by user id (sorted by most recent notifications first)
   async getNotificationByUserId(userId: string): Promise<Notification[]> {
