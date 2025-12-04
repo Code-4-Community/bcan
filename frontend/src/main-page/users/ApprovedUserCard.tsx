@@ -91,6 +91,8 @@ const ApprovedUserCard = ({
         console.log(`User ${userId} has been deleted successfully`);
         alert(`User ${userId} has been deleted successfully`);
       } else {
+        const errorBody = await response.json();
+        console.error("Error: ", errorBody)
         alert("Failed to delete user");
       }
       setIsDeleteUserModalOpen(false);
