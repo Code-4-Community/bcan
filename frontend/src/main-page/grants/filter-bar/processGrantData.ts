@@ -30,6 +30,7 @@ export const fetchGrants = async () => {
 // stores state for list of grants/filter
 export const ProcessGrantData = () => {
   const { allGrants, filterStatus, startDateFilter, endDateFilter, yearFilter, searchQuery } = getAppStore();
+  
 
   // fetch grants on mount if empty
   useEffect(() => {
