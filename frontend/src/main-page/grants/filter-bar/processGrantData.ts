@@ -30,7 +30,7 @@ export const fetchGrants = async () => {
 // stores state for list of grants/filter
 export const ProcessGrantData = () => {
   const { allGrants, filterStatus, startDateFilter, endDateFilter, yearFilter, searchQuery } = getAppStore();
-
+  
   // fetch grants on mount if empty
   useEffect(() => {
     if (allGrants.length === 0) fetchGrants();
@@ -43,6 +43,7 @@ export const ProcessGrantData = () => {
     yearFilterer(yearFilter),
     searchFilter(searchQuery)
   ]);
+
 
   // sorting callback
   const onSort = (header: keyof Grant, asc: boolean) => {

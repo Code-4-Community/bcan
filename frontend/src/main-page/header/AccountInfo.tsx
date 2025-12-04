@@ -33,6 +33,7 @@ const AccountInfo: React.FC<AccountInfoProps> = ({
   const handleLogoutClick = () => {
     logoutUser();
     setOpenModal(null);
+    navigate('/login')
   };
 
   return createPortal(
