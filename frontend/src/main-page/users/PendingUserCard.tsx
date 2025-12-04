@@ -44,7 +44,7 @@ const PendingUserCard = ({
         }),
       });
       if (response.ok) {
-        alert(`User ${name} has been approved successfully`);
+        alert(`User ${userId} has been approved successfully`);
         const body = await response.json();
         moveUserToActive(body as User)
       } else {
