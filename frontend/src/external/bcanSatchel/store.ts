@@ -91,6 +91,5 @@ export function persistToSessionStorage() {
  */
 export function getAppStore() {
   const state = store();
-  console.log('Current store.user:', state.user); // Debug: log current user when accessed
   return state;
 }
