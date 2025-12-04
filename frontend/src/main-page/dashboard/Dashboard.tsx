@@ -45,9 +45,7 @@ const Dashboard = observer(() => {
 
   const { grants } = ProcessGrantData();
 
-  return user ? (
-    user?.position !== UserStatus.Inactive ? (
-      <div className="dashboard-page px-12 py-4 mb-8 ">
+  return(<div className="dashboard-page px-12 py-4 mb-8 ">
         <div className="flex flex-row justify-end gap-4 mb-6">
           <CsvExportButton />
           <DateFilter />
@@ -81,13 +79,7 @@ const Dashboard = observer(() => {
             <BarYearGrantStatus recentYear={recentYear} grants={grants} />
           </div>
         </div>
-      </div>
-    ) : (
-      <Navigate to="restricted" replace />
-    )
-  ) : (
-    <Navigate to="/login" replace />
-  );
+      </div>)
 });
 
 export default Dashboard;
