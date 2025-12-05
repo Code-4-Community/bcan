@@ -1,11 +1,9 @@
-import React from "react";
 import "../styles/GrantLabels.css";
 import { useState } from "react";
 import { Grant } from "../../../../../middle-layer/types/Grant";
+import { updateSort } from "../../../external/bcanSatchel/actions";
 
-const GrantLabels: React.FC<{
-  onSort: (header: keyof Grant, asc: boolean) => void;
-}> = ({ onSort }) => {
+const GrantLabels = () => {
   const [labels, setLabels] = useState({
     header: "applicationDate",
     asc: true,
@@ -13,7 +11,7 @@ const GrantLabels: React.FC<{
 
   function buttonHandler(header: keyof Grant) {
     const isAsc = labels.header == header ? !labels.asc : true;
-    onSort(header, isAsc);
+    updateSort({header, asc: isAsc});
     setLabels({ header: header, asc: isAsc });
   }
 
