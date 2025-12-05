@@ -403,14 +403,14 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                             className="w-4/5 border-l border-black bg-[#FFCEB6] rounded-r-md"
                           >
                             <h2
-                              className="truncate px-2 text-left font-bold h-8 w-full text-gray-700 rounded flex items-center"
+                              className="truncate px-2 text-left font-bold h-10 w-full text-gray-700 rounded flex items-center"
                               id="grid-city"
                             >
                               {" "}
                               {curGrant.bcan_poc?.POC_name ?? "Unknown"}{" "}
                             </h2>
                             <h2
-                              className="truncate px-2 text-left h-12 w-full text-gray-700 rounded flex items-center"
+                              className="truncate px-2 text-left h-10 w-full text-gray-700 rounded flex items-center"
                               id="grid-city"
                               title={
                                 curGrant.bcan_poc?.POC_email ?? "----------"
