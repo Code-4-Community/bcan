@@ -217,7 +217,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                       {/*Left column of gray labels */}
                       <div className="w-1/2 mr-2">
                         {/*Application date and grant start date row*/}
-                        <div className="flex space-x-4 w-full mb-4">
+                        <div className="flex space-x-4 w-full">
                           {/*Application date*/}
                           <div className="w-1/2 mb-3">
                             <label
@@ -336,7 +336,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                           Report Deadlines
                         </label>
                         <div
-                          className="p-2 rounded-md h-52 w-4/5  overflow-auto grip "
+                          className="p-2 rounded-md h-[13.5rem] w-4/5  overflow-auto grip "
                           style={{
                             backgroundColor: "#F58D5C",
                             borderStyle: "solid",
@@ -404,14 +404,14 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                             className="w-4/5 border-l border-black bg-[#FFCEB6] rounded-r-md"
                           >
                             <h2
-                              className="truncate px-2 text-left font-bold h-10 w-full text-gray-700 rounded flex items-center"
+                              className="truncate px-2 text-left font-bold h-8 w-full text-gray-700 rounded flex items-center"
                               id="grid-city"
                             >
                               {" "}
                               {curGrant.bcan_poc?.POC_name ?? "Unknown"}{" "}
                             </h2>
                             <h2
-                              className="truncate px-2 text-left h-10 w-full text-gray-700 rounded flex items-center"
+                              className="truncate px-2 text-left h-8 w-full text-gray-700 rounded flex items-center"
                               id="grid-city"
                               title={
                                 curGrant.bcan_poc?.POC_email ?? "----------"
@@ -448,14 +448,14 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                             className="w-4/5 border-l border-black bg-[#FFCEB6] rounded-r-md"
                           >
                             <h2
-                              className="truncate px-2 text-left font-bold h-10 w-full text-gray-700 rounded-md flex items-center"
+                              className="truncate px-2 text-left font-bold h-8 w-full text-gray-700 rounded-md flex items-center"
                               id="grid-city"
                             >
                               {" "}
                               {curGrant.grantmaker_poc?.POC_name ?? "Unknown"}
                             </h2>
                             <h2
-                              className="truncate px-2 text-left h-10 w-full text-gray-700 rounded-md flex items-center"
+                              className="truncate px-2 text-left h-8 w-full text-gray-700 rounded-md flex items-center"
                               id="grid-city"
                               title={
                                 curGrant.grantmaker_poc?.POC_email ??
@@ -552,7 +552,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                           Scope Documents
                         </label>
                         <div
-                          className="p-2 rounded-md h-48 overflow-auto grip grid-cols-1 gap-4"
+                          className="p-2 rounded-md h-[11.5rem] overflow-auto grip grid-cols-1 gap-4"
                           style={{
                             backgroundColor: ButtonColorOption.GRAY,
                             borderStyle: "solid",
