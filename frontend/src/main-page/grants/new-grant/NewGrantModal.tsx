@@ -654,7 +654,7 @@ const NewGrantModal: React.FC<{
               </div>
             </div>
 
-            <div className="flex flex-col justify-between mt-7 h-[170px]">
+            <div className="flex flex-col justify-between mt-4 h-[160px]">
               {/*Timeline label and input */}
               <div className="w-full">
                 <label
@@ -1027,7 +1027,7 @@ const NewGrantModal: React.FC<{
                     borderStyle: "solid",
                     borderColor: "black",
                     borderWidth: "1px",
-                    height: isAddingAttachment ? "77px" : "190px",
+                    height: isAddingAttachment ? "77px" : "168px",
                   }}
                 >
                   {attachments
