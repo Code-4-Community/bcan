@@ -447,14 +447,14 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                             className="w-4/5 border-l border-black bg-[#FFCEB6] rounded-r-md"
                           >
                             <h2
-                              className=" px-2 text-left font-bold h-10 w-full text-gray-700 rounded-md flex items-center"
+                              className="truncate px-2 text-left font-bold h-10 w-full text-gray-700 rounded-md flex items-center"
                               id="grid-city"
                             >
                               {" "}
                               {curGrant.grantmaker_poc?.POC_name ?? "Unknown"}
                             </h2>
                             <h2
-                              className=" px-2 text-left h-10 w-full text-gray-700 rounded-md flex items-center"
+                              className="truncate px-2 text-left h-10 w-full text-gray-700 rounded-md flex items-center"
                               id="grid-city"
                               title={
                                 curGrant.grantmaker_poc?.POC_email ??
@@ -576,7 +576,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                                         borderWidth: "1px",
                                         height:"42px"
                                       }}
-                                      className="items-center text-nowrap overflow-x-scroll overflow-hidden text-left justify-center w-full rounded-md p-2 mb-2 bg-tan"
+                                      className="items-center truncate overflow-x-scroll overflow-hidden text-left justify-center w-full rounded-md p-2 mb-2 bg-tan"
                                     >
                                       <a
                             href={attachment.url}
