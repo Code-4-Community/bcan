@@ -10,6 +10,7 @@ import { api } from "../../api";
 import { User } from "../../../../middle-layer/types/User";
 import { toJS } from "mobx";
 import { getAppStore } from "../../external/bcanSatchel/store";
+import { setActiveUsers } from "../../external/bcanSatchel/actions";
 
 interface ApprovedUserCardProps {
   userId: string;
@@ -62,6 +63,9 @@ const ApprovedUserCard = ({
             position === UserStatus.Admin ? "employee" : "admin"
           }`
         );
+        const updatedUser = await response.json();
+        setActiveUsers([...store.activeUsers.filter(u => u.userId !== userId), updatedUser as User]);
+
         setIsChangeGroupModalOpen(false);
       } else {
         const errorBody = await response.json();
@@ -90,6 +94,8 @@ const ApprovedUserCard = ({
       if (response.ok) {
         console.log(`User ${userId} has been deleted successfully`);
         alert(`User ${userId} has been deleted successfully`);
+        setActiveUsers(store.activeUsers.filter(u => u.userId !== userId));
+
       } else {
         const errorBody = await response.json();
         console.error("Error: ", errorBody)
