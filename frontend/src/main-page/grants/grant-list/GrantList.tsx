@@ -8,6 +8,7 @@ import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import { ProcessGrantData } from "../filter-bar/processGrantData";
 import NewGrantModal from "../new-grant/NewGrantModal";
 import { Grant } from "../../../../../middle-layer/types/Grant";
+import { getAppStore } from '../../../external/bcanSatchel/store';
 
 const ITEMS_PER_PAGE = 6;
 
@@ -26,6 +27,7 @@ const GrantList: React.FC<GrantListProps> = observer(
     currentUserEmail,
   }) => {
     const { grants } = ProcessGrantData();
+    const {filterStatus} = getAppStore();
     const [currentPage, setPage] = useState(1);
     const [showNewGrantModal, setShowNewGrantModal] = useState(false);
     // @ts-ignore 
@@ -52,6 +54,10 @@ const GrantList: React.FC<GrantListProps> = observer(
         }
       }
     }, [selectedGrantId, grants, currentPage]);
+
+    useEffect(() => {
+        setPage(1);
+    },[filterStatus, showOnlyMyGrants]);
 
     const count = displayedGrants.length;
     const startRange = (currentPage - 1) * ITEMS_PER_PAGE;
