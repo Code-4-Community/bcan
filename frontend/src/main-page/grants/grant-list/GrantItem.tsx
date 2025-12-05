@@ -9,7 +9,7 @@ import { api } from "../../../api";
 import { MdOutlinePerson2 } from "react-icons/md";
 import Attachment from "../../../../../middle-layer/types/Attachment";
 import NewGrantModal from "../new-grant/NewGrantModal";
-import { CostBenefitAnalysis } from '../grant-details/CostBenefitAnalysis';
+import { CostBenefitAnalysis } from "../grant-details/CostBenefitAnalysis";
 import ActionConfirmation from "../../../custom/ActionConfirmation";
 import { observer } from "mobx-react-lite";
 import { fetchGrants } from "../filter-bar/processGrantData";
@@ -332,7 +332,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
 
                       {/*Report deadlines div*/}
                       <div className="w-1/2 h-full pl-5">
-                        <label className="flex block tracking-wide text-gray-700 font-bold mb-2  sm:text-sm lg:text-base">
+                        <label className="flex block tracking-wide text-gray-700 font-bold mb-2 text-left  sm:text-sm lg:text-base">
                           Report Deadlines
                         </label>
                         <div
@@ -575,18 +575,19 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                                         borderStyle: "solid",
                                         borderColor: "black",
                                         borderWidth: "1px",
-                                        height:"42px"
+                                        height: "42px",
                                       }}
                                       className="items-center truncate overflow-x-scroll overflow-hidden text-left justify-center w-full rounded-md p-2 mb-2 bg-tan"
                                     >
                                       <a
-                            href={attachment.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 underline truncate"
-                          >
-                            {attachment.attachment_name || "Untitled"}
-                          </a>
+                                        href={attachment.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 underline truncate"
+                                      >
+                                        {attachment.attachment_name ||
+                                          "Untitled"}
+                                      </a>
                                     </div>
                                   )}
                                 </div>
@@ -608,29 +609,37 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                   {/*End two main left right columns */}
                 </div>
 
-                {/*Description*/}
-                <div className="w-full mb-3">
-                  <label
-                    className="text-lg flex block  tracking-wide text-gray-700  font-semibold mb-2"
-                    htmlFor="grid-city"
-                  >
-                    Description
-                  </label>
-                  <div
-                    style={{
-                      color: "black",
-                      borderStyle: "solid",
-                      borderColor: "black",
-                      borderWidth: "1px",
-                    }}
-                    className=" h-32 bg-tan flex  w-full rounded-md  p-5 overflow-auto"
-                  >
-                    {curGrant.description}
-                  </div>
+                {/*Cost Benefit Analysis and Description Row*/}
+            <div className="flex w-full mb-3 space-x-4 items-stretch">
+              {/* Cost Benefit Analysis */}
+              <div className="w-1/3 mr-2">
+                <CostBenefitAnalysis grant={curGrant} />
                 </div>
 
+              {/*Description */}
+              <div className="w-2/3">
+              <label
+                className="text-lg flex block tracking-wide text-gray-700  font-semibold mb-2"
+                htmlFor="grid-city"
+              >
+                Description
+              </label>
+              <div
+                style={{
+                  color: "black",
+                  borderStyle: "solid",
+                  borderColor: "black",
+                  borderWidth: "1px",
+                }}
+                className="h-64 bg-tan flex  w-full rounded-md  p-5 overflow-auto"
+              >
+                {curGrant.description}
+                </div>
+              </div>
+            </div>
+
                 {/*bottom buttons */}
-                <div className="flex justify-between items-center w-full mt-6 mb-6">
+                <div className="flex justify-between items-center w-full mt-6">
                   <>
                     <button
                       style={{
@@ -690,95 +699,6 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                   </div>
                 </div>
 
-                {/*End right column */}
-              </div>
-
-              {/*End two main left right columns */}
-            </div>
-
-            {/*Cost Benefit Analysis and Description Row*/}
-            <div className="flex w-full mb-3 space-x-4 items-stretch">
-              {/* Cost Benefit Analysis */}
-              <div className="w-1/3">
-                <CostBenefitAnalysis grant={curGrant} />
-                </div>
-              
-              {/*Description */}
-              <div className="w-2/3">
-              <label
-                className="text-lg flex block  tracking-wide text-gray-700  font-bold mb-2"
-                htmlFor="grid-city"
-              >
-                Description
-              </label>
-              <div
-                style={{
-                  color: "black",
-                  borderStyle: "solid",
-                  borderColor: "black",
-                  borderWidth: "1px",
-                }}
-                className=" h-72 bg-tan flex  w-full rounded-md  p-5 overflow-auto"
-              >
-                {curGrant.description}
-                </div>
-              </div>
-            </div>
-
-            {/*bottom buttons */}
-            <div className="flex justify-between items-center w-full mt-6 mb-6">
-              <>
-                <button
-                  style={{
-                    backgroundColor: "indianred",
-                    color: "white",
-                    borderStyle: "solid",
-                    borderColor: "#8B0000",
-                    borderWidth: "1px",
-                  }}
-                  className="py-2 px-4 rounded-md hover:bg-red-600 transition-colors"
-                  onClick={() => setShowDeleteModal(true)}
-                >
-                  Delete
-                </button>
-
-                <DeleteModal
-                  isOpen={showDeleteModal}
-                  onCloseDelete={() => setShowDeleteModal(false)}
-                  onConfirmDelete={() => {
-                    setShowDeleteModal(false);
-                  }}
-                />
-              </>
-
-              <div className="space-x-4">
-                <button
-                  style={{
-                    backgroundColor: "white",
-                    color: "black",
-                    borderStyle: "solid",
-                    borderColor: "black",
-                    borderWidth: "1px",
-                  }}
-                  className="py-2 px-4 rounded-md"
-                  onClick={() => setIsExpanded(false)}
-                >
-                  {"Close"}
-                </button>
-
-                <button
-                  style={{
-                    backgroundColor: ButtonColorOption.ORANGE,
-                    color: "black",
-                    borderStyle: "solid",
-                    borderColor: "black",
-                    borderWidth: "1px",
-                  }}
-                  className="py-2 px-4 rounded-md"
-                  onClick={() => setShowNewGrantModal(true)}
-                >
-                  {"Edit"}
-                </button>
                 {/*End expanded div */}
               </div>
             </div>
