@@ -1,5 +1,5 @@
 import { Controller, Post, Body, Get, Query, Param, Patch, Put, Delete } from '@nestjs/common';
-import { NotificationService } from './notifcation.service';
+import { NotificationService } from './notification.service';
 import { Notification } from '../../../middle-layer/types/Notification';
 
 
@@ -19,6 +19,11 @@ export class NotificationController {
   @Get(':notificationId')
   async findByNotification(@Param('notificationId') notificationId: string) {
     return await this.notificationService.getNotificationByNotificationId(notificationId);
+  }
+
+  @Get('/user/:userId/current')
+  async findCurrentByUser(@Param('userId') userId: string) {
+    return await this.notificationService.getCurrentNotificationsByUserId(userId);
   }
 
   // gets notifications by user id (sorted by most recent notifications first)

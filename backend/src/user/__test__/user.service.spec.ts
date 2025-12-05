@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from '../user.controller';
 import { UserService } from '../user.service';
-import { describe, it, expect, beforeEach, vi, beforeAll } from 'vitest';
+import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 
-// Create mock functions at module level
+// Create mock functions at module level (BEFORE mock)
 const mockScan = vi.fn().mockReturnThis();
 const mockGet = vi.fn().mockReturnThis();
 const mockUpdate = vi.fn().mockReturnThis();
@@ -12,19 +12,35 @@ const mockDelete = vi.fn().mockReturnThis();
 const mockPromise = vi.fn();
 
 // Mock Cognito functions
-const mockAdminAddUserToGroup = vi.fn().mockReturnThis();
-const mockAdminRemoveUserFromGroup = vi.fn().mockReturnThis();
-const mockAdminDeleteUser = vi.fn().mockReturnThis();
-const mockCognitoPromise = vi.fn();
+const mockAdminAddUserToGroup = vi.fn().mockReturnValue({ promise: () => Promise.resolve({}) });
+const mockAdminRemoveUserFromGroup = vi.fn().mockReturnValue({ promise: () => Promise.resolve({}) });
+const mockAdminDeleteUser = vi.fn().mockReturnValue({ promise: () => Promise.resolve({}) });
 
-// Mock AWS SDK
-vi.mock('aws-sdk', () => ({
-  default: {
+// Mock AWS SDK ONCE with proper structure for import * as AWS
+vi.mock('aws-sdk', () => {
+  return {
+    default: {
+      CognitoIdentityServiceProvider: vi.fn(() => ({
+        adminAddUserToGroup: mockAdminAddUserToGroup,
+        adminRemoveUserFromGroup: mockAdminRemoveUserFromGroup,
+        adminDeleteUser: mockAdminDeleteUser,
+      })),
+      DynamoDB: {
+        DocumentClient: vi.fn(() => ({
+          scan: mockScan,
+          get: mockGet,
+          update: mockUpdate,
+          put: mockPut,
+          delete: mockDelete,
+          promise: mockPromise,
+        }))
+      },
+      SES: vi.fn(() => ({}))
+    },
     CognitoIdentityServiceProvider: vi.fn(() => ({
       adminAddUserToGroup: mockAdminAddUserToGroup,
       adminRemoveUserFromGroup: mockAdminRemoveUserFromGroup,
       adminDeleteUser: mockAdminDeleteUser,
-      promise: mockCognitoPromise,
     })),
     DynamoDB: {
       DocumentClient: vi.fn(() => ({
@@ -35,9 +51,10 @@ vi.mock('aws-sdk', () => ({
         delete: mockDelete,
         promise: mockPromise,
       }))
-    }
-  }
-}));
+    },
+    SES: vi.fn(() => ({}))
+  };
+});
 
 describe('UserController', () => {
   let controller: UserController;
@@ -55,7 +72,6 @@ describe('UserController', () => {
     
     // Reset promise mocks to default resolved state
     mockPromise.mockResolvedValue({});
-    mockCognitoPromise.mockResolvedValue({});
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],

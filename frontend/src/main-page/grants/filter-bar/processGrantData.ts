@@ -13,7 +13,7 @@ import { sortGrants } from "./grantSorter.ts";
 import { api } from "../../../api.ts";
 
 // fetch grants
-const fetchGrants = async () => {
+export const fetchGrants = async () => {
   try {
     const response = await api("/grant");
     if (!response.ok) {
