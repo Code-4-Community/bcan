@@ -18,8 +18,6 @@ import GanttYearGrantTimeline from "./Charts/GanttYearGrantTimeline";
 import DonutMoneyApplied from "./Charts/DonutMoneyApplied";
 import { ProcessGrantData } from "../grants/filter-bar/processGrantData";
 import KPICards from "./Charts/KPICards";
-import { Navigate } from "react-router-dom";
-import { UserStatus } from "../../../../middle-layer/types/UserStatus";
 
 const Dashboard = observer(() => {
   // reset filters on initial render
@@ -30,7 +28,7 @@ const Dashboard = observer(() => {
     updateStartDateFilter(null);
   }, []);
 
-  const { yearFilter, allGrants, user } = getAppStore();
+  const { yearFilter, allGrants } = getAppStore();
 
   const uniqueYears = Array.from(
     new Set(
@@ -45,9 +43,7 @@ const Dashboard = observer(() => {
 
   const { grants } = ProcessGrantData();
 
-  return user ? (
-    user?.position !== UserStatus.Inactive ? (
-      <div className="dashboard-page px-12 py-4 mb-8 ">
+  return(<div className="dashboard-page px-12 py-4 mb-8 ">
         <div className="flex flex-row justify-end gap-4 mb-6">
           <CsvExportButton />
           <DateFilter />
@@ -81,13 +77,7 @@ const Dashboard = observer(() => {
             <BarYearGrantStatus recentYear={recentYear} grants={grants} />
           </div>
         </div>
-      </div>
-    ) : (
-      <Navigate to="restricted" replace />
-    )
-  ) : (
-    <Navigate to="/login" replace />
-  );
+      </div>)
 });
 
 export default Dashboard;

@@ -256,6 +256,7 @@ async makeGrantsInactive(grantId: number): Promise<Grant> {
           userId,
           message,
           alertTime: alertTime as TDateISO,
+          sent: false,
         };
         await this.notificationService.createNotification(notification);
       }
@@ -272,6 +273,7 @@ async makeGrantsInactive(grantId: number): Promise<Grant> {
             userId,
             message,
             alertTime: alertTime as TDateISO,
+            sent: false,
           };
           await this.notificationService.createNotification(notification);
         }

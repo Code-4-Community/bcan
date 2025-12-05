@@ -41,7 +41,7 @@ const Login = observer(() => {
           <div className="grid grid-cols-1 gap-x-6 gap-y-4">
             <div className="">
               <label htmlFor="username" className="block">
-                Email address
+                Username
               </label>
               <div className="flex items-center rounded-md pt-2">
                 <input

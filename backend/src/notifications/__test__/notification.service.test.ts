@@ -80,28 +80,32 @@ describe('NotificationController', () => {
       notificationId: '1',
       userId: 'user-1',
       message: 'New Grant Created 🎉 ',
-      alertTime: '2024-01-15T10:30:00.000Z'
+      alertTime: '2024-01-15T10:30:00.000Z',
+      sent: false
     } as Notification;
 
     mockNotification_id1_user2 = {
       notificationId: '1',
       userId: 'user-2',
       message: 'New Grant Created',
-      alertTime: '2025-01-15T10:30:00.000Z'
+      alertTime: '2025-01-15T10:30:00.000Z',
+      sent: false
     } as Notification;
 
     mockNotification_id2_user1= {
       notificationId: '2',
       userId: 'user-1',
       message: 'New Grant Created',
-      alertTime: '2025-01-15T10:30:00.000Z'
+      alertTime: '2025-01-15T10:30:00.000Z',
+      sent: false
     } as Notification;
 
     mockNotification_id2_user2= {
       notificationId: '2',
       userId: 'user-2',
       message: 'New Grant Created',
-      alertTime: '2025-01-15T10:30:00.000Z'
+      alertTime: '2025-01-15T10:30:00.000Z',
+      sent: false
     } as Notification;
 
     mockPut.mockReturnValue({ promise: mockPromise });
@@ -292,6 +296,7 @@ describe('NotificationController', () => {
       userId : 'user-456',
       message : 'Test notification',
       alertTime : '2024-01-15T10:30:00.000Z',
+      sent: false
     } as Notification;
     const result = await notificationService.createNotification(mockNotification);
     expect(mockPut).toHaveBeenCalledWith({
@@ -300,7 +305,8 @@ describe('NotificationController', () => {
       notificationId: '123',
       userId : 'user-456',
       message : 'Test notification',
-      alertTime : '2024-01-15T10:30:00.000Z'
+      alertTime : '2024-01-15T10:30:00.000Z',
+      sent: false
       },
     });
     expect(result).toEqual(mockNotification);
@@ -315,7 +321,8 @@ describe('NotificationController', () => {
       notificationId: '123',
       userId: 'user-456',
       message: 'Test notification',
-      alertTime: '2024-01-15T10:30:00.000Z'
+      alertTime: '2024-01-15T10:30:00.000Z',
+      sent: false
     } as Notification;
 
     // Act
@@ -329,7 +336,8 @@ describe('NotificationController', () => {
         notificationId: '123',
         userId: 'user-456',
         message: 'Test notification',
-        alertTime: '2024-01-15T10:30:00.000Z'
+        alertTime: '2024-01-15T10:30:00.000Z',
+        sent: false
       },
     });
   });

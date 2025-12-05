@@ -13,6 +13,7 @@ import {
 } from "../new-grant/processGrantDataEditSave";
 import { fetchGrants } from "../filter-bar/processGrantData";
 import { observer } from "mobx-react-lite";
+import  UserDropdown  from "./UserDropdown";
 
 /** Attachment type from your middle layer */
 enum AttachmentType {
@@ -221,6 +222,9 @@ const NewGrantModal: React.FC<{
 
   /** Basic validations based on your screenshot fields */
   const validateInputs = (): boolean => {
+    // Timeline check
+
+
     // Organization validation
     if (!organization || organization.trim() === "") {
       setErrorMessage("Organization Name is required.");
@@ -320,11 +324,11 @@ const NewGrantModal: React.FC<{
       return false;
     }
     // Estimated completion time validation
-    if (estimatedCompletionTimeInHours < 0) {
+    if (estimatedCompletionTimeInHours <= 0) {
       setErrorMessage("Estimated Completion Time cannot be negative.");
       return false;
     }
-    if (estimatedCompletionTimeInHours === 0) {
+    if (estimatedCompletionTimeInHours <= 0) {
       setErrorMessage("Estimated Completion Time must be greater than 0.");
       return false;
     }
@@ -713,55 +717,30 @@ const NewGrantModal: React.FC<{
             <div className="flex w-full mb-16">
               {/*BCAN POC div*/}
               <div className="w-full pr-3">
-                <label
-                  className="font-family-helvetica mb-1 flex block tracking-wide text-black sm:text-sm lg:text-base"
-                  htmlFor="grid-zip"
-                >
-                  BCAN POC *
-                </label>
-                {/*Box div*/}
-                <div
-                  className="items-center flex p-3 rounded h-full"
-                  style={{
-                    backgroundColor: "#F58D5C",
-                    borderColor: "black",
-                    borderWidth: "1px",
-                    borderRadius: "1.2rem",
-                  }}
-                >
-                  <MdOutlinePerson2 className="w-1/4 h-full sm:p-1 lg:p-2" />
-                  <div className="w-3/4">
-                    <input
-                      style={{
-                        height: "42px",
-                        backgroundColor: "#F2EBE4",
-                        borderStyle: "solid",
-                        borderColor: "black",
-                        borderWidth: "1px",
+                  <label className="font-family-helvetica mb-1 flex block tracking-wide text-black text-lg" htmlFor="grid-zip">
+                      BCAN POC *
+                  </label>
+                  {/*Box div*/} 
+                  <div className="items-center flex p-3 rounded h-full" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}>
+                      <MdOutlinePerson2 className="w-1/4 h-full p-1"/>
+                      <div className="w-3/4">
+                      <UserDropdown
+                      selectedUser={bcanPocName && bcanPocEmail ? {name: bcanPocName, email: bcanPocEmail } : null}
+                      onSelect={(user) => {
+                        setBcanPocName(user.name);
+                        setBcanPocEmail(user.email)
                       }}
-                      className="font-family-helvetica w-full text-gray-700 rounded"
-                      id="grid-city"
                       placeholder="Name"
-                      value={bcanPocName}
-                      onChange={(e) => setBcanPocName(e.target.value)}
-                    />
-                    <input
-                      style={{
-                        height: "42px",
-                        backgroundColor: "#F2EBE4",
-                        borderStyle: "solid",
-                        borderColor: "black",
-                        borderWidth: "1px",
-                      }}
-                      className="font-family-helvetica w-full text-gray-700 rounded"
-                      id="grid-city"
-                      placeholder="e-mail"
-                      value={bcanPocEmail}
-                      onChange={(e) => setBcanPocEmail(e.target.value)}
-                    />
+                      />
+                        <input style={{height: "48px",backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        className="font-family-helvetica w-full text-gray-700 rounded"
+                         placeholder="e-mail" 
+                         value={bcanPocEmail}
+                         readOnly
+                         />
+                      </div> 
                   </div>
                 </div>
-              </div>
 
               {/*Grant Provider POC div*/}
               <div className="w-full pl-3">
