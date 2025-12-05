@@ -574,10 +574,18 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                                         borderStyle: "solid",
                                         borderColor: "black",
                                         borderWidth: "1px",
+                                        height:"42px"
                                       }}
-                                      className="items-center text-wrap justify-center w-full rounded-md p-2 mb-2 bg-tan"
+                                      className="items-center text-nowrap overflow-x-scroll overflow-hidden text-left justify-center w-full rounded-md p-2 mb-2 bg-tan"
                                     >
-                                      {attachment.url}
+                                      <a
+                            href={attachment.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 underline truncate"
+                          >
+                            {attachment.attachment_name || "Untitled"}
+                          </a>
                                     </div>
                                   )}
                                 </div>
