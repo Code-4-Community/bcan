@@ -5,7 +5,6 @@ import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { DoesBcanQualifyText } from "../../../translations/general";
 import RingButton, { ButtonColorOption } from "../../../custom/RingButton";
-import { Status } from "../../../../../middle-layer/types/Status";
 import { api } from "../../../api";
 import { MdOutlinePerson2 } from "react-icons/md";
 import Attachment from "../../../../../middle-layer/types/Attachment";
@@ -256,7 +255,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                             >
                               {curGrant.grant_start_date
                                 ? formatDate(curGrant.grant_start_date)
-                                : "Unknown"}
+                                : "-------"}
                             </div>
                           </div>
 
@@ -266,7 +265,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                         {/*Estimated completion time row*/}
                         <div className="w-full justify-center">
                           <label
-                            className="mt-2 flex block tracking-wide text-gray-700 font-bold mb-2 text-left"
+                            className="mt-2 flex block tracking-wide text-gray-700 font-bold mb-2 text-left  sm:text-sm lg:text-base"
                             htmlFor="grid-state"
                           >
                             Estimated Completion Time
@@ -278,7 +277,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                                 ? "normal"
                                 : "italic",
                             }}
-                            className="text-left text-md h-10 flex w-2/3  "
+                            className="text-left  sm:text-sm lg:text-base h-10 flex w-2/3  "
                           >
                             {curGrant.estimated_completion_time
                               ? curGrant.estimated_completion_time + " hours"
@@ -290,7 +289,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                           {/*Timeline*/}
                           <div className="w-full">
                             <label
-                              className="text-md flex block tracking-wide text-gray-700 font-bold mb-2"
+                              className=" sm:text-sm lg:text-base flex block tracking-wide text-gray-700 font-bold mb-2"
                               htmlFor="grid-city"
                             >
                               Timeline
@@ -302,7 +301,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                                   ? "normal"
                                   : "italic",
                               }}
-                              className="text-left text-md h-10 w-full"
+                              className="text-left  sm:text-sm lg:text-base h-10 w-full"
                             >
                               {curGrant.timeline
                                 ? curGrant.timeline + " years"
@@ -312,14 +311,14 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                           {/*Amount */}
                           <div className=" w-full">
                             <label
-                              className="text-md flex block tracking-wide text-gray-700 font-bold mb-2"
+                              className=" sm:text-sm lg:text-base flex block tracking-wide text-gray-700 font-bold mb-2"
                               htmlFor="grid-state"
                             >
                               Amount
                             </label>
                             <div
                               style={{ color: "black" }}
-                              className="text-left text-md h-10 w-full"
+                              className="text-left  sm:text-sm lg:text-base h-10 w-full"
                             >
                               {formatCurrency(curGrant.amount)}
                             </div>
@@ -332,7 +331,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
 
                       {/*Report deadlines div*/}
                       <div className="w-1/2 h-full pl-5">
-                        <label className="flex block tracking-wide text-gray-700 font-bold mb-2">
+                        <label className="flex block tracking-wide text-gray-700 font-bold mb-2  sm:text-sm lg:text-base">
                           Report Deadlines
                         </label>
                         <div
@@ -384,7 +383,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                       {/*BCAN POC div*/}
                       <div className="w-1/2 pr-3">
                         <label
-                          className="text-md mb-2 flex block tracking-wide text-gray-700 font-bold"
+                          className=" sm:text-sm lg:text-base mb-2 flex block tracking-wide text-gray-700 font-bold "
                           htmlFor="grid-zip"
                         >
                           BCAN POC
@@ -413,8 +412,9 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                             <h2
                               className="truncate px-2 text-left h-12 w-full text-gray-700 rounded flex items-center"
                               id="grid-city"
-                              title={curGrant.bcan_poc?.POC_email ??
-                                "----------"}
+                              title={
+                                curGrant.bcan_poc?.POC_email ?? "----------"
+                              }
                             >
                               {" "}
                               {curGrant.bcan_poc?.POC_email ??
@@ -427,7 +427,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                       {/*Grant Provider POC div*/}
                       <div className="w-1/2 pl-3">
                         <label
-                          className="text-md mb-2 flex block tracking-wide text-gray-700 font-bold text-left"
+                          className=" sm:text-sm lg:text-base mb-2 flex block tracking-wide text-gray-700 font-bold text-left"
                           htmlFor="grid-zip"
                         >
                           Grant Provider POC
@@ -456,8 +456,10 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                             <h2
                               className=" px-2 text-left h-10 w-full text-gray-700 rounded-md flex items-center"
                               id="grid-city"
-                              title={curGrant.grantmaker_poc?.POC_email ??
-                                "----------"}
+                              title={
+                                curGrant.grantmaker_poc?.POC_email ??
+                                "----------"
+                              }
                             >
                               {" "}
                               {curGrant.grantmaker_poc?.POC_email ??
@@ -476,7 +478,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                         {/*Does BCAN qualify  */}
                         <div className="w-full mb-3">
                           <label
-                            className="text-md flex block tracking-wide text-gray-700 font-bold mb-1 text-left"
+                            className=" sm:text-sm lg:text-base flex block tracking-wide text-gray-700 font-bold mb-1 text-left"
                             htmlFor="grid-city"
                           >
                             Does BCAN qualify?
@@ -497,7 +499,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                         {/*Status*/}
                         <div className="w-full mb-3">
                           <label
-                            className="text-md flex block tracking-wide text-gray-700 font-bold mb-1"
+                            className=" sm:text-sm lg:text-base flex block tracking-wide text-gray-700 font-bold mb-1"
                             htmlFor="grid-city"
                           >
                             Status
@@ -521,7 +523,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                         {/*Restriction*/}
                         <div className="w-full mb-3">
                           <label
-                            className="text-md flex block tracking-wide text-gray-700 font-bold mb-1 text-left"
+                            className=" sm:text-sm lg:text-base flex block tracking-wide text-gray-700 font-bold mb-1 text-left"
                             htmlFor="grid-city"
                           >
                             Is BCAN Restricted?
@@ -545,7 +547,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
 
                       {/*Scope documents div*/}
                       <div className="w-1/2 pl-3">
-                        <label className="text-md flex block tracking-wide text-gray-700 font-bold mb-2 text-left">
+                        <label className=" sm:text-sm lg:text-base flex block tracking-wide text-gray-700 font-bold mb-2 text-left">
                           Scope Documents
                         </label>
                         <div
@@ -600,7 +602,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                 {/*Description*/}
                 <div className="w-full mb-3">
                   <label
-                    className="text-lg flex block  tracking-wide text-gray-700  font-bold mb-2"
+                    className="text-lg flex block  tracking-wide text-gray-700  font-semibold mb-2"
                     htmlFor="grid-city"
                   >
                     Description

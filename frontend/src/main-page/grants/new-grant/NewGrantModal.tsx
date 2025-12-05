@@ -460,7 +460,7 @@ const NewGrantModal: React.FC<{
             {/*Organization name and input */}
             <div className="w-full md:mb-0">
               <label
-                className="font-family-helvetica text-md flex block text-black  mb-1"
+                className="font-family-helvetica  sm:text-sm lg:text-base flex block text-black  mb-1"
                 htmlFor="grid-first-name"
               >
                 Organization Name *
@@ -491,7 +491,7 @@ const NewGrantModal: React.FC<{
                   {/*Application date and input */}
                   <div className="w-1/2">
                     <label
-                      className="font-family-helvetica flex block tracking-wide text-black text-md mb-1"
+                      className="font-family-helvetica flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1"
                       htmlFor="grid-city"
                     >
                       Application Date *
@@ -519,7 +519,7 @@ const NewGrantModal: React.FC<{
                   {/*Grant Start Date and input */}
                   <div className=" w-1/2">
                     <label
-                      className="font-family-helvetica flex block tracking-wide text-black text-black text-md mb-1"
+                      className="font-family-helvetica flex block tracking-wide text-black text-black  sm:text-sm lg:text-base mb-1"
                       htmlFor="grid-state"
                     >
                       Grant Start Date *
@@ -547,7 +547,7 @@ const NewGrantModal: React.FC<{
                 {/*Estimated completition time and input - need to make wider (length of application date and grant start date)*/}
                 <div className="w-full mt-11">
                   <label
-                    className="font-family-helvetica flex block tracking-wide text-black text-md mb-1"
+                    className="font-family-helvetica flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1"
                     htmlFor="grid-state"
                   >
                     Estimated Completion Time (in hours) *
@@ -577,7 +577,7 @@ const NewGrantModal: React.FC<{
                 {/*Report deadlines label and grey box */}
                 <div className="h-full">
                   <label
-                    className="font-family-helvetica flex block tracking-wide text-black text-md mb-1"
+                    className="font-family-helvetica flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1"
                     htmlFor="grid-zip"
                   >
                     Report Deadlines
@@ -601,7 +601,7 @@ const NewGrantModal: React.FC<{
                         borderColor: "black",
                         borderWidth: "1px",
                       }}
-                      className="font-family-helvetica w-full text-xs mb-2 flex items-center justify-center"
+                      className="font-family-helvetica w-full text-xs mb-2 flex items-center justify-center "
                       onClick={_addReportDate}
                     >
                       Add Deadline +
@@ -658,7 +658,7 @@ const NewGrantModal: React.FC<{
               {/*Timeline label and input */}
               <div className="w-full">
                 <label
-                  className="font-family-helvetica flex block tracking-wide text-black text-md mb-1"
+                  className="font-family-helvetica flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1"
                   htmlFor="grid-first-name"
                 >
                   Timeline (in years) *
@@ -683,7 +683,7 @@ const NewGrantModal: React.FC<{
               {/*Amount label and input */}
               <div className="w-full ">
                 <label
-                  className="font-family-helvetica flex block tracking-wide text-black placeholder:text-gray-400 text-md mb-1"
+                  className="font-family-helvetica flex block tracking-wide text-black placeholder:text-gray-400  sm:text-sm lg:text-base mb-1"
                   htmlFor="grid-first-name"
                 >
                   Amount (in $) *
@@ -714,7 +714,7 @@ const NewGrantModal: React.FC<{
               {/*BCAN POC div*/}
               <div className="w-full pr-3">
                 <label
-                  className="font-family-helvetica mb-1 flex block tracking-wide text-black text-md"
+                  className="font-family-helvetica mb-1 flex block tracking-wide text-black sm:text-sm lg:text-base"
                   htmlFor="grid-zip"
                 >
                   BCAN POC *
@@ -766,7 +766,7 @@ const NewGrantModal: React.FC<{
               {/*Grant Provider POC div*/}
               <div className="w-full pl-3">
                 <label
-                  className="font-family-helvetica mb-1 flex block tracking-wide text-black text-md mb-1 text-left"
+                  className="font-family-helvetica mb-1 flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1 text-left"
                   htmlFor="grid-zip"
                 >
                   Grant Provider POC
@@ -823,7 +823,7 @@ const NewGrantModal: React.FC<{
                 {/*Qualify label and input */}
                 <div className="w-full ">
                   <label
-                    className="font-family-helvetica flex block tracking-wide text-black text-md mb-1 text-left"
+                    className="font-family-helvetica flex block tracking-wide text-black sm:text-sm lg:text-base mb-1 text-left"
                     htmlFor="grid-first-name"
                   >
                     Does BCAN qualify? *
@@ -851,7 +851,7 @@ const NewGrantModal: React.FC<{
                 {/*Status label and input */}
                 <div className="w-full">
                   <label
-                    className="font-family-helvetica flex block tracking-wide text-black text-md mb-1"
+                    className="font-family-helvetica flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1"
                     htmlFor="grid-first-name"
                   >
                     Status
@@ -882,7 +882,7 @@ const NewGrantModal: React.FC<{
                 {/*Restriction types label and input */}
                 <div className="w-full">
                   <label
-                    className="font-family-helvetica flex block tracking-wide text-black text-md mb-1 text0left"
+                    className="font-family-helvetica flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1 text0left"
                     htmlFor="grid-first-name"
                   >
                     Restriction type *
@@ -915,7 +915,7 @@ const NewGrantModal: React.FC<{
 
               {/*Scope Documents div p-2 h-full w-1/2 flex-col*/}
               <div className="w-1/2 flex-col pl-3">
-                <label className="font-family-helvetica flex block tracking-wide text-black text-md mb-1 text-start">
+                <label className="font-family-helvetica flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1 text-start">
                   Scope Documents
                 </label>
 
@@ -932,7 +932,7 @@ const NewGrantModal: React.FC<{
                       borderColor: "black",
                       borderWidth: "1px",
                     }}
-                    className="items-center flex font-family-helvetica w-full mt-1 mb-2 justify-center"
+                    className="items-center flex font-family-helvetica w-full mt-1 mb-2 justify-center "
                   >
                     <FiUpload className="mr-2" />
                     <span>Upload Documents</span>
@@ -1089,7 +1089,7 @@ const NewGrantModal: React.FC<{
         {/*Description and input */}
         <div className="w-full mt-4">
           <label
-            className="font-family-helvetica flex block tracking-wide text-black text-md mb-1"
+            className="font-family-helvetica flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1"
             htmlFor="grid-first-name"
           >
             Description
