@@ -222,6 +222,9 @@ const NewGrantModal: React.FC<{
 
   /** Basic validations based on your screenshot fields */
   const validateInputs = (): boolean => {
+    // Timeline check
+
+
     // Organization validation
     if (!organization || organization.trim() === "") {
       setErrorMessage("Organization Name is required.");
@@ -321,11 +324,11 @@ const NewGrantModal: React.FC<{
       return false;
     }
     // Estimated completion time validation
-    if (estimatedCompletionTimeInHours < 0) {
+    if (estimatedCompletionTimeInHours <= 0) {
       setErrorMessage("Estimated Completion Time cannot be negative.");
       return false;
     }
-    if (estimatedCompletionTimeInHours === 0) {
+    if (estimatedCompletionTimeInHours <= 0) {
       setErrorMessage("Estimated Completion Time must be greater than 0.");
       return false;
     }
@@ -718,7 +721,6 @@ const NewGrantModal: React.FC<{
                       BCAN POC *
                   </label>
                   {/*Box div*/} 
-                   {/*Box div*/} 
                   <div className="items-center flex p-3 rounded h-full" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}>
                       <MdOutlinePerson2 className="w-1/4 h-full p-1"/>
                       <div className="w-3/4">
@@ -739,7 +741,6 @@ const NewGrantModal: React.FC<{
                       </div> 
                   </div>
                 </div>
-              </div>
 
               {/*Grant Provider POC div*/}
               <div className="w-full pl-3">

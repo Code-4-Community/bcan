@@ -18,8 +18,6 @@ import GanttYearGrantTimeline from "./Charts/GanttYearGrantTimeline";
 import DonutMoneyApplied from "./Charts/DonutMoneyApplied";
 import { ProcessGrantData } from "../grants/filter-bar/processGrantData";
 import KPICards from "./Charts/KPICards";
-import { Navigate } from "react-router-dom";
-import { UserStatus } from "../../../../middle-layer/types/UserStatus";
 
 const Dashboard = observer(() => {
   // reset filters on initial render
@@ -30,7 +28,7 @@ const Dashboard = observer(() => {
     updateStartDateFilter(null);
   }, []);
 
-  const { yearFilter, allGrants, user } = getAppStore();
+  const { yearFilter, allGrants } = getAppStore();
 
   const uniqueYears = Array.from(
     new Set(
