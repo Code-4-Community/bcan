@@ -21,6 +21,7 @@ export class NotificationService {
       Item: {
         ...notification,
         alertTime: alertTime.toISOString(),
+        sent: false // initialize sent to false when creating a new notification
       },
     };
     await this.dynamoDb.put(params).promise();
