@@ -21,7 +21,7 @@ const UserPositionCard = ({ position }: UserPositionCardProps) => {
   }, [position]);
 
   return (
-    <div className={`py-1 px-6 rounded-sm border ${cardStyles}`}>
+    <div className={`py-1 px-6 rounded-md border ${cardStyles}`}>
       <p className="text-base">{position}</p>
     </div>
   );
