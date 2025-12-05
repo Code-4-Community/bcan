@@ -1,13 +1,14 @@
 import "../styles/GrantList.css";
 import { observer } from "mobx-react-lite";
 import { useState, useEffect } from "react";
-import GrantItem from "./GrantItem.tsx";
-import GrantLabels from "./GrantLabels.tsx";
+import GrantItem from "./GrantItem";
+import GrantLabels from "./GrantLabels";
 import { ButtonGroup, IconButton, Pagination } from "@chakra-ui/react";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
-import { ProcessGrantData } from "../filter-bar/processGrantData.ts";
-import NewGrantModal from "../new-grant/NewGrantModal.tsx";
-import { Grant } from "../../../../../middle-layer/types/Grant.ts";
+import { ProcessGrantData } from "../filter-bar/processGrantData";
+import NewGrantModal from "../new-grant/NewGrantModal";
+import { Grant } from "../../../../../middle-layer/types/Grant";
+import { getAppStore } from '../../../external/bcanSatchel/store';
 
 const ITEMS_PER_PAGE = 6;
 
@@ -25,25 +26,20 @@ const GrantList: React.FC<GrantListProps> = observer(
     showOnlyMyGrants = false,
     currentUserEmail,
   }) => {
-    const { grants, onSort } = ProcessGrantData();
+    const { grants } = ProcessGrantData();
+    const {filterStatus} = getAppStore();
     const [currentPage, setPage] = useState(1);
     const [showNewGrantModal, setShowNewGrantModal] = useState(false);
     // @ts-ignore 
     const [wasGrantSubmitted, setWasGrantSubmitted] = useState(false);
-    const [sortedGrants, setSortedGrants] = useState(grants);
-
-    // const handleSort = (header: keyof Grant, asc: boolean) => {
-    //   const sorted = onSort(header, asc);
-    //   setSortedGrants(sorted.length > 0 ? sorted : grants);
-    // };
 
     const displayedGrants = showOnlyMyGrants
-      ? sortedGrants.filter(
+      ? grants.filter(
           (grant: Grant) =>
             grant.bcan_poc?.POC_email?.toLowerCase() ===
             currentUserEmail?.toLowerCase()
         )
-      : sortedGrants;
+      : grants;
 
     useEffect(() => {
       if (selectedGrantId !== undefined && grants.length > 0) {
@@ -57,11 +53,11 @@ const GrantList: React.FC<GrantListProps> = observer(
           }
         }
       }
-    }, [selectedGrantId, grants, currentPage, sortedGrants]);
+    }, [selectedGrantId, grants, currentPage]);
 
     useEffect(() => {
-      setSortedGrants(sortedGrants.length > 0 ? sortedGrants : grants);
-    }, [grants]);
+        setPage(1);
+    },[filterStatus, showOnlyMyGrants]);
 
     const count = displayedGrants.length;
     const startRange = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -71,7 +67,7 @@ const GrantList: React.FC<GrantListProps> = observer(
     return (
         <div className="paginated-grant-list">
             <div className="bg-light-orange rounded-[1.2rem] pt-2">
-                <GrantLabels onSort={onSort} />
+                <GrantLabels/>
                 <div className="grant-list p-4">
                     {visibleItems.map((grant) => (
                         <GrantItem key={grant.grantId}
@@ -82,7 +78,7 @@ const GrantList: React.FC<GrantListProps> = observer(
                         <p className="text-center text-gray-500 py-6">
                             {showOnlyMyGrants
                             ? "You currently have no grants assigned as BCAN POC."
-                            : "No grants found>"}
+                            : "No grants found :("}
                         </p>
                     )}
                 </div>

@@ -4,7 +4,7 @@ import { ButtonColorOption } from "../../custom/RingButton";
 
 function RestrictedPage() {
   return (
-    <div className="flex justify-center gap-20 items-center h-[100vh] text-left">
+    <div className="flex justify-center gap-20 items-center h-[70vh] text-left">
       <div>
         <h1 className="text-7xl font-bold mb-5">So Sorry!</h1>
         <p className="text-3xl font-bold mb-3">

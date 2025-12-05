@@ -13,14 +13,14 @@ import { useState } from "react";
 const store = getAppStore();
 
 interface PendingUserCardProps {
-  name: string;
+  userId: string;
   email: string;
-  position: string;
+  position: UserStatus;
 }
 
 
 const PendingUserCard = ({
-  name,
+  userId,
   email,
   position,
 }: PendingUserCardProps) => {
@@ -35,16 +35,16 @@ const PendingUserCard = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user: {
-            userId: name,
-            email: email,
-            position: position as UserStatus,
+            userId,
+            email,
+            position
           } as User,
           groupName: "Employee",
           requestedBy: toJS(store.user) as User,
         }),
       });
       if (response.ok) {
-        alert(`User ${name} has been approved successfully`);
+        alert(`User ${userId} has been approved successfully`);
         const body = await response.json();
         moveUserToActive(body as User)
       } else {
@@ -66,9 +66,9 @@ const PendingUserCard = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user: {
-            userId: name,
+            userId,
             email: email,
-            position: position as UserStatus,
+            position,
           } as User,
           requestedBy: toJS(store.user) as User,
         }),
@@ -90,8 +90,7 @@ const PendingUserCard = ({
 
   return (
     <div className="bg-white text-lg border rounded-md m-6 p-6 flex justify-around items-center">
-      <p className="font-semibold w-[140px] text-left">{name}</p>
-      <p className="w-[140px] text-left">xxxxxxx</p>
+      <p className="font-semibold w-[140px] text-left">{userId}</p>
       <p className="w-[140px] text-left">{email}</p>
       <div className="w-[140px]">
         <UserPositionCard position={position} />

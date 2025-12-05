@@ -1,5 +1,5 @@
 import "./styles/GrantPage.css";
-import GrantList from "./grant-list/index.tsx";
+import GrantList from "./grant-list/GrantList.tsx";
 
 import AddGrantButton from "./new-grant/AddGrant.tsx";
 import GrantSearch from "./filter-bar/GrantSearch.tsx";
@@ -17,7 +17,8 @@ import {
 import { toJS } from "mobx";
 
 import { fetchGrants } from "./filter-bar/processGrantData.ts";
-
+import { UserStatus } from "../../../../middle-layer/types/UserStatus.ts";
+import { Navigate } from "react-router-dom";
 
 interface GrantPageProps {
   showOnlyMyGrants?: boolean; //if true, filters grants by user email
@@ -50,38 +51,50 @@ function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
     }
   }, [showNewGrantModal, wasGrantSubmitted]);
 
-  return (
-    <div className="grant-page px-8">
-      <div className="top-half">
-      </div>
+  return user ? (
+    user?.position !== UserStatus.Inactive ? (
+      <div className="grant-page px-8">
+        <div className="top-half"></div>
         <div className="flex justify-end align-middle p-4 gap-4">
           <GrantSearch />
           <AddGrantButton onClick={() => setShowNewGrantModal(true)} />
         </div>
-      <div className="grid grid-cols-5 gap-8 px-4">
-        <div className="col-span-1">
-          <FilterBar/>
-        </div>
-        <div className="bot-half col-span-4">
-          <div className="grant-list-container">
-            <GrantList
-              selectedGrantId={
-                selectedGrant ? selectedGrant.grantId : undefined
-              }
-              onClearSelectedGrant={() => setSelectedGrant(null)}
-              currentUserEmail={currentUserEmail}
-              showOnlyMyGrants={showOnlyMyGrants}
-            />
+        <div className="grid grid-cols-5 gap-8 px-4">
+          <div className="col-span-1">
+            <FilterBar />
+          </div>
+          <div className="bot-half col-span-4">
+            <div className="grant-list-container">
+              <GrantList
+                selectedGrantId={
+                  selectedGrant ? selectedGrant.grantId : undefined
+                }
+                onClearSelectedGrant={() => setSelectedGrant(null)}
+                currentUserEmail={currentUserEmail}
+                showOnlyMyGrants={showOnlyMyGrants}
+              />
+            </div>
           </div>
         </div>
+        <div className="hidden-features">
+          {showNewGrantModal && (
+            <NewGrantModal
+              grantToEdit={null}
+              onClose={async () => {
+                setShowNewGrantModal(false);
+                setWasGrantSubmitted(true);
+              }}
+              isOpen={showNewGrantModal}
+            />
+          )}
+        </div>
       </div>
-      <div className="hidden-features">
-        {showNewGrantModal && (
-          <NewGrantModal grantToEdit={null} onClose={async () => {setShowNewGrantModal(false); setWasGrantSubmitted(true);} } isOpen={showNewGrantModal}  />
-        )}
-      </div>
-    </div>
+    ) : (
+      <Navigate to="restricted" replace />
+    )
+  ) : (
+    <Navigate to="/login" replace />
   );
-} 
+}
 
 export default GrantPage;
