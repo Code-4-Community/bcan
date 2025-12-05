@@ -8,7 +8,8 @@ import {
   updateStartDateFilter, updateEndDateFilter,
   updateSearchQuery,
   updateYearFilter,
-  setNotifications
+  setNotifications,
+  updateSort
 } from './actions';
 import { getAppStore, persistToSessionStorage } from './store';
 import { setActiveUsers, setInactiveUsers } from './actions';
@@ -110,4 +111,9 @@ mutator(updateYearFilter, (actionMessage) => {
 mutator(setNotifications, (actionMessage) => {
   const store = getAppStore();
   store.notifications = actionMessage.notifications;
+})
+
+mutator(updateSort, (actionMessage) => {
+  const store = getAppStore();
+  store.sort = actionMessage.sort;
 })
