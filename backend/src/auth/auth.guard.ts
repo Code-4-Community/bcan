@@ -6,7 +6,7 @@ import { CognitoJwtVerifier } from "aws-jwt-verify";
 
 
 @Injectable()
-export class RolesGuard implements CanActivate {
+export class VerifyUserGuard implements CanActivate {
   private verifier: any;
   constructor() {
     const userPoolId = process.env.COGNITO_USER_POOL_ID;
@@ -61,8 +61,13 @@ export class VerifyAdminRoleGuard implements CanActivate {
       const result = await this.verifier.verify(accessToken);
       const groups = result['cognito:groups'] || [];
       console.log("User groups from token:", groups); 
+      if (!groups.includes('Admin')) {
+        console.warn("Access denied: User is not an Admin");
+        return false;
+      } else { 
+        return true;
+      }
 
-      return true;
     } catch (error) {
       console.error("Token verification failed:", error); // Debug log
       return false;

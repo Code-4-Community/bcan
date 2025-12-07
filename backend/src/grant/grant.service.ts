@@ -15,6 +15,7 @@ export class GrantService {
 
     // function to retrieve all grants in our database
     async getAllGrants(): Promise<Grant[]> {
+      console.log("GETTING ALL GRANTS");
         // loads in the environment variable for the table now
         const params = {
             TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
