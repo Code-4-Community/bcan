@@ -1,12 +1,14 @@
-import { Controller, Get, Param, Put, Body, Patch, Post, Delete, ValidationPipe, Logger } from '@nestjs/common';
+import { Controller, Get, Param, Put, Body, Patch, Post, Delete, ValidationPipe, Logger, UseGuards } from '@nestjs/common';
 import { GrantService } from './grant.service';
 import { Grant } from '../../../middle-layer/types/Grant';
+import { RolesGuard, VerifyAdminRoleGuard } from '../auth/auth.guard';
 
 @Controller('grant')
 export class GrantController {
     constructor(private readonly grantService: GrantService) { }
 
     @Get()
+    @UseGuards(VerifyAdminRoleGuard)
     async getAllGrants() {
         return await this.grantService.getAllGrants();
     }
