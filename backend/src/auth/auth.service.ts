@@ -350,7 +350,7 @@ private isValidEmail(email: string): boolean {
 
       if (!accessToken) {
         throw new Error("Access token is undefined.");
-      }
+      } 
 
       const getUserResponse = await this.cognito
         .getUser({ AccessToken: accessToken })
@@ -403,7 +403,7 @@ private isValidEmail(email: string): boolean {
         user = newUser;
       }
 
-      return { access_token: idToken, user, message: "Login Successful!" };
+      return { access_token: accessToken, user, message: "Login Successful!" };
     } catch (error: unknown) {
       /* Login Failures */
       const cognitoError = error as AwsCognitoError;
