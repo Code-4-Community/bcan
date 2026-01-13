@@ -59,6 +59,8 @@ describe('NotificationController', () => {
     process.env = { ...originalEnv };
      process.env.NOTIFICATION_EMAIL_SENDER = 'kummer.j@northeastern.edu';
     process.env.DYNAMODB_NOTIFICATION_TABLE_NAME = 'BCANNotifications';
+    process.env.COGNITO_USER_POOL_ID = "test-user-pool-id";
+
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [NotificationController],

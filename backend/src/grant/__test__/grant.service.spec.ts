@@ -120,6 +120,8 @@ describe("GrantService", () => {
 
     // Set the environment variable for the table name
     process.env.DYNAMODB_GRANT_TABLE_NAME = 'Grants';
+    process.env.COGNITO_USER_POOL_ID = "test-user-pool-id";
+
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [GrantController],
