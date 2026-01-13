@@ -169,7 +169,7 @@ describe("GrantService", () => {
       const dbError = new Error("Could not retrieve grants");
       mockPromise.mockRejectedValue(dbError);
 
-      expect(grantService.getAllGrants()).rejects.toThrow(
+      await expect(grantService.getAllGrants()).rejects.toThrow(
         "Could not retrieve grants"
       );
     });
@@ -196,7 +196,7 @@ describe("GrantService", () => {
       );
       mockPromise.mockRejectedValue(noGrantFoundError);
 
-      expect(grantService.getGrantById(5)).rejects.toThrow(
+      await expect(grantService.getGrantById(5)).rejects.toThrow(
         "No grant with id 5 found."
       );
     });
