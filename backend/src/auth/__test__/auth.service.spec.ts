@@ -7,6 +7,15 @@ import {
 } from "@nestjs/common";
 import { describe, it, expect, beforeEach, vi, beforeAll } from "vitest";
 
+vi.mock('../../auth/auth.guard', () => ({
+  VerifyUserGuard: vi.fn(() => ({
+    canActivate: vi.fn().mockResolvedValue(true),
+  })),
+  VerifyAdminRoleGuard: vi.fn(() => ({
+    canActivate: vi.fn().mockResolvedValue(true),
+  })),
+}));
+
 // Create mock functions for Cognito operations
 const mockAdminCreateUser = vi.fn().mockReturnThis();
 const mockAdminSetUserPassword = vi.fn().mockReturnThis();
@@ -166,7 +175,9 @@ describe("AuthService", () => {
       const mockGet = () => ({
         promise: () =>
           Promise.resolve({
-            Item: { userId: "c4c", email: "c4c@example.com", biography: "" },
+            Item: { userId: "c4c",
+        email: "c4c@example.com",
+        position: "Inactive", },
           }),
       });
 
@@ -178,11 +189,11 @@ describe("AuthService", () => {
       const result = await service.login("c4c", "Pass123!");
 
       // Verify the results
-      expect(result.access_token).toBe("id-token");
+      expect(result.access_token).toBe("access-token");
       expect(result.user).toEqual({
         userId: "c4c",
         email: "c4c@example.com",
-        biography: "",
+        position: "Inactive",
       });
       expect(result.message).toBe("Login Successful!");
     });
@@ -253,7 +264,7 @@ describe("AuthService", () => {
 
       const result = await service.login("c4c", "Pass123!");
 
-      expect(result.access_token).toBe("id-token");
+      expect(result.access_token).toBe("access-token");
       expect(result.user).toEqual({
         userId: "c4c",
         email: "c4c@gmail.com",

@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import logo from "../../images/bcan_logo.svg";
 import { ButtonColorOption } from "../../custom/RingButton";
+import { useAuthContext } from "../../context/auth/authContext";
 
 function RestrictedPage() {
+  const {logout} = useAuthContext();
   return (
     <div className="flex justify-center gap-20 items-center h-[70vh] text-left">
       <div>
@@ -21,6 +23,9 @@ function RestrictedPage() {
               borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'
             }}
             className="py-2 px-4 rounded"
+            onClick={() => {
+              logout()
+            }}
           >
             Back to Login
           </button>
