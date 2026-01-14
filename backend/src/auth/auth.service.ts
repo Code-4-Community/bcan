@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-import { Injectable, InternalServerErrorException, Logger, UnauthorizedException } from '@nestjs/common';
-import * as AWS from 'aws-sdk';
-import * as crypto from 'crypto';
-
-=======
 import {
   Injectable,
   InternalServerErrorException,
@@ -21,7 +15,6 @@ import {
   BadRequestException,
   ConflictException,
 } from "@nestjs/common";
->>>>>>> main
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -44,33 +37,27 @@ export class AuthService {
       .digest("base64");
   }
 
-<<<<<<< HEAD
+
 constructor() {
   try {
-    console.log('Starting AuthService constructor...');
-      console.log('AWS module:', typeof AWS);
-      console.log('AWS.CognitoIdentityServiceProvider:', typeof AWS.CognitoIdentityServiceProvider);
-      
-      this.cognito = new AWS.CognitoIdentityServiceProvider();
-      console.log('Cognito initialized successfully');
-      
-      this.dynamoDb = new AWS.DynamoDB.DocumentClient();
-      console.log('DynamoDB initialized successfully');
-      
-      console.log('AuthService constructor completed');
-    } catch (error) {
-      console.error('FATAL: AuthService constructor failed:', error);
-      throw error;
-    }
-  }
+    this.logger.log('Starting AuthService constructor...');
+    this.logger.log('AWS module:', typeof AWS);
+    this.logger.log('AWS.CognitoIdentityServiceProvider:', typeof AWS.CognitoIdentityServiceProvider);
 
-  async register(
-    username: string,
-    password: string,
-    email: string,
-  ): Promise<void> {
-    const userPoolId = process.env.COGNITO_USER_POOL_ID;
-=======
+    this.cognito = new AWS.CognitoIdentityServiceProvider();
+    this.logger.log('Cognito initialized successfully');
+
+    this.dynamoDb = new AWS.DynamoDB.DocumentClient();
+    this.logger.log('DynamoDB initialized successfully');
+
+    this.logger.log('AuthService constructor completed');
+  } catch (error) {
+    this.logger.error('FATAL: AuthService constructor failed:', error);
+    throw error;
+  }
+}
+
+  
  async register(
   username: string,
   password: string,
@@ -78,7 +65,6 @@ constructor() {
 ): Promise<void> {
   const userPoolId = process.env.COGNITO_USER_POOL_ID;
   const tableName = process.env.DYNAMODB_USER_TABLE_NAME;
->>>>>>> main
 
   // Validate environment variables
   if (!userPoolId) {
@@ -560,7 +546,6 @@ private isValidEmail(email: string): boolean {
     }
   }
 
-<<<<<<< HEAD
   // Add this to auth.service.ts
 
 async validateSession(accessToken: string): Promise<any> {
@@ -610,7 +595,3 @@ async validateSession(accessToken: string): Promise<any> {
   }
 }
 }
-=======
-  
-}
->>>>>>> main
