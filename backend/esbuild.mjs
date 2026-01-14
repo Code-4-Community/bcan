@@ -2,7 +2,6 @@ import { build } from 'esbuild';
 
 // Wildcards aren’t supported, so list explicit roots.
 const externals = [
-  'aws-sdk', // default
   'cache-manager',
   '@nestjs/microservices',
   '@nestjs/websockets',
@@ -17,7 +16,9 @@ const externals = [
    target: 'node20',
    outfile: 'dist/bundle.js',
    format: 'cjs',
-   external: externals,            // <─ consolidated list
+   external: externals,
    sourcemap: false,
    logLevel: 'info',
+   keepNames: true,
+   minify: false
  });

@@ -5,10 +5,11 @@
   "scripts": {
     "start": "nest start",
     "start:dev": "nest start --watch",
-    "build": "node esbuild.mjs",
+    "build": "nest build",
     "test": "vitest --config vitest.config.ts",
-    "zip": "cd dist && zip -r ../lambda.zip bundle.js node_modules",
-    "deploy": "npm run build && npm run zip && sls deploy --package dist"
+    "zip": "zip -r lambda.zip dist/ package.json",
+    "upload-s3": "aws s3 cp lambda.zip s3://bcan-lambda-deployments/lambda.zip --region us-east-2",
+    "deploy": "npm run build && npm run zip && npm run upload-s3 && aws lambda update-function-code --function-name bcanBackendLambda --s3-bucket bcan-lambda-deployments --s3-key lambda.zip --region us-east-2"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
@@ -16,9 +17,9 @@
     "@nestjs/jwt": "^8.0.0",
     "@nestjs/passport": "^8.0.0",
     "@nestjs/platform-express": "^8.4.7",
+    "@vendia/serverless-express": "^4.12.6",
     "aws-jwt-verify": "^5.1.1",
     "aws-sdk": "^2.1030.0",
-    "aws-serverless-express": "^3.4.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.7",
@@ -31,12 +32,14 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
+    "@nestjs/cli": "^11.0.10",
     "@nestjs/testing": "^8.4.7",
     "@types/aws-lambda": "^8.10.149",
     "@types/aws-serverless-express": "^3.3.10",
     "@types/cookie-parser": "^1.4.10",
     "@types/jest": "^27.0.0",
     "@types/node": "^20.0.0",
+    "aws-sdk": "^2.1030.0",
     "esbuild": "^0.25.2",
     "jest": "^27.0.0",
     "ts-jest": "^27.0.0",

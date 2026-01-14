@@ -1,6 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from '../user.controller';
 import { UserService } from '../user.service';
+
+import * as AWS from 'aws-sdk';
+
 import { VerifyUserGuard, VerifyAdminRoleGuard } from '../../auth/auth.guard';
 import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 

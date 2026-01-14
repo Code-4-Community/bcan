@@ -19,8 +19,8 @@ import {
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
 
-  private cognito = new AWS.CognitoIdentityServiceProvider();
-  private dynamoDb = new AWS.DynamoDB.DocumentClient();
+  private cognito;
+  private dynamoDb;
 
   private computeHatch(
     username: string,
@@ -37,6 +37,27 @@ export class AuthService {
       .digest("base64");
   }
 
+
+constructor() {
+  try {
+    this.logger.log('Starting AuthService constructor...');
+    this.logger.log('AWS module:', typeof AWS);
+    this.logger.log('AWS.CognitoIdentityServiceProvider:', typeof AWS.CognitoIdentityServiceProvider);
+
+    this.cognito = new AWS.CognitoIdentityServiceProvider();
+    this.logger.log('Cognito initialized successfully');
+
+    this.dynamoDb = new AWS.DynamoDB.DocumentClient();
+    this.logger.log('DynamoDB initialized successfully');
+
+    this.logger.log('AuthService constructor completed');
+  } catch (error) {
+    this.logger.error('FATAL: AuthService constructor failed:', error);
+    throw error;
+  }
+}
+
+  
  async register(
   username: string,
   password: string,
@@ -525,5 +546,52 @@ private isValidEmail(email: string): boolean {
     }
   }
 
-  
+  // Add this to auth.service.ts
+
+async validateSession(accessToken: string): Promise<any> {
+  try {
+    // Use Cognito's getUser method to validate the token
+    const getUserResponse = await this.cognito
+      .getUser({ AccessToken: accessToken })
+      .promise();
+
+    const username = getUserResponse.Username;
+    let email: string | undefined;
+
+    // Extract email from user attributes
+    for (const attribute of getUserResponse.UserAttributes) {
+      if (attribute.Name === 'email') {
+        email = attribute.Value;
+        break;
+      }
+    }
+
+    // Get additional user info from DynamoDB
+    const tableName = process.env.DYNAMODB_USER_TABLE_NAME || 'TABLE_FAILURE';
+    const params = {
+      TableName: tableName,
+      Key: {
+        userId: username,
+      },
+    };
+
+    const userResult = await this.dynamoDb.get(params).promise();
+    const user = userResult.Item;
+
+    if (!user) {
+      throw new Error('User not found in database');
+    }
+
+    return user;
+  } catch (error: unknown) {
+    this.logger.error('Session validation failed', error);
+    
+    const cognitoError = error as AwsCognitoError;
+    if (cognitoError.code === 'NotAuthorizedException') {
+      throw new UnauthorizedException('Session expired or invalid');
+    }
+    
+    throw new UnauthorizedException('Failed to validate session');
+  }
+}
 }
