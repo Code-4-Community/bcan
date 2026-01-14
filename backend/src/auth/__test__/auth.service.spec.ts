@@ -7,6 +7,15 @@ import {
 } from "@nestjs/common";
 import { describe, it, expect, beforeEach, vi, beforeAll } from "vitest";
 
+vi.mock('../../auth/auth.guard', () => ({
+  VerifyUserGuard: vi.fn(() => ({
+    canActivate: vi.fn().mockResolvedValue(true),
+  })),
+  VerifyAdminRoleGuard: vi.fn(() => ({
+    canActivate: vi.fn().mockResolvedValue(true),
+  })),
+}));
+
 // Create mock functions for Cognito operations
 const mockAdminCreateUser = vi.fn().mockReturnThis();
 const mockAdminSetUserPassword = vi.fn().mockReturnThis();

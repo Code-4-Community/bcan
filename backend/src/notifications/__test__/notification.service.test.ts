@@ -6,6 +6,15 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { servicesVersion } from 'typescript';
 import { TDateISO } from '../../utils/date';
 
+vi.mock('../../auth/auth.guard', () => ({
+  VerifyUserGuard: vi.fn(() => ({
+    canActivate: vi.fn().mockResolvedValue(true),
+  })),
+  VerifyAdminRoleGuard: vi.fn(() => ({
+    canActivate: vi.fn().mockResolvedValue(true),
+  })),
+}));
+
 // Create mock functions that we can reference
 const mockPromise = vi.fn();
 const mockScan = vi.fn().mockReturnThis();

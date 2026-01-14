@@ -85,6 +85,16 @@ const mockGrants: Grant[] = [
   },
 ];
 
+vi.mock('../../auth/auth.guard', () => ({
+  VerifyUserGuard: vi.fn(() => ({
+    canActivate: vi.fn().mockResolvedValue(true),
+  })),
+  VerifyAdminRoleGuard: vi.fn(() => ({
+    canActivate: vi.fn().mockResolvedValue(true),
+  })),
+}));
+
+
 // Create mock functions that we can reference
 const mockPromise = vi.fn();
 const mockScan = vi.fn().mockReturnThis();
