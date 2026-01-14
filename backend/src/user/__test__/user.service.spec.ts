@@ -1,12 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from '../user.controller';
 import { UserService } from '../user.service';
-<<<<<<< HEAD
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+
 import * as AWS from 'aws-sdk';
-=======
+
+import { VerifyUserGuard, VerifyAdminRoleGuard } from '../../auth/auth.guard';
 import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
->>>>>>> main
 
 // Create mock functions at module level (BEFORE mock)
 const mockScan = vi.fn().mockReturnThis();
@@ -60,6 +59,16 @@ vi.mock('aws-sdk', () => {
     SES: vi.fn(() => ({}))
   };
 });
+
+// ✅ Mock the auth guards
+vi.mock('../../auth/auth.guard', () => ({
+  VerifyUserGuard: vi.fn(() => ({
+    canActivate: vi.fn().mockResolvedValue(true)
+  })),
+  VerifyAdminRoleGuard: vi.fn(() => ({
+    canActivate: vi.fn().mockResolvedValue(true)
+  }))
+}));
 
 describe('UserController', () => {
   let controller: UserController;

@@ -1,6 +1,7 @@
-import { Controller, Post, Body, Get, Req, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Body, Get, Req, Res, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { User } from '../types/User';
+import { Response } from 'express';
 import { UserStatus } from '../../../middle-layer/types/UserStatus';
 
 @Controller('auth')
@@ -43,10 +44,10 @@ export class AuthController {
 
   @Post('login')
   async login(
+    @Res({ passthrough: true }) response: Response,
     @Body('username') username: string,
-    @Body('password') password: string,
+    @Body('password') password: string, 
   ): Promise<{
-    access_token?: string;
     user: User;
     session?: string;
     challenge?: string;
@@ -54,7 +55,20 @@ export class AuthController {
     username?: string;
     position?: string;
   }> {
-    return await this.authService.login(username, password);
+    const result = await this.authService.login(username, password);
+  
+  // Set cookie with access token
+  if (result.access_token) {
+    response.cookie('access_token', result.access_token, {
+      httpOnly: true,      // Cannot be accessed by JavaScript (XSS protection)
+      secure: process.env.NODE_ENV === 'production', // Only HTTPS in production
+      sameSite: 'strict',  // CSRF protection
+      maxAge: 3600000,     // 1 hour in milliseconds
+      path: '/',           // Cookie available on all routes
+    });
+  }
+  delete result.access_token;
+    return result
   }
 
   @Post('set-password')

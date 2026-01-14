@@ -1,9 +1,13 @@
+import { Link } from "react-router-dom";
 import logo from "./images/bcan_logo.svg";
+import { ButtonColorOption } from "./custom/RingButton";
+import { useAuthContext } from "./context/auth/authContext";
 
 /**
  * Registered user landing page after signing up
  */
 const RegisterLanding = () => {
+  const {logout} = useAuthContext();
   return (
     <div className="bg-white grid grid-cols-2" style={styles.pageContainer}>
       <div className="w-[35%] h-full flex flex-col justify-center items-center pb-32">
@@ -25,6 +29,21 @@ const RegisterLanding = () => {
             our team. You'll receive an email notification once your account has
             been approved. Please try logging in after receiving approval.
           </h2>
+          <Link to="/login">
+                    <button
+                      style={{
+                        backgroundColor: ButtonColorOption.ORANGE ,
+                        color: 'black',
+                        borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'
+                      }}
+                      className="py-2 px-4 rounded"
+                      onClick={() => {
+                        logout()
+                      }}
+                    >
+                      Back to Login
+                    </button>
+                  </Link>
         </div>
       </div>
     </div>

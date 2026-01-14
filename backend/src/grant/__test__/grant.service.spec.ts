@@ -106,6 +106,16 @@ const mockGrants: Grant[] = [
   },
 ];
 
+vi.mock('../../auth/auth.guard', () => ({
+  VerifyUserGuard: vi.fn(() => ({
+    canActivate: vi.fn().mockResolvedValue(true),
+  })),
+  VerifyAdminRoleGuard: vi.fn(() => ({
+    canActivate: vi.fn().mockResolvedValue(true),
+  })),
+}));
+
+
 // Create mock functions that we can reference
 const mockPromise = vi.fn();
 const mockScan = vi.fn().mockReturnThis();
@@ -141,6 +151,8 @@ describe("GrantService", () => {
 
     // Set the environment variable for the table name
     process.env.DYNAMODB_GRANT_TABLE_NAME = 'Grants';
+    process.env.COGNITO_USER_POOL_ID = "test-user-pool-id";
+
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [GrantController],
@@ -190,7 +202,7 @@ describe("GrantService", () => {
       const dbError = new Error("Could not retrieve grants");
       mockPromise.mockRejectedValue(dbError);
 
-      expect(grantService.getAllGrants()).rejects.toThrow(
+      await expect(grantService.getAllGrants()).rejects.toThrow(
         "Could not retrieve grants"
       );
     });
@@ -217,7 +229,7 @@ describe("GrantService", () => {
       );
       mockPromise.mockRejectedValue(noGrantFoundError);
 
-      expect(grantService.getGrantById(5)).rejects.toThrow(
+      await expect(grantService.getGrantById(5)).rejects.toThrow(
         "No grant with id 5 found."
       );
     });

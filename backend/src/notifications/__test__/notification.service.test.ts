@@ -6,6 +6,15 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { servicesVersion } from 'typescript';
 import { TDateISO } from '../../utils/date';
 
+vi.mock('../../auth/auth.guard', () => ({
+  VerifyUserGuard: vi.fn(() => ({
+    canActivate: vi.fn().mockResolvedValue(true),
+  })),
+  VerifyAdminRoleGuard: vi.fn(() => ({
+    canActivate: vi.fn().mockResolvedValue(true),
+  })),
+}));
+
 // Create mock functions that we can reference
 const mockPromise = vi.fn();
 const mockScan = vi.fn().mockReturnThis();
@@ -59,6 +68,8 @@ describe('NotificationController', () => {
     process.env = { ...originalEnv };
      process.env.NOTIFICATION_EMAIL_SENDER = 'kummer.j@northeastern.edu';
     process.env.DYNAMODB_NOTIFICATION_TABLE_NAME = 'BCANNotifications';
+    process.env.COGNITO_USER_POOL_ID = "test-user-pool-id";
+
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [NotificationController],

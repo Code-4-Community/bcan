@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import * as dotenv from 'dotenv'
 import * as AWS from 'aws-sdk';
 import { ValidationPipe } from '@nestjs/common';
-
+import  cookieParser from 'cookie-parser';
 /* ! */
 async function bootstrap() {
   AWS.config.update({
@@ -20,6 +20,7 @@ async function bootstrap() {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
+  app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(3001);
