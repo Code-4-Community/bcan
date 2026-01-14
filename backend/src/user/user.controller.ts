@@ -1,5 +1,7 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { UserService } from './user.service';
+import { User } from '../../../middle-layer/types/User';
+import { UserStatus } from '../../../middle-layer/types/UserStatus';
 
 @Controller('user')
 export class UserController {
@@ -10,8 +12,42 @@ export class UserController {
     return await this.userService.getAllUsers();
   }
 
-  @Get(':id')
+
+  @Get('inactive')
+  async getAllInactiveUsers(): Promise<User[]> {
+    return await this.userService.getAllInactiveUsers();
+  }
+
+  @Get('active')
+  async getAllActiveUsers(): Promise<User[]> {
+    console.log("Fetching all active users");
+    return await this.userService.getAllActiveUsers();
+  }
+   // Make sure to put a guard on this route
+    @Post('change-role')
+    async addToGroup(
+      @Body('user') user: User,
+      @Body('groupName') groupName: UserStatus,
+      @Body('requestedBy') requestedBy: User,
+    ): Promise< User > {
+      let newUser:User = await this.userService.addUserToGroup(user, groupName,requestedBy);
+      return newUser as User;
+    }
+
+    @Post('delete-user')
+    async deleteUser(
+      @Body('user') user: User,
+      @Body('requestedBy') requestedBy: User,
+    ): Promise<User> {
+      let deletedUser = await this.userService.deleteUser(user, requestedBy);
+      return user as User;
+    }
+
+   @Get(':id')
   async getUserById(@Param('id') userId: string) {
     return await this.userService.getUserById(userId);
   }
+
+
+
 }

@@ -1,18 +1,26 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import NotificationPopup from "../notifications/NotificationPopup";
+import { setNotifications as setNotificationsAction } from "../../external/bcanSatchel/actions";
+import { getAppStore } from "../../external/bcanSatchel/store";
+import { observer } from "mobx-react-lite";
 import { api } from "../../api";
 
 // get current user id
 // const currUserID = sessionStorage.getItem('userId');
-const currUserID = "bcanuser33";
+// const currUserID = "bcanuser33";
 
-const BellButton = () => {
+interface BellButtonProps {
+  // onClick handler to open notification popup
+  setOpenModal: (modal: string | null) => void;
+  openModal: string | null;
+}
+
+const BellButton: React.FC<BellButtonProps> = observer(({ setOpenModal, openModal }) => {
   // stores notifications for the current user
-  const [notifications, setNotifications] = useState<any[]>([]);
-
-  // determines whether bell has been clicked
-  const [isClicked, setClicked] = useState(false);
+  const store = getAppStore();
+  const notifications = store.notifications ?? [];
 
   // logs the notifications for the current user whenever they are fetched
   useEffect(() => {
@@ -22,55 +30,58 @@ const BellButton = () => {
   // function that handles when button is clicked and fetches notifications
   const handleClick = async () => {
     const response = await api(
-      `/notifications/user/${currUserID}`,
-      {
-        method: "GET",
-      }
+    `/notifications/user/${store.user?.userId}/current`,
+    {
+    method: "GET",
+    }
     );
     console.log(response);
     const currNotifications = await response.json();
-    setNotifications(currNotifications);
-    setClicked(!isClicked);
+    setNotificationsAction(currNotifications);
+    setOpenModal(openModal === "bell" ? null : "bell");
     return notifications;
   };
 
   return (
-    <>
-      <button
-        className={`bell-button ${isClicked ? "hovered" : ""}`}
-        onClick={handleClick}
+    <div className="bell-container">
+      <div
+        className="bell-wrapper"
+        style={{ position: "relative", display: "inline-block" }}
       >
-        <FontAwesomeIcon icon={faBell} style={{ color: "black" }} />
-      </button>
-      {isClicked && (
-        <div className="notification-modal">
-          <div className="notification-modal-content">
-            <h4>
-              {currUserID ? `Notifications for ${currUserID}` : "Notifications"}
-            </h4>
-            {notifications.length > 0 ? (
-              <ul>
-                {notifications.map((notification, index) => (
-                  <li key={index} className="notification-item">
-                    {notification.message} <br />
-                    <small>Alert Time: {notification.alertTime}</small>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No new notifications</p>
-            )}
-            <button
-              onClick={() => setClicked(false)}
-              className="notification-close-button"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-    </>
+        <button
+          className={`bell-button ${openModal === "bell" ? "hovered" : ""}`}
+          onClick={handleClick}
+          style={{ background: "none", position: "relative" }}
+        >
+          <FontAwesomeIcon
+            icon={faBell}
+            style={{ color: "black"}}
+          />
+        </button>
+
+        {notifications.length > 0 && (
+          <span
+            style={{
+              position: "absolute",
+              top: "0px",
+              right: "0px",
+              width: "10px",
+              height: "10px",
+              backgroundColor: "red",
+              borderRadius: "50%",
+              border: "2px solid white",
+            }}
+          />
+        )}
+      </div>
+
+      {(openModal === "bell" ? (
+        <NotificationPopup
+          setOpenModal={setOpenModal}
+        />
+      ) : null)}
+    </div>
   );
-};
+});
 
 export default BellButton;

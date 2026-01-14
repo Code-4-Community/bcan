@@ -1,28 +1,107 @@
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow-x: hidden;
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+  font-size: medium;
+  box-sizing: border-box;
+}
+
+/* Hide the default checkbox */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none; /* For Safari */
+  margin: 0; /* Remove default margin */
+  /* Additional styling for the custom checkbox container */
+  width: 1.2em;
+  height: 1.2em;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+}
+
+/* Style the custom checkmark using a pseudo-element */
+input[type="checkbox"]::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 0.4em;
+  height: 0.8em;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  display: none; /* Hidden by default */
+}
+
+input[type="checkbox"]:checked::before {
+  display: block; /* Show the checkmark */
+  border-color: black;
 }
 
 /* Main container styling */
 .dashboard-page {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    background-color: #F2EBE4;
-    width: 100%;
-    height: 100%;
-    height: 100%;
-    overflow-y: auto;
-    padding-bottom: 1em;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: #f2ebe4;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 1em;
 }
 
 .chart-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 12px;
-    border-radius: 1.2rem;
-    border: 0.1rem solid #E0E0E0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 24px;
+  background-color: #ffffff;
+  border-radius: 1.2rem;
+  border: 0.1rem solid black;
+}
+
+.kpi-card {
+  background-color: #ffd5c2;
+}
+
+.tooltip {
+  border-radius: 12px;
+  background-color: "#fffff";
+  border: "1px solid #ccc";
+  box-shadow: "0 2px 8px rgba(0,0,0,0.1)";
+}
+
+.axis {
+  font-size: 0.875rem; /* Tailwind's text-sm */
+}
+.data {
+  white-space: nowrap;
+  border-radius: 16px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+}
+
+#reactSchedulerOutsideWrapper {
+  overflow: hidden;
+}
+
+#reactSchedulerOutsideWrapper:hover {
+  overflow-x: scroll;
+  overflow-y: scroll;
+}
+
+#reactSchedulerOutsideWrapper button {
+  overflow: hidden;
+  border-color: darkslategray;
+  color: black;
+}
+
+#reactSchedulerOutsideWrapper svg {
+  fill: darkslategray;
 }

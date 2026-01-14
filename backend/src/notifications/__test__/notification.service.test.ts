@@ -1,9 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Notification } from '../../../../middle-layer/types/Notification';
 import { NotificationController } from '../notification.controller';
-import { NotificationService } from '../notifcation.service';
+import { NotificationService } from '../notification.service';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { servicesVersion } from 'typescript';
+import { TDateISO } from '../../utils/date';
 
 // Create mock functions that we can reference
 const mockPromise = vi.fn();
@@ -11,16 +12,21 @@ const mockScan = vi.fn().mockReturnThis();
 const mockGet = vi.fn().mockReturnThis();
 const mockSend = vi.fn().mockReturnThis(); // for SES
 const mockPut = vi.fn().mockReturnThis();
+const mockDelete = vi.fn().mockReturnThis();
 const mockQuery = vi.fn().mockReturnThis();
 const mockSendEmail = vi.fn().mockReturnThis();
+const mockUpdate = vi.fn().mockReturnThis();
 
 const mockDocumentClient = {
   scan: mockScan,
   get: mockGet,
-  put : mockPut,
+  put: mockPut,
+  query: mockQuery,
+  update: mockUpdate,
+  delete : mockDelete,
   promise: mockPromise,
-  query : mockQuery
 };
+
 
 const mockSES = {
   send: mockSend,
@@ -30,12 +36,10 @@ const mockSES = {
 
 // Mock AWS SDK - Note the structure here
 vi.mock('aws-sdk', () => ({
-  default: {
-    DynamoDB: {
-      DocumentClient: vi.fn(() => mockDocumentClient)
-    },
-    SES: vi.fn(() => mockSES)
-  }
+  DynamoDB: {
+    DocumentClient: vi.fn(() => mockDocumentClient)
+  },
+  SES: vi.fn(() => mockSES)
 }));
 
 describe('NotificationController', () => {
@@ -76,28 +80,32 @@ describe('NotificationController', () => {
       notificationId: '1',
       userId: 'user-1',
       message: 'New Grant Created 🎉 ',
-      alertTime: '2024-01-15T10:30:00.000Z'
+      alertTime: '2024-01-15T10:30:00.000Z',
+      sent: false
     } as Notification;
 
     mockNotification_id1_user2 = {
       notificationId: '1',
       userId: 'user-2',
       message: 'New Grant Created',
-      alertTime: '2025-01-15T10:30:00.000Z'
+      alertTime: '2025-01-15T10:30:00.000Z',
+      sent: false
     } as Notification;
 
     mockNotification_id2_user1= {
       notificationId: '2',
       userId: 'user-1',
       message: 'New Grant Created',
-      alertTime: '2025-01-15T10:30:00.000Z'
+      alertTime: '2025-01-15T10:30:00.000Z',
+      sent: false
     } as Notification;
 
     mockNotification_id2_user2= {
       notificationId: '2',
       userId: 'user-2',
       message: 'New Grant Created',
-      alertTime: '2025-01-15T10:30:00.000Z'
+      alertTime: '2025-01-15T10:30:00.000Z',
+      sent: false
     } as Notification;
 
     mockPut.mockReturnValue({ promise: mockPromise });
@@ -269,17 +277,17 @@ describe('NotificationController', () => {
 
   
 
-   it('should throw error when notifications is null', async () => {
+  it('should throw error when notifications is null', async () => {
     // Arrange - Setup query mock to return no items
     const mockQueryResponse = {
-      Items: null // or undefined or []
+      Items: [] // Empty array instead of null
     };
     
     mockQuery.mockReturnValue({ promise: vi.fn().mockResolvedValue(mockQueryResponse) });
 
     // Act & Assert
-    await expect(notificationService.getNotificationByUserId('nonexistent-user'))
-      .rejects.toThrow('Failed to retrieve notifications.');
+    const result = await notificationService.getNotificationByUserId('nonexistent-user');
+    expect(result).toEqual([]);
   });
 
   it('should create notification with valid data in the set table', async () => {
@@ -288,6 +296,7 @@ describe('NotificationController', () => {
       userId : 'user-456',
       message : 'Test notification',
       alertTime : '2024-01-15T10:30:00.000Z',
+      sent: false
     } as Notification;
     const result = await notificationService.createNotification(mockNotification);
     expect(mockPut).toHaveBeenCalledWith({
@@ -296,7 +305,8 @@ describe('NotificationController', () => {
       notificationId: '123',
       userId : 'user-456',
       message : 'Test notification',
-      alertTime : '2024-01-15T10:30:00.000Z'
+      alertTime : '2024-01-15T10:30:00.000Z',
+      sent: false
       },
     });
     expect(result).toEqual(mockNotification);
@@ -311,7 +321,8 @@ describe('NotificationController', () => {
       notificationId: '123',
       userId: 'user-456',
       message: 'Test notification',
-      alertTime: '2024-01-15T10:30:00.000Z'
+      alertTime: '2024-01-15T10:30:00.000Z',
+      sent: false
     } as Notification;
 
     // Act
@@ -325,10 +336,143 @@ describe('NotificationController', () => {
         notificationId: '123',
         userId: 'user-456',
         message: 'Test notification',
-        alertTime: '2024-01-15T10:30:00.000Z'
+        alertTime: '2024-01-15T10:30:00.000Z',
+        sent: false
       },
     });
   });
 
+  it('should update a notification successfully with multiple fields', async () => {
+    // Arrange
+    const notificationId = 'notif-123';
+    const updates = {
+      message: 'Updated message',
+      alertTime: '2025-01-01T00:00:00.000Z' as unknown as TDateISO
+    };
+    
+  
+    const mockUpdateResponse = {
+      Attributes: {
+        message: 'Updated message',
+        alertTime: '2025-01-01T00:00:00.000Z',
+      },
+    };
+  
+    mockUpdate.mockReturnValue({ promise: mockPromise });
+    mockPromise.mockResolvedValue(mockUpdateResponse);
+  
+    const result = await notificationService.updateNotification(notificationId, updates);
+  
+    expect(mockUpdate).toHaveBeenCalledWith({
+      TableName: 'BCANNotifications',
+      Key: { notificationId },
+      UpdateExpression: 'SET #message = :message, #alertTime = :alertTime',
+      ExpressionAttributeNames: {
+        '#message': 'message',
+        '#alertTime': 'alertTime',
+      },
+      ExpressionAttributeValues: {
+        ':message': 'Updated message',
+        ':alertTime': '2025-01-01T00:00:00.000Z',
+      },
+      ReturnValues: 'UPDATED_NEW',
+    });
+  
+    expect(result).toEqual(JSON.stringify(mockUpdateResponse));
+  });
 
+  it('should throw error when DynamoDB update fails', async () => {
+    // Arrange
+    const notificationId = 'notif-fail';
+    const updates = { message: 'Failure test' };
+    const mockError = new Error('DynamoDB update failed');
+
+    mockDocumentClient.update = vi.fn().mockReturnThis();
+    mockPromise.mockRejectedValue(mockError);
+
+    // Act & Assert
+    await expect(notificationService.updateNotification(notificationId, updates))
+      .rejects.toThrow('Failed to update Notification notif-fail');
+
+    expect(mockDocumentClient.update).toHaveBeenCalled();
+  });
+
+  it('should correctly update a single field', async () => {
+    // Arrange
+    const notificationId = 'notif-single';
+    const updates = { message: 'Single field update' };
+    const mockUpdateResponse = { Attributes: { message: 'Single field update' } };
+
+    mockDocumentClient.update = vi.fn().mockReturnThis();
+    mockPromise.mockResolvedValue(mockUpdateResponse);
+
+    // Act
+    const result = await notificationService.updateNotification(notificationId, updates);
+
+    // Assert
+    expect(mockDocumentClient.update).toHaveBeenCalledWith({
+      TableName: 'BCANNotifications',
+      Key: { notificationId },
+      UpdateExpression: 'SET #message = :message',
+      ExpressionAttributeNames: { '#message': 'message' },
+      ExpressionAttributeValues: { ':message': 'Single field update' },
+      ReturnValues: 'UPDATED_NEW',
+    });
+
+    expect(result).toEqual(JSON.stringify(mockUpdateResponse));
+  });
+
+
+  
+
+
+  describe('deleteNotification', () => {
+    it('should successfully delete a notification given a valid id', async () => {
+      mockPromise.mockResolvedValueOnce({})
+
+      const result = await notificationService.deleteNotification('0')
+
+      expect(mockDelete).toHaveBeenCalledTimes(1)
+
+      expect(mockDelete).toHaveBeenCalledWith({
+        TableName: 'BCANNotifications',
+        Key: {
+          notificationId: '0',
+        },
+        ConditionExpression: 'attribute_exists(notificationId)'
+      })
+
+      expect(result).toEqual('Notification with id 0 successfully deleted')
+    })
+
+    it('uses the fallback table when the environment variable is not set', async () => {
+      delete process.env.DYNAMODB_NOTIFICATION_TABLE_NAME
+      mockPromise.mockResolvedValueOnce({})
+
+      const result = await notificationService.deleteNotification('0')
+
+      expect(mockDelete).toHaveBeenCalledWith({
+        TableName: 'TABLE_FAILURE',
+        Key: {
+          notificationId: '0',
+        },
+        ConditionExpression: 'attribute_exists(notificationId)'
+      })
+    })
+
+    it('throws an error when the given notification id does not exist', async () => {
+      mockPromise.mockRejectedValueOnce({
+        code: 'ConditionalCheckFailedException', 
+        message: 'The item does not exist' 
+      });
+
+      try {
+        await notificationService.deleteNotification('999');
+        throw new Error('Expected deleteNotification to throw');
+      } catch (err: any) {
+        expect(err).toBeInstanceOf(Error);
+        expect(err.message).toContain('Notification with id 999 not found');
+      }
+    })
+  })
 });

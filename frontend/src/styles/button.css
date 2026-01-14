@@ -1,61 +1,62 @@
 /* Custom dropdown container */
 .custom-dropdown-wrapper {
-    position: relative;
-    display: inline-block;
-  }
-  
-  /* The dropdown menu styling */
-  .custom-dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    z-index: 10;
-    background-color: #fff;
-    border: 0.1rem solid #ddd;
-    border-radius: 15px;
-    padding: 0.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Each dropdown option */
-  .custom-dropdown-option {
-    cursor: pointer;
-  }
-  
-  .custom-dropdown-option:hover {
-    opacity: 0.85;
-  }
-  
-  /* Optional: styling for the preview of the status button */
-  .status-button-preview {
-    cursor: pointer;
-  }
-  
-  /* Button preview defaults */
-  .button-default {
-    color: #000000;
-    width: 168.42px;
-    text-align: center;
-    padding: 0.5rem 0;
-  }
-  
-  /* Custom button color classes */
-  .green-button {
-    background-color: #5AB911;
-  }
-  
-  .gray-button {
-    background-color: #A8A3A3;
-  }
-  
-  .orange-button {
-    background-color: #F7A781;
-  }
+  position: relative;
+  display: inline-block;
+}
 
-  .navy-button {
-    background-color: #0b303b;
-  }
-  
+/* The dropdown menu styling */
+.custom-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  background-color: #fff;
+  border: 0.1rem solid #ddd;
+  border-radius: 15px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Each dropdown option */
+.custom-dropdown-option {
+  cursor: pointer;
+}
+
+.custom-dropdown-option:hover {
+  opacity: 0.85;
+}
+
+/* Optional: styling for the preview of the status button */
+.status-button-preview {
+  cursor: pointer;
+}
+
+/* Button preview defaults */
+.button-default {
+  color: #000000;
+  width: 168.42px;
+  text-align: center;
+  padding: 0.5rem 0;
+  border-radius: 15px;
+  z-index: 0;
+}
+
+/* Custom button color classes */
+.green-button {
+  background-color: #5ab911;
+}
+
+.gray-button {
+  background-color: #d3d3d3;
+}
+
+.orange-button {
+  background-color: #f7a781;
+}
+
+.navy-button {
+  background-color: #0b303b;
+}

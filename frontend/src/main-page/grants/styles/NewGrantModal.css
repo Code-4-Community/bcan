@@ -5,196 +5,194 @@
   We'll keep it scrollable for tall content.
 */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2;
-  }
-  
-  /* 
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+/* 
     Container for the modal.
     We'll use a background color similar to the screenshot's peach tone.
   */
-  .modal-content {
-    background: white; /* Peach background */
-    width: 100%;
-    max-width: 80%;
-    max-height: 80%; /* More width to accommodate multiple columns */
-    padding: 2rem;
-    border: 3px solid black;
-    border-radius: 5px;
-    flex: 1 1 auto;
-    overflow-y: auto; /* Scroll if content exceeds max height */
-  }
+.modal-content {
+  background: white; /* Peach background */
+  max-width: 85%;
+  max-height: 85%; /* More width to accommodate multiple columns */
+  padding: 2rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: 2px solid black;
+  border-radius: 1.2rem;
+  flex: 1 1 auto;
+  box-sizing: border-box;
 
-  /*
+  /* Scroll if content exceeds max height */
+}
+
+/*
   h-16 block w-full text-gray-700 border rounded py-3 px-4 mb-3 leading-tight
   
   /* 
     We'll define a grid layout that lines up labels and inputs
     in a more horizontal fashion, similar to your screenshot.
   */
-  .new-grant-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr; /* label-col is narrower, input-col is wider */
-    grid-auto-rows: auto;
-    column-gap: 1rem;
-    row-gap: 1rem;
-  }
-  
-  /* For label columns and input columns specifically */
-  .label-col {
-    align-self: center; /* vertically center label text */
-    font-weight: bold;
-  }
+.new-grant-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr; /* label-col is narrower, input-col is wider */
+  grid-auto-rows: auto;
+  column-gap: 1rem;
+  row-gap: 1rem;
+}
 
+/* For label columns and input columns specifically */
+.label-col {
+  align-self: center; /* vertically center label text */
+  font-weight: bold;
+}
 
-  .left-cols {
-    grid-column: 1 / span 3;
-    text-align: left;
-  }
+.left-cols {
+  grid-column: 1 / span 3;
+  text-align: left;
+}
 
-  .date-entry  {
-    text-align: left;
-    display: flex;
-    align-self : center;
-    gap: 10px;
- 
-  }
+.date-entry {
+  text-align: left;
+  display: flex;
+  align-self: center;
+  gap: 10px;
+}
 
-  .inputs {
-    padding-bottom : 20px;
-  }
+.inputs {
+  padding-bottom: 20px;
+}
 
-
-
-  /* 
+/* 
     If you want certain rows to span the entire width,
     you can place them outside the grid or use grid-column: span 2;
   */
-  
-  /* Headline / Title */
-  .modal-content h2 {
-    grid-column: 1 / span 2; /* let the title span across both columns */
-    margin-top: 0;
-    margin-bottom: 1rem;
-    font-size: 1.8rem;
-    font-weight: 600;
-    text-align: center;
-    text-align : left;
-  }
-  
-  /* Error message styling */
-  .error-message {
-    grid-column: 1 / span 2; /* span across both columns */
-    margin: 0.5rem 0;
-    color: #d9534f;
-    font-weight: bold;
-  }
-  
-  /* For text inputs, selects, textareas */
-  .modal-content input,
-  .modal-content select,
-  .modal-content textarea {
-    width: 100%;
-    padding: 0.6rem;
-    font-size: 1rem;
-    margin-bottom: 0.25rem;
-    border: 0.1rem solid #ccc;
-    border-radius: 15px;
-    box-sizing: border-box;
-    background-color: #fff;
-    color: #000;
-  }
-  
-  /* Make textareas bigger by default */
-  .modal-content textarea {
-    min-height: 80px;
-    resize: vertical;
-  }
-  
-  /* 
+
+/* Headline / Title */
+.modal-content h2 {
+  grid-column: 1 / span 2; /* let the title span across both columns */
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+  text-align: center;
+  text-align: left;
+}
+
+/* Error message styling */
+.error-message {
+  grid-column: 1 / span 2; /* span across both columns */
+  margin: 0.5rem 0;
+  color: #d9534f;
+  font-weight: bold;
+}
+
+/* For text inputs, selects, textareas */
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+  width: 100%;
+  padding: 0.6rem;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+  border: 0.1rem solid #ccc;
+  border-radius: 15px;
+  box-sizing: border-box;
+  background-color: #fff;
+  color: #000;
+}
+
+/* Make textareas bigger by default */
+.modal-content textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* 
     POC boxes
     We'll place them in the input column, so they have a bit of 
     internal spacing.
   */
-  .poc-box {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  /* Each POC entry row */
-  .poc-entry {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
+.poc-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
 
-  /* Each report date entry row */
-  .report-date-entry {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
-  /* The dropdown for Email/Phone in each POC entry */
-  .poc-entry select {
-    min-width: 120px;
-  }
-  
-  /* Attachments container in the input-col */
-  .attachments-container {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  /* Each attachment row */
-  .attachment-entry {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
-  /* 
+/* Each POC entry row */
+.poc-entry {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Each report date entry row */
+.report-date-entry {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* The dropdown for Email/Phone in each POC entry */
+.poc-entry select {
+  min-width: 120px;
+}
+
+/* Attachments container in the input-col */
+.attachments-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Each attachment row */
+.attachment-entry {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* 
     For the row of buttons (Close / Save), 
     let's let them span the full grid and appear at the bottom.
   */
-  .button-row {
-    grid-column: 1 / span 2;
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-  
-  /* 
+.button-row {
+  grid-column: 1 / span 2;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+/* 
     Buttons 
   */
-  .modal-content button {
-    background-color: #007bff; /* typical “primary” color */
-    border: none;
-    color: #fff;
-    padding: 0.75rem 1.25rem;
-    font-size: 1rem;
-    border-radius: 15px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  /* Hover effect for buttons */
-  .modal-content button:hover {
-    background-color: #0056b3;
-  }
-  
+.modal-content button {
+  background-color: #007bff; /* typical “primary” color */
+  border: none;
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Hover effect for buttons */
+.modal-content button:hover {
+  background-color: #0056b3;
+}

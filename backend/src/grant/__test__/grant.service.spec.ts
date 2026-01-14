@@ -70,6 +70,40 @@ const mockGrants: Grant[] = [
     attachments: [],
     isRestricted: true
   },
+  {
+    grantId: 3,
+    organization: "Test Organization",
+    does_bcan_qualify: true,
+    status: Status.Active,
+    amount: 1000,
+    grant_start_date: "2024-01-01",
+    application_deadline: "2025-01-01",
+    report_deadlines: ["2025-01-01"],
+    description: "Test Description",
+    timeline: 1,
+    estimated_completion_time: 100,
+    grantmaker_poc: { POC_name: "name", POC_email: "test@test.com" },
+    bcan_poc: { POC_name: "name", POC_email: ""},
+    attachments: [],
+    isRestricted: false
+  },
+  {
+    grantId: 4,
+    organization: "Test Organization 2",
+    does_bcan_qualify: false,
+    status: Status.Active,
+    amount: 1000,
+    grant_start_date: "2025-02-15",
+    application_deadline: "2025-02-01",
+    report_deadlines: ["2025-03-01", "2025-04-01"],
+    description: "Test Description 2",
+    timeline: 2,
+    estimated_completion_time: 300,
+    bcan_poc:  { POC_name: "Allie", POC_email: "allie@gmail.com" },
+    grantmaker_poc: { POC_name: "Benjamin", POC_email: "benpetrillo@yahoo.com" },
+    attachments: [],
+    isRestricted: true
+  },
 ];
 
 // Create mock functions that we can reference
@@ -79,6 +113,7 @@ const mockGet = vi.fn().mockReturnThis();
 const mockDelete = vi.fn().mockReturnThis();
 const mockUpdate = vi.fn().mockReturnThis();
 const mockPut = vi.fn().mockReturnThis();
+// const mockGetGrantById = vi.fn();
 
 const mockDocumentClient = {
   scan: mockScan,
@@ -91,10 +126,8 @@ const mockDocumentClient = {
 
 // Mock AWS SDK - Note the structure here
 vi.mock("aws-sdk", () => ({
-  default: {
-    DynamoDB: {
-      DocumentClient: vi.fn(() => mockDocumentClient),
-    },
+  DynamoDB: {
+    DocumentClient: vi.fn(() => mockDocumentClient),
   },
 }));
 
@@ -114,8 +147,18 @@ describe("GrantService", () => {
       providers: [GrantService],
     }).compile();
 
+    grantService = Object.assign(module.get<GrantService>(GrantService), {
+      notificationService: { 
+        createNotification: vi.fn(), 
+        updateNotification: vi.fn() 
+      }
+    });
+
+    
+    
     controller = module.get<GrantController>(GrantController);
     grantService = module.get<GrantService>(GrantService);
+    
   });
 
   it("should be defined", () => {
@@ -180,53 +223,44 @@ describe("GrantService", () => {
     });
   });
 
-  describe("unarchiveGrants()", () => {
-    it("should unarchive multiple grants and return their ids", async () => {
-      mockPromise
-        .mockResolvedValueOnce({ Attributes: { isArchived: false } })
-        .mockResolvedValueOnce({ Attributes: { isArchived: false } });
+  describe("makeGrantsInactive()", () => {
+    it("should inactivate multiple grants and return the updated grant objects", async () => {
+      const inactiveGrant3 = {
+        grantId: 3,
+        organization: "Test Organization",
+        does_bcan_qualify: true,
+        status: Status.Inactive,
+        amount: 1000,
+        grant_start_date: "2024-01-01",
+        application_deadline: "2025-01-01",
+        report_deadlines: ["2025-01-01"],
+        description: "Test Description",
+        timeline: 1,
+        estimated_completion_time: 100,
+        grantmaker_poc: { POC_name: "name", POC_email: "test@test.com" },
+        bcan_poc: { POC_name: "name", POC_email: ""},
+        attachments: [],
+        isRestricted: false
+      };
 
-      const data = await grantService.unarchiveGrants([1, 2]);
+      mockPromise.mockResolvedValueOnce({ Attributes: inactiveGrant3 });
 
-      expect(data).toEqual([1, 2]);
-      expect(mockUpdate).toHaveBeenCalledTimes(2);
-
-      const firstCallArgs = mockUpdate.mock.calls[0][0];
-      const secondCallArgs = mockUpdate.mock.calls[1][0];
-
-      expect(firstCallArgs).toMatchObject({
+      const data = await grantService.makeGrantsInactive(3);
+  
+      expect(data).toEqual(inactiveGrant3);
+      
+      expect(mockUpdate).toHaveBeenCalledTimes(1);
+  
+      const callArgs = mockUpdate.mock.calls[0][0];
+  
+      expect(callArgs).toMatchObject({
         TableName: "Grants",
-        Key: { grantId: 1 },
-        UpdateExpression: "set isArchived = :archived",
-        ExpressionAttributeValues: { ":archived": false },
-        ReturnValues: "UPDATED_NEW",
+        Key: { grantId: 3 },
+        UpdateExpression: "SET #status = :inactiveStatus",
+        ExpressionAttributeNames: { "#status": "status" },
+        ExpressionAttributeValues: { ":inactiveStatus": Status.Inactive },
+        ReturnValues: "ALL_NEW",
       });
-      expect(secondCallArgs).toMatchObject({
-        TableName: "Grants",
-        Key: { grantId: 2 },
-        UpdateExpression: "set isArchived = :archived",
-        ExpressionAttributeValues: { ":archived": false },
-        ReturnValues: "UPDATED_NEW",
-      });
-    });
-
-    it("should skip over grants that are already ", async () => {
-      mockPromise
-        .mockResolvedValueOnce({ Attributes: { isArchived: true } })
-        .mockResolvedValueOnce({ Attributes: { isArchived: false } });
-
-      const data = await grantService.unarchiveGrants([1, 2]);
-
-      expect(data).toEqual([2]);
-      expect(mockUpdate).toHaveBeenCalledTimes(2);
-    });
-
-    it("should throw an error if any update call fails", async () => {
-      mockPromise.mockRejectedValueOnce(new Error("DB Error"));
-
-      await expect(grantService.unarchiveGrants([90])).rejects.toThrow(
-        "Failed to update Grant 90 status."
-      );
     });
   });
 
@@ -377,9 +411,11 @@ describe("GrantService", () => {
   // Tests for deleteGrantById method
 describe('deleteGrantById', () => {
   it('should call DynamoDB delete with the correct params and return success message', async () => {
-    mockPromise.mockResolvedValueOnce({});
+    mockDelete.mockReturnValue({
+      promise: vi.fn().mockResolvedValue({})
+    });
 
-    const result = await grantService.deleteGrantById('123');
+    const result = await grantService.deleteGrantById(123);
 
     expect(mockDelete).toHaveBeenCalledTimes(1); //ensures delete() was called once
 
@@ -387,7 +423,7 @@ describe('deleteGrantById', () => {
     expect(mockDelete).toHaveBeenCalledWith(
       expect.objectContaining({
         TableName: expect.any(String),
-        Key: {grantId: '123'},
+        Key: {grantId: 123},
         ConditionExpression: 'attribute_exists(grantId)'
       }),
     );
@@ -400,17 +436,178 @@ describe('deleteGrantById', () => {
     const conditionalError = new Error('Conditional check failed');
     (conditionalError as any).code = 'ConditionalCheckFailedException';
 
-    mockPromise.mockRejectedValueOnce(conditionalError);
+    mockDelete.mockReturnValue({
+      promise: vi.fn().mockRejectedValue(conditionalError)
+    });
 
-    await expect(grantService.deleteGrantById('999'))
+    await expect(grantService.deleteGrantById(999))
     .rejects.toThrow(/does not exist/);
   });
 
   it('should throw a generic failure when DynamoDB fails for other reasons', async () => {
-    mockPromise.mockRejectedValueOnce(new Error('Some other DynamoDB error'));
+    mockDelete.mockReturnValue({
+      promise: vi.fn().mockRejectedValue(new Error('Some other DynamoDB error'))
+    });
 
-    await expect(grantService.deleteGrantById('123'))
+    await expect(grantService.deleteGrantById(123))
     .rejects.toThrow(/Failed to delete/);
+  });
+});
+describe('Notification helpers', () => {
+  let notificationServiceMock: any;
+  let grantServiceWithMockNotif: GrantService;
+
+  beforeEach(() => {
+    // mock notification service with spy functions
+    notificationServiceMock = {
+      createNotification: vi.fn().mockResolvedValue(undefined),
+      updateNotification: vi.fn().mockResolvedValue(undefined),
+    };
+
+    grantServiceWithMockNotif = new GrantService(notificationServiceMock);
+  });
+
+  describe('getNotificationTimes', () => {
+    it('should return ISO strings for 14, 7, and 3 days before deadline', () => {
+      const deadline = '2025-12-25T00:00:00.000Z';
+      const result = (grantServiceWithMockNotif as any).getNotificationTimes(deadline);
+
+      expect(result).toHaveLength(3);
+      result.forEach((date: any) => expect(date).toMatch(/^\d{4}-\d{2}-\d{2}T/));
+
+      const parsed = result.map((r: string | number | Date) => new Date(r));
+      const main = new Date(deadline);
+      const diffs = parsed.map((d: string | number) => Math.round((+main - +d) / (1000 * 60 * 60 * 24)));
+
+      expect(diffs).toEqual([14, 7, 3]);
+    });
+  });
+
+  describe('createGrantNotifications', () => {
+    it('should create notifications for application and report deadlines', async () => {
+      const mockGrant: Grant = {
+        grantId: 100,
+        organization: 'Boston Cares',
+        does_bcan_qualify: true,
+        status: Status.Active,
+        amount: 10000,
+        grant_start_date: '2025-01-01',
+        application_deadline: '2025-12-31T00:00:00.000Z',
+        report_deadlines: ['2026-01-31T00:00:00.000Z'],
+        description: 'Helping local communities',
+        timeline: 12,
+        estimated_completion_time: 365,
+        grantmaker_poc: { POC_name: 'Sarah', POC_email: 'sarah@test.com' },
+        bcan_poc: { POC_name: 'Tom', POC_email: 'tom@test.com' },
+        attachments: [],
+        isRestricted: false,
+      };
+
+      await (grantServiceWithMockNotif as any).createGrantNotifications(mockGrant, 'user123');
+
+      // application_deadline => 3 notifications (14,7,3 days)
+      // one report_deadline => 3 more
+      expect(notificationServiceMock.createNotification).toHaveBeenCalledTimes(6);
+      expect(notificationServiceMock.createNotification).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: 'user123',
+          notificationId: expect.stringContaining('-app'),
+          message: expect.stringContaining('Application due in'),
+          alertTime: expect.any(String),
+        })
+      );
+      expect(notificationServiceMock.createNotification).toHaveBeenCalledWith(
+        expect.objectContaining({
+          notificationId: expect.stringContaining('-report'),
+          message: expect.stringContaining('Report due in'),
+        })
+      );
+    });
+
+    it('should handle missing deadlines gracefully', async () => {
+      const mockGrant = {
+        grantId: 55,
+        organization: 'No Deadline Org',
+        does_bcan_qualify: true,
+        status: Status.Active,
+        amount: 5000,
+        grant_start_date: '2025-01-01',
+        description: '',
+        timeline: 1,
+        estimated_completion_time: 10,
+        grantmaker_poc: { POC_name: 'A', POC_email: 'a@a.com' },
+        bcan_poc: { POC_name: 'B', POC_email: 'b@b.com' },
+        attachments: [],
+        isRestricted: false,
+      } as unknown as Grant;
+
+      await (grantServiceWithMockNotif as any).createGrantNotifications(mockGrant, 'userX');
+
+      expect(notificationServiceMock.createNotification).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('updateGrantNotifications', () => {
+    it('should call updateNotification for all alert times', async () => {
+      const mockGrant: Grant = {
+        grantId: 123,
+        organization: 'Grant Org',
+        does_bcan_qualify: true,
+        status: Status.Pending,
+        amount: 5000,
+        grant_start_date: '2025-01-01',
+        application_deadline: '2025-06-30T00:00:00.000Z',
+        report_deadlines: ['2025-07-15T00:00:00.000Z'],
+        description: 'Test desc',
+        timeline: 1,
+        estimated_completion_time: 100,
+        grantmaker_poc: { POC_name: 'Alice', POC_email: 'alice@test.com' },
+        bcan_poc: { POC_name: 'Bob', POC_email: 'bob@test.com' },
+        attachments: [],
+        isRestricted: false,
+      };
+
+      await (grantServiceWithMockNotif as any).updateGrantNotifications(mockGrant);
+
+      // Expect 6 updateNotification calls (3 per deadline)
+      expect(notificationServiceMock.updateNotification).toHaveBeenCalledTimes(6);
+      expect(notificationServiceMock.updateNotification).toHaveBeenCalledWith(
+        expect.stringContaining('-app'),
+        expect.objectContaining({
+          message: expect.stringContaining('Application due in'),
+          alertTime: expect.any(String),
+        })
+      );
+      expect(notificationServiceMock.updateNotification).toHaveBeenCalledWith(
+        expect.stringContaining('-report'),
+        expect.objectContaining({
+          message: expect.stringContaining('Report due in'),
+        })
+      );
+    });
+
+    it('should not crash when no deadlines exist', async () => {
+      const mockGrant = {
+        grantId: 321,
+        organization: 'No deadlines',
+        does_bcan_qualify: false,
+        status: Status.Inactive,
+        amount: 0,
+        grant_start_date: '2025-01-01',
+        report_deadlines: [],
+        description: '',
+        timeline: 0,
+        estimated_completion_time: 0,
+        grantmaker_poc: { POC_name: 'X', POC_email: 'x@test.com' },
+        bcan_poc: { POC_name: 'Y', POC_email: 'y@test.com' },
+        attachments: [],
+        isRestricted: false,
+      } as unknown as Grant;
+
+      await (grantServiceWithMockNotif as any).updateGrantNotifications(mockGrant);
+
+      expect(notificationServiceMock.updateNotification).not.toHaveBeenCalled();
+    });
   });
 });
 });

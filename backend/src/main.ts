@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as dotenv from 'dotenv'
 import * as AWS from 'aws-sdk';
+import { ValidationPipe } from '@nestjs/common';
 
 /* ! */
 async function bootstrap() {
@@ -19,6 +20,7 @@ async function bootstrap() {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
+  app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(3001);
 }

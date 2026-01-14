@@ -1,11 +1,9 @@
-import React from "react";
 import "../styles/GrantLabels.css";
 import { useState } from "react";
 import { Grant } from "../../../../../middle-layer/types/Grant";
+import { updateSort } from "../../../external/bcanSatchel/actions";
 
-const GrantLabels: React.FC<{
-  onSort: (header: keyof Grant, asc: boolean) => void;
-}> = ({ onSort }) => {
+const GrantLabels = () => {
   const [labels, setLabels] = useState({
     header: "applicationDate",
     asc: true,
@@ -13,18 +11,19 @@ const GrantLabels: React.FC<{
 
   function buttonHandler(header: keyof Grant) {
     const isAsc = labels.header == header ? !labels.asc : true;
-    onSort(header, isAsc);
+    updateSort({header, asc: isAsc});
     setLabels({ header: header, asc: isAsc });
   }
 
   return (
-    <ul className="grant-labels grid grid-cols-5 justify-stretch font-semibold pt-4 px-4">
+    <ul className="grant-labels grid grid-cols-5 justify-stretch font-semibold pt-4 px-8">
       <li className="text-center">
         <button
           className="grant-name"
           onClick={() => buttonHandler("organization")}
         >
-          Organization Name {labels.header == "organization" ? (labels.asc ? "▲" : "▼") : ""}
+          Organization Name{" "}
+          {labels.header == "organization" ? (labels.asc ? "▲" : "▼") : ""}
         </button>
       </li>
       <li className="text-center">
@@ -32,7 +31,12 @@ const GrantLabels: React.FC<{
           className="application-date"
           onClick={() => buttonHandler("application_deadline")}
         >
-          Application Deadline {labels.header == "application_deadline" ? (labels.asc ? "▲" : "▼") : ""}
+          Application Deadline{" "}
+          {labels.header == "application_deadline"
+            ? labels.asc
+              ? "▲"
+              : "▼"
+            : ""}
         </button>
       </li>
       <li className="text-center">
@@ -41,8 +45,12 @@ const GrantLabels: React.FC<{
         </button>
       </li>
       <li className="text-center">
-        <button className="does_bcan_qualify" onClick={() => buttonHandler("does_bcan_qualify")}>
-          Does BCAN Qualify? {labels.header == "amount" ? (labels.asc ? "▲" : "▼") : ""}
+        <button
+          className="does_bcan_qualify"
+          onClick={() => buttonHandler("does_bcan_qualify")}
+        >
+          Does BCAN Qualify?{" "}
+          {labels.header == "does_bcan_qualify" ? (labels.asc ? "▲" : "▼") : ""}
         </button>
       </li>
       <li className="text-center">
@@ -50,15 +58,6 @@ const GrantLabels: React.FC<{
           Status {labels.header == "status" ? (labels.asc ? "▲" : "▼") : ""}
         </button>
       </li>
-      
-      {/* <li>
-        <button
-          className="restriction-status"
-          onClick={() => buttonHandler("restrictions")}
-        >
-          Restricted vs. Unrestricted
-        </button>
-      </li> */}
     </ul>
   );
 };

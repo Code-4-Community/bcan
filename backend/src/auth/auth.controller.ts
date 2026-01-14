@@ -1,5 +1,7 @@
 import { Controller, Post, Body, Get, Req, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { User } from '../types/User';
+import { UserStatus } from '../../../middle-layer/types/UserStatus';
 
 @Controller('auth')
 export class AuthController {
@@ -45,11 +47,12 @@ export class AuthController {
     @Body('password') password: string,
   ): Promise<{
     access_token?: string;
-    user?: any;
+    user: User;
     session?: string;
     challenge?: string;
     requiredAttributes?: string[];
     username?: string;
+    position?: string;
   }> {
     return await this.authService.login(username, password);
   }
@@ -72,5 +75,11 @@ export class AuthController {
     ): Promise<{ message: string }> {
       await this.authService.updateProfile(username, email, position_or_role);
       return { message: 'Profile has been updated' };
-    }  
+    }
+
+    
+    
+    
+  
+  
 }
