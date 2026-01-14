@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-import { Injectable } from '@nestjs/common';
-import * as AWS from 'aws-sdk';
-=======
 import {
   Injectable,
   Logger,
@@ -15,7 +11,6 @@ import {
 import * as AWS from "aws-sdk";
 import { User } from "../../../middle-layer/types/User";
 import { UserStatus } from "../../../middle-layer/types/UserStatus";
->>>>>>> main
 
 /**
  * File could use safer 'User' typing after grabbing users, verifying type after the scan.

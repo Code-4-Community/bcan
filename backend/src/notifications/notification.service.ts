@@ -1,8 +1,4 @@
-<<<<<<< HEAD:backend/src/notifications/notifcation.service.ts
-import { Injectable } from '@nestjs/common';
-=======
 import { Injectable, Logger } from '@nestjs/common';
->>>>>>> main:backend/src/notifications/notification.service.ts
 import * as AWS from 'aws-sdk';
 import { Notification } from '../../../middle-layer/types/Notification';
 
