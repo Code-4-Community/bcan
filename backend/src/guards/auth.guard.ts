@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
+import { Injectable, CanActivate, ExecutionContext, Logger } from "@nestjs/common";
 import { Observable } from "rxjs";
 import { CognitoJwtVerifier } from "aws-jwt-verify";
 
@@ -8,8 +8,11 @@ import { CognitoJwtVerifier } from "aws-jwt-verify";
 @Injectable()
 export class VerifyUserGuard implements CanActivate {
   private verifier: any;
+  private readonly logger: Logger;
   constructor() {
     const userPoolId = process.env.COGNITO_USER_POOL_ID;
+    this.logger = new Logger(VerifyUserGuard.name);
+
     if (userPoolId) {
       this.verifier = CognitoJwtVerifier.create({
         userPoolId,
@@ -27,6 +30,10 @@ export class VerifyUserGuard implements CanActivate {
     try {
       const request = context.switchToHttp().getRequest();
       const accessToken = request.cookies["access_token"];
+      if (!accessToken) {
+        this.logger.error("No access token found in cookies");
+        return false;
+      }
       const result = await this.verifier.verify(accessToken);
 
       return true;
@@ -40,8 +47,10 @@ export class VerifyUserGuard implements CanActivate {
 @Injectable()
 export class VerifyAdminRoleGuard implements CanActivate {
   private verifier: any;
+  private readonly logger: Logger;
   constructor() {
     const userPoolId = process.env.COGNITO_USER_POOL_ID;
+    this.logger = new Logger(VerifyAdminRoleGuard.name);
     if (userPoolId) {
       this.verifier = CognitoJwtVerifier.create({
         userPoolId,
@@ -58,6 +67,10 @@ export class VerifyAdminRoleGuard implements CanActivate {
     try {
       const request = context.switchToHttp().getRequest();
       const accessToken = request.cookies["access_token"];
+       if (!accessToken) {
+        this.logger.error("No access token found in cookies");
+        return false;
+      }
       const result = await this.verifier.verify(accessToken);
       const groups = result['cognito:groups'] || [];
       console.log("User groups from token:", groups); 

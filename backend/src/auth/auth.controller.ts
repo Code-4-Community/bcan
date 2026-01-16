@@ -2,7 +2,8 @@ import { Controller, Post, Body, Get, Req, Res, UseGuards } from '@nestjs/common
 import { AuthService } from './auth.service';
 import { User } from '../types/User';
 import { Response } from 'express';
-import { VerifyAdminRoleGuard, VerifyUserGuard } from "../auth/auth.guard";
+import { VerifyAdminRoleGuard, VerifyUserGuard } from "../guards/auth.guard";
+import { RegisterBody } from './types/auth.types';
 
 @Controller('auth')
 export class AuthController {
@@ -34,11 +35,9 @@ export class AuthController {
 
   @Post('register')
   async register(
-    @Body('username') username: string,
-    @Body('password') password: string,
-    @Body('email') email: string,
+   @Body() body: RegisterBody
   ): Promise<{ message: string }> {
-    await this.authService.register(username, password, email);
+    await this.authService.register(body.username, body.password, body.email);
     return { message: 'User registered successfully' };
   }
 

@@ -4,7 +4,7 @@ import { UserService } from '../user.service';
 
 import * as AWS from 'aws-sdk';
 
-import { VerifyUserGuard, VerifyAdminRoleGuard } from '../../auth/auth.guard';
+import { VerifyUserGuard, VerifyAdminRoleGuard } from '../../guards/auth.guard';
 import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 
 // Create mock functions at module level (BEFORE mock)

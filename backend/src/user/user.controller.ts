@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Param, UseGuards } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { User } from "../../../middle-layer/types/User";
 import { UserStatus } from "../../../middle-layer/types/UserStatus";
-import { VerifyAdminRoleGuard, VerifyUserGuard } from "../auth/auth.guard";
+import { VerifyAdminRoleGuard, VerifyUserGuard } from "../guards/auth.guard";
 
 @Controller("user")
 export class UserController {

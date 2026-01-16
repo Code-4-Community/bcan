@@ -1,7 +1,7 @@
 import { Controller, Post, Body, Get, Query, Param, Patch, Put, Delete, UseGuards } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { Notification } from '../../../middle-layer/types/Notification';
-import { VerifyUserGuard } from '../auth/auth.guard';
+import { VerifyUserGuard } from '../guards/auth.guard';
 
 
 @Controller('notifications')
