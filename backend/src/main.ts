@@ -4,6 +4,8 @@ import * as dotenv from 'dotenv'
 import * as AWS from 'aws-sdk';
 import { ValidationPipe } from '@nestjs/common';
 import  cookieParser from 'cookie-parser';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+
 /* ! */
 async function bootstrap() {
   AWS.config.update({
@@ -22,6 +24,14 @@ async function bootstrap() {
   });
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe());
+  const config = new DocumentBuilder()
+    .setTitle('Cats example')
+    .setDescription('The cats API description')
+    .setVersion('1.0')
+    .addTag('cats')
+    .build();
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, documentFactory);
 
   await app.listen(3001);
 }
