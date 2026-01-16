@@ -1,36 +1,36 @@
-import { Controller, Post, Body, Get, Req, Res, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Body, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { User } from '../types/User';
 import { Response } from 'express';
-import { UserStatus } from '../../../middle-layer/types/UserStatus';
+import { VerifyAdminRoleGuard, VerifyUserGuard } from "../auth/auth.guard";
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Get('session')
-  async getSession(@Req() req: any) {
-    try {
-      const authHeader = req.headers['authorization'] || req.headers['Authorization'];
+  // @Get('session')
+  // async getSession(@Req() req: any) {
+  //   try {
+  //     const authHeader = req.headers['authorization'] || req.headers['Authorization'];
       
-      if (!authHeader) {
-        throw new UnauthorizedException('No active session');
-      }
+  //     if (!authHeader) {
+  //       throw new UnauthorizedException('No active session');
+  //     }
 
-      const token = authHeader.startsWith('Bearer ') 
-        ? authHeader.substring(7) 
-        : authHeader;
+  //     const token = authHeader.startsWith('Bearer ') 
+  //       ? authHeader.substring(7) 
+  //       : authHeader;
       
-      const user = await this.authService.validateSession(token);
+  //     const user = await this.authService.validateSession(token);
       
-      return {
-        user,
-        message: 'Session valid'
-      };
-    } catch (error) {
-      throw new UnauthorizedException('Invalid or expired session');
-    }
-  }
+  //     return {
+  //       user,
+  //       message: 'Session valid'
+  //     };
+  //   } catch (error) {
+  //     throw new UnauthorizedException('Invalid or expired session');
+  //   }
+  // }
 
   @Post('register')
   async register(
@@ -82,6 +82,7 @@ export class AuthController {
   }
 
     @Post('update-profile')
+    @UseGuards(VerifyUserGuard)
     async updateProfile(
       @Body('username') username: string,
       @Body('email') email: string,
