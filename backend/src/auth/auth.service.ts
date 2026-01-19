@@ -266,6 +266,9 @@ constructor() {
     this.logger.log(`✅ Registration completed successfully for ${username}`);
 
   } catch (error) {
+    if(error instanceof InternalServerErrorException){
+      throw new InternalServerErrorException("Internal Server Error")
+    }
     // Re-throw known HTTP exceptions
     if (error instanceof HttpException) {
       throw error;
@@ -275,14 +278,14 @@ constructor() {
     if (error instanceof Error) {
       this.logger.error(`Unexpected error during registration for ${username}:`, error.stack);
       throw new InternalServerErrorException(
-        `Registration failed: ${error.message}`
+        `Internal Server Error`
       );
     }
 
     // Handle completely unknown errors
     this.logger.error(`Unknown error during registration for ${username}:`, error);
     throw new InternalServerErrorException(
-      "An unexpected error occurred during registration"
+      "Internal Server Error"
     );
   }
 }

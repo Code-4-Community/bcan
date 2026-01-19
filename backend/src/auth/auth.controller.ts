@@ -1,39 +1,56 @@
-import { Controller, Post, Body, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, Req, Res, UseGuards, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { User } from '../types/User';
 import { Response } from 'express';
 import { VerifyAdminRoleGuard, VerifyUserGuard } from "../guards/auth.guard";
 import { RegisterBody } from './types/auth.types';
+import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  // @Get('session')
-  // async getSession(@Req() req: any) {
-  //   try {
-  //     const authHeader = req.headers['authorization'] || req.headers['Authorization'];
+  @Get('session')
+  async getSession(@Req() req: any) {
+    try {
+      const authHeader = req.headers['authorization'] || req.headers['Authorization'];
       
-  //     if (!authHeader) {
-  //       throw new UnauthorizedException('No active session');
-  //     }
+      if (!authHeader) {
+        throw new UnauthorizedException('No active session');
+      }
 
-  //     const token = authHeader.startsWith('Bearer ') 
-  //       ? authHeader.substring(7) 
-  //       : authHeader;
+      const token = authHeader.startsWith('Bearer ') 
+        ? authHeader.substring(7) 
+        : authHeader;
       
-  //     const user = await this.authService.validateSession(token);
+      const user = await this.authService.validateSession(token);
       
-  //     return {
-  //       user,
-  //       message: 'Session valid'
-  //     };
-  //   } catch (error) {
-  //     throw new UnauthorizedException('Invalid or expired session');
-  //   }
-  // }
+      return {
+        user,
+        message: 'Session valid'
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid or expired session');
+    }
+  }
 
   @Post('register')
+  @ApiResponse({
+    status : 201,
+    description : "User registered successfully"
+  })
+  @ApiResponse({
+    status : 400,
+    description : "{Error encountered}"}
+  )
+  @ApiResponse({
+    status: 500,
+    description : "Internal Server Error"
+  })
+  @ApiResponse({
+    status: 409,
+    description : "{Error encountered}"
+  })
   async register(
    @Body() body: RegisterBody
   ): Promise<{ message: string }> {
