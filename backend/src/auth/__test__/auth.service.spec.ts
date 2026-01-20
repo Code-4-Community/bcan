@@ -7,55 +7,61 @@ import {
 } from "@nestjs/common";
 import { describe, it, expect, beforeEach, vi, beforeAll } from "vitest";
 
-vi.mock('../../auth/auth.guard', () => ({
-  VerifyUserGuard: vi.fn(() => ({
-    canActivate: vi.fn().mockResolvedValue(true),
-  })),
-  VerifyAdminRoleGuard: vi.fn(() => ({
-    canActivate: vi.fn().mockResolvedValue(true),
-  })),
+vi.mock('../../guards/auth.guard', () => ({
+  VerifyUserGuard: vi.fn(class MockVerifyUserGuard {
+    canActivate = vi.fn().mockResolvedValue(true);
+  }),
+  VerifyAdminRoleGuard: vi.fn(class MockVerifyAdminRoleGuard {
+    canActivate = vi.fn().mockResolvedValue(true);
+  }),
 }));
 
-// Create mock functions for Cognito operations
-const mockAdminCreateUser = vi.fn().mockReturnThis();
-const mockAdminSetUserPassword = vi.fn().mockReturnThis();
-const mockInitiateAuth = vi.fn().mockReturnThis();
-const mockGetUser = vi.fn().mockReturnThis();
-const mockRespondToAuthChallenge = vi.fn().mockReturnThis();
+// Create mock functions for Cognito operations - at module level for test access
+const mockAdminCreateUser = vi.fn();
+const mockAdminSetUserPassword = vi.fn();
+const mockInitiateAuth = vi.fn();
+const mockGetUser = vi.fn();
+const mockRespondToAuthChallenge = vi.fn();
+const mockAdminAddUserToGroup = vi.fn();
+const mockAdminDeleteUser = vi.fn();
 const mockCognitoPromise = vi.fn();
-// adminAddUserToGroup is called without .promise() in the service; return a resolved promise so `await` works
-const mockAdminAddUserToGroup = vi.fn().mockReturnThis()
-// Create mock functions for DynamoDB operations
-const mockDynamoGet = vi.fn().mockReturnThis();
-const mockDynamoPut = vi.fn().mockReturnThis();
-const mockDynamoUpdate = vi.fn().mockReturnThis();
-const mockDynamoScan = vi.fn().mockReturnThis();
+
+// Create mock functions for DynamoDB operations - at module level for test access
+const mockDynamoGet = vi.fn();
+const mockDynamoPut = vi.fn();
+const mockDynamoUpdate = vi.fn();
+const mockDynamoScan = vi.fn();
 const mockDynamoPromise = vi.fn();
 
-// Mock AWS SDK
-vi.mock('aws-sdk', () => ({
-  CognitoIdentityServiceProvider: vi.fn(() => ({
-    adminCreateUser: mockAdminCreateUser,
-    adminSetUserPassword: mockAdminSetUserPassword,
-    initiateAuth: mockInitiateAuth,
-    getUser: mockGetUser,
-    respondToAuthChallenge: mockRespondToAuthChallenge,
-    adminAddUserToGroup: mockAdminAddUserToGroup,
-    promise: mockCognitoPromise,
-  })),
-  DynamoDB: {
-    DocumentClient: vi.fn(() => ({
-      get: mockDynamoGet,
-      put: mockDynamoPut,
-      update: mockDynamoUpdate,
-      promise: mockDynamoPromise,
-      scan: mockDynamoScan
-    }))
-  },
-  SES: vi.fn(() => ({
-    // SES methods can be mocked here if needed
-  })),
-}));
+// Mock AWS SDK - reference module-level mocks
+vi.mock('aws-sdk', () => {
+  return {
+    CognitoIdentityServiceProvider: vi.fn(function() {
+      return {
+        adminCreateUser: mockAdminCreateUser,
+        adminSetUserPassword: mockAdminSetUserPassword,
+        initiateAuth: mockInitiateAuth,
+        getUser: mockGetUser,
+        respondToAuthChallenge: mockRespondToAuthChallenge,
+        adminAddUserToGroup: mockAdminAddUserToGroup,
+        adminDeleteUser: mockAdminDeleteUser,
+      };
+    }),
+    DynamoDB: {
+      DocumentClient: vi.fn(function() {
+        return {
+          get: mockDynamoGet,
+          put: mockDynamoPut,
+          update: mockDynamoUpdate,
+          scan: mockDynamoScan,
+        };
+      })
+    },
+    SES: vi.fn(function() {
+      return {};
+    }),
+  };
+});
 
 describe("AuthService", () => {
   let service: AuthService;
@@ -72,6 +78,21 @@ describe("AuthService", () => {
   beforeEach(async () => {
     // Clear all mocks before each test
     vi.clearAllMocks();
+
+    // Setup Cognito mocks to return chainable objects with .promise()
+    mockAdminCreateUser.mockReturnValue({ promise: mockCognitoPromise });
+    mockAdminSetUserPassword.mockReturnValue({ promise: mockCognitoPromise });
+    mockInitiateAuth.mockReturnValue({ promise: mockCognitoPromise });
+    mockGetUser.mockReturnValue({ promise: mockCognitoPromise });
+    mockRespondToAuthChallenge.mockReturnValue({ promise: mockCognitoPromise });
+    mockAdminAddUserToGroup.mockReturnValue({ promise: mockCognitoPromise });
+    mockAdminDeleteUser.mockReturnValue({ promise: mockCognitoPromise });
+
+    // Setup DynamoDB mocks to return chainable objects with .promise()
+    mockDynamoGet.mockReturnValue({ promise: mockDynamoPromise });
+    mockDynamoPut.mockReturnValue({ promise: mockDynamoPromise });
+    mockDynamoUpdate.mockReturnValue({ promise: mockDynamoPromise });
+    mockDynamoScan.mockReturnValue({ promise: mockDynamoPromise });
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [AuthService],

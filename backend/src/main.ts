@@ -4,6 +4,8 @@ import * as dotenv from 'dotenv'
 import * as AWS from 'aws-sdk';
 import { ValidationPipe } from '@nestjs/common';
 import  cookieParser from 'cookie-parser';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+
 /* ! */
 async function bootstrap() {
   AWS.config.update({
@@ -22,6 +24,14 @@ async function bootstrap() {
   });
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe());
+  const config = new DocumentBuilder()
+    .setTitle('Project BCAN Backend API Documentation')
+    .setDescription('REST API for Bcan project written in nestjs using bearer auth for auth purposes.')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, documentFactory);
 
   await app.listen(3001);
 }

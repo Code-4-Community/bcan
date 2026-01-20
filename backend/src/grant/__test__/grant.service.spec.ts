@@ -106,38 +106,39 @@ const mockGrants: Grant[] = [
   },
 ];
 
-vi.mock('../../auth/auth.guard', () => ({
-  VerifyUserGuard: vi.fn(() => ({
-    canActivate: vi.fn().mockResolvedValue(true),
-  })),
-  VerifyAdminRoleGuard: vi.fn(() => ({
-    canActivate: vi.fn().mockResolvedValue(true),
-  })),
+vi.mock('../../guards/auth.guard', () => ({
+  VerifyUserGuard: vi.fn(class MockVerifyUserGuard {
+    canActivate = vi.fn().mockResolvedValue(true);
+  }),
+  VerifyAdminRoleGuard: vi.fn(class MockVerifyAdminRoleGuard {
+    canActivate = vi.fn().mockResolvedValue(true);
+  }),
 }));
 
-
-// Create mock functions that we can reference
+// Create mock functions at module level
 const mockPromise = vi.fn();
-const mockScan = vi.fn().mockReturnThis();
-const mockGet = vi.fn().mockReturnThis();
-const mockDelete = vi.fn().mockReturnThis();
-const mockUpdate = vi.fn().mockReturnThis();
-const mockPut = vi.fn().mockReturnThis();
-// const mockGetGrantById = vi.fn();
+const mockScan = vi.fn();
+const mockGet = vi.fn();
+const mockDelete = vi.fn();
+const mockUpdate = vi.fn();
+const mockPut = vi.fn();
+const mockQuery = vi.fn();
 
 const mockDocumentClient = {
+  query: mockQuery,
   scan: mockScan,
   get: mockGet,
   delete: mockDelete,
   update: mockUpdate,
-  promise: mockPromise,
   put: mockPut,
 };
 
 // Mock AWS SDK - Note the structure here
 vi.mock("aws-sdk", () => ({
   DynamoDB: {
-    DocumentClient: vi.fn(() => mockDocumentClient),
+    DocumentClient: vi.fn(function() {
+      return mockDocumentClient;
+    }),
   },
 }));
 
@@ -148,6 +149,14 @@ describe("GrantService", () => {
   beforeEach(async () => {
     // Clear all mocks before each test
     vi.clearAllMocks();
+
+    // Setup DynamoDB mocks to return chainable objects with .promise()
+    mockScan.mockReturnValue({ promise: mockPromise });
+    mockGet.mockReturnValue({ promise: mockPromise });
+    mockDelete.mockReturnValue({ promise: mockPromise });
+    mockUpdate.mockReturnValue({ promise: mockPromise });
+    mockPut.mockReturnValue({ promise: mockPromise });
+    mockQuery.mockReturnValue({ promise: mockPromise });
 
     // Set the environment variable for the table name
     process.env.DYNAMODB_GRANT_TABLE_NAME = 'Grants';

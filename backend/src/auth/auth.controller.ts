@@ -1,8 +1,10 @@
-import { Controller, Post, Body, Get, Req, Res, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Body, Get, Req, Res, UseGuards, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { User } from '../types/User';
 import { Response } from 'express';
-import { UserStatus } from '../../../middle-layer/types/UserStatus';
+import { VerifyAdminRoleGuard, VerifyUserGuard } from "../guards/auth.guard";
+import { RegisterBody } from './types/auth.types';
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -32,13 +34,31 @@ export class AuthController {
     }
   }
 
+  /**
+   * 
+   * Register user
+   */
   @Post('register')
+  @ApiResponse({
+    status : 201,
+    description : "User registered successfully"
+  })
+  @ApiResponse({
+    status : 400,
+    description : "{Error encountered}"}
+  )
+  @ApiResponse({
+    status: 500,
+    description : "Internal Server Error"
+  })
+  @ApiResponse({
+    status: 409,
+    description : "{Error encountered}"
+  })
   async register(
-    @Body('username') username: string,
-    @Body('password') password: string,
-    @Body('email') email: string,
+   @Body() body: RegisterBody
   ): Promise<{ message: string }> {
-    await this.authService.register(username, password, email);
+    await this.authService.register(body.username, body.password, body.email);
     return { message: 'User registered successfully' };
   }
 
@@ -72,6 +92,8 @@ export class AuthController {
   }
 
   @Post('set-password')
+  @UseGuards(VerifyUserGuard)
+  @ApiBearerAuth()
   async setNewPassword(
     @Body('newPassword') newPassword: string,
     @Body('session') session: string,
@@ -82,6 +104,8 @@ export class AuthController {
   }
 
     @Post('update-profile')
+    @UseGuards(VerifyUserGuard)
+    @ApiBearerAuth()
     async updateProfile(
       @Body('username') username: string,
       @Body('email') email: string,

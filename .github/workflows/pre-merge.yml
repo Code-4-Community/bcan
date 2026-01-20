@@ -53,6 +53,12 @@ jobs:
             cd backend
             npm run test
 
-      - name: Run Circular Dependency Check
+      - name: Run Circular Dependency Check - Backend
         run: |
-          node canIMerge.js --check-circular
+          cd backend
+          node ../canIMerge.js --check-circular
+
+      - name: Run Circular Dependency Check - Frontend
+        run: |
+          cd frontend
+          node ../canIMerge.js --check-circular
