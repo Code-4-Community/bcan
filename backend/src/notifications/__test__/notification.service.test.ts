@@ -6,25 +6,25 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { servicesVersion } from 'typescript';
 import { TDateISO } from '../../utils/date';
 
-vi.mock('../../auth/auth.guard', () => ({
-  VerifyUserGuard: vi.fn(() => ({
-    canActivate: vi.fn().mockResolvedValue(true),
-  })),
-  VerifyAdminRoleGuard: vi.fn(() => ({
-    canActivate: vi.fn().mockResolvedValue(true),
-  })),
+vi.mock('../../guards/auth.guard', () => ({
+  VerifyUserGuard: vi.fn(class MockVerifyUserGuard {
+    canActivate = vi.fn().mockResolvedValue(true);
+  }),
+  VerifyAdminRoleGuard: vi.fn(class MockVerifyAdminRoleGuard {
+    canActivate = vi.fn().mockResolvedValue(true);
+  }),
 }));
 
 // Create mock functions that we can reference
 const mockPromise = vi.fn();
-const mockScan = vi.fn().mockReturnThis();
-const mockGet = vi.fn().mockReturnThis();
-const mockSend = vi.fn().mockReturnThis(); // for SES
-const mockPut = vi.fn().mockReturnThis();
-const mockDelete = vi.fn().mockReturnThis();
-const mockQuery = vi.fn().mockReturnThis();
-const mockSendEmail = vi.fn().mockReturnThis();
-const mockUpdate = vi.fn().mockReturnThis();
+const mockScan = vi.fn();
+const mockGet = vi.fn();
+const mockSend = vi.fn(); // for SES
+const mockPut = vi.fn();
+const mockDelete = vi.fn();
+const mockQuery = vi.fn();
+const mockSendEmail = vi.fn();
+const mockUpdate = vi.fn();
 
 const mockDocumentClient = {
   scan: mockScan,
@@ -33,22 +33,24 @@ const mockDocumentClient = {
   query: mockQuery,
   update: mockUpdate,
   delete : mockDelete,
-  promise: mockPromise,
 };
 
 
 const mockSES = {
   send: mockSend,
-  promise: mockPromise,
   sendEmail : mockSendEmail
 };
 
 // Mock AWS SDK - Note the structure here
 vi.mock('aws-sdk', () => ({
   DynamoDB: {
-    DocumentClient: vi.fn(() => mockDocumentClient)
+    DocumentClient: vi.fn(function() {
+      return mockDocumentClient;
+    })
   },
-  SES: vi.fn(() => mockSES)
+  SES: vi.fn(function() {
+    return mockSES;
+  })
 }));
 
 describe('NotificationController', () => {
@@ -62,6 +64,18 @@ describe('NotificationController', () => {
   beforeEach(async () => {
     // Clear all mocks before each test
     vi.clearAllMocks();
+
+    // Setup DynamoDB mocks to return chainable objects with .promise()
+    mockScan.mockReturnValue({ promise: mockPromise });
+    mockGet.mockReturnValue({ promise: mockPromise });
+    mockDelete.mockReturnValue({ promise: mockPromise });
+    mockUpdate.mockReturnValue({ promise: mockPromise });
+    mockPut.mockReturnValue({ promise: mockPromise });
+    mockQuery.mockReturnValue({ promise: mockPromise });
+
+    // Setup SES mocks to return chainable objects with .promise()
+    mockSendEmail.mockReturnValue({ promise: mockPromise });
+    mockSend.mockReturnValue({ promise: mockPromise });
 
     // Reset environment variables
     const originalEnv = process.env;
@@ -79,7 +93,9 @@ describe('NotificationController', () => {
     controller = module.get<NotificationController>(NotificationController);
     notificationService = module.get<NotificationService>(NotificationService);
 
-    mockSendEmail.mockReturnValue({ promise: mockPromise });
+    // Reset promise mock to default resolved state
+    mockPromise.mockResolvedValue({});
+
     mockPromise.mockResolvedValue({
       MessageId: 'test-message-id-123',
       ResponseMetadata: {
@@ -398,14 +414,13 @@ describe('NotificationController', () => {
     const updates = { message: 'Failure test' };
     const mockError = new Error('DynamoDB update failed');
 
-    mockDocumentClient.update = vi.fn().mockReturnThis();
-    mockPromise.mockRejectedValue(mockError);
+    mockPromise.mockRejectedValueOnce(mockError);
 
     // Act & Assert
     await expect(notificationService.updateNotification(notificationId, updates))
       .rejects.toThrow('Failed to update Notification notif-fail');
 
-    expect(mockDocumentClient.update).toHaveBeenCalled();
+    expect(mockUpdate).toHaveBeenCalled();
   });
 
   it('should correctly update a single field', async () => {
@@ -414,14 +429,14 @@ describe('NotificationController', () => {
     const updates = { message: 'Single field update' };
     const mockUpdateResponse = { Attributes: { message: 'Single field update' } };
 
-    mockDocumentClient.update = vi.fn().mockReturnThis();
-    mockPromise.mockResolvedValue(mockUpdateResponse);
+    // Make sure mockPromise resolves with the response
+    mockPromise.mockResolvedValueOnce(mockUpdateResponse);
 
     // Act
     const result = await notificationService.updateNotification(notificationId, updates);
 
     // Assert
-    expect(mockDocumentClient.update).toHaveBeenCalledWith({
+    expect(mockUpdate).toHaveBeenCalledWith({
       TableName: 'BCANNotifications',
       Key: { notificationId },
       UpdateExpression: 'SET #message = :message',
@@ -477,13 +492,7 @@ describe('NotificationController', () => {
         message: 'The item does not exist' 
       });
 
-      try {
-        await notificationService.deleteNotification('999');
-        throw new Error('Expected deleteNotification to throw');
-      } catch (err: any) {
-        expect(err).toBeInstanceOf(Error);
-        expect(err.message).toContain('Notification with id 999 not found');
-      }
+      await expect(notificationService.deleteNotification('999')).rejects.toThrow('Notification with id 999 not found');
     })
   })
 });

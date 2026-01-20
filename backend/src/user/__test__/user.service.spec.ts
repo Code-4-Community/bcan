@@ -8,66 +8,76 @@ import { VerifyUserGuard, VerifyAdminRoleGuard } from '../../guards/auth.guard';
 import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 
 // Create mock functions at module level (BEFORE mock)
-const mockScan = vi.fn().mockReturnThis();
-const mockGet = vi.fn().mockReturnThis();
-const mockUpdate = vi.fn().mockReturnThis();
-const mockPut = vi.fn().mockReturnThis();
-const mockDelete = vi.fn().mockReturnThis();
+const mockScan = vi.fn();
+const mockGet = vi.fn();
+const mockUpdate = vi.fn();
+const mockPut = vi.fn();
+const mockDelete = vi.fn();
 const mockPromise = vi.fn();
 
 // Mock Cognito functions
-const mockAdminAddUserToGroup = vi.fn().mockReturnValue({ promise: () => Promise.resolve({}) });
-const mockAdminRemoveUserFromGroup = vi.fn().mockReturnValue({ promise: () => Promise.resolve({}) });
-const mockAdminDeleteUser = vi.fn().mockReturnValue({ promise: () => Promise.resolve({}) });
+const mockAdminAddUserToGroup = vi.fn();
+const mockAdminRemoveUserFromGroup = vi.fn();
+const mockAdminDeleteUser = vi.fn();
 
 // Mock AWS SDK ONCE with proper structure for import * as AWS
 vi.mock('aws-sdk', () => {
   return {
     default: {
-      CognitoIdentityServiceProvider: vi.fn(() => ({
+      CognitoIdentityServiceProvider: vi.fn(function() {
+        return {
+          adminAddUserToGroup: mockAdminAddUserToGroup,
+          adminRemoveUserFromGroup: mockAdminRemoveUserFromGroup,
+          adminDeleteUser: mockAdminDeleteUser,
+        };
+      }),
+      DynamoDB: {
+        DocumentClient: vi.fn(function() {
+          return {
+            scan: mockScan,
+            get: mockGet,
+            update: mockUpdate,
+            put: mockPut,
+            delete: mockDelete,
+          };
+        })
+      },
+      SES: vi.fn(function() {
+        return {};
+      })
+    },
+    CognitoIdentityServiceProvider: vi.fn(function() {
+      return {
         adminAddUserToGroup: mockAdminAddUserToGroup,
         adminRemoveUserFromGroup: mockAdminRemoveUserFromGroup,
         adminDeleteUser: mockAdminDeleteUser,
-      })),
-      DynamoDB: {
-        DocumentClient: vi.fn(() => ({
+      };
+    }),
+    DynamoDB: {
+      DocumentClient: vi.fn(function() {
+        return {
           scan: mockScan,
           get: mockGet,
           update: mockUpdate,
           put: mockPut,
           delete: mockDelete,
-          promise: mockPromise,
-        }))
-      },
-      SES: vi.fn(() => ({}))
+        };
+      })
     },
-    CognitoIdentityServiceProvider: vi.fn(() => ({
-      adminAddUserToGroup: mockAdminAddUserToGroup,
-      adminRemoveUserFromGroup: mockAdminRemoveUserFromGroup,
-      adminDeleteUser: mockAdminDeleteUser,
-    })),
-    DynamoDB: {
-      DocumentClient: vi.fn(() => ({
-        scan: mockScan,
-        get: mockGet,
-        update: mockUpdate,
-        put: mockPut,
-        delete: mockDelete,
-        promise: mockPromise,
-      }))
-    },
-    SES: vi.fn(() => ({}))
+    SES: vi.fn(function() {
+      return {};
+    })
   };
 });
 
 // ✅ Mock the auth guards
-vi.mock('../../auth/auth.guard', () => ({
-  VerifyUserGuard: vi.fn(() => ({
-    canActivate: vi.fn().mockResolvedValue(true)
-  })),
-  VerifyAdminRoleGuard: vi.fn(() => ({
-    canActivate: vi.fn().mockResolvedValue(true)
-  }))
+vi.mock('../../guards/auth.guard', () => ({
+  VerifyUserGuard: vi.fn(class MockVerifyUserGuard {
+    canActivate = vi.fn().mockResolvedValue(true);
+  }),
+  VerifyAdminRoleGuard: vi.fn(class MockVerifyAdminRoleGuard {
+    canActivate = vi.fn().mockResolvedValue(true);
+  })
 }));
 
 describe('UserController', () => {
@@ -83,6 +93,18 @@ describe('UserController', () => {
   beforeEach(async () => {
     // Clear all mocks before each test
     vi.clearAllMocks();
+
+    // Setup DynamoDB mocks to return chainable objects with .promise()
+    mockScan.mockReturnValue({ promise: mockPromise });
+    mockGet.mockReturnValue({ promise: mockPromise });
+    mockDelete.mockReturnValue({ promise: mockPromise });
+    mockUpdate.mockReturnValue({ promise: mockPromise });
+    mockPut.mockReturnValue({ promise: mockPromise });
+
+    // Setup Cognito mocks to return chainable objects with .promise()
+    mockAdminAddUserToGroup.mockReturnValue({ promise: mockPromise });
+    mockAdminRemoveUserFromGroup.mockReturnValue({ promise: mockPromise });
+    mockAdminDeleteUser.mockReturnValue({ promise: mockPromise });
     
     // Reset promise mocks to default resolved state
     mockPromise.mockResolvedValue({});
