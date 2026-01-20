@@ -4,7 +4,7 @@ import { User } from '../types/User';
 import { Response } from 'express';
 import { VerifyAdminRoleGuard, VerifyUserGuard } from "../guards/auth.guard";
 import { RegisterBody } from './types/auth.types';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -34,6 +34,10 @@ export class AuthController {
     }
   }
 
+  /**
+   * 
+   * Register user
+   */
   @Post('register')
   @ApiResponse({
     status : 201,
@@ -88,6 +92,8 @@ export class AuthController {
   }
 
   @Post('set-password')
+  @UseGuards(VerifyUserGuard)
+  @ApiBearerAuth()
   async setNewPassword(
     @Body('newPassword') newPassword: string,
     @Body('session') session: string,
@@ -99,6 +105,7 @@ export class AuthController {
 
     @Post('update-profile')
     @UseGuards(VerifyUserGuard)
+    @ApiBearerAuth()
     async updateProfile(
       @Body('username') username: string,
       @Body('email') email: string,

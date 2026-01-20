@@ -2,6 +2,7 @@ import { Controller, Get, Param, Put, Body, Patch, Post, Delete, ValidationPipe,
 import { GrantService } from './grant.service';
 import { Grant } from '../../../middle-layer/types/Grant';
 import { VerifyUserGuard } from '../guards/auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('grant')
 export class GrantController {
@@ -9,6 +10,7 @@ export class GrantController {
 
     @Get()
     @UseGuards(VerifyUserGuard)
+    @ApiBearerAuth()
     async getAllGrants() {
         return await this.grantService.getAllGrants();
     }

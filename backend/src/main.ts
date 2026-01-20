@@ -25,10 +25,10 @@ async function bootstrap() {
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe());
   const config = new DocumentBuilder()
-    .setTitle('Cats example')
-    .setDescription('The cats API description')
+    .setTitle('Project BCAN Backend API Documentation')
+    .setDescription('REST API for Bcan project written in nestjs using bearer auth for auth purposes.')
     .setVersion('1.0')
-    .addTag('cats')
+    .addBearerAuth()
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
