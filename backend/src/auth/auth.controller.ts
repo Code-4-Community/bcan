@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { User } from '../types/User';
 import { Response } from 'express';
 import { VerifyAdminRoleGuard, VerifyUserGuard } from "../guards/auth.guard";
-import { RegisterBody } from './types/auth.types';
+import { LoginBody, RegisterBody } from './types/auth.types';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
 @Controller('auth')
@@ -44,13 +44,13 @@ export class AuthController {
     description : "User registered successfully"
   })
   @ApiResponse({
-    status : 400,
-    description : "{Error encountered}"}
-  )
-  @ApiResponse({
     status: 500,
     description : "Internal Server Error"
   })
+  @ApiResponse({
+    status : 400,
+    description : "{Error encountered}"}
+  )
   @ApiResponse({
     status: 409,
     description : "{Error encountered}"
@@ -65,8 +65,7 @@ export class AuthController {
   @Post('login')
   async login(
     @Res({ passthrough: true }) response: Response,
-    @Body('username') username: string,
-    @Body('password') password: string, 
+    @Body() body:LoginBody
   ): Promise<{
     user: User;
     session?: string;
@@ -75,7 +74,7 @@ export class AuthController {
     username?: string;
     position?: string;
   }> {
-    const result = await this.authService.login(username, password);
+    const result = await this.authService.login(body.username, body.password);
   
   // Set cookie with access token
   if (result.access_token) {
