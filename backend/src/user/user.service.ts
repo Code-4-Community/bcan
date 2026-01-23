@@ -102,6 +102,7 @@ export class UserService {
     const deleteResult = await this.dynamoDb.delete(deleteParams).promise();
 
     if (!deleteResult.Attributes) {
+      this.logger.error(`DynamoDB delete did not return deleted attributes for ${username}`);
       throw new InternalServerErrorException(
         "Failed to delete user from database"
       );
@@ -275,6 +276,9 @@ async addUserToGroup(
         requestedBy.position === UserStatus.Admin &&
         groupName !== UserStatus.Admin
       ) {
+        this.logger.warn(
+          `Administrator ${requestedBy.userId} attempted to demote themselves`
+        );
         throw new BadRequestException(
           "Administrators cannot demote themselves"
         );
@@ -542,7 +546,6 @@ async getAllActiveUsers(): Promise<User[]> {
         this.logger.error("DynamoDB scan result:", result);
         throw new NotFoundException("No active users found.");
       }
-      
       const users: User[] = (result.Items || []).map((item) => ({
         userId: item.userId, // Assign name to userId
         position: item.position as UserStatus,
