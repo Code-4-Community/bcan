@@ -41,10 +41,12 @@ export class UserService {
 
   // 2. Validate input
   if (!user || !user.userId) {
+    this.logger.error("Invalid user object provided for deletion");
     throw new BadRequestException("Valid user object is required");
   }
 
   if (!requestedBy || !requestedBy.userId) {
+    this.logger.error("Invalid requesting user object provided for deletion");
     throw new BadRequestException("Valid requesting user is required");
   }
 
