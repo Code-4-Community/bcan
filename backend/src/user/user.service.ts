@@ -23,6 +23,8 @@ export class UserService {
   private dynamoDb = new AWS.DynamoDB.DocumentClient();
   private ses = new AWS.SES({ region: process.env.AWS_REGION });
 
+  // purpose statement: deletes user from database; only admin can delete users
+  // use case: employee is no longer with BCAN
  async deleteUser(user: User, requestedBy: User): Promise<User> {
   const userPoolId = process.env.COGNITO_USER_POOL_ID;
   const tableName = process.env.DYNAMODB_USER_TABLE_NAME;
@@ -60,6 +62,7 @@ export class UserService {
 
   // 4. Prevent self-deletion
   if (requestedBy.userId === username) {
+    this.logger.warn(`Administrator ${requestedBy.userId} attempted to delete their own account`);
     throw new BadRequestException("Administrators cannot delete their own account");
   }
 
@@ -179,19 +182,30 @@ export class UserService {
   return userToDelete;
 }
 
-  async getAllUsers(): Promise<any> {
+// purpose statement: retrieves all users from the database
+// use case: admin wants to see all users on user management page
+async getAllUsers(): Promise<any> {
     const params = {
       TableName: process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE",
     };
 
     try {
+      this.logger.log('Executing DynamoDB scan to retrieve all users...');
       const data = await this.dynamoDb.scan(params).promise();
+      
+      const userCount = data.Items?.length || 0;
+      this.logger.log(`✅ Successfully retrieved ${userCount} users from database`);
+      
       return data.Items;
     } catch (error) {
-      throw new Error("Could not retrieve users.");
+      this.logger.error('Failed to retrieve users from DynamoDB:', error);
+      throw new InternalServerErrorException("Could not retrieve users.");
     }
   }
-  async addUserToGroup(
+
+  // purpose statement: adds user to a group/changes their role; only admin can do this
+  // use case: admin wants to promote an employee to admin or activate an inactive user
+async addUserToGroup(
     user: User,
     groupName: UserStatus,
     requestedBy: User
@@ -374,6 +388,9 @@ export class UserService {
       const result = await this.dynamoDb.update(params).promise();
 
       if (!result.Attributes) {
+        this.logger.error(
+          `DynamoDB update did not return updated attributes for ${username}`
+        );
         throw new InternalServerErrorException(
           "Failed to retrieve updated user data"
         );
@@ -441,6 +458,8 @@ export class UserService {
     }
   }
 
+  // purpose statement: retrieves user by their userId
+  // use case: not actually sure right now, maybe is there is an option for admin to click on a specific user to see details?
   async getUserById(userId: string): Promise<any> {
     const params = {
       TableName: process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE",
@@ -450,15 +469,22 @@ export class UserService {
     };
 
     try {
+      this.logger.log(`Fetching user ${userId} from DynamoDB...`);
       const data = await this.dynamoDb.get(params).promise();
+      
+      this.logger.log(`✅ Successfully retrieved user ${userId}`);
       return data.Item;
     } catch (error) {
-      throw new Error('Could not retrieve user.');
+      this.logger.error(`Failed to retrieve user ${userId} from DynamoDB:`, error);
+      throw new InternalServerErrorException('Could not retrieve user.');
     }
   }
 
+  // purpose statement: retrieves all inactive users
+  // use case: for admin to see all users that need account approval on user management page (pending users tab)
   async getAllInactiveUsers(): Promise<User[]> {
     this.logger.log("Fetching all inactive users in service");
+
     const params = {
       TableName: process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE",
       FilterExpression: "#pos IN (:inactive)",
@@ -471,7 +497,9 @@ export class UserService {
     };
 
     try {
+      this.logger.log('Executing DynamoDB scan with filter for Inactive users...');
       const result = await this.dynamoDb.scan(params).promise();
+      
       const users: User[] = (result.Items || []).map((item) => ({
         userId: item.userId, // Assign name to userId
         position: item.position as UserStatus,
@@ -479,6 +507,7 @@ export class UserService {
         name: item.userId, // Keep name as name
       }));
 
+      this.logger.log(`✅ Successfully retrieved ${users.length} inactive users`);
       return users;
     } catch (error) {
       this.logger.error("Error scanning DynamoDB:", error);
@@ -489,7 +518,10 @@ export class UserService {
     }
   }
 
-  async getAllActiveUsers(): Promise<User[]> {
+  // purpose statement: retrieves all active users (Admins and Employees)
+  // use case: for admin to see all current users on user management page (current users tab)
+async getAllActiveUsers(): Promise<User[]> {
+    this.logger.log('Starting getAllActiveUsers - Fetching all active users (Admin and Employee)');
     const params = {
       TableName: process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE",
       FilterExpression: "#pos IN (:admin, :employee)",
@@ -503,18 +535,21 @@ export class UserService {
     };
 
     try {
+      this.logger.log('Executing DynamoDB scan with filter for Admin and Employee users...');
       const result = await this.dynamoDb.scan(params).promise();
       if (!result.Items) {
         this.logger.error("No active users found.");
         this.logger.error("DynamoDB scan result:", result);
         throw new NotFoundException("No active users found.");
       }
+      
       const users: User[] = (result.Items || []).map((item) => ({
         userId: item.userId, // Assign name to userId
         position: item.position as UserStatus,
         email: item.email,
         name: item.userId, // Keep name as name
       }));
+      
       this.logger.debug(`Fetched ${users.length} active users.`);
 
       return users;
@@ -522,19 +557,25 @@ export class UserService {
       this.logger.error("Error scanning DynamoDB:", error);
       if (error instanceof NotFoundException) throw error;
       throw new InternalServerErrorException(
-        "Failed to retrieve inactive users."
+        "Failed to retrieve active users."
       );
     }
   }
 
 
 
-  // sends email to user once account is approved, used in method above when a user
+  // purpose statement: sends email to user once account is approved, used in method above when a user
   // is added to the Employee or Admin group from Inactive
   async sendVerificationEmail(userEmail: string): Promise<AWS.SES.SendEmailResponse> {
+      this.logger.log(`Starting sendVerificationEmail for email: ${userEmail}`);
+      
+      if (!userEmail || !this.isValidEmail(userEmail)) {
+        this.logger.error(`Invalid email address provided: ${userEmail}`);
+        throw new BadRequestException("Valid email address is required");
+      }
+
       // remove actual email and add to env later!!
-      const fromEmail = process.env.NOTIFICATION_EMAIL_SENDER ||
-      'c4cneu.bcan@gmail.com';
+      const fromEmail = process.env.NOTIFICATION_EMAIL_SENDER || 'c4cneu.bcan@gmail.com';
 
       const params: AWS.SES.SendEmailRequest = {
         Source: fromEmail,
@@ -551,13 +592,20 @@ export class UserService {
       };
 
       try {
+        this.logger.log(`Calling AWS SES to send email to ${userEmail}...`);
         const result = await this.ses.sendEmail(params).promise();
-        this.logger.log(`Verification email sent to ${userEmail}`);
+        this.logger.log(`✅ Verification email sent successfully to ${userEmail}. MessageId: ${result.MessageId}`);
         return result;
       } catch (err: unknown) {
         this.logger.error('Error sending email: ', err);
-        const errMessage = (err instanceof Error) ? err.message : 'Generic'; 
-        throw new Error(`Failed to send email: ${errMessage}`);
+        const errMessage = (err instanceof Error) ? err.message : 'Unknown error'; 
+        throw new InternalServerErrorException(`Failed to send email: ${errMessage}`);
       }
+  }
+
+  // Helper method for email validation
+  private isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   }
 }
