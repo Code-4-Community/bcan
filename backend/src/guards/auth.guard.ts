@@ -73,6 +73,14 @@ export class VerifyAdminRoleGuard implements CanActivate {
       }
       const result = await this.verifier.verify(accessToken);
       const groups = result['cognito:groups'] || [];
+      
+      // Attach user info to request for use in controllers
+      request.user = {
+        userId: result['username'] || result['cognito:username'],
+        email: result['email'],
+        position: groups.includes('Admin') ? 'Admin' : (groups.includes('Employee') ? 'Employee' : 'Inactive')
+      };
+      
       console.log("User groups from token:", groups); 
       if (!groups.includes('Admin')) {
         console.warn("Access denied: User is not an Admin");

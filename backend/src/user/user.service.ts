@@ -464,7 +464,7 @@ async addUserToGroup(
 
   // purpose statement: retrieves user by their userId
   // use case: not actually sure right now, maybe is there is an option for admin to click on a specific user to see details?
-  async getUserById(userId: string): Promise<any> {
+  async getUserById(userId: string): Promise<User> {
     const params = {
       TableName: process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE",
       Key: {
@@ -477,7 +477,7 @@ async addUserToGroup(
       const data = await this.dynamoDb.get(params).promise();
       
       this.logger.log(`✅ Successfully retrieved user ${userId}`);
-      return data.Item;
+      return data.Item as User;
     } catch (error) {
       this.logger.error(`Failed to retrieve user ${userId} from DynamoDB:`, error);
       throw new InternalServerErrorException('Could not retrieve user.');

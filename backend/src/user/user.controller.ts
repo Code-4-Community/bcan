@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Patch, Body, Param, UseGuards } from "@nestjs/common";
+import { Controller, Get, Patch, Delete, Body, Param, UseGuards, Req } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { User } from "../../../middle-layer/types/User";
 import { UserStatus } from "../../../middle-layer/types/UserStatus";
 import { VerifyAdminRoleGuard, VerifyUserGuard, VerifyAdminOrEmployeeRoleGuard } from "../guards/auth.guard";
 import { ApiResponse, ApiParam , ApiBearerAuth} from "@nestjs/swagger";
-import { ChangeRoleBody, DeleteUserBody } from "./types/user.types";
+import { ChangeRoleBody } from "./types/user.types";
 
 @Controller("user")
 export class UserController {
@@ -17,6 +17,10 @@ export class UserController {
   @ApiResponse({
     status : 200,
     description : "All users retrieved successfully"
+  })
+  @ApiResponse({
+    status : 403,
+    description : "Forbidden"
   })
   @ApiResponse({
     status : 500,
@@ -38,6 +42,10 @@ export class UserController {
     description : "All inactive users retrieved successfully"
   })
   @ApiResponse({
+    status : 403,
+    description : "Forbidden"
+  })
+  @ApiResponse({
     status : 500,
     description : "Internal Server Error"
   })
@@ -54,6 +62,10 @@ export class UserController {
   @ApiResponse({
     status : 200,
     description : "All active users retrieved successfully"
+  })
+  @ApiResponse({
+    status : 403,
+    description : "Forbidden"
   })
   @ApiResponse({
     status : 500,
@@ -83,6 +95,10 @@ export class UserController {
     description : "Unauthorized"
   })
   @ApiResponse({
+    status : 403,
+    description : "Forbidden"
+  })
+  @ApiResponse({
     status : 404,
     description : "Not Found"
   })
@@ -93,12 +109,16 @@ export class UserController {
   @UseGuards(VerifyAdminRoleGuard)
   @ApiBearerAuth()
   async addToGroup(
-    @Body() changeRoleBody: ChangeRoleBody
+    @Body() changeRoleBody: ChangeRoleBody,
+    @Req() req: any
   ): Promise<User> {
+    // Get the requesting admin from the authenticated session (attached by guard)
+    const requestedBy: User = req.user;
+    
     let newUser: User = await this.userService.addUserToGroup(
       changeRoleBody.user,
       changeRoleBody.groupName,
-      changeRoleBody.requestedBy
+      requestedBy
     );
     return newUser as User;
   }
@@ -106,9 +126,15 @@ export class UserController {
   /**
    * Delete a user
    */
-  @Post("delete-user")
+  @Delete("delete-user/:userId")
+  @ApiParam({
+    name: 'userId',
+    description: 'ID of the user to delete',
+    required: true,
+    type: String
+  })
   @ApiResponse({
-    status : 201,
+    status : 200,
     description : "User deleted successfully"
   })
   @ApiResponse({
@@ -118,6 +144,10 @@ export class UserController {
   @ApiResponse({
     status : 401,
     description : "Unauthorized"
+  })
+  @ApiResponse({
+    status : 403,
+    description : "Forbidden"
   })
   @ApiResponse({
     status : 404,
@@ -130,10 +160,16 @@ export class UserController {
   @UseGuards(VerifyAdminRoleGuard)
   @ApiBearerAuth()
   async deleteUser(
-    @Body() deleteUserBody: DeleteUserBody  
+    @Param('userId') userId: string,
+    @Req() req: any
   ): Promise<User> {
-    let deletedUser = await this.userService.deleteUser(deleteUserBody.user, deleteUserBody.requestedBy);
-    return deletedUser as User;
+    // Get the requesting admin from the authenticated session (attached by guard)
+    const requestedBy: User = req.user;
+    
+    // Fetch the user to delete from the database
+    const userToDelete: User = await this.userService.getUserById(userId);
+    
+    return await this.userService.deleteUser(userToDelete, requestedBy);
   }
 
   /**
@@ -149,6 +185,10 @@ export class UserController {
   @ApiResponse({
     status : 200,
     description : "User retrieved successfully"
+  })
+  @ApiResponse({
+    status : 403,
+    description : "Forbidden"
   })
   @ApiResponse({
     status : 500,

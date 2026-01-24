@@ -8,22 +8,4 @@ export class ChangeRoleBody {
     email: string 
   };
   groupName!: UserStatus;
-  requestedBy!: {   
-    userId: string,
-    position: UserStatus,
-    email: string 
-  };
-}
-
-export class DeleteUserBody {
-  user!: {   
-    userId: string,
-    position: UserStatus,
-    email: string 
-  };
-  requestedBy!: {   
-    userId: string,
-    position: UserStatus,
-    email: string 
-  };
 }
