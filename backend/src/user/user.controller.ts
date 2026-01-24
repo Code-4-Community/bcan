@@ -2,8 +2,8 @@ import { Controller, Get, Post, Patch, Body, Param, UseGuards } from "@nestjs/co
 import { UserService } from "./user.service";
 import { User } from "../../../middle-layer/types/User";
 import { UserStatus } from "../../../middle-layer/types/UserStatus";
-import { VerifyAdminRoleGuard, VerifyUserGuard } from "../guards/auth.guard";
-import { ApiResponse, ApiParam } from "@nestjs/swagger";
+import { VerifyAdminRoleGuard, VerifyUserGuard, VerifyAdminOrEmployeeRoleGuard } from "../guards/auth.guard";
+import { ApiResponse, ApiParam , ApiBearerAuth} from "@nestjs/swagger";
 import { ChangeRoleBody, DeleteUserBody } from "./types/user.types";
 
 @Controller("user")
@@ -22,7 +22,8 @@ export class UserController {
     status : 500,
     description : "Internal Server Error"
   })
-  @UseGuards(VerifyUserGuard)
+  @UseGuards(VerifyAdminOrEmployeeRoleGuard)
+  @ApiBearerAuth()
   async getAllUsers() {
     return await this.userService.getAllUsers();
   }
@@ -40,7 +41,8 @@ export class UserController {
     status : 500,
     description : "Internal Server Error"
   })
-  @UseGuards(VerifyUserGuard)
+  @UseGuards(VerifyAdminOrEmployeeRoleGuard)
+  @ApiBearerAuth()
   async getAllInactiveUsers(): Promise<User[]> {
     return await this.userService.getAllInactiveUsers();
   }
@@ -57,7 +59,8 @@ export class UserController {
     status : 500,
     description : "Internal Server Error"
   })
-  @UseGuards(VerifyUserGuard)
+  @UseGuards(VerifyAdminOrEmployeeRoleGuard)
+  @ApiBearerAuth()
   async getAllActiveUsers(): Promise<User[]> {
     console.log("Fetching all active users");
     return await this.userService.getAllActiveUsers();
@@ -88,6 +91,7 @@ export class UserController {
     description : "Internal Server Error"
   })
   @UseGuards(VerifyAdminRoleGuard)
+  @ApiBearerAuth()
   async addToGroup(
     @Body() changeRoleBody: ChangeRoleBody
   ): Promise<User> {
@@ -124,6 +128,7 @@ export class UserController {
     description : "Internal Server Error"
   })
   @UseGuards(VerifyAdminRoleGuard)
+  @ApiBearerAuth()
   async deleteUser(
     @Body() deleteUserBody: DeleteUserBody  
   ): Promise<User> {
@@ -149,7 +154,8 @@ export class UserController {
     status : 500,
     description : "Internal Server Error"
   })
-  @UseGuards(VerifyUserGuard)
+  @UseGuards(VerifyAdminOrEmployeeRoleGuard)
+  @ApiBearerAuth()
   async getUserById(@Param('id') userId: string): Promise<User> {
     return await this.userService.getUserById(userId);
   }
