@@ -82,17 +82,17 @@ constructor() {
 
   // Validate input parameters for username, password, and email
   if (!username || username.trim().length === 0) {
-    this.logger.warn("Registration failed: Username is required");
+    this.logger.error("Registration failed: Username is required");
     throw new BadRequestException("Username is required");
   }
 
   if (!password || password.length < 8) {
-    this.logger.warn("Registration failed: Password must be at least 8 characters long");
+    this.logger.error("Registration failed: Password must be at least 8 characters long");
     throw new BadRequestException("Password must be at least 8 characters long");
   }
 
   if (!email || !this.isValidEmail(email)) {
-    this.logger.warn("Registration failed: Valid email address is required");
+    this.logger.error("Registration failed: Valid email address is required");
     throw new BadRequestException("Valid email address is required");
   }
 
@@ -116,7 +116,7 @@ constructor() {
     const emailCheckResult = await this.dynamoDb.scan(emailCheckParams).promise();
 
     if (emailCheckResult.Items && emailCheckResult.Items.length > 0) {
-      this.logger.warn(`Registration failed: Email ${email} already exists`);
+      this.logger.error(`Registration failed: Email ${email} already exists`);
       throw new ConflictException("An account with this email already exists");
     }
 
@@ -131,7 +131,7 @@ constructor() {
     const usernameCheckResult = await this.dynamoDb.get(usernameCheckParams).promise();
 
     if (usernameCheckResult.Item) {
-      this.logger.warn(`Registration failed: Username ${username} already exists`);
+      this.logger.error(`Registration failed: Username ${username} already exists`);
       throw new ConflictException("This username is already taken");
     }
 
@@ -182,6 +182,7 @@ constructor() {
 
     } catch (passwordError: any) {
       this.logger.error(`Failed to set password for ${username}:`, passwordError);
+
 
       // Rollback: Delete Cognito user if password setting fails
       if (cognitoUserCreated) {
@@ -329,10 +330,12 @@ private isValidEmail(email: string): boolean {
 
     // Validate input parameters for username and password
     if (!username || username.trim().length === 0) {
+      this.logger.error("Login failed: Username is required");
       throw new BadRequestException("Username is required");
     }
 
     if (!password || password.length === 0) {
+      this.logger.error("Login failed: Password is required");
       throw new BadRequestException("Password is required");
     }
 
@@ -452,7 +455,7 @@ private isValidEmail(email: string): boolean {
       if (cognitoError.code) {
         switch (cognitoError.code) {
           case "NotAuthorizedException":
-            this.logger.warn(`Login failed: ${cognitoError.message}`);
+            this.logger.error(`Login failed: ${cognitoError.message}`);
             throw new UnauthorizedException("Incorrect username or password.");
           default:
             this.logger.error(
