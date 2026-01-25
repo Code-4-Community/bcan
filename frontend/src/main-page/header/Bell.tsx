@@ -45,34 +45,22 @@ const BellButton: React.FC<BellButtonProps> = observer(({ setOpenModal, openModa
   return (
     <div className="bell-container">
       <div
-        className="bell-wrapper"
-        style={{ position: "relative", display: "inline-block" }}
+        className="bell-wrapper inline-block relative p-2 hover:bg-light-orange rounded-md"
       >
         <button
-          className={`bell-button ${openModal === "bell" ? "hovered" : ""}`}
+          className={`bell-button ${openModal === "bell" ? "hovered" : ""} bg-none border-none relative`}
           onClick={handleClick}
-          style={{ background: "none", position: "relative" }}
         >
           <FontAwesomeIcon
-            icon={faBell}
-            style={{ color: "black"}}
+            icon={faBell} className="text-black"
           />
-        </button>
-
-        {notifications.length > 0 && (
-          <span
-            style={{
-              position: "absolute",
-              top: "0px",
-              right: "0px",
-              width: "10px",
-              height: "10px",
-              backgroundColor: "red",
-              borderRadius: "50%",
-              border: "2px solid white",
-            }}
+          {notifications.length == 0 && (
+          <span className="absolute top-0 -right-[0.10rem] w-3 h-3 rounded-full bg-red border-2 border-white"
           />
         )}
+        </button>
+
+        
       </div>
 
       {(openModal === "bell" ? (

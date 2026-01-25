@@ -8,6 +8,8 @@ export default {
       'light-blue': '#90c4e5',
       'green': '#119548',
       'yellow': '#F8CC16',
+      'black': '#000000',
+      'red': '#ff0000',
       'tan': '#F2EBE4',
       'dark-orange': "#F26624",
       'light-orange': "#f7a781",
