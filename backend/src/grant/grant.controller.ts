@@ -3,7 +3,7 @@ import { GrantService } from './grant.service';
 import { Grant } from '../../../middle-layer/types/Grant';
 import { VerifyUserGuard } from '../guards/auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiTags } from '@nestjs/swagger';
-import { InactivateGrantBody, AddGrantBody, UpdateGrantBody } from './types/grant.types';
+import { InactivateGrantBody, AddGrantBody, UpdateGrantBody, GrantResponseDto } from './types/grant.types';
 
 @ApiTags('grant')
 @Controller('grant')
@@ -16,7 +16,7 @@ export class GrantController {
     @UseGuards(VerifyUserGuard)
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Retrieve all grants', description: 'Returns a list of all grants in the database. Automatically inactivates expired grants.' })
-    @ApiResponse({ status: 200, description: 'Successfully retrieved all grants', type: [Grant] })
+    @ApiResponse({ status: 200, description: 'Successfully retrieved all grants', type: [GrantResponseDto] })
     @ApiResponse({ status: 401, description: 'Unauthorized - Invalid or missing authentication token' })
     @ApiResponse({ status: 500, description: 'Internal Server Error', example: 'Internal Server Error' })
     async getAllGrants(): Promise<Grant[]> {
@@ -31,7 +31,7 @@ export class GrantController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Inactivate grants', description: 'Marks one or more grants as inactive by their grant IDs' })
     @ApiBody({ type: InactivateGrantBody, description: 'Array of grant IDs to inactivate' })
-    @ApiResponse({ status: 200, description: 'Successfully inactivated grants', type: [Grant] })
+    @ApiResponse({ status: 200, description: 'Successfully inactivated grants', type: [GrantResponseDto] })
     @ApiResponse({ status: 401, description: 'Unauthorized - Invalid or missing authentication token' })
     @ApiResponse({ status: 500, description: 'Internal Server Error', example: 'Internal Server Error' })
     async inactivate(
@@ -104,7 +104,7 @@ export class GrantController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Get a grant by ID', description: 'Retrieves a single grant from the database by its grant ID' })
     @ApiParam({ name: 'id', type: String, description: 'The ID of the grant to retrieve' })
-    @ApiResponse({ status: 200, description: 'Successfully retrieved grant', type: Grant })
+    @ApiResponse({ status: 200, description: 'Successfully retrieved grant', type: GrantResponseDto })
     @ApiResponse({ status: 404, description: 'Grant not found', example: '{Error encountered}' })
     @ApiResponse({ status: 401, description: 'Unauthorized - Invalid or missing authentication token' })
     @ApiResponse({ status: 500, description: 'Internal Server Error', example: 'Internal Server Error' })
