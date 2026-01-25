@@ -166,6 +166,7 @@ export class UserService {
 
     // Handle specific Cognito errors
     if (cognitoError.code === "UserNotFoundException") {
+      this.logger.error(`User not found in Cognito: ${username}`);
       throw new NotFoundException(
         `User '${username}' not found in authentication system`
       );
@@ -244,6 +245,7 @@ async addUserToGroup(
     // 3. Validate group name is a valid UserStatus
     const validStatuses = Object.values(UserStatus);
     if (!validStatuses.includes(groupName)) {
+      this.logger.error(`Invalid group name: ${groupName}`);
       throw new BadRequestException(
         `Invalid group name. Must be one of: ${validStatuses.join(", ")}`
       );
@@ -356,14 +358,19 @@ async addUserToGroup(
 
       // Handle specific Cognito errors
       if (cognitoError.code === "UserNotFoundException") {
+        this.logger.error(`User not found in Cognito: ${username}`);
         throw new NotFoundException(
           `User '${username}' not found in authentication system`
         );
       } else if (cognitoError.code === "ResourceNotFoundException") {
+        this.logger.error(`Group not found in Cognito: ${groupName}`);
         throw new InternalServerErrorException(
           `Group '${groupName}' does not exist in the system`
         );
       } else if (cognitoError.code === "InvalidParameterException") {
+        this.logger.error(
+          `Invalid parameters provided for Cognito operation: ${cognitoError.message}`
+        );
         throw new BadRequestException(
           `Invalid parameters: ${cognitoError.message}`
         );
@@ -451,6 +458,9 @@ async addUserToGroup(
       }
 
       if (dynamoError.code === "ConditionalCheckFailedException") {
+        this.logger.error(
+          `Conditional check failed while updating user ${username} in DynamoDB`
+        );
         throw new ConflictException(
           "User data was modified by another process"
         );
