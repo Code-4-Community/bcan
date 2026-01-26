@@ -22,7 +22,7 @@ const GrantNotification: React.FC<GrantNotificationProps> = ({
     return (
         <div className="grant-notification" role="listitem">
             <div className="bell-notif">
-                <FontAwesomeIcon className="text-red" icon={faBell}/>
+                <FontAwesomeIcon className="text-gray" icon={faBell}/>
             </div>
             <div className="notification-text">
                 <div className="notification-title">{title}</div>

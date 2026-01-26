@@ -54,7 +54,7 @@ const BellButton: React.FC<BellButtonProps> = observer(({ setOpenModal, openModa
           <FontAwesomeIcon
             icon={faBell} className="text-black"
           />
-          {notifications.length == 0 && (
+          {notifications.length > 0 && (
           <span className="absolute top-0 -right-[0.10rem] w-3 h-3 rounded-full bg-red border-2 border-white"
           />
         )}
