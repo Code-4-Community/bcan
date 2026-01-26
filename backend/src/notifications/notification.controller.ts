@@ -2,7 +2,8 @@ import { Controller, Post, Body, Get, Query, Param, Patch, Put, Delete, UseGuard
 import { NotificationService } from './notification.service';
 import { Notification } from '../../../middle-layer/types/Notification';
 import { VerifyUserGuard } from '../guards/auth.guard';
-import { ApiTags, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { NotificationBody } from './types/notification.types';
 
 
 @ApiTags('notifications')
@@ -41,7 +42,7 @@ export class NotificationController {
   })
   @UseGuards(VerifyUserGuard)
   @ApiBearerAuth()
-  async create(@Body() notification: Partial<Notification>): Promise<Notification> {
+  async create(@Body() notification: NotificationBody): Promise<Notification> {
     // call the service's createNotification method and return the result
     return await this.notificationService.createNotification(notification as Notification);
   }
@@ -145,10 +146,11 @@ export class NotificationController {
     description: "Internal Server Error"
   })
   @Put(':notificationId')
+  @ApiBody({ type: NotificationBody})
   @UseGuards(VerifyUserGuard)
   @ApiBearerAuth()
   async updateNotification(@Param('notificationId') notificationId: string, 
-  @Body() notification: Partial<Notification>){
+  @Body() notification: Partial<NotificationBody>){
     return await this.notificationService.updateNotification(notificationId, notification);
   }
 
