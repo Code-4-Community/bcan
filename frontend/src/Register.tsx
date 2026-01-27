@@ -205,7 +205,7 @@ const Register = observer(() => {
             <hr className="border-[#757575] w-[45%]" />
           </div>
           <div className="flex items-center mt-4 justify-center">
-            Don't have an account?{" "}
+            Have an account?{" "}
             <button
               type="button"
               onClick={() => navigate("/login")}
