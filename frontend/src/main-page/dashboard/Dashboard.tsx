@@ -10,6 +10,7 @@ import {
   updateFilter,
   updateEndDateFilter,
   updateStartDateFilter,
+  updateSearchQuery,
 } from "../../external/bcanSatchel/actions";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import BarYearGrantStatus from "./Charts/BarYearGrantStatus";
@@ -26,6 +27,7 @@ const Dashboard = observer(() => {
     updateFilter(null);
     updateEndDateFilter(null);
     updateStartDateFilter(null);
+    updateSearchQuery("");
   }, []);
 
   const { yearFilter, allGrants } = getAppStore();

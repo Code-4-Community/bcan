@@ -1,8 +1,4 @@
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
-// import { TransitionGroup, CSSTransition } from "react-transition-group";
-
-// static transitions sheet
-import "./transitions.css";
 
 import { observer } from "mobx-react-lite";
 import { useAuthContext } from "../context/auth/authContext";
@@ -14,11 +10,10 @@ import { getAppStore } from "../external/bcanSatchel/store"
 import RestrictedPage from "../main-page/restricted/RestrictedPage";
 
 /**
- * AnimatedRoutes:
- * - Wraps routes with CSSTransition + TransitionGroup
- * - Applies .fade-enter / .fade-exit transitions from transitions.css
+ * AppRoutes:
+ * - Handles routing and route protection based on authentication status.
  */
-const AnimatedRoutes = observer(() => {
+const AppRoutes = observer(() => {
   const location = useLocation();
   const { isAuthenticated } = useAuthContext();
   const user = getAppStore().user;
@@ -61,4 +56,4 @@ const AnimatedRoutes = observer(() => {
   );
 });
 
-export default AnimatedRoutes;
+export default AppRoutes;

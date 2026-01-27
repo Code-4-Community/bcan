@@ -19,6 +19,7 @@ export default {
       'gray': '#808080',
       'pale-orange':'#FFCEB6',
       'white-orange': '#FFF1EB',
+      'medium-gray': '#D9D9D9',
     },
     fontFamily: {
       sans: ['Montserrat', 'sans-serif'],
