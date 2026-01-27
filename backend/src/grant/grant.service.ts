@@ -257,11 +257,20 @@ export class GrantService {
   // Creates notifications for a grant's application and report deadlines
   private async createGrantNotifications(grant: Grant, userId: string) {
     const { grantId, organization, application_deadline, report_deadlines } = grant;
-  
+    this.logger.log(
+      `Creating notifications for grant ${grantId} (${organization}) for user ${userId}`,
+    );
+
     // Application deadline notifications
     if (application_deadline) {
+      this.logger.debug(
+        `Creating application deadline notifications for grant ${grantId} with deadline ${application_deadline}`,
+      );
       const alertTimes = this.getNotificationTimes(application_deadline);
       for (const alertTime of alertTimes) {
+        this.logger.debug(
+          `Creating application notification for grant ${grantId} at alertTime ${alertTime}`,
+        );
         const message = `Application due in ${this.daysUntil(alertTime, application_deadline)} days for ${organization}`;
         const notification: Notification = {
           notificationId: `${grantId}-app`,
@@ -272,13 +281,23 @@ export class GrantService {
         };
         await this.notificationService.createNotification(notification);
       }
+    } else {
+      this.logger.debug(
+        `No application_deadline found for grant ${grantId}; skipping application notifications`,
+      );
     }
-  
+
     // Report deadlines notifications
     if (report_deadlines && Array.isArray(report_deadlines)) {
+      this.logger.debug(
+        `Creating report deadline notifications for grant ${grantId} with ${report_deadlines.length} report_deadlines`,
+      );
       for (const reportDeadline of report_deadlines) {
         const alertTimes = this.getNotificationTimes(reportDeadline);
         for (const alertTime of alertTimes) {
+          this.logger.debug(
+            `Creating report notification for grant ${grantId} at alertTime ${alertTime} (report deadline ${reportDeadline})`,
+          );
           const message = `Report due in ${this.daysUntil(alertTime, reportDeadline)} days for ${organization}`;
           const notification: Notification = {
             notificationId: `${grantId}-report`,
@@ -290,50 +309,82 @@ export class GrantService {
           await this.notificationService.createNotification(notification);
         }
       }
+    } else {
+      this.logger.debug(
+        `No report_deadlines configured for grant ${grantId}; skipping report notifications`,
+      );
     }
+
+    this.logger.log(
+      `Finished creating notifications for grant ${grantId} (${organization}) for user ${userId}`,
+    );
   }
 
   // Updates notifications for a grant's application and report deadlines
   private async updateGrantNotifications(grant: Grant) {
     const { grantId, organization, application_deadline, report_deadlines } = grant;
-  
+    this.logger.log(
+      `Updating notifications for grant ${grantId} (${organization})`,
+    );
+
     // Application notifications
     if (application_deadline) {
+      this.logger.debug(
+        `Updating application deadline notifications for grant ${grantId} with deadline ${application_deadline}`,
+      );
       const alertTimes = this.getNotificationTimes(application_deadline);
       for (const alertTime of alertTimes) {
         const notificationId = `${grantId}-app`;
         const message = `Application due in ${this.daysUntil(alertTime, application_deadline)} days for ${organization}`;
-  
+
+        this.logger.debug(
+          `Updating application notification ${notificationId} for grant ${grantId} to alertTime ${alertTime}`,
+        );
         await this.notificationService.updateNotification(notificationId, {
           message,
           alertTime: alertTime as TDateISO,
         });
       }
+    } else {
+      this.logger.debug(
+        `No application_deadline found for grant ${grantId}; skipping application notification updates`,
+      );
     }
-  
+
     // Report notifications
     if (report_deadlines && Array.isArray(report_deadlines)) {
+      this.logger.debug(
+        `Updating report deadline notifications for grant ${grantId} with ${report_deadlines.length} report_deadlines`,
+      );
       for (const reportDeadline of report_deadlines) {
         const alertTimes = this.getNotificationTimes(reportDeadline);
         for (const alertTime of alertTimes) {
           const notificationId = `${grantId}-report`;
           const message = `Report due in ${this.daysUntil(alertTime, reportDeadline)} days for ${organization}`;
-  
+
+          this.logger.debug(
+            `Updating report notification ${notificationId} for grant ${grantId} to alertTime ${alertTime} (report deadline ${reportDeadline})`,
+          );
           await this.notificationService.updateNotification(notificationId, {
             message,
             alertTime: alertTime as TDateISO,
           });
         }
       }
+    } else {
+      this.logger.debug(
+        `No report_deadlines configured for grant ${grantId}; skipping report notification updates`,
+      );
     }
+
+    this.logger.log(
+      `Finished updating notifications for grant ${grantId} (${organization})`,
+    );
   }
-  
+
   // Calculates the number of days between an alert time and deadline
   private daysUntil(alertTime: string, deadline: string): number {
     const diffMs = +new Date(deadline) - +new Date(alertTime);
     return Math.round(diffMs / (1000 * 60 * 60 * 24));
   }
-
-
-  
 }
