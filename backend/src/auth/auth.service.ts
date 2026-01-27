@@ -58,6 +58,8 @@ constructor() {
 }
 
   
+ // purpose statement: registers an user into cognito and dynamodb
+ // use case: new employee is joining
  async register(
   username: string,
   password: string,
@@ -72,21 +74,25 @@ constructor() {
     throw new InternalServerErrorException("Server configuration error");
   }
 
+  // Validate environment variables
   if (!tableName) {
     this.logger.error("DynamoDB User Table Name is not defined in environment variables.");
     throw new InternalServerErrorException("Server configuration error");
   }
 
-  // Validate input parameters
+  // Validate input parameters for username, password, and email
   if (!username || username.trim().length === 0) {
+    this.logger.error("Registration failed: Username is required");
     throw new BadRequestException("Username is required");
   }
 
   if (!password || password.length < 8) {
+    this.logger.error("Registration failed: Password must be at least 8 characters long");
     throw new BadRequestException("Password must be at least 8 characters long");
   }
 
   if (!email || !this.isValidEmail(email)) {
+    this.logger.error("Registration failed: Valid email address is required");
     throw new BadRequestException("Valid email address is required");
   }
 
@@ -110,7 +116,7 @@ constructor() {
     const emailCheckResult = await this.dynamoDb.scan(emailCheckParams).promise();
 
     if (emailCheckResult.Items && emailCheckResult.Items.length > 0) {
-      this.logger.warn(`Registration failed: Email ${email} already exists`);
+      this.logger.error(`Registration failed: Email ${email} already exists`);
       throw new ConflictException("An account with this email already exists");
     }
 
@@ -125,7 +131,7 @@ constructor() {
     const usernameCheckResult = await this.dynamoDb.get(usernameCheckParams).promise();
 
     if (usernameCheckResult.Item) {
-      this.logger.warn(`Registration failed: Username ${username} already exists`);
+      this.logger.error(`Registration failed: Username ${username} already exists`);
       throw new ConflictException("This username is already taken");
     }
 
@@ -176,6 +182,7 @@ constructor() {
 
     } catch (passwordError: any) {
       this.logger.error(`Failed to set password for ${username}:`, passwordError);
+
 
       // Rollback: Delete Cognito user if password setting fails
       if (cognitoUserCreated) {
@@ -298,7 +305,8 @@ private isValidEmail(email: string): boolean {
 
  
 
-  // Overall, needs better undefined handling and optional adding
+  // purpose statement: logs in an user via cognito and retrieves user data from dynamodb
+  // use case: employee is trying to access the app, needs to have an account already
   async login(
     username: string,
     password: string
@@ -314,9 +322,21 @@ private isValidEmail(email: string): boolean {
     const clientId = process.env.COGNITO_CLIENT_ID;
     const clientSecret = process.env.COGNITO_CLIENT_SECRET;
 
+    // Validate environment variables
     if (!clientId || !clientSecret) {
       this.logger.error("Cognito Client ID or Secret is not defined.");
       throw new Error("Cognito Client ID or Secret is not defined.");
+    }
+
+    // Validate input parameters for username and password
+    if (!username || username.trim().length === 0) {
+      this.logger.error("Login failed: Username is required");
+      throw new BadRequestException("Username is required");
+    }
+
+    if (!password || password.length === 0) {
+      this.logger.error("Login failed: Password is required");
+      throw new BadRequestException("Password is required");
     }
 
     const hatch = this.computeHatch(username, clientId, clientSecret);
@@ -435,7 +455,7 @@ private isValidEmail(email: string): boolean {
       if (cognitoError.code) {
         switch (cognitoError.code) {
           case "NotAuthorizedException":
-            this.logger.warn(`Login failed: ${cognitoError.message}`);
+            this.logger.error(`Login failed: ${cognitoError.message}`);
             throw new UnauthorizedException("Incorrect username or password.");
           default:
             this.logger.error(
@@ -460,6 +480,8 @@ private isValidEmail(email: string): boolean {
     }
   }
 
+  // purpose statement: sets a new password for an user in cognito
+  // use case: employee changing password after forgetting password
   async setNewPassword(
     newPassword: string,
     session: string,
@@ -474,6 +496,22 @@ private isValidEmail(email: string): boolean {
       throw new Error("Cognito Client ID or Secret is not defined.");
     }
 
+    // Validate input parameters for newPassword, session, and username
+    if (!newPassword || newPassword.length === 0) {
+      this.logger.error("Set New Password failed: New password is required");
+      throw new BadRequestException("New password is required");
+    }
+
+    if (!session || session.length === 0) {
+      this.logger.error("Set New Password failed: Session is required");
+      throw new BadRequestException("Session is required");
+    }
+
+    if (!username || username.trim().length === 0) {
+      this.logger.error("Set New Password failed: Username is required");
+      throw new BadRequestException("Username is required");
+    }
+
     const hatch = this.computeHatch(username, clientId, clientSecret);
 
     const challengeResponses: any = {
@@ -483,6 +521,7 @@ private isValidEmail(email: string): boolean {
     };
 
     if (email) {
+      this.logger.log("Including email in challenge responses");
       challengeResponses.email = email;
     }
 
@@ -497,6 +536,7 @@ private isValidEmail(email: string): boolean {
       const response = await this.cognito
         .respondToAuthChallenge(params)
         .promise();
+        this.logger.log("Responded to auth challenge for new password");
 
       if (
         !response.AuthenticationResult ||
@@ -516,11 +556,29 @@ private isValidEmail(email: string): boolean {
     }
   }
 
+  // purpose statement: updates user profile info in dynamodb
+  // use case: employee is updating their profile information
   async updateProfile(
     username: string,
     email: string,
     position_or_role: string
   ) {
+    // Validate input parameters for username, email, and position_or_role
+    if (!username || username.trim().length === 0) {
+      this.logger.error("Update Profile failed: Username is required");
+      throw new BadRequestException("Username is required");
+    }
+
+    if (!email || email.trim().length === 0) {
+      this.logger.error("Update Profile failed: Email is required");
+      throw new BadRequestException("Email is required");
+    }
+
+    if (!position_or_role || position_or_role.trim().length === 0) {
+      this.logger.error("Update Profile failed: Position or role is required");
+      throw new BadRequestException("Position or role is required");
+    }
+    this.logger.log(`Updating profile for user ${username}`);
     const tableName = process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE";
 
     const params = {
@@ -551,6 +609,8 @@ private isValidEmail(email: string): boolean {
 
   // Add this to auth.service.ts
 
+// purpose statement: validates a user's session token via cognito and retrieves user data from dynamodb
+// use case: employee is accessing the app with an existing session token
 async validateSession(accessToken: string): Promise<any> {
   try {
     // Use Cognito's getUser method to validate the token
@@ -564,6 +624,7 @@ async validateSession(accessToken: string): Promise<any> {
     // Extract email from user attributes
     for (const attribute of getUserResponse.UserAttributes) {
       if (attribute.Name === 'email') {
+        this.logger.log(`Extracted email from user attributes: ${attribute.Value}`);
         email = attribute.Value;
         break;
       }
@@ -582,6 +643,7 @@ async validateSession(accessToken: string): Promise<any> {
     const user = userResult.Item;
 
     if (!user) {
+      this.logger.error(`User not found in database for username: ${username}`);
       throw new Error('User not found in database');
     }
 
