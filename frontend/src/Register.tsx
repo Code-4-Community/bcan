@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
-import logo from "./images/bcan_logo.svg";
+import logo from "./images/logo.svg";
 import { useAuthContext } from "./context/auth/authContext";
 import "./styles/index.css";
 

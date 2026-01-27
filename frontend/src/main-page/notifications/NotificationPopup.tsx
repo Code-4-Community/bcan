@@ -71,7 +71,7 @@ const NotificationPopup: React.FC<NotificationPopupProps> = observer(({
                         />
                     ))
                 ) : (
-                    <p className="empty-text">No new notifications</p>
+                    <p className="empty-text pl-2 pb-2">No new notifications</p>
                 )}
             </div>
         </div>,

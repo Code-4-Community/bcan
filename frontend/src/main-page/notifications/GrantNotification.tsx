@@ -22,17 +22,16 @@ const GrantNotification: React.FC<GrantNotificationProps> = ({
     return (
         <div className="grant-notification" role="listitem">
             <div className="bell-notif">
-                <FontAwesomeIcon icon={faBell} style={{ color: "gray"}} />
+                <FontAwesomeIcon className="text-gray" icon={faBell}/>
             </div>
             <div className="notification-text">
                 <div className="notification-title">{title}</div>
                 <div className="notification-message">{message}</div>
             </div>
             <FaTrash
-                className="notification-trash-icon"
+                className="notification-trash-icon cursor-pointer"
                 title="Delete notification"
                 onClick={handleDelete}
-                style={{ cursor: "pointer" }}
             />
             </div>
     );

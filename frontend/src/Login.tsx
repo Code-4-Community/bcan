@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useAuthContext } from "./context/auth/authContext";
 import { observer } from "mobx-react-lite";
-import logo from "./images/bcan_logo.svg";
+import logo from "./images/logo.svg";
 import { useNavigate } from "react-router-dom";
 import "./external/bcanSatchel/mutators";
 

@@ -1,8 +1,6 @@
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AccountInfo from "./AccountInfo";
-
-import "./styles/UserButton.css";
 import { useAuthContext } from "../../context/auth/authContext";
 
 interface UserButtonProps {
@@ -20,15 +18,13 @@ const UserButton: React.FC<UserButtonProps> = ({ setOpenModal, openModal }) => {
   return (
     <div className="user-container">
       <div
-        className="user-wrapper"
-        style={{ position: "relative", display: "inline-block" }}
+        className="user-wrapper relative inline-block p-2 hover:bg-light-orange rounded-md"
       >
         <button
-          className={`user-button ${openModal === "user" ? "hovered" : ""}`}
+          className={`user-button ${openModal === "user" ? "hovered" : ""} bg-none border-none relative`}
           onClick={toggleAccountInfo}
-          style={{ background: "none", position: "relative" }}
         >
-          <FontAwesomeIcon icon={faUser} style={{ color: "black" }} />
+          <FontAwesomeIcon className="text-black" icon={faUser} />
         </button>
 
         {openModal === "user" && (
