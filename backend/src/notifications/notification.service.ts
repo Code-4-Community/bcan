@@ -32,12 +32,12 @@ export class NotificationService {
 
   // Function that retreives all current notifications for a user
   async  getCurrentNotificationsByUserId(userId: string): Promise<Notification[]> {
-    this.logger.log(`Fetching current notifications for userId: ${userId}`);
+    this.logger.log(`Fetching current notifications for userID: ${userId}`);
     const notifactions = await this.getNotificationByUserId(userId);
     
     const currentTime = new Date();
 
-    this.logger.log(`Found current notifications for this user`);
+    this.logger.log(`Found current notifications for userID ${userId}`);
     return notifactions.filter(notification => new Date(notification.alertTime) <= currentTime);
   }
 
@@ -109,13 +109,14 @@ export class NotificationService {
 
 
       if (!data.Items) {
+        this.logger.error(`No notifications found with notification id: ${notificationId}`);
         throw new Error('No notifications with notification id ' + notificationId + ' found.');
       }
 
-
+      this.logger.log(`Successfully retrieved ${data.Items.length} notification(s) for notification id: ${notificationId}`);
       return data.Items as Notification[];
     } catch (error) {
-      this.logger.error(`Failed to retrieve notification with notificationId: ${notificationId}`);
+      this.logger.error(`Failed to retrieve notification with notificationId: ${notificationId}`, error);
       throw new Error('Failed to retrieve notification.');
     }
   }
