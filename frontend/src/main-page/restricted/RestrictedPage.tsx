@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import logo from "../../images/bcan_logo.svg";
-import { ButtonColorOption } from "../../custom/RingButton";
+import logo from "../../images/logo.svg";
 import { useAuthContext } from "../../context/auth/authContext";
 
 function RestrictedPage() {
@@ -17,12 +16,7 @@ function RestrictedPage() {
         </p>
         <Link to="/login">
           <button
-            style={{
-              backgroundColor: ButtonColorOption.ORANGE ,
-              color: 'black',
-              borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'
-            }}
-            className="py-2 px-4 rounded"
+            className="py-2 px-4 rounded w-48 font-semibold grant-button text-black bg-light-orange"
             onClick={() => {
               logout()
             }}

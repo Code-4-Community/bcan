@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
-import logo from "./images/bcan_logo.svg";
+import logo from "./images/logo.svg";
 import { useAuthContext } from "./context/auth/authContext";
 import "./styles/index.css";
 
@@ -112,7 +112,7 @@ const Register = observer(() => {
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter your username"
                   style={styles.inputContainer}
-                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-[#D9D9D9]"
+                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-medium-gray"
                 />
               </div>
             </div>
@@ -134,7 +134,7 @@ const Register = observer(() => {
                       ? styles.errorItem
                       : styles.inputContainer
                   }
-                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-[#D9D9D9]"
+                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-medium-gray"
                 />
               </div>
             </div>
@@ -156,7 +156,7 @@ const Register = observer(() => {
                       ? styles.errorItem
                       : styles.inputContainer
                   }
-                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-[#D9D9D9]"
+                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-medium-gray"
                 />
               </div>
             </div>
@@ -178,7 +178,7 @@ const Register = observer(() => {
                       ? styles.errorItem
                       : styles.inputContainer
                   }
-                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-[#D9D9D9]"
+                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-medium-gray"
                 />
               </div>
             </div>
@@ -205,7 +205,7 @@ const Register = observer(() => {
             <hr className="border-[#757575] w-[45%]" />
           </div>
           <div className="flex items-center mt-4 justify-center">
-            Don't have an account?{" "}
+            Have an account?{" "}
             <button
               type="button"
               onClick={() => navigate("/login")}

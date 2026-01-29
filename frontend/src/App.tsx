@@ -1,6 +1,6 @@
 /**
  * App.tsx
- * Renders with <AnimatedRoutes />.
+ * Renders with <AppRoutes />.
  */
 import "./styles/App.css";
 import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
@@ -9,11 +9,11 @@ import { observer } from "mobx-react-lite";
 
 // Register store and mutators
 import "./external/bcanSatchel/mutators";
-import AnimatedRoutes from "./animations/AnimatedRoutes";
+import AppRoutes from "./routes/AppRoutes";
 import Footer from "./main-page/Footer";
 
 /**
- * Main app component that renders animated routes
+ * Main app component that renders routes
  */
 const App = observer(() => {
   return (
@@ -21,7 +21,7 @@ const App = observer(() => {
       <ChakraProvider value={defaultSystem}>
         <div className="app-wide">
         <div className="app-container">
-          <AnimatedRoutes />
+          <AppRoutes />
         </div>
         <Footer/>
         </div>

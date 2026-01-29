@@ -1,32 +1,27 @@
-import React from 'react';
-import '../styles/Footer.css'
-import { Group, Text } from '@chakra-ui/react';
-import { FooterText } from '../translations/general';
+import React from "react";
+import "../styles/Footer.css";
+import { Group, Text, Link } from "@chakra-ui/react";
+import { FooterText } from "../translations/general";
+import tailwindConfig from "../../tailwind.config.js";
 
 const Footer: React.FC = () => {
-    return (
-        <div className="footer">
-{
-    /* TODO: Add BCAN Quick Links
-            <div className="bcan-link">
-            <Text>
-                <a href="https://bostonclimateaction.org/">
-                bostonclimateaction website
-                </a>
-            </Text>
-            </div>
-    */
-}
-            <Group className="text-block">
-                <Text>
-                {FooterText.Motto}
-                </Text>
-                <Text className="northeastern-uni-caption">
-                {FooterText.NEU}
-                </Text>
-            </Group>
-            </div>
-    )
-}
+  return (
+    <div className="footer">
+      <Group className="text-block">
+        <Text>
+          {FooterText.C4C_Motto}
+          <Link variant="underline" href={FooterText.C4C_Link}>
+            {FooterText.C4C}
+          </Link>{" "}
+          for{" "}
+          <Link variant="underline" _hover={{color: `${tailwindConfig.theme.colors["dark-orange"]}`}}  href={FooterText.Org_Link}>
+            {FooterText.Org}
+          </Link>
+        </Text>
+        <Text className="northeastern-uni-caption">{FooterText.NEU}</Text>
+      </Group>
+    </div>
+  );
+};
 
 export default Footer;

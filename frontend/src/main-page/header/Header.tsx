@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import "./styles/Header.css";
-import logo from "../../images/bcan_logo.svg";
+import logo from "../../images/logo.svg";
 import {
   Status,
   stringToStatus,

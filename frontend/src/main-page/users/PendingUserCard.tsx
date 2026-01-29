@@ -100,13 +100,13 @@ const PendingUserCard = ({
           className="bg-[#c6fbd3] w-8 h-8 focus:outline-none rounded"
           onClick={approveUser}
           disabled={isLoading}>
-          <FontAwesomeIcon icon={faCheck} style={{ color: "black" }} />
+          <FontAwesomeIcon icon={faCheck} className="text-black" />
         </button>
         <button 
         className="bg-[#fe9d92] w-8 h-8 focus:outline-none rounded"
           onClick={rejectUser}
           disabled={isLoading}>
-          <FontAwesomeIcon icon={faX} style={{ color: "black" }} />
+          <FontAwesomeIcon icon={faX} className="text-black"/>
         </button>
       </div>
     </div>
