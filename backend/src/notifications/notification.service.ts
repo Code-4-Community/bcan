@@ -10,9 +10,10 @@ export class NotificationService {
     private readonly logger = new Logger(NotificationService.name);
 
 
-  // function to create a notification
+  // Function to create a notification in DynamoDB for a specific user
   // Should this have a check to prevent duplicate notifications?
   async createNotification(notification: Notification): Promise<Notification> {
+    this.logger.log(`Starting notification creation for userId: ${notification.userId}`);
 
     const alertTime = new Date(notification.alertTime); // ensures a Date can be created from the given alertTime
 
@@ -25,19 +26,23 @@ export class NotificationService {
       },
     };
     await this.dynamoDb.put(params).promise();
+    this.logger.log(`Notification created successfully with Id: ${notification.notificationId}`);
     return notification;
   }
 
+  // Function that retreives all current notifications for a user
   async  getCurrentNotificationsByUserId(userId: string): Promise<Notification[]> {
+    this.logger.log(`Fetching current notifications for userID: ${userId}`);
     const notifactions = await this.getNotificationByUserId(userId);
     
     const currentTime = new Date();
 
+    this.logger.log(`Found current notifications for userID ${userId}`);
     return notifactions.filter(notification => new Date(notification.alertTime) <= currentTime);
   }
 
 
-  // function that returns array of notifications by user id (sorted by most recent notifications first)
+  // Function that returns array of notifications by user id (sorted by most recent notifications first)
   async getNotificationByUserId(userId: string): Promise<Notification[]> {
 
     // KeyConditionExpression specifies the query condition
@@ -72,6 +77,7 @@ export class NotificationService {
         return [] as Notification[];
       }
 
+      this.logger.log(`Retrieved ${data.Items.length} notifications for userId ${userId}`);
       return data.Items as Notification[];
     } catch (error) {
       this.logger.error(`Error retrieving notifications for userId: ${userId}`, error as string);
@@ -82,9 +88,10 @@ export class NotificationService {
   
 
 
-  // function that returns array of notifications by notification id
+  // Function that returns array of notifications by notification id
   // should this exist?
   async getNotificationByNotificationId(notificationId: string): Promise<Notification[]> {
+    this.logger.log(`Fetching notification with notificationId: ${notificationId}`)
 
     // key condition expression specifies the query condition
     // expression attribute values specifies the actual value of the key
@@ -102,13 +109,14 @@ export class NotificationService {
 
 
       if (!data.Items) {
+        this.logger.error(`No notifications found with notification id: ${notificationId}`);
         throw new Error('No notifications with notification id ' + notificationId + ' found.');
       }
 
-
+      this.logger.log(`Successfully retrieved ${data.Items.length} notification(s) for notification id: ${notificationId}`);
       return data.Items as Notification[];
     } catch (error) {
-      console.log(error)
+      this.logger.error(`Failed to retrieve notification with notificationId: ${notificationId}`, error);
       throw new Error('Failed to retrieve notification.');
     }
   }
@@ -126,6 +134,7 @@ export class NotificationService {
   ): Promise<AWS.SES.SendEmailResponse> {
     // Default to an invalid email to prevent non-verified sender mails
     // if BCAN's is not defined in the environment
+    this.logger.log(`Sending email notification to: ${to}, subject: ${subject}`);
     const fromEmail = process.env.NOTIFICATION_EMAIL_SENDER ||
      'u&@nveR1ified-failure@dont-send.com';
 
@@ -144,16 +153,19 @@ export class NotificationService {
     };
 
     try {
-      return await this.ses.sendEmail(params).promise();
+      const result = await this.ses.sendEmail(params).promise();
+      this.logger.log(`Email sent successfully to ${to}`);
+      return result
     } catch (err: unknown) {
-      console.error('Error sending email: ', err);
+      this.logger.error('Error sending email: ', err);
       const errMessage = (err instanceof Error) ? err.message : 'Generic'; 
       throw new Error(`Failed to send email: ${errMessage}`);
     }
   }
 
-  // function to update notification by its id
+  // Function to update notification by its id
   async updateNotification(notificationId: string, updates: Partial<Notification>): Promise<string> {
+    this.logger.log(`Starting update for notificationId: ${notificationId}`);
     const updateKeys = Object.keys(updates);
     const UpdateExpression = "SET " + updateKeys.map(k => `#${k} = :${k}`).join(", ");
     const ExpressionAttributeNames = updateKeys.reduce((acc, key) => ({ ...acc, [`#${key}`]: key }), {});
@@ -170,9 +182,10 @@ export class NotificationService {
   
     try {
       const result = await this.dynamoDb.update(params).promise();
+      this.logger.log(`Notification with notificationId: ${notificationId} updated successfully`)
       return JSON.stringify(result);
   } catch(err) {
-      console.log(err);
+      this.logger.error(`Failed to update notification ${notificationId}:`, err as string);
       throw new Error(`Failed to update Notification ${notificationId}`)
   }
   }
@@ -183,6 +196,7 @@ export class NotificationService {
    * @param notificationId the id of the notification to delete
    */
   async deleteNotification(notificationId: string): Promise<string> {
+    this.logger.log(`Starting notification deletion for notificationId: ${notificationId}`);
     const params = {
       TableName: process.env.DYNAMODB_NOTIFICATION_TABLE_NAME || 'TABLE_FAILURE',
       Key: {
@@ -193,13 +207,15 @@ export class NotificationService {
 
     try {
       await this.dynamoDb.delete(params).promise()
+      this.logger.log(`NotificationId ${notificationId} successfully deleted`);
       return `Notification with id ${notificationId} successfully deleted`
     } catch (error: any) {
       if (error.code === "ConditionalCheckFailedException") {
+        this.logger.warn(`Notification with id ${notificationId} not found for deletion`);
         throw new Error(`Notification with id ${notificationId} not found`)
       }
 
-      console.error(error)
+      this.logger.error(`Failed to delete notification ${notificationId}:`, error as string);
       throw new Error(`Failed to delete notification with id ${notificationId}`)
     }
   }
