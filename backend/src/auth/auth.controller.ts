@@ -14,6 +14,23 @@ export class AuthController {
    * Checks if the user has a valid session
    */
   @Get('session')
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: "Session is valid"
+  })
+  @ApiResponse({
+    status: 400,
+    description: "{Error encountered}"
+  })
+  @ApiResponse({
+    status: 401,
+    description: "Invalid credentials"
+  })
+  @ApiResponse({
+    status: 500,
+    description: "Internal Server Error"
+  })
   async getSession(@Req() req: any) {
     try {
       const authHeader = req.headers['authorization'] || req.headers['Authorization'];
@@ -38,7 +55,6 @@ export class AuthController {
   }
 
   /**
-   * 
    * Register user
    */
   @Post('register')
@@ -58,7 +74,6 @@ export class AuthController {
     status: 409,
     description : "{Error encountered}"
   })
-
   async register(
    @Body() body: RegisterBody
   ): Promise<{ message: string }> {
@@ -146,13 +161,12 @@ export class AuthController {
   }
 
   /**
-   * 
    * Update user profile for username, email, and position_or_role
    */
-    @Post('update-profile')
-    @UseGuards(VerifyUserGuard)
-    @ApiBearerAuth()
-    @ApiResponse({
+  @Post('update-profile')
+  @UseGuards(VerifyUserGuard)
+  @ApiBearerAuth()
+  @ApiResponse({
     status: 200,
     description: "Profile updated successfully"
   })

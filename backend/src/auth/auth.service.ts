@@ -273,10 +273,7 @@ constructor() {
     this.logger.log(`✅ Registration completed successfully for ${username}`);
 
   } catch (error) {
-    if(error instanceof InternalServerErrorException){
-      throw new InternalServerErrorException("Internal Server Error")
-    }
-    // Re-throw known HTTP exceptions
+    // Re-throw HTTP exceptions (validation errors, conflicts, etc.)
     if (error instanceof HttpException) {
       throw error;
     }
@@ -287,10 +284,10 @@ constructor() {
       throw new InternalServerErrorException(
         `Internal Server Error`
       );
+    } else {
+      this.logger.error(`Unknown error during registration for ${username}:`, error);
     }
-
-    // Handle completely unknown errors
-    this.logger.error(`Unknown error during registration for ${username}:`, error);
+    
     throw new InternalServerErrorException(
       "Internal Server Error"
     );
@@ -466,6 +463,8 @@ private isValidEmail(email: string): boolean {
               "An error occurred during login."
             );
         }
+      } else if (error instanceof BadRequestException) {
+        throw error;
       } else if (error instanceof Error) {
         // Handle non-AWS errors
         this.logger.error("Login failed", error.stack);
@@ -474,6 +473,7 @@ private isValidEmail(email: string): boolean {
         );
       }
       // Handle unknown errors
+      this.logger.error(`Login failed for user ${username} with unknown error type`, error);
       throw new InternalServerErrorException(
         "An unknown error occurred during login."
       );
@@ -546,6 +546,7 @@ private isValidEmail(email: string): boolean {
       }
 
       const token = response.AuthenticationResult.IdToken;
+      this.logger.log(`New password set successfully for user ${username}`);
       return { access_token: token };
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -647,6 +648,7 @@ async validateSession(accessToken: string): Promise<any> {
       throw new Error('User not found in database');
     }
 
+    this.logger.log(`Session validated successfully for user ${username}`);
     return user;
   } catch (error: unknown) {
     this.logger.error('Session validation failed', error);
