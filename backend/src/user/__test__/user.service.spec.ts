@@ -4,7 +4,7 @@ import { UserService } from '../user.service';
 
 import * as AWS from 'aws-sdk';
 
-import { VerifyUserGuard, VerifyAdminRoleGuard } from '../../guards/auth.guard';
+import { VerifyUserGuard, VerifyAdminRoleGuard, VerifyAdminOrEmployeeRoleGuard } from '../../guards/auth.guard';
 import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 
 // Create mock functions at module level (BEFORE mock)
@@ -76,6 +76,9 @@ vi.mock('../../guards/auth.guard', () => ({
     canActivate = vi.fn().mockResolvedValue(true);
   }),
   VerifyAdminRoleGuard: vi.fn(class MockVerifyAdminRoleGuard {
+    canActivate = vi.fn().mockResolvedValue(true);
+  }),
+  VerifyAdminOrEmployeeRoleGuard: vi.fn(class MockVerifyAdminOrEmployeeRoleGuard {
     canActivate = vi.fn().mockResolvedValue(true);
   })
 }));

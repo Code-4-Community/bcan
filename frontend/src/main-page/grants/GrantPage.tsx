@@ -11,6 +11,7 @@ import { useAuthContext } from "../../context/auth/authContext";
 import {
   updateEndDateFilter,
   updateFilter,
+  updateSearchQuery,
   updateStartDateFilter,
   updateYearFilter,
 } from "../../external/bcanSatchel/actions.ts";
@@ -41,6 +42,7 @@ function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
     updateFilter(null);
     updateEndDateFilter(null);
     updateStartDateFilter(null);
+    updateSearchQuery("");
   }, []);
 
   useEffect(() => {

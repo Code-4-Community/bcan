@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logo from "./images/bcan_logo.svg";
+import logo from "./images/logo.svg";
 import { ButtonColorOption } from "./custom/RingButton";
 import { useAuthContext } from "./context/auth/authContext";
 

@@ -73,6 +73,14 @@ export class VerifyAdminRoleGuard implements CanActivate {
       }
       const result = await this.verifier.verify(accessToken);
       const groups = result['cognito:groups'] || [];
+      
+      // Attach user info to request for use in controllers
+      request.user = {
+        userId: result['username'] || result['cognito:username'],
+        email: result['email'],
+        position: groups.includes('Admin') ? 'Admin' : (groups.includes('Employee') ? 'Employee' : 'Inactive')
+      };
+      
       console.log("User groups from token:", groups); 
       if (!groups.includes('Admin')) {
         console.warn("Access denied: User is not an Admin");
@@ -83,6 +91,60 @@ export class VerifyAdminRoleGuard implements CanActivate {
 
     } catch (error) {
       console.error("Token verification failed:", error); // Debug log
+      return false;
+    }
+  }
+}
+
+@Injectable()
+export class VerifyAdminOrEmployeeRoleGuard implements CanActivate {
+  private verifier: any;
+  private readonly logger: Logger;
+  
+  constructor() {
+    const userPoolId = process.env.COGNITO_USER_POOL_ID;
+    this.logger = new Logger(VerifyAdminOrEmployeeRoleGuard.name);
+    
+    if (userPoolId) {
+      this.verifier = CognitoJwtVerifier.create({
+        userPoolId,
+        tokenUse: "access",
+        clientId: process.env.COGNITO_CLIENT_ID,
+      });
+    } else {
+      throw new Error(
+        "[AUTH] USER POOL ID is not defined in environment variables"
+      );
+    }
+  }
+  
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    try {
+      const request = context.switchToHttp().getRequest();
+      const accessToken = request.cookies["access_token"];
+      
+      if (!accessToken) {
+        this.logger.error("No access token found in cookies");
+        return false;
+      }
+      
+      const result = await this.verifier.verify(accessToken);
+      const groups = result['cognito:groups'] || [];
+      
+      this.logger.log(`User groups from token: ${groups.join(', ')}`);
+      
+      // Check if user is either Admin or Employee
+      const isAuthorized = groups.includes('Admin') || groups.includes('Employee');
+      
+      if (!isAuthorized) {
+        this.logger.warn("Access denied: User is not an Admin or Employee");
+        return false;
+      }
+      
+      return true;
+      
+    } catch (error) {
+      this.logger.error("Token verification failed:", error);
       return false;
     }
   }
