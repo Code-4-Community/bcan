@@ -42,8 +42,16 @@ export class UserController {
     description : "All inactive users retrieved successfully"
   })
   @ApiResponse({
+    status : 400,
+    description : "{Error encountered}"
+  })
+  @ApiResponse({
     status : 403,
     description : "Forbidden"
+  })
+  @ApiResponse({
+    status : 404,
+    description : "Not Found"
   })
   @ApiResponse({
     status : 500,
@@ -64,8 +72,20 @@ export class UserController {
     description : "All active users retrieved successfully"
   })
   @ApiResponse({
+    status : 400,
+    description : "{Error encountered}"
+  })
+  @ApiResponse({
+    status : 401,
+    description : "Unauthorized"
+  })
+  @ApiResponse({
     status : 403,
     description : "Forbidden"
+  })
+  @ApiResponse({
+    status : 404,
+    description : "Not Found"
   })
   @ApiResponse({
     status : 500,
