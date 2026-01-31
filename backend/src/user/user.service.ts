@@ -232,22 +232,38 @@ async addUserToGroup(
       throw new InternalServerErrorException("Server configuration error");
     }
 
-    // 2. Authorization check
+    // 2. Validate input
+    if (!user || !user.userId) {
+      this.logger.error("Invalid user object provided for role change");
+      throw new BadRequestException("Valid user object is required");
+    }
+
+    if (!requestedBy || !requestedBy.userId) {
+      this.logger.error("Invalid requesting user object provided for role change");
+      throw new BadRequestException("Valid requesting user is required");
+    }
+
+    if (!groupName) {
+      this.logger.error("Group name is required for role change");
+      throw new BadRequestException("Group name is required");
+    }
+
+    // Validate group name is a valid UserStatus
+    const validStatuses = Object.values(UserStatus);
+    if (!validStatuses.includes(groupName)) {
+      this.logger.error(`Invalid group name: ${groupName}`);
+      throw new BadRequestException(
+        `Invalid group name. Must be one of: ${validStatuses.join(", ")}`
+      );
+    }
+
+    // 3. Authorization check
     if (requestedBy.position !== UserStatus.Admin) {
       this.logger.warn(
         `Unauthorized access attempt: ${requestedBy.userId} tried to add ${username} to ${groupName}`
       );
       throw new UnauthorizedException(
         "Only administrators can modify user groups"
-      );
-    }
-
-    // 3. Validate group name is a valid UserStatus
-    const validStatuses = Object.values(UserStatus);
-    if (!validStatuses.includes(groupName)) {
-      this.logger.error(`Invalid group name: ${groupName}`);
-      throw new BadRequestException(
-        `Invalid group name. Must be one of: ${validStatuses.join(", ")}`
       );
     }
 
@@ -475,6 +491,13 @@ async addUserToGroup(
   // purpose statement: retrieves user by their userId
   // use case: not actually sure right now, maybe is there is an option for admin to click on a specific user to see details?
   async getUserById(userId: string): Promise<User> {
+
+    // Validate input
+    if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+      this.logger.error(`Invalid userId provided: ${userId}`);
+      throw new BadRequestException("Valid user ID is required");
+    }
+
     const params = {
       TableName: process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE",
       Key: {
@@ -486,11 +509,32 @@ async addUserToGroup(
       this.logger.log(`Fetching user ${userId} from DynamoDB...`);
       const data = await this.dynamoDb.get(params).promise();
       
+      // Check if user exists
+      if (!data.Item) {
+        this.logger.warn(`User ${userId} not found in database`);
+        throw new NotFoundException(`User '${userId}' does not exist`);
+      }
+
       this.logger.log(`✅ Successfully retrieved user ${userId}`);
       return data.Item as User;
-    } catch (error) {
+    } catch (error: any) {
+      // Re-throw known exceptions
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
       this.logger.error(`Failed to retrieve user ${userId} from DynamoDB:`, error);
-      throw new InternalServerErrorException('Could not retrieve user.');
+      
+      // Handle specific AWS errors
+      if (error.code === 'ResourceNotFoundException') {
+        this.logger.error(`DynamoDB table not found`);
+        throw new InternalServerErrorException("Database table not found");
+      } else if (error.code === 'ValidationException') {
+        this.logger.error(`Invalid DynamoDB request: ${error.message}`);
+        throw new BadRequestException(`Invalid request: ${error.message}`);
+      }
+      
+      throw new InternalServerErrorException('Could not retrieve user');
     }
   }
 

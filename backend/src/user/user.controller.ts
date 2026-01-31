@@ -103,6 +103,10 @@ export class UserController {
     description : "Not Found"
   })
   @ApiResponse({
+    status : 409,
+    description : "Conflict"
+  })
+  @ApiResponse({
     status : 500,
     description : "Internal Server Error"
   })
@@ -187,8 +191,16 @@ export class UserController {
     description : "User retrieved successfully"
   })
   @ApiResponse({
+    status : 400,
+    description : "{Error encountered}"
+  })
+  @ApiResponse({
     status : 403,
     description : "Forbidden"
+  })
+  @ApiResponse({
+    status : 404,
+    description : "Not Found"
   })
   @ApiResponse({
     status : 500,
