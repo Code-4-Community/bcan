@@ -28,7 +28,6 @@ export class UserService {
  async deleteUser(user: User, requestedBy: User): Promise<User> {
   const userPoolId = process.env.COGNITO_USER_POOL_ID;
   const tableName = process.env.DYNAMODB_USER_TABLE_NAME;
-  const username = user.userId;
 
   // 1. Validate environment variables
   if (!userPoolId) {
@@ -51,6 +50,8 @@ export class UserService {
     this.logger.error("Invalid requesting user object provided for deletion");
     throw new BadRequestException("Valid requesting user is required");
   }
+
+  const username = user.userId; // now access userID after validating
 
   // 3. Authorization check
   if (requestedBy.position !== UserStatus.Admin) {
@@ -236,8 +237,6 @@ async addUserToGroup(
   ): Promise<User> {
     const userPoolId = process.env.COGNITO_USER_POOL_ID;
     const tableName = process.env.DYNAMODB_USER_TABLE_NAME;
-    const username = user.userId;
-    const previousGroup = user.position; // Store the old group for rollback
 
     // 1. Validate environment variables
     if (!userPoolId) {
@@ -254,7 +253,7 @@ async addUserToGroup(
       throw new InternalServerErrorException("Server configuration error");
     }
 
-    // 2. Validate input
+    // 2. Validate input FIRST before accessing any properties
     if (!user || !user.userId) {
       this.logger.error("Invalid user object provided for role change");
       throw new BadRequestException("Valid user object is required");
@@ -269,6 +268,10 @@ async addUserToGroup(
       this.logger.error("Group name is required for role change");
       throw new BadRequestException("Group name is required");
     }
+
+    // Now safe to access user properties
+    const username = user.userId;
+    const previousGroup = user.position; // Store the old group for rollback
 
     // Validate group name is a valid UserStatus
     const validStatuses = Object.values(UserStatus);
