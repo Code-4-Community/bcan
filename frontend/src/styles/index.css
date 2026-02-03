@@ -1,15 +1,24 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
+  --color-tan: #F2EBE4;
+  --color-light-orange: #F7A781;
+  --color-dark-orange: #F26624;
+  --color-medium-orange: #F58D5C;
+  --color-light-gray: #F8F8F8;
+  --color-warning: #D33221;
+  --color-light-warning: #FFA399;
+  --color-light-gray-2: #D3D3D3;
+
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
   color: rgba(0, 0, 0, 0.87);
-  background-color: #F2EBE4;
+  background-color: var(--color-tan);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -46,7 +55,7 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: black;
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -66,7 +75,7 @@ button:focus-visible {
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #ffffff;
+    background-color: white;
   }
   a:hover {
     color: #747bff;

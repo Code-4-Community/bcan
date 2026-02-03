@@ -64,10 +64,9 @@ const FilterBar: React.FC = observer(() => {
                   }`}
                 >
                   <div
-                    className="flex w-full justify-between items-center"
-                    style={{
-                      color: selected === item.name ? "#FFFFFF" : "#000000",
-                    }}
+                    className={`flex w-full justify-between items-center ${
+                    selected === item.name ? "text-white" : "text-black"
+                    }`}
                   >
                     {item.name}
                     <FaChevronRight />

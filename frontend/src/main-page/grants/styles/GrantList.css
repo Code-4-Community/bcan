@@ -4,6 +4,6 @@
     flex-direction: column;
     justify-content: space-around;
     border-radius: 15px;
-background: #F7A781;
+    background: var(--color-light-orange);
 /* padding: 0.5em; */
 }

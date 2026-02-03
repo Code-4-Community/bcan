@@ -103,8 +103,8 @@ const Users = observer(() => {
             <button
               className={`w-52 h-16 border rounded-b-none focus:outline-none ${
                 usersTabStatus === UsersTab.PendingUsers
-                  ? "bg-[#F5F4F4] border-x-[#000000] border-t-[#000000]"
-                  : "bg-[#F4F4F4] border-x-[#BFBBBB] border-t-[#BFBBBB] border-b-[#000000]"
+                  ? "bg-[#F5F4F4] border-x-black border-t-black"
+                  : "bg-[#F4F4F4] border-x-[#BFBBBB] border-t-[#BFBBBB] border-b-black"
               }`}
               onClick={() => {
                 setUsersTabStatus(UsersTab.PendingUsers);
@@ -116,8 +116,8 @@ const Users = observer(() => {
             <button
               className={`w-52 h-16 border rounded-b-none ml-2 focus:outline-none ${
                 usersTabStatus === UsersTab.CurrentUsers
-                  ? "bg-[#F5F4F4] border-x-[#000000] border-t-[#000000]"
-                  : "bg-[#F4F4F4] border-x-[#BFBBBB] border-t-[#BFBBBB] border-b-[#000000]"
+                  ? "bg-[#F5F4F4] border-x-black border-t-black"
+                  : "bg-[#F4F4F4] border-x-[#BFBBBB] border-t-[#BFBBBB] border-b-black"
               }`}
               onClick={() => {
                 setUsersTabStatus(UsersTab.CurrentUsers);

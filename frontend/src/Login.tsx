@@ -78,7 +78,7 @@ const Login = observer(() => {
           </div>
           <div className="h-12 items-center">
             {failure ? (
-              <div className="text-[#D33221] mt-4 bg-[#FFA399] h-full rounded-md text-center flex items-center justify-center p-2">
+              <div className="text-warning mt-4 bg-light-warning h-full rounded-md text-center flex items-center justify-center p-2">
                 Your password is incorrect or this account doesn't exist.
               </div>
             ) : (
@@ -93,9 +93,9 @@ const Login = observer(() => {
             Login
           </button>
           <div className="flex items-center justify-between gap-4 mt-8">
-            <hr className="border-[#757575] w-[45%]" />
-            <div className="text-[#757575]">or</div>
-            <hr className="border-[#757575] w-[45%]" />
+            <hr className="border-dark-gray w-[45%]" />
+            <div className="text-dark-gray">or</div>
+            <hr className="border-dark-gray w-[45%]" />
           </div>
           <div className="flex items-center mt-8 justify-center">
             Don't have an account?{" "}

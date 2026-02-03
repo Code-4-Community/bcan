@@ -472,7 +472,7 @@ const NewGrantModal: React.FC<{
               <input
                 style={{
                   height: "42px",
-                  backgroundColor: "#F2EBE4",
+                  backgroundColor: "var(--color-tan)",
                   borderStyle: "solid",
                   borderColor: "black",
                   borderWidth: "1px",
@@ -503,7 +503,7 @@ const NewGrantModal: React.FC<{
                     <input
                       style={{
                         height: "42px",
-                        backgroundColor: "#F2EBE4",
+                        backgroundColor: "var(--color-tan)",
                         borderStyle: "solid",
                         borderColor: "black",
                         borderWidth: "1px",
@@ -531,7 +531,7 @@ const NewGrantModal: React.FC<{
                     <input
                       style={{
                         height: "42px",
-                        backgroundColor: "#F2EBE4",
+                        backgroundColor: "var(--color-tan)",
                         borderStyle: "solid",
                         borderColor: "black",
                         borderWidth: "1px",
@@ -561,7 +561,7 @@ const NewGrantModal: React.FC<{
                     min="0"
                     style={{
                       height: "42px",
-                      backgroundColor: "#F2EBE4",
+                      backgroundColor: "var(--color-tan)",
                       borderStyle: "solid",
                       borderColor: "black",
                       borderWidth: "1px",
@@ -587,9 +587,8 @@ const NewGrantModal: React.FC<{
                     Report Deadlines
                   </label>
                   <div
-                    className="p-2 rounded sm:h-52 xl:h-40 overflow-y-auto overflow-x-hidden"
+                    className="p-2 rounded sm:h-52 bg-light-gray-2 xl:h-40 overflow-y-auto overflow-x-hidden"
                     style={{
-                      backgroundColor: "#D3D3D3",
                       borderStyle: "solid",
                       borderColor: "black",
                       borderWidth: "1px",
@@ -600,7 +599,7 @@ const NewGrantModal: React.FC<{
                       style={{
                         height: "42px",
                         color: "black",
-                        backgroundColor: "#F58D5C",
+                        backgroundColor: "var(--color-medium-orange)",
                         borderStyle: "solid",
                         borderColor: "black",
                         borderWidth: "1px",
@@ -616,7 +615,7 @@ const NewGrantModal: React.FC<{
                           key={index}
                           style={{
                             height: "42px",
-                            backgroundColor: "#F2EBE4",
+                            backgroundColor: "var(--color-tan)",
                             borderStyle: "solid",
                             borderColor: "black",
                             borderWidth: "1px",
@@ -670,7 +669,7 @@ const NewGrantModal: React.FC<{
                 <input
                   style={{
                     height: "42px",
-                    backgroundColor: "#F2EBE4",
+                    backgroundColor: "var(--color-tan)",
                     borderStyle: "solid",
                     borderColor: "black",
                     borderWidth: "1px",
@@ -695,7 +694,7 @@ const NewGrantModal: React.FC<{
                 <CurrencyInput
                   style={{
                     height: "42px",
-                    backgroundColor: "#F2EBE4",
+                    backgroundColor: "var(--color-tan)",
                     borderStyle: "solid",
                     borderColor: "black",
                     borderWidth: "1px",
@@ -721,7 +720,7 @@ const NewGrantModal: React.FC<{
                       BCAN POC *
                   </label>
                   {/*Box div*/} 
-                  <div className="items-center flex p-3 rounded h-full" style={{backgroundColor: "#F58D5C", borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}>
+                  <div className="items-center flex p-3 rounded h-full bg-medium-orange" style={{borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}>
                       <MdOutlinePerson2 className="w-1/4 h-full p-1"/>
                       <div className="w-3/4">
                       <UserDropdown
@@ -732,7 +731,7 @@ const NewGrantModal: React.FC<{
                       }}
                       placeholder="Name"
                       />
-                        <input style={{height: "48px",backgroundColor: '#F2EBE4', borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
+                        <input style={{height: "48px",backgroundColor: "var(--color-tan)", borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'}}
                         className="font-family-helvetica w-full text-gray-700 rounded"
                          placeholder="e-mail" 
                          value={bcanPocEmail}
@@ -752,9 +751,8 @@ const NewGrantModal: React.FC<{
                 </label>
                 {/*Box div*/}
                 <div
-                  className="flex p-3 rounded  items-center h-full"
+                  className="flex p-3 rounded  items-center h-full bg-medium-orange"
                   style={{
-                    backgroundColor: "#F58D5C",
                     borderColor: "black",
                     borderWidth: "1px",
                     borderRadius: "1.2rem",
@@ -765,7 +763,7 @@ const NewGrantModal: React.FC<{
                     <input
                       style={{
                         height: "42px",
-                        backgroundColor: "#F2EBE4",
+                        backgroundColor: "var(--color-tan)",
                         borderStyle: "solid",
                         borderColor: "black",
                         borderWidth: "1px",
@@ -779,7 +777,7 @@ const NewGrantModal: React.FC<{
                     <input
                       style={{
                         height: "42px",
-                        backgroundColor: "#F2EBE4",
+                        backgroundColor: "var(--color-tan)",
                         borderStyle: "solid",
                         borderColor: "black",
                         borderWidth: "1px",
@@ -810,7 +808,7 @@ const NewGrantModal: React.FC<{
                   <select
                     style={{
                       height: "42px",
-                      backgroundColor: "#F2EBE4",
+                      backgroundColor: "var(--color-tan)",
                       borderStyle: "solid",
                       borderColor: "black",
                       borderWidth: "1px",
@@ -838,7 +836,7 @@ const NewGrantModal: React.FC<{
                   <select
                     style={{
                       height: "42px",
-                      backgroundColor: "#F2EBE4",
+                      backgroundColor: "var(--color-tan)",
                       borderStyle: "solid",
                       borderColor: "black",
                       borderWidth: "1px",
@@ -870,7 +868,7 @@ const NewGrantModal: React.FC<{
                     style={{
                       marginBottom: "0px",
                       height: "42px",
-                      backgroundColor: "#F2EBE4",
+                      backgroundColor: "var(--color-tan)",
                       borderStyle: "solid",
                       borderColor: "black",
                       borderWidth: "1px",
@@ -926,7 +924,7 @@ const NewGrantModal: React.FC<{
                         type="text"
                         placeholder="Name"
                         className="flex-1 px-2 border border-black rounded-md"
-                        style={{ backgroundColor: "#F2EBE4", height: "42px" }}
+                        style={{backgroundColor: "var(--color-tan)", height: "42px" }}
                         value={currentAttachment.attachment_name}
                         onChange={(e) =>
                           setCurrentAttachment({
@@ -939,7 +937,7 @@ const NewGrantModal: React.FC<{
                         type="text"
                         placeholder="URL"
                         className="h-12 flex-1 px-2 border border-black rounded-md"
-                        style={{ backgroundColor: "#F2EBE4", height: "42px" }}
+                        style={{ backgroundColor: "var(--color-tan)", height: "42px" }}
                         value={currentAttachment.url}
                         onChange={(e) =>
                           setCurrentAttachment({
@@ -950,7 +948,7 @@ const NewGrantModal: React.FC<{
                       />
                       <select
                         className="h-12 border border-black rounded-md px-2 items-center justify-center"
-                        style={{ backgroundColor: "#F2EBE4", height: "42px" }}
+                        style={{ backgroundColor: "var(--color-tan)", height: "42px" }}
                         value={currentAttachment.type}
                         onChange={(e) =>
                           setCurrentAttachment({
@@ -971,7 +969,7 @@ const NewGrantModal: React.FC<{
                         <button
                           type="button"
                           style={{
-                            backgroundColor: "#D3D3D3",
+                            backgroundColor: "var(--color-light-gray-2)",
                             color: "black",
                             height: "21px",
                           }}
@@ -985,7 +983,7 @@ const NewGrantModal: React.FC<{
                           type="button"
                           onClick={_addAttachment}
                           style={{
-                            backgroundColor: "#F58D5C",
+                            backgroundColor: "var(--color-medium-orange)",
                             color: "black",
                             height: "21px",
                           }}
@@ -1000,9 +998,8 @@ const NewGrantModal: React.FC<{
 
                 {/* Gray box showing added links */}
                 <div
-                  className=" p-2 rounded-md overflow-y-auto overflow-x-hidden"
+                  className=" p-2 rounded-md overflow-y-auto overflow-x-hidden bg-light-gray-2"
                   style={{
-                    backgroundColor: "#D3D3D3",
                     borderStyle: "solid",
                     borderColor: "black",
                     borderWidth: "1px",
@@ -1019,7 +1016,7 @@ const NewGrantModal: React.FC<{
                         <div
                           style={{
                             height: "42px",
-                            backgroundColor: "#F2EBE4",
+                            backgroundColor: "var(--color-tan)",
                             borderStyle: "solid",
                             borderColor: "black",
                             borderWidth: "1px",
@@ -1075,7 +1072,7 @@ const NewGrantModal: React.FC<{
           </label>
           <textarea
             style={{
-              backgroundColor: "#F2EBE4",
+              backgroundColor: "var(--color-tan)",
               borderStyle: "solid",
               borderColor: "black",
               borderWidth: "1px",
@@ -1108,7 +1105,7 @@ const NewGrantModal: React.FC<{
             style={{
               fontFamily: "helvetica",
               color: "black",
-              backgroundColor: "#F58D5C",
+              backgroundColor: "var(--color-medium-orange)",
               borderStyle: "solid",
               borderColor: "black",
               borderWidth: "1px",
@@ -1142,7 +1139,7 @@ const NewGrantModal: React.FC<{
             <button
               onClick={() => setShowErrorPopup(false)}
               style={{
-                backgroundColor: "#F58D5C",
+                backgroundColor: "var(--color-medium-orange)",
                 color: "black",
                 borderStyle: "solid",
                 borderColor: "black",

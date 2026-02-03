@@ -18,6 +18,7 @@ import {
 import "../styles/Dashboard.css";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { getListApplied } from "../../../../../middle-layer/types/Status";
+import tailwindConfig from "../../../../tailwind.config";
 
 const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
   // Wrap Legend with a React component type to satisfy JSX typing
@@ -123,7 +124,7 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
             ) => (
               <span
                 style={{
-                  color: "#000",
+                  color: "black",
                   fontWeight: 500,
                   marginLeft: 5,
                   marginRight: 10,
@@ -133,11 +134,11 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
               </span>
             )}
           />
-          <CartesianGrid vertical={false} stroke="#aaa" strokeDasharray="5 5" />
+          <CartesianGrid vertical={false} stroke="lightgray" strokeDasharray="5 5" />
           <Line
             type="monotone"
             dataKey="money_captured"
-            stroke="#F58D5C"
+            stroke={tailwindConfig.theme.colors["medium-orange"]}
             strokeWidth={2}
             dot={{ r: 4 }}
             name="Money Captured"
@@ -146,7 +147,7 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
           <Line
             type="monotone"
             dataKey="grants_captured"
-            stroke="#F8CC16"
+            stroke={tailwindConfig.theme.colors["yellow"]}
             strokeWidth={2}
             dot={{ r: 4 }}
             name="Grants Captured"
@@ -174,8 +175,8 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
           <Tooltip
             contentStyle={{
               borderRadius: "12px",
-              backgroundColor: "#fff",
-              border: "1px solid #ccc",
+              backgroundColor: "white",
+              border: "1px solid lightgray",
               boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
             }}
             labelFormatter={(date: Date) => date.getFullYear().toString()}

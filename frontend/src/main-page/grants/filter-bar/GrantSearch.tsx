@@ -48,7 +48,6 @@ function GrantSearch() {
               pointerEvents: "none",
               zIndex: 2,
               marginLeft: "2px",
-              // color: "#aaa" // optional styling
             }}
           />
           <Input

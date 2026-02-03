@@ -18,7 +18,7 @@
 }
 
 .calendar-toggle-button:hover {
-    background-color: #f7a781;
+    background-color: var(--color-light-orange);
     border-color: black;
 }
 
@@ -31,6 +31,6 @@
     z-index: 9999;
     background-color: white;
     padding: 1rem;
-    border: 0.1rem solid #ccc;
+    border: 0.1rem solid lightgray;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }

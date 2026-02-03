@@ -19,7 +19,7 @@
 }
 
 .popup-header {
-  color: #000;
+  color: black;
   font-size: 22px;
   font-style: normal;
   font-weight: 100;
@@ -58,7 +58,7 @@
 }
 
 .info-value {
-  color: #000;
+  color: black;
 font-size: 15px;
 font-style: normal;
 font-weight: 400;
@@ -91,7 +91,7 @@ z-index: 1000;
 }
 
 .user-list-btn:hover {
-  background: #f8f8f8;
+  background: var(--color-light-gray);
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }

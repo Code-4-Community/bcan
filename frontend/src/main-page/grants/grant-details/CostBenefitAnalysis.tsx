@@ -71,8 +71,7 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({ grant 
             placeholder="Enter rate"
             value={hourlyRate}
             onChange={(e) => setHourlyRate(e.target.value)}
-            className="w-full h-[42px]  px-3 py-4 border border-gray-400 rounded-md"
-            style={{ backgroundColor: '#F2EBE4' }}
+            className="w-full h-[42px]  px-3 py-4 border border-gray-400 rounded-md bg-tan"
           />
         </div>
 
@@ -89,17 +88,15 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({ grant 
                 console.log('Time per report changed to:', e.target.value);
                 setTimePerReport(e.target.value);
             }}
-            className="w-full h-[42px] px-3 py-4 border border-gray-400 rounded-md"
-            style={{ backgroundColor: '#F2EBE4' }}
+            className="w-full h-[42px] px-3 py-4 border border-gray-400 rounded-md bg-tan"
           />
         </div>
 
         {/* Calculate Button */}
         <button
           onClick={calculateNetBenefit}
-          className="w-full py-1 px-4 rounded-md mb-7"
+          className="w-full py-1 px-4 rounded-md mb-7 bg-medium-orange"
           style={{
-            backgroundColor: '#F58D5C',
             color: 'black',
             borderStyle: 'solid',
             borderColor: 'black',
@@ -114,9 +111,8 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({ grant 
             <span className="text-sm font-semibold"> Net Benefit:</span>
         <div
           onClick={calculateNetBenefit}
-          className="w-1/2 py-2 px-4 rounded-md"
+          className="w-1/2 py-2 px-4 rounded-md bg-tan"
           style={{
-            backgroundColor: '#F2EBE4',
             color: netBenefit !== null ? 'black' : 'gray',
             borderStyle: 'solid',
             borderColor: 'black',

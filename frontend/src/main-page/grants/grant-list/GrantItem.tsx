@@ -229,9 +229,8 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                             <div
                               style={{
                                 color: "black",
-                                backgroundColor: "#D3D3D3",
                               }}
-                              className="h-9  flex items-center justify-center w-full rounded-full px-4"
+                              className="h-9  flex items-center bg-light-gray-2 justify-center w-full rounded-full px-4"
                             >
                               {formatDate(curGrant.application_deadline)}
                             </div>
@@ -247,12 +246,11 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                             <div
                               style={{
                                 color: "black",
-                                backgroundColor: "#D3D3D3",
                                 fontStyle: curGrant.grant_start_date
                                   ? "normal"
                                   : "italic",
                               }}
-                              className="h-9 flex items-center justify-center w-full rounded-full px-4"
+                              className="h-9 flex items-center bg-light-gray-2 justify-center w-full rounded-full px-4"
                             >
                               {curGrant.grant_start_date
                                 ? formatDate(curGrant.grant_start_date)
@@ -336,9 +334,8 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                           Report Deadlines
                         </label>
                         <div
-                          className="p-2 rounded-md h-[13.5rem] w-4/5  overflow-auto grip "
+                          className="p-2 rounded-md h-[13.5rem] w-4/5  overflow-auto grip bg-medium-orange"
                           style={{
-                            backgroundColor: "#F58D5C",
                             borderStyle: "solid",
                             borderColor: "black",
                             borderWidth: "1px",
@@ -354,9 +351,8 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                                   key={index}
                                   style={{
                                     color: "black",
-                                    backgroundColor: "#D3D3D3",
                                   }}
-                                  className="h-10 flex items-center justify-center w-full rounded-full mb-2 px-4"
+                                  className="h-10 flex items-center bg-light-gray-2 justify-center w-full rounded-full mb-2 px-4"
                                 >
                                   {formatDate(deadline)}
                                 </div>
@@ -391,17 +387,15 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                         </label>
                         {/*Box div*/}
                         <div
-                          className="items-center flex rounded-md"
+                          className="items-center flex rounded-md bg-medium-orange"
                           style={{
-                            backgroundColor: "#F58D5C",
                             borderColor: "black",
                             borderWidth: "1px",
                           }}
                         >
                           <MdOutlinePerson2 className="w-1/5 h-full p-1" />
                           <div
-                            style={{ backgroundColor: "#F2EBE4" }}
-                            className="w-4/5 border-l border-black bg-[#FFCEB6] rounded-r-md"
+                            className="w-4/5 border-l border-black rounded-r-md bg-tan"
                           >
                             <h2
                               className="truncate px-2 text-left font-bold h-8 w-full text-gray-700 rounded flex items-center"
@@ -435,17 +429,15 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                         </label>
                         {/*Box div*/}
                         <div
-                          className="items-center flex rounded-md"
+                          className="items-center flex rounded-md bg-medium-orange"
                           style={{
-                            backgroundColor: "#F58D5C",
                             borderColor: "black",
                             borderWidth: "1px",
                           }}
                         >
                           <MdOutlinePerson2 className="w-1/5 h-full p-1" />
                           <div
-                            style={{ backgroundColor: "#F2EBE4" }}
-                            className="w-4/5 border-l border-black bg-[#FFCEB6] rounded-r-md"
+                            className="w-4/5 border-l border-black rounded-r-md bg-tan"
                           >
                             <h2
                               className="truncate px-2 text-left font-bold h-8 w-full text-gray-700 rounded-md flex items-center"

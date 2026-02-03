@@ -26,7 +26,7 @@
   min-height: 100px;  /* Sets a reasonable height */
   min-width: 100%;
   padding: 1rem;      /* Matches <p> padding */
-  border: 0.1rem solid #F26624;
+  border: 0.1rem solid var(--color-dark-orange);
     border-radius: 15px;
   transition: border-color 0.3s ease;
   overflow-y: auto;

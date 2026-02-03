@@ -36,7 +36,7 @@
 
 /* Button preview defaults */
 .button-default {
-  color: #000000;
+  color: black;
   width: 168.42px;
   text-align: center;
   padding: 0.5rem 0;
@@ -50,11 +50,11 @@
 }
 
 .gray-button {
-  background-color: #d3d3d3;
+  background-color: var(--color-light-gray-2);
 }
 
 .orange-button {
-  background-color: #f7a781;
+  background-color: var(--color-light-orange);
 }
 
 .navy-button {

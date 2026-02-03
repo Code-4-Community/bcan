@@ -70,12 +70,11 @@ import { IoIosWarning } from "react-icons/io";
           <div className="flex w-full justify-between ">
             <button
               style={{
-                backgroundColor: "#F7A781",
                 borderStyle: 'solid',
                 borderColor: 'black',
                 borderWidth: '2px'
               }}
-              className="rounded-lg hover:bg-gray-200 transition-colors w-32 h-12"
+              className="rounded-lg hover:bg-gray-200 bg-light-orange transition-colors w-32 h-12"
               onClick={onCloseDelete}
             >
               No, cancel

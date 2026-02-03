@@ -200,9 +200,9 @@ const Register = observer(() => {
             Register
           </button>
           <div className="flex items-center justify-between gap-4 mt-4">
-            <hr className="border-[#757575] w-[45%]" />
-            <div className="text-[#757575]">or</div>
-            <hr className="border-[#757575] w-[45%]" />
+            <hr className="border-dark-gray w-[45%]" />
+            <div className="text-dark-gray">or</div>
+            <hr className="border-dark-gray w-[45%]" />
           </div>
           <div className="flex items-center mt-4 justify-center">
             Have an account?{" "}
@@ -250,10 +250,10 @@ const styles: { [key: string]: React.CSSProperties } = {
     backgroundColor: "#E7E7E7",
   },
   error: {
-    color: "#D33221",
-    backgroundColor: "#FFA399",
+    color: "var(--color-warning)",
+    backgroundColor: "var(--color-light-warning)",
   },
   errorItem: {
-    borderColor: "#D33221",
+    borderColor: "var(--color-warning)",
   },
 };

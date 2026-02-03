@@ -16,6 +16,7 @@ import {
 import "../styles/Dashboard.css";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { useState } from "react";
+import tailwindConfig from "../../../../tailwind.config";
 
 const BarYearGrantStatus = observer(
   ({ recentYear, grants }: { recentYear: number; grants: Grant[] }) => {
@@ -103,7 +104,7 @@ const BarYearGrantStatus = observer(
               type="monotone"
               stackId="a"
               dataKey="value"
-              fill="#F58D5C"
+              fill={tailwindConfig.theme.colors["medium-orange"]}
               strokeWidth={2}
               name="Grants"
               radius={[15, 15, 15, 15]}
@@ -123,8 +124,8 @@ const BarYearGrantStatus = observer(
             <Tooltip
               contentStyle={{
                 borderRadius: "12px",
-                backgroundColor: "#fff",
-                border: "1px solid #ccc",
+                backgroundColor: "white",
+                border: "1px solid lightgray",
                 boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
               }}
               formatter={(value: number) =>
