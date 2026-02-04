@@ -246,8 +246,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     textAlign: "start",
   },
   warning: {
-    color: "#616161",
-    backgroundColor: "#E7E7E7",
+    color: "gray",
+    backgroundColor: "var(--color-light-gray-2)",
   },
   error: {
     color: "var(--color-warning)",

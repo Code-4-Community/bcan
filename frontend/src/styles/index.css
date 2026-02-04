@@ -17,6 +17,14 @@
   --color-light-red: #FF6B6B;
   --color-green-2: #5AB911;
   --color-almost-black: #2D2D2D;
+  --color-red: #ff0000;
+  --color-active: #5AB911;
+  --color-inactive: #A9A9A9;
+  --color-potential: #E6CA15;
+  --color-pending: #FFA500;
+  --color-dark-gray: #757575;
+
+
 
 
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;

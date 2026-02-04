@@ -155,7 +155,7 @@ const ApprovedUserCard = ({
             <Menu.Content>
               <Button
                 px={4}
-                className="text-sm focus:outline-none block w-full bg-light-gray-2 border-[#666666] text-[#666666] mb-1"
+                className="text-sm focus:outline-none block w-full bg-light-gray-2 border-dark-gray text-dark-gray mb-1"
                 onClick={() => setIsChangeGroupModalOpen(true)}
               >
                 Change to {position === UserStatus.Admin ? "employee" : "admin"}

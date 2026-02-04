@@ -118,5 +118,5 @@ z-index: 1000;
   color: white;
   border-color: var(--color-medium-orange);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 119, 119, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }

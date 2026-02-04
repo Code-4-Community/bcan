@@ -14,6 +14,7 @@ export default {
       'dark-yellow': '#8a710c',
       'black': '#000000',
       'red': '#ff0000',
+      'burgundy': '#771505',
       'light-red': '#FF6B6B',
       'tan': '#F2EBE4',
       'dark-orange': "#F26624",

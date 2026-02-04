@@ -174,7 +174,7 @@
     Buttons 
   */
 .modal-content button {
-  background-color: #007bff; /* typical “primary” color */
+  background-color: gray; /* typical “primary” color */
   border: none;
   color: white;
   padding: 0.75rem 1.25rem;
@@ -186,5 +186,5 @@
 
 /* Hover effect for buttons */
 .modal-content button:hover {
-  background-color: #0056b3;
+  background-color: darkgray;
 }

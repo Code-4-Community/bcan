@@ -51,13 +51,13 @@ import { IoIosWarning } from "react-icons/io";
 
             <div className="flex mb-6">
 
-            <div className="w-3" style={{backgroundColor : "#FA703F"}}/>
-            <div  className="p-3" style={{backgroundColor : "#FFE9D9"}}>
+            <div className="w-3 bg-medium-orange"/>
+            <div  className="p-3 bg-white-orange">
             <div className="flex">
-              <IoIosWarning size={24} style={{color: "#771505"}}/>
-              <p className="font-bold px-1 text-lg" style={{color: "#771505"}}> Warning </p>
+              <IoIosWarning size={24} className="text-burgundy"/>
+              <p className="font-bold px-1 text-lg text-burgundy"> Warning </p>
             </div>
-            <p className=" text-left text-lg font-semibold" style={{color : "#FA703F"}}>
+            <p className=" text-left text-lg font-semibold text-dark-orange">
               {warningMessage}
             </p>
 

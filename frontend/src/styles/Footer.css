@@ -8,13 +8,13 @@ flex-grow: 1;
 
   
     background-color: white;
-    border-color: rgb(228, 228, 231);
+    border-color: var(--color-off-white);
     width: 100%;
     padding: 1em;
     
     /* Text */
     font-size: 1.3rem;
-    color: rgb(74 73 81) + 1;
+    color: var(--color-almost-black);
 }
 
 .text-block {
@@ -27,5 +27,5 @@ flex-grow: 1;
 .northeastern-uni-caption {
     font-size: 0.90rem;
     line-height: 1rem;
-    color: rgb(153 151 162);
+    color: var(--color-dark-gray);
 }
