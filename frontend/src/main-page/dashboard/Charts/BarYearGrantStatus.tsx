@@ -16,7 +16,6 @@ import {
 import "../styles/Dashboard.css";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { useState } from "react";
-import tailwindConfig from "../../../../tailwind.config";
 
 const BarYearGrantStatus = observer(
   ({ recentYear, grants }: { recentYear: number; grants: Grant[] }) => {
@@ -104,7 +103,7 @@ const BarYearGrantStatus = observer(
               type="monotone"
               stackId="a"
               dataKey="value"
-              fill={tailwindConfig.theme.colors["medium-orange"]}
+              fill="var(--color-medium-orange)"
               strokeWidth={2}
               name="Grants"
               radius={[15, 15, 15, 15]}

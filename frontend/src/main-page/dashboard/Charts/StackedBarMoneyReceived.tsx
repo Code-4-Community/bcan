@@ -15,7 +15,6 @@ import { aggregateMoneyGrantsByYear, YearAmount } from "../grantCalculations";
 import "../styles/Dashboard.css";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { getListApplied } from "../../../../../middle-layer/types/Status";
-import tailwindConfig from "../../../../tailwind.config";
 
 const StackedBarMoneyReceived = observer(({ grants }: { grants: Grant[] }) => {
   // Wrap Legend with a React component type to satisfy JSX typing
@@ -87,7 +86,7 @@ const StackedBarMoneyReceived = observer(({ grants }: { grants: Grant[] }) => {
             type="monotone"
             stackId="a"
             dataKey="unreceived"
-            fill={tailwindConfig.theme.colors["medium-orange"]}
+            fill="var(--color-medium-orange)"
             strokeWidth={2}
             name="Unreceived"
             radius={[15, 15, 15, 15]}
@@ -107,7 +106,7 @@ const StackedBarMoneyReceived = observer(({ grants }: { grants: Grant[] }) => {
             type="monotone"
             stackId="a"
             dataKey="received"
-            fill={tailwindConfig.theme.colors["yellow"]}
+            fill="var(--color-yellow)"
             strokeWidth={2}
             name="Received"
             radius={[15, 15, 15, 15]}

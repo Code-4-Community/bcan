@@ -4,7 +4,6 @@ import { aggregateMoneyGrantsByYear, YearAmount } from "../grantCalculations";
 import "../styles/Dashboard.css";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { getListApplied } from "../../../../../middle-layer/types/Status";
-import tailwindConfig from "../../../../tailwind.config";
 
 const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
   // Helper to sum values for given statuses
@@ -32,8 +31,8 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
   );
   const total = sumReceived + sumUnreceived;
   const data = [
-    { name: "Received", value: sumReceived, fill: tailwindConfig.theme.colors["yellow"] },
-    { name: "Unreceived", value: sumUnreceived, fill: tailwindConfig.theme.colors["medium-orange"] },
+    { name: "Received", value: sumReceived, fill: "var(--color-yellow)"},
+    { name: "Unreceived", value: sumUnreceived, fill: "var(--color-medium-orange)" },
   ];
 
   // Creating the label for the slices
@@ -93,7 +92,7 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
                 name="Unreceived"
                 value={sumUnreceived}
                 percent={sumUnreceived / total}
-                color={tailwindConfig.theme.colors["medium-orange"]}
+                color="var(--color-medium-orange)"
               />
             </div>
           )}
@@ -104,7 +103,7 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
                 name="Received"
                 value={sumReceived}
                 percent={sumReceived / total}
-                color={tailwindConfig.theme.colors["yellow"]}
+                color="var(--color-yellow)"
               />
             </div>
           )}

@@ -18,7 +18,6 @@ import {
 import "../styles/Dashboard.css";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { getListApplied } from "../../../../../middle-layer/types/Status";
-import tailwindConfig from "../../../../tailwind.config";
 
 const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
   // Wrap Legend with a React component type to satisfy JSX typing
@@ -138,7 +137,7 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
           <Line
             type="monotone"
             dataKey="money_captured"
-            stroke={tailwindConfig.theme.colors["medium-orange"]}
+            stroke="var(--color-medium-orange)"
             strokeWidth={2}
             dot={{ r: 4 }}
             name="Money Captured"
@@ -147,7 +146,7 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
           <Line
             type="monotone"
             dataKey="grants_captured"
-            stroke={tailwindConfig.theme.colors["yellow"]}
+            stroke="var(--color-yellow)"
             strokeWidth={2}
             dot={{ r: 4 }}
             name="Grants Captured"
