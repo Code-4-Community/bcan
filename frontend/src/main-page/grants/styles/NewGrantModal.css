@@ -91,14 +91,6 @@
   text-align: left;
 }
 
-/* Error message styling */
-.error-message {
-  grid-column: 1 / span 2; /* span across both columns */
-  margin: 0.5rem 0;
-  color: #d9534f;
-  font-weight: bold;
-}
-
 /* For text inputs, selects, textareas */
 .modal-content input,
 .modal-content select,

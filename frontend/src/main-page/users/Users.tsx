@@ -96,15 +96,15 @@ const Users = observer(() => {
               ? "All Users"
               : "Pending Users"}
           </h1>
-          <p className="text-[#FF8476]">{numInactiveUsers} new users</p>
+          <p className="text-dark-orange">{numInactiveUsers} new users</p>
         </div>
-        <div className="min-h-screen bg-[#F5F4F4] border rounded-md relative flex flex-col">
+        <div className="min-h-screen bg-light-gray-3 border rounded-md relative flex flex-col">
           <div className="absolute right-7 top-0 -translate-y-full flex">
             <button
               className={`w-52 h-16 border rounded-b-none focus:outline-none ${
                 usersTabStatus === UsersTab.PendingUsers
-                  ? "bg-[#F5F4F4] border-x-black border-t-black"
-                  : "bg-[#F4F4F4] border-x-[#BFBBBB] border-t-[#BFBBBB] border-b-black"
+                  ? "bg-light-gray-3 border-x-black border-t-black"
+                  : "bg-light-gray-3 border-x-medium-gray-2 border-t-medium-gray-2 border-b-black"
               }`}
               onClick={() => {
                 setUsersTabStatus(UsersTab.PendingUsers);
@@ -116,8 +116,8 @@ const Users = observer(() => {
             <button
               className={`w-52 h-16 border rounded-b-none ml-2 focus:outline-none ${
                 usersTabStatus === UsersTab.CurrentUsers
-                  ? "bg-[#F5F4F4] border-x-black border-t-black"
-                  : "bg-[#F4F4F4] border-x-[#BFBBBB] border-t-[#BFBBBB] border-b-black"
+                  ? "bg-light-gray-3 border-x-black border-t-black"
+                  : "bg-light-gray-3 border-x-medium-gray-2 border-t-medium-gray-2 border-b-black"
               }`}
               onClick={() => {
                 setUsersTabStatus(UsersTab.CurrentUsers);
@@ -130,7 +130,7 @@ const Users = observer(() => {
           <div>
             {usersTabStatus === UsersTab.CurrentUsers ? (
               <>
-                <div className="flex px-9 pb-3 m-7 border-b border-b-[#BFBBBB] font-semibold justify-around">
+                <div className="flex px-9 pb-3 m-7 border-b border-b-medium-gray-2 font-semibold justify-around">
                   <p className="w-[140px] text-left">User ID</p>
                   <p className="w-[140px] text-left">Email</p>
                   <p className="w-[140px] text-left">Position</p>
@@ -146,7 +146,7 @@ const Users = observer(() => {
               </>
             ) : (
               <>
-                <div className="flex px-9 pb-3 m-7 border-b border-b-[#BFBBBB] font-semibold justify-around">
+                <div className="flex px-9 pb-3 m-7 border-b border-b-medium-gray-2 font-semibold justify-around">
                   <p className="w-[140px] text-left">User ID</p>
                   <p className="w-[140px] text-left">Email</p>
                   <p className="w-[140px] text-left">Position</p>

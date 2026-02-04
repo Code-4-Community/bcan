@@ -36,7 +36,7 @@ const RegisterLanding = () => {
                         color: 'black',
                         borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'
                       }}
-                      className="py-2 px-4 rounded"
+                      className="py-2 mt-8 px-4 rounded-md"
                       onClick={() => {
                         logout()
                       }}

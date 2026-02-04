@@ -66,10 +66,6 @@ input[type="checkbox"]:checked::before {
   border: 0.1rem solid black;
 }
 
-.kpi-card {
-  background-color: #ffd5c2;
-}
-
 .tooltip {
   border-radius: 12px;
   background-color: white;

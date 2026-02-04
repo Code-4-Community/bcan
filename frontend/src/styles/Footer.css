@@ -17,14 +17,6 @@ flex-grow: 1;
     color: rgb(74 73 81) + 1;
 }
 
-.bcan-link {
-    background-color: "#0b303b";
-    border-width: 0;
-    border-radius: "100px";
-    color: white;
-    text-transform: "uppercase";
-}
-
 .text-block {
     width: 50%;
     display: flex;

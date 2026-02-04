@@ -639,7 +639,7 @@ const NewGrantModal: React.FC<{
                           <button
                             style={{
                               height: "42px",
-                              backgroundColor: "#FF6B6B",
+                              backgroundColor: "var(--color-light-red)",
                               borderStyle: "solid",
                               borderColor: "black",
                               borderWidth: "1px",
@@ -1042,7 +1042,7 @@ const NewGrantModal: React.FC<{
                         <button
                           style={{
                             height: "42px",
-                            backgroundColor: "#FF6B6B",
+                            backgroundColor: "var(--color-light-red)",
                             borderStyle: "solid",
                             borderColor: "black",
                             borderWidth: "1px",

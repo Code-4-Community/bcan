@@ -638,7 +638,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                         backgroundColor: "indianred",
                         color: "white",
                         borderStyle: "solid",
-                        borderColor: "#8B0000",
+                        borderColor: "black",
                         borderWidth: "1px",
                       }}
                       className="py-2 px-4 rounded-md hover:bg-red-600 transition-colors"

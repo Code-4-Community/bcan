@@ -13,7 +13,7 @@
   border-radius: 4px;
   padding: 0 12px;
   cursor: pointer;
-  color: #374151;
+  color: var(--color-teal);
 }
 
 .user-dropdown-input:focus {
@@ -62,7 +62,7 @@
 
 .user-dropdown-email {
   font-size: 14px;
-  color: #666;
+  color: gray;
   margin-top: 2px;
   font-family: helvetica;
   white-space: nowrap;
@@ -72,6 +72,6 @@
 
 .user-dropdown-empty {
   padding: 12px;
-  color: #666;
+  color: gray;
   text-align: center;
 }

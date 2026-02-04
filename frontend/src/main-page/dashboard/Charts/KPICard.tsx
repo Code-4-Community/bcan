@@ -16,7 +16,7 @@ const KPICard = observer(
     percentChange: number;
   }) => {
     return (
-      <div className="chart-container kpi-card w-full flex flex-col justify-between">
+      <div className="chart-container !bg-pale-orange w-full flex flex-col justify-between">
         {/* Title */}
         <div className="text-lg w-full text-left font-semibold">{title}</div>
 
