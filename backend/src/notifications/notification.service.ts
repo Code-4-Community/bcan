@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
 import { Notification } from '../../../middle-layer/types/Notification';
 
@@ -159,7 +159,7 @@ export class NotificationService {
     } catch (err: unknown) {
       this.logger.error('Error sending email: ', err);
       const errMessage = (err instanceof Error) ? err.message : 'Generic'; 
-      throw new Error(`Failed to send email: ${errMessage}`);
+      throw new InternalServerErrorException(`Failed to send email: ${errMessage}`);
     }
   }
 
@@ -186,7 +186,7 @@ export class NotificationService {
       return JSON.stringify(result);
   } catch(err) {
       this.logger.error(`Failed to update notification ${notificationId}:`, err as string);
-      throw new Error(`Failed to update Notification ${notificationId}`)
+      throw new InternalServerErrorException(`Failed to update Notification ${notificationId}`)
   }
   }
   
@@ -212,11 +212,11 @@ export class NotificationService {
     } catch (error: any) {
       if (error.code === "ConditionalCheckFailedException") {
         this.logger.warn(`Notification with id ${notificationId} not found for deletion`);
-        throw new Error(`Notification with id ${notificationId} not found`)
+        throw new NotFoundException(`Notification with id ${notificationId} not found`)
       }
 
       this.logger.error(`Failed to delete notification ${notificationId}:`, error as string);
-      throw new Error(`Failed to delete notification with id ${notificationId}`)
+      throw new InternalServerErrorException(`Failed to delete notification with id ${notificationId}`)
     }
   }
 }

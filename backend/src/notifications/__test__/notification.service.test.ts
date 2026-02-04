@@ -5,6 +5,7 @@ import { NotificationService } from '../notification.service';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { servicesVersion } from 'typescript';
 import { TDateISO } from '../../utils/date';
+import { NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 
 vi.mock('../../guards/auth.guard', () => ({
   VerifyUserGuard: vi.fn(class MockVerifyUserGuard {
@@ -249,7 +250,7 @@ describe('NotificationController', () => {
       'user@example.com',
       'Test Subject',
       'Test Body'
-    )).rejects.toThrow('Failed to send email: SES service unavailable');
+    )).rejects.toThrow(InternalServerErrorException);
 
     expect(mockSendEmail).toHaveBeenCalled();
   });
@@ -418,7 +419,7 @@ describe('NotificationController', () => {
 
     // Act & Assert
     await expect(notificationService.updateNotification(notificationId, updates))
-      .rejects.toThrow('Failed to update Notification notif-fail');
+      .rejects.toThrow(InternalServerErrorException);
 
     expect(mockUpdate).toHaveBeenCalled();
   });
@@ -486,13 +487,19 @@ describe('NotificationController', () => {
       })
     })
 
-    it('throws an error when the given notification id does not exist', async () => {
+    it('throws NotFoundException when the given notification id does not exist', async () => {
       mockPromise.mockRejectedValueOnce({
         code: 'ConditionalCheckFailedException', 
         message: 'The item does not exist' 
       });
 
-      await expect(notificationService.deleteNotification('999')).rejects.toThrow('Notification with id 999 not found');
+      await expect(notificationService.deleteNotification('999')).rejects.toThrow(NotFoundException);
+    })
+
+    it('throws InternalServerErrorException when DynamoDB fails unexpectedly', async () => {
+      mockPromise.mockRejectedValueOnce(new Error('DynamoDB service unavailable'));
+
+      await expect(notificationService.deleteNotification('123')).rejects.toThrow(InternalServerErrorException);
     })
   })
 });
