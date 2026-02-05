@@ -31,11 +31,7 @@ const RegisterLanding = () => {
           </h2>
           <Link to="/login">
                     <button
-                      style={{
-                        backgroundColor: ButtonColorOption.ORANGE ,
-                        color: 'black',
-                        borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'
-                      }}
+                      style={styles.loginButton}
                       className="py-2 px-4 rounded"
                       onClick={() => {
                         logout()
@@ -66,4 +62,11 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: "start",
     textAlign: "start",
   },
+  loginButton :{
+    backgroundColor: ButtonColorOption.ORANGE,
+    color: 'black',
+    borderStyle: 'solid',
+    borderColor: 'black',
+    borderWidth: '1px'
+  }
 };
