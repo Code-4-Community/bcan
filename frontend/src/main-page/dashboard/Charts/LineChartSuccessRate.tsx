@@ -137,7 +137,7 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
           <Line
             type="monotone"
             dataKey="money_captured"
-            stroke="var(--color-medium-orange)"
+            stroke="var(--color-primary-800)"
             strokeWidth={2}
             dot={{ r: 4 }}
             name="Money Captured"

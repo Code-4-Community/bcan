@@ -71,10 +71,10 @@ const DateFilter: React.FC = observer(() => {
         >
           {uniqueYears.map((year) => (
             <li key={year}>
-              <div className="flex items-center p-2 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-600">
+              <div className="flex items-center p-2 rounded-sm hover:bg-grey-100">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 rounded-sm accent-dark-orange bg-white-orange"
+                  className="w-4 h-4 rounded-sm accent-primary-900 bg-orange-lightest"
                   id={year.toString()}
                   value={year}
                   checked={selectedYears.includes(year)}

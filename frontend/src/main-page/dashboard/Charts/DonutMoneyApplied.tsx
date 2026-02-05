@@ -32,7 +32,7 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
   const total = sumReceived + sumUnreceived;
   const data = [
     { name: "Received", value: sumReceived, fill: "var(--color-yellow)"},
-    { name: "Unreceived", value: sumUnreceived, fill: "var(--color-medium-orange)" },
+    { name: "Unreceived", value: sumUnreceived, fill: "var(--color-primary-800)" },
   ];
 
   // Creating the label for the slices
@@ -92,7 +92,7 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
                 name="Unreceived"
                 value={sumUnreceived}
                 percent={sumUnreceived / total}
-                color="var(--color-medium-orange)"
+                color="var(--color-primary-800)"
               />
             </div>
           )}

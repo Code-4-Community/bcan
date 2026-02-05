@@ -35,7 +35,7 @@
   flex-direction: column;
   gap: 10px;
   margin-bottom: 20px;
-  border-left: 4px solid var(--color-medium-orange);
+  border-left: 4px solid var(--color-primary-800);
   padding-left: 20px;
   z-index: 1000;
 }
@@ -81,17 +81,17 @@ z-index: 1000;
   gap: 8px;
   padding: 10px 20px;
   background: white;
-  border: 2px solid var(--color-almost-black);
+  border: 2px solid var(--color-grey-700);
   border-radius: 10px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: var(--color-almost-black);
+  color: var(--color-grey-700);
 }
 
 .user-list-btn:hover {
-  background: var(--color-light-gray);
+  background: var(--color-grey-100);
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -103,10 +103,10 @@ z-index: 1000;
 
 .logout-btn {
   padding: 10px 26px;
-  background: var(--color-light-warning);
-  border: 2px solid var(--color-light-red);
+  background: var(--color-red-lighter);
+  border: 2px solid var(--color-red-light);
   border-radius: 10px;
-  color: var(--color-warning);
+  color: var(--color-red);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -114,9 +114,9 @@ z-index: 1000;
 }
 
 .logout-btn:hover {
-  background: var(--color-light-orange);
+  background: var(--color-primary-700);
   color: white;
-  border-color: var(--color-medium-orange);
+  border-color: var(--color-primary-800);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }

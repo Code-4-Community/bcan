@@ -18,7 +18,7 @@ const UserButton: React.FC<UserButtonProps> = ({ setOpenModal, openModal }) => {
   return (
     <div className="user-container">
       <div
-        className="user-wrapper relative inline-block p-2 hover:bg-light-orange rounded-md"
+        className="user-wrapper relative inline-block p-2 hover:bg-primary-700 rounded-md"
       >
         <button
           className={`user-button ${openModal === "user" ? "hovered" : ""} bg-none border-none relative`}

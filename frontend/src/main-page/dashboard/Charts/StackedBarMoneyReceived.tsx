@@ -86,7 +86,7 @@ const StackedBarMoneyReceived = observer(({ grants }: { grants: Grant[] }) => {
             type="monotone"
             stackId="a"
             dataKey="unreceived"
-            fill="var(--color-medium-orange)"
+            fill="var(--color-primary-800)"
             strokeWidth={2}
             name="Unreceived"
             radius={[15, 15, 15, 15]}

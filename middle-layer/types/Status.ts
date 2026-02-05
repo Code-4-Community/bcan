@@ -41,12 +41,12 @@ export function statusToString(status : Status): string {
 // color associated with status on UI, represented as a string
 export function getColorStatus(status: string) {
     switch (status) {
-        case "Active": return "var(--color-active)"; // green
-        case "Inactive": return "var(--color-inactive)" // gray
-        case "Potential": return "var(--color-potential)" // TODO: no color given for potential yet
+        case "Active": return "var(--color-green)"; // green
+        case "Inactive": return "var(--color-grey-500)" // gray
+        case "Potential": return "var(--color-yellow)" // TODO: no color given for potential yet
         // TODO add colors for rejected and pending
         case "Rejected": return "var(--color-red)" // red
-        case "Pending": return "var(--color-pending)" // orange
+        case "Pending": return "var(--color-orange)" // orange
         default: return 'gray';
     }
 }

@@ -71,7 +71,7 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({ grant 
             placeholder="Enter rate"
             value={hourlyRate}
             onChange={(e) => setHourlyRate(e.target.value)}
-            className="w-full h-[42px]  px-3 py-4 border border-gray-400 rounded-md bg-tan"
+            className="w-full h-[42px]  px-3 py-4 border border-black rounded-md bg-tan placeholder-gray-500"
           />
         </div>
 
@@ -88,14 +88,14 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({ grant 
                 console.log('Time per report changed to:', e.target.value);
                 setTimePerReport(e.target.value);
             }}
-            className="w-full h-[42px] px-3 py-4 border border-gray-400 rounded-md bg-tan"
+            className="w-full h-[42px] px-3 py-4 border border-black rounded-md bg-tan placeholder-gray-500"
           />
         </div>
 
         {/* Calculate Button */}
         <button
           onClick={calculateNetBenefit}
-          className="w-full py-1 px-4 rounded-md mb-7 bg-medium-orange"
+          className="w-full py-1 px-4 rounded-md mb-7 bg-primary-800"
           style={{
             color: 'black',
             borderStyle: 'solid',

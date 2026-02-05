@@ -51,13 +51,13 @@ import { IoIosWarning } from "react-icons/io";
 
             <div className="flex mb-6">
 
-            <div className="w-3 bg-medium-orange"/>
-            <div  className="p-3 bg-white-orange">
+            <div className="w-3 bg-primary-800"/>
+            <div  className="p-3 bg-orange-lightest">
             <div className="flex">
-              <IoIosWarning size={24} className="text-burgundy"/>
-              <p className="font-bold px-1 text-lg text-burgundy"> Warning </p>
+              <IoIosWarning size={24} className="text-red-dark"/>
+              <p className="font-bold px-1 text-lg text-red-dark"> Warning </p>
             </div>
-            <p className=" text-left text-lg font-semibold text-dark-orange">
+            <p className=" text-left text-lg font-semibold text-primary-900">
               {warningMessage}
             </p>
 
@@ -74,7 +74,7 @@ import { IoIosWarning } from "react-icons/io";
                 borderColor: 'black',
                 borderWidth: '2px'
               }}
-              className="rounded-lg hover:bg-gray-200 bg-light-orange transition-colors w-32 h-12"
+              className="rounded-lg hover:bg-gray-200 bg-primary-700 transition-colors w-32 h-12"
               onClick={onCloseDelete}
             >
               No, cancel

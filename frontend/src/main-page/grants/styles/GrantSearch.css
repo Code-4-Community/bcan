@@ -28,7 +28,7 @@
 
 .search-input:focus {
     outline: none !important;
-    border:0.1rem solid var(--color-medium-orange);
+    border:0.1rem solid var(--color-primary-800);
 }
 
 

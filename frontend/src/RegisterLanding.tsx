@@ -11,7 +11,7 @@ const RegisterLanding = () => {
   return (
     <div className="bg-white grid grid-cols-2" style={styles.pageContainer}>
       <div className="w-[35%] h-full flex flex-col justify-center items-center pb-32">
-        <div className="w-full h-[70%] bg-medium-orange rounded-r-4xl flex flex-col justify-center items-center">
+        <div className="w-full h-[70%] bg-primary-800 rounded-r-4xl flex flex-col justify-center items-center">
           <img
             className="w-[90%] h-[90%] object-contain p-20 ml-10"
             src={logo}

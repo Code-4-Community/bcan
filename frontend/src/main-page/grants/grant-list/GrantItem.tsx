@@ -230,7 +230,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                               style={{
                                 color: "black",
                               }}
-                              className="h-9  flex items-center bg-light-gray-2 justify-center w-full rounded-full px-4"
+                              className="h-9  flex items-center bg-grey-400 justify-center w-full rounded-full px-4"
                             >
                               {formatDate(curGrant.application_deadline)}
                             </div>
@@ -250,7 +250,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                                   ? "normal"
                                   : "italic",
                               }}
-                              className="h-9 flex items-center bg-light-gray-2 justify-center w-full rounded-full px-4"
+                              className="h-9 flex items-center bg-grey-400 justify-center w-full rounded-full px-4"
                             >
                               {curGrant.grant_start_date
                                 ? formatDate(curGrant.grant_start_date)
@@ -334,7 +334,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                           Report Deadlines
                         </label>
                         <div
-                          className="p-2 rounded-md h-[13.5rem] w-4/5  overflow-auto grip bg-medium-orange"
+                          className="p-2 rounded-md h-[13.5rem] w-4/5  overflow-auto grip bg-primary-800"
                           style={{
                             borderStyle: "solid",
                             borderColor: "black",
@@ -352,7 +352,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                                   style={{
                                     color: "black",
                                   }}
-                                  className="h-10 flex items-center bg-light-gray-2 justify-center w-full rounded-full mb-2 px-4"
+                                  className="h-10 flex items-center bg-grey-400 justify-center w-full rounded-full mb-2 px-4"
                                 >
                                   {formatDate(deadline)}
                                 </div>
@@ -387,7 +387,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                         </label>
                         {/*Box div*/}
                         <div
-                          className="items-center flex rounded-md bg-medium-orange"
+                          className="items-center flex rounded-md bg-primary-800"
                           style={{
                             borderColor: "black",
                             borderWidth: "1px",
@@ -429,7 +429,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                         </label>
                         {/*Box div*/}
                         <div
-                          className="items-center flex rounded-md bg-medium-orange"
+                          className="items-center flex rounded-md bg-primary-800"
                           style={{
                             borderColor: "black",
                             borderWidth: "1px",

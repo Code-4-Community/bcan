@@ -60,7 +60,7 @@ const BarYearGrantStatus = observer(
           {/* Toggle */}
           <div className="mt-2">
             <label className="inline-flex items-center mb-5 cursor-pointer">
-              <span className="me-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+              <span className="me-3 text-sm font-medium text-gray-900">
                 Count
               </span>
               <input
@@ -70,8 +70,8 @@ const BarYearGrantStatus = observer(
                 className="sr-only peer"
                 style={{display:"none"}}
               />
-              <div className=" bg-light-orange relative w-9 h-5 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-dark-orange rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border after:rounded-full after:h-4 after:w-4 after:transition-allpeer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"></div>
-              <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+              <div className=" bg-primary-700 relative w-9 h-5 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-900 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border after:rounded-full after:h-4 after:w-4 after:transition-allpeer-checked:bg-blue-600"></div>
+              <span className="ms-3 text-sm font-medium text-gray-900">
                 Money
               </span>
             </label>
@@ -103,7 +103,7 @@ const BarYearGrantStatus = observer(
               type="monotone"
               stackId="a"
               dataKey="value"
-              fill="var(--color-medium-orange)"
+              fill="var(--color-primary-800)"
               strokeWidth={2}
               name="Grants"
               radius={[15, 15, 15, 15]}

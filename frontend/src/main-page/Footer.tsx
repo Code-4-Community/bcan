@@ -13,7 +13,7 @@ const Footer: React.FC = () => {
             {FooterText.C4C}
           </Link>{" "}
           for{" "}
-          <Link variant="underline" _hover={{color: "var(--color-dark-orange)"}}  href={FooterText.Org_Link}>
+          <Link variant="underline" _hover={{color: "var(--color-primary-900)"}}  href={FooterText.Org_Link}>
             {FooterText.Org}
           </Link>
         </Text>

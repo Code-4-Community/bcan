@@ -53,7 +53,7 @@ const Login = observer(() => {
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter your email"
                   style={styles.inputContainer}
-                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-medium-gray"
+                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-grey-400"
                 />
               </div>
             </div>
@@ -71,14 +71,14 @@ const Login = observer(() => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
                   style={styles.inputContainer}
-                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-medium-gray"
+                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-grey-400"
                 />
               </div>
             </div>
           </div>
           <div className="h-12 items-center">
             {failure ? (
-              <div className="text-warning mt-4 bg-light-warning h-full rounded-md text-center flex items-center justify-center p-2">
+              <div className="text-red mt-4 bg-red-lighter h-full rounded-md text-center flex items-center justify-center p-2">
                 Your password is incorrect or this account doesn't exist.
               </div>
             ) : (
@@ -87,22 +87,22 @@ const Login = observer(() => {
           </div>
           <button
             type="submit"
-            className="w-full block mt-8 min-w-0 rounded-md grow bg-dark-orange text-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500"
+            className="w-full block mt-8 min-w-0 rounded-md grow bg-primary-900 text-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500"
             style={{ ...styles.button, ...styles.helloButton }}
           >
             Login
           </button>
           <div className="flex items-center justify-between gap-4 mt-8">
-            <hr className="border-dark-gray w-[45%]" />
-            <div className="text-dark-gray">or</div>
-            <hr className="border-dark-gray w-[45%]" />
+            <hr className="border-grey-600 w-[45%]" />
+            <div className="text-grey-600">or</div>
+            <hr className="border-grey-600 w-[45%]" />
           </div>
           <div className="flex items-center mt-8 justify-center">
             Don't have an account?{" "}
             <button
               type="button"
               onClick={() => navigate("/register")}
-              className="inline ml-2 text-dark-blue text-left"
+              className="inline ml-2 text-secondary-500 text-left"
             >
               Sign up
             </button>
@@ -112,7 +112,7 @@ const Login = observer(() => {
 
       {/*/ Right side: logo */}
       <div className="w-[40%] h-full flex flex-col justify-center items-center">
-        <div className="w-full h-full  bg-medium-orange rounded-l-4xl flex flex-col justify-center items-center">
+        <div className="w-full h-full  bg-primary-800 rounded-l-4xl flex flex-col justify-center items-center">
           <img
             className="w-[60%] h-[60%] object-contain p-10 mb-40"
             src={logo}

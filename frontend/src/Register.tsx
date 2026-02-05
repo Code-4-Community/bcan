@@ -112,7 +112,7 @@ const Register = observer(() => {
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter your username"
                   style={styles.inputContainer}
-                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-medium-gray"
+                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-grey-400"
                 />
               </div>
             </div>
@@ -134,7 +134,7 @@ const Register = observer(() => {
                       ? styles.errorItem
                       : styles.inputContainer
                   }
-                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-medium-gray"
+                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-grey-400"
                 />
               </div>
             </div>
@@ -156,7 +156,7 @@ const Register = observer(() => {
                       ? styles.errorItem
                       : styles.inputContainer
                   }
-                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-medium-gray"
+                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-grey-400"
                 />
               </div>
             </div>
@@ -178,7 +178,7 @@ const Register = observer(() => {
                       ? styles.errorItem
                       : styles.inputContainer
                   }
-                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-medium-gray"
+                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-grey-400"
                 />
               </div>
             </div>
@@ -194,22 +194,22 @@ const Register = observer(() => {
 
           <button
             type="submit"
-            className="w-full block mt-8 min-w-0 rounded-md grow bg-dark-orange text-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500"
+            className="w-full block mt-8 min-w-0 rounded-md grow bg-primary-900 text-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500"
             style={{ ...styles.button, ...styles.helloButton }}
           >
             Register
           </button>
           <div className="flex items-center justify-between gap-4 mt-4">
-            <hr className="border-dark-gray w-[45%]" />
-            <div className="text-dark-gray">or</div>
-            <hr className="border-dark-gray w-[45%]" />
+            <hr className="border-grey-600 w-[45%]" />
+            <div className="text-grey-600">or</div>
+            <hr className="border-grey-600 w-[45%]" />
           </div>
           <div className="flex items-center mt-4 justify-center">
             Have an account?{" "}
             <button
               type="button"
               onClick={() => navigate("/login")}
-              className="inline ml-2 text-dark-blue text-left"
+              className="inline ml-2 text-secondary-500 text-left"
             >
               Sign in
             </button>
@@ -218,7 +218,7 @@ const Register = observer(() => {
       </div>
       {/*/ Right side: logo */}
       <div className="sm:w-1/4 lg:w-[40%] h-full flex flex-col justify-center items-center">
-        <div className="w-full h-full  bg-medium-orange rounded-l-4xl flex flex-col justify-center items-center">
+        <div className="w-full h-full  bg-primary-800 rounded-l-4xl flex flex-col justify-center items-center">
           <img
             className="w-[60%] h-[60%] object-contain p-10 mb-40"
             src={logo}
@@ -247,13 +247,13 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   warning: {
     color: "gray",
-    backgroundColor: "var(--color-light-gray-2)",
+    backgroundColor: "var(--color-grey-400)",
   },
   error: {
-    color: "var(--color-warning)",
-    backgroundColor: "var(--color-light-warning)",
+    color: "var(--color-red)",
+    backgroundColor: "var(--color-red-lighter)",
   },
   errorItem: {
-    borderColor: "var(--color-warning)",
+    borderColor: "var(--color-red)",
   },
 };

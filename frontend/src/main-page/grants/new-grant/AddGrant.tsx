@@ -4,7 +4,7 @@ import '../styles/GrantButton.css';
 const AddGrantButton = ({ onClick } : any) => {
 
   return (
-    <button className="grant-button add-grant-button bg-medium-orange" onClick={onClick}>
+    <button className="grant-button add-grant-button bg-primary-800" onClick={onClick}>
       + ADD
     </button>
   );

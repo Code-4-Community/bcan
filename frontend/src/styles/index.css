@@ -3,57 +3,54 @@
 @tailwind utilities;
 
 :root {
+  --color-green-dark: #119548;
+  --color-green: #5ab911;
+  --color-green-light: #c6fbd3;
 
-  --color-active: #5AB911;
-  --color-inactive: #A9A9A9;
-  --color-potential: #E6CA15;
-  --color-pending: #FFA500;
-  --color-dark-gray: #757575;
+  --color-yellow: #f8cc16;
+  --color-yellow-light: #fff8ca;
+  --color-yellow-dark: #8a710c;
 
-  --color-dark-blue: #3191CF;
-  --color-light-blue: #90c4e5;
+  --color-red: #d33221;
+  --color-red-dark: #771505;
+  --color-red-light: #ff6b6b;
+  --color-red-lighter: #ffa399;
+  --color-red-lightest: #ffdfdf;
 
-  --color-green: #119548;
-  --color-green-2: #5AB911;
-  --color-pale-green: #c6fbd3;
+  --color-tan: #f2ebe4;
 
-  --color-yellow: #F8CC16;
-  --color-medium-yellow: #FFF8CA;
-  --color-dark-yellow: #8a710c;
+  --color-orange: #ffa500;
+  --color-orange-light: #ffceb6;
+  --color-orange-lightest: #fff1eb;
+
+  --color-primary-900: #e16f39;
+  --color-primary-800: #e78c61;
+  --color-primary-700: #eca380;
+
+  --color-secondary-900: #001733;
+  --color-secondary-800: #002f66;
+  --color-secondary-700: #004899;
+  --color-secondary-600: #0061cc;
+  --color-secondary-500: #007aff;
+  --color-secondary-400: #3b98ff;
+  --color-secondary-300: #75b6ff;
+  --color-secondary-200: #b0d5ff;
+  --color-secondary-100: #ebf4ff;
+
+  --color-accent: #5f5ac6;
+
+  --color-grey-900: #212529;
+  --color-grey-800: #343a40;
+  --color-grey-700: #495057;
+  --color-grey-600: #6c757d;
+  --color-grey-500: #adb5bd;
+  --color-grey-400: #ced4da;
+  --color-grey-300: #dee2e6;
+  --color-grey-200: #e9ecef;
+  --color-grey-100: #f8f9fa;
 
   --color-black: #000000;
-  --color-almost-black: #2D2D2D;
-
-  --color-red: #ff0000;
-  --color-burgundy: #771505;
-  --color-light-red: #FF6B6B;
-
-  --color-tan: #F2EBE4;
-
-  --color-dark-orange: #F26624;
-  --color-light-orange: #f7a781;
-  --color-medium-orange: #F58D5C;
-
-  --color-white: #FFFFFF;
-
-  --color-light-gray: #F8F8F8;
-  --color-light-gray-2: #D3D3D3;
-  --color-light-gray-3: #F5F4F4;
-  --color-gray: #808080;
-  --color-medium-gray: #D9D9D9;
-  --color-medium-gray-2: #BFBBBB;
-  --color-dark-gray: #757575;
-
-  --color-pale-orange: #FFCEB6;
-  --color-white-orange: #FFF1EB;
-
-  --color-warning: #D33221;
-  --color-light-warning: #FFA399;
-  --color-light-warning-2: #FFDFDF;
-
-  --color-off-white: #F9F9F9;
-  --color-teal: #213547;
-
+  --color-white: #ffffff;
 
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -71,11 +68,11 @@
 
 a {
   font-weight: 500;
-  color: var(--color-dark-blue);
+  color: var(--color-secondary-500);
   text-decoration: inherit;
 }
 a:hover {
-  color: var(--color-dark-blue);
+  color: var(--color-secondary-500);
 }
 
 body {
@@ -117,17 +114,17 @@ button:focus-visible {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: var(--color-teal);
+    color: var(--color-grey-800);
     background-color: white;
   }
   a:hover {
-    color: var(--color-dark-blue);
+    color: var(--color-secondary-500);
   }
   button {
-    background-color: var(--color-off-white);
+    background-color: var(--color-grey-100);
   }
 }
 
-    input:focus {
-      outline: 1px solid darkorange;
-    }
+input:focus {
+  outline: 1px solid darkorange;
+}

@@ -587,7 +587,7 @@ const NewGrantModal: React.FC<{
                     Report Deadlines
                   </label>
                   <div
-                    className="p-2 rounded sm:h-52 bg-light-gray-2 xl:h-40 overflow-y-auto overflow-x-hidden"
+                    className="p-2 rounded sm:h-52 bg-grey-400 xl:h-40 overflow-y-auto overflow-x-hidden"
                     style={{
                       borderStyle: "solid",
                       borderColor: "black",
@@ -599,7 +599,7 @@ const NewGrantModal: React.FC<{
                       style={{
                         height: "42px",
                         color: "black",
-                        backgroundColor: "var(--color-medium-orange)",
+                        backgroundColor: "var(--color-primary-800)",
                         borderStyle: "solid",
                         borderColor: "black",
                         borderWidth: "1px",
@@ -639,7 +639,7 @@ const NewGrantModal: React.FC<{
                           <button
                             style={{
                               height: "42px",
-                              backgroundColor: "var(--color-light-red)",
+                              backgroundColor: "var(--color-red-light)",
                               borderStyle: "solid",
                               borderColor: "black",
                               borderWidth: "1px",
@@ -720,7 +720,7 @@ const NewGrantModal: React.FC<{
                       BCAN POC *
                   </label>
                   {/*Box div*/} 
-                  <div className="items-center flex p-3 rounded h-full bg-medium-orange" style={{borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}>
+                  <div className="items-center flex p-3 rounded h-full bg-primary-800" style={{borderColor: 'black', borderWidth: '1px', borderRadius:"1.2rem"}}>
                       <MdOutlinePerson2 className="w-1/4 h-full p-1"/>
                       <div className="w-3/4">
                       <UserDropdown
@@ -751,7 +751,7 @@ const NewGrantModal: React.FC<{
                 </label>
                 {/*Box div*/}
                 <div
-                  className="flex p-3 rounded  items-center h-full bg-medium-orange"
+                  className="flex p-3 rounded  items-center h-full bg-primary-800"
                   style={{
                     borderColor: "black",
                     borderWidth: "1px",
@@ -969,7 +969,7 @@ const NewGrantModal: React.FC<{
                         <button
                           type="button"
                           style={{
-                            backgroundColor: "var(--color-light-gray-2)",
+                            backgroundColor: "var(--color-grey-400)",
                             color: "black",
                             height: "21px",
                           }}
@@ -983,7 +983,7 @@ const NewGrantModal: React.FC<{
                           type="button"
                           onClick={_addAttachment}
                           style={{
-                            backgroundColor: "var(--color-medium-orange)",
+                            backgroundColor: "var(--color-primary-800)",
                             color: "black",
                             height: "21px",
                           }}
@@ -998,7 +998,7 @@ const NewGrantModal: React.FC<{
 
                 {/* Gray box showing added links */}
                 <div
-                  className=" p-2 rounded-md overflow-y-auto overflow-x-hidden bg-light-gray-2"
+                  className=" p-2 rounded-md overflow-y-auto overflow-x-hidden bg-grey-400"
                   style={{
                     borderStyle: "solid",
                     borderColor: "black",
@@ -1042,7 +1042,7 @@ const NewGrantModal: React.FC<{
                         <button
                           style={{
                             height: "42px",
-                            backgroundColor: "var(--color-light-red)",
+                            backgroundColor: "var(--color-red-light)",
                             borderStyle: "solid",
                             borderColor: "black",
                             borderWidth: "1px",
@@ -1105,7 +1105,7 @@ const NewGrantModal: React.FC<{
             style={{
               fontFamily: "helvetica",
               color: "black",
-              backgroundColor: "var(--color-medium-orange)",
+              backgroundColor: "var(--color-primary-800)",
               borderStyle: "solid",
               borderColor: "black",
               borderWidth: "1px",
@@ -1139,7 +1139,7 @@ const NewGrantModal: React.FC<{
             <button
               onClick={() => setShowErrorPopup(false)}
               style={{
-                backgroundColor: "var(--color-medium-orange)",
+                backgroundColor: "var(--color-primary-800)",
                 color: "black",
                 borderStyle: "solid",
                 borderColor: "black",

@@ -97,13 +97,13 @@ const PendingUserCard = ({
       </div>
       <div className="flex w-[140px] gap-3">
         <button 
-          className="bg-pale-green w-8 h-8 focus:outline-none rounded"
+          className="bg-green-light w-8 h-8 focus:outline-none rounded"
           onClick={approveUser}
           disabled={isLoading}>
           <FontAwesomeIcon icon={faCheck} className="text-black" />
         </button>
         <button 
-        className="bg-light-warning w-8 h-8 focus:outline-none rounded"
+        className="bg-red-lighter w-8 h-8 focus:outline-none rounded"
           onClick={rejectUser}
           disabled={isLoading}>
           <FontAwesomeIcon icon={faX} className="text-black"/>
