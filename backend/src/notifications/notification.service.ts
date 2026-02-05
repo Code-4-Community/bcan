@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
 import { Notification } from '../../../middle-layer/types/Notification';
 
@@ -15,7 +15,18 @@ export class NotificationService {
   async createNotification(notification: Notification): Promise<Notification> {
     this.logger.log(`Starting notification creation for userId: ${notification.userId}`);
 
+    // validate required fields
+    if (!notification.userId || !notification.notificationId) {
+      this.logger.error('Missing required fields in notification');
+      throw new BadRequestException('userId and notificationId are required');
+    }
+
+    // validate and parse alertTime
     const alertTime = new Date(notification.alertTime); // ensures a Date can be created from the given alertTime
+    if (isNaN(alertTime.getTime())) {
+      this.logger.error(`Invalid alertTime provided: ${notification.alertTime}`);
+      throw new BadRequestException('Invalid alertTime format');
+    }
 
     const params = {
       TableName: process.env.DYNAMODB_NOTIFICATION_TABLE_NAME || 'TABLE_FAILURE',
@@ -25,20 +36,31 @@ export class NotificationService {
         sent: false // initialize sent to false when creating a new notification
       },
     };
+
+    try {
     await this.dynamoDb.put(params).promise();
     this.logger.log(`Notification created successfully with Id: ${notification.notificationId}`);
     return notification;
+  } catch (error) {
+    this.logger.error(`Failed to create notification for userId ${notification.userId}:`, error);
+    throw new InternalServerErrorException('Failed to create notification');
   }
+}
 
   // Function that retreives all current notifications for a user
   async  getCurrentNotificationsByUserId(userId: string): Promise<Notification[]> {
     this.logger.log(`Fetching current notifications for userID: ${userId}`);
-    const notifactions = await this.getNotificationByUserId(userId);
+    
+    try {const notifactions = await this.getNotificationByUserId(userId);
     
     const currentTime = new Date();
 
     this.logger.log(`Found current notifications for userID ${userId}`);
     return notifactions.filter(notification => new Date(notification.alertTime) <= currentTime);
+  } catch (error) {
+    this.logger.error("Failed to notifications by user id error: " + error)
+    throw error;
+    }
   }
 
 
@@ -54,7 +76,7 @@ export class NotificationService {
 
         if (!notificationTableName) {
             this.logger.error('DYNAMODB_NOTIFICATION_TABLE_NAME is not defined in environment variables');
-            throw new Error("Internal Server Error")
+            throw new InternalServerErrorException("Internal Server Error")
         }
     const params = {
       TableName: notificationTableName,
@@ -81,7 +103,7 @@ export class NotificationService {
       return data.Items as Notification[];
     } catch (error) {
       this.logger.error(`Error retrieving notifications for userId: ${userId}`, error as string);
-      throw new Error('Failed to retrieve notifications.');
+      throw new InternalServerErrorException('Failed to retrieve notifications.');
     }
   }
 
@@ -110,14 +132,19 @@ export class NotificationService {
 
       if (!data.Items) {
         this.logger.error(`No notifications found with notification id: ${notificationId}`);
-        throw new Error('No notifications with notification id ' + notificationId + ' found.');
+        throw new NotFoundException('No notifications with notification id ' + notificationId + ' found.');
       }
 
       this.logger.log(`Successfully retrieved ${data.Items.length} notification(s) for notification id: ${notificationId}`);
       return data.Items as Notification[];
     } catch (error) {
+      // if error is already NotFoundException, we re-throw it
+      if (error instanceof NotFoundException) {
+        this.logger.error("Could not find notifaction error: ", error)
+        throw error;
+      }
       this.logger.error(`Failed to retrieve notification with notificationId: ${notificationId}`, error);
-      throw new Error('Failed to retrieve notification.');
+      throw new InternalServerErrorException('Failed to retrieve notification.');
     }
   }
 
@@ -158,8 +185,7 @@ export class NotificationService {
       return result
     } catch (err: unknown) {
       this.logger.error('Error sending email: ', err);
-      const errMessage = (err instanceof Error) ? err.message : 'Generic'; 
-      throw new Error(`Failed to send email: ${errMessage}`);
+      throw new InternalServerErrorException(`Internal Server Error`);
     }
   }
 
@@ -186,7 +212,7 @@ export class NotificationService {
       return JSON.stringify(result);
   } catch(err) {
       this.logger.error(`Failed to update notification ${notificationId}:`, err as string);
-      throw new Error(`Failed to update Notification ${notificationId}`)
+      throw new InternalServerErrorException(`Failed to update Notification ${notificationId}`)
   }
   }
   
@@ -211,12 +237,12 @@ export class NotificationService {
       return `Notification with id ${notificationId} successfully deleted`
     } catch (error: any) {
       if (error.code === "ConditionalCheckFailedException") {
-        this.logger.warn(`Notification with id ${notificationId} not found for deletion`);
-        throw new Error(`Notification with id ${notificationId} not found`)
+        this.logger.error(`Notification with id ${notificationId} not found for deletion`);
+        throw new NotFoundException(`Notification with id ${notificationId} not found`)
       }
 
       this.logger.error(`Failed to delete notification ${notificationId}:`, error as string);
-      throw new Error(`Failed to delete notification with id ${notificationId}`)
+      throw new InternalServerErrorException(`Failed to delete notification with id ${notificationId}`)
     }
   }
 }
