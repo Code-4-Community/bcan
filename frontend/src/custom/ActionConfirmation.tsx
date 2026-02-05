@@ -26,12 +26,7 @@ import { IoIosWarning } from "react-icons/io";
         onClick={onCloseDelete}
       >
         <div 
-          style={{
-            borderStyle: 'solid',
-            borderColor: 'black',
-            borderWidth: '2px'
-          }}
-          className=" bg-white rounded-md shadow-2xl p-8 max-w-xl w-full mx-4 transform transition-all duration-300"
+          className=" bg-white border-2 rounded-md shadow-2xl p-8 max-w-xl w-full mx-4 transform transition-all duration-300"
           onClick={(e) => e.stopPropagation()}
         >
 
@@ -51,13 +46,13 @@ import { IoIosWarning } from "react-icons/io";
 
             <div className="flex mb-6">
 
-            <div className="w-3 bg-primary-800"/>
-            <div  className="p-3 bg-orange-lightest">
+            <div className="w-3 bg-red"/>
+            <div  className="p-3 bg-red-lightest">
             <div className="flex">
               <IoIosWarning size={24} className="text-red-dark"/>
               <p className="font-bold px-1 text-lg text-red-dark"> Warning </p>
             </div>
-            <p className=" text-left text-lg font-semibold text-primary-900">
+            <p className=" text-left text-lg font-semibold text-red">
               {warningMessage}
             </p>
 
@@ -69,24 +64,13 @@ import { IoIosWarning } from "react-icons/io";
           {/* Buttons */}
           <div className="flex w-full justify-between ">
             <button
-              style={{
-                borderStyle: 'solid',
-                borderColor: 'black',
-                borderWidth: '2px'
-              }}
-              className="rounded-lg hover:bg-gray-200 bg-primary-700 transition-colors w-32 h-12"
+              className="rounded-lg hover:bg-gray-200 border-2 border-black bg-red-lightest transition-colors w-32 h-12"
               onClick={onCloseDelete}
             >
               No, cancel
             </button>
             <button
-              style={{
-                backgroundColor: 'white',
-                borderStyle: 'solid',
-                borderColor: 'black',
-                borderWidth: '2px'
-              }}
-              className="rounded-lg text-black hover:bg-red-700 transition-colors w-32 h-12"
+              className="rounded-lg text-black border-2 border-black hover:bg-red-700 transition-colors w-32 h-12"
               onClick={() => {
                 onConfirmDelete();
                 onCloseDelete();

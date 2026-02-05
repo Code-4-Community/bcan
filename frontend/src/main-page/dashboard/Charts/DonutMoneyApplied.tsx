@@ -49,17 +49,13 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
   }) => {
     return (
       <div className="w-[100px] ">
-        <div style={{ fontWeight: 500 }}>{name}</div>
-        <div
+        <div className="font-semibold">{name}</div>
+        <div className="h-[0.15rem] w-[80%] mt-0 rounded-full"
           style={{
-            height: 3,
-            width: "80%",
             backgroundColor: color,
-            marginTop: 0,
-            borderRadius: 2,
           }}
         />
-        <div style={{ fontSize: 12, color: "gray", marginTop: 0 }}>
+        <div className="text-sm font-medium text-grey-800 mt-1">
           {`${(percent * 100).toFixed(0)}% ($${(value / 1_000_000).toFixed(
             2
           )}M)`}
@@ -70,8 +66,7 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
 
   return (
     <div
-      className="chart-container"
-      style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+      className="chart-container flex flex-col align-center"
     >
       <div className="relative w-full h-full flex flex-col">
         {/* Title */}

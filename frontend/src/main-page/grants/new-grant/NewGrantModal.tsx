@@ -494,7 +494,7 @@ const NewGrantModal: React.FC<{
                       Application Date *
                     </label>
                     <input
-                      className={`font-family-helvetica appearance-none block w-full h-[42px] bg-tan border border-black rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 ${
+                      className={`font-family-helvetica appearance-none block w-full h-[42px] bg-tan border border-black rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500 ${
                         applicationDate ? "text-black" : "text-gray-500"
                       }`}
                       id="grid-city"
@@ -516,7 +516,7 @@ const NewGrantModal: React.FC<{
                       Grant Start Date *
                     </label>
                     <input
-                      className={`font-family-helvetica w-full appearance-none block w-full h-[42px] bg-tan placeholder:text-gray-400 border border-black rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 ${
+                      className={`font-family-helvetica w-full appearance-none block w-full h-[42px] bg-tan placeholder:text-gray-400 border border-black rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500 ${
                         grantStartDate ? "text-black" : "text-gray-500"
                       }`}
                       id="grid-city"
@@ -540,7 +540,7 @@ const NewGrantModal: React.FC<{
                   <input
                     type="number"
                     min="0"
-                    className="font-family-helvetica appearance-none block w-full h-[42px] bg-tan text-black placeholder:text-gray-400 border border-black rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    className="font-family-helvetica appearance-none block w-full h-[42px] bg-tan text-black placeholder:text-gray-400 border border-black rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500"
                     id="grid-city"
                     value={estimatedCompletionTimeInHours}
                     onChange={(e) =>
@@ -613,7 +613,7 @@ const NewGrantModal: React.FC<{
                   Timeline (in years) *
                 </label>
                 <input
-                  className="font-family-helvetica appearance-none block w-full h-[42px] bg-tan text-black placeholder:text-gray-400 border border-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  className="font-family-helvetica appearance-none block w-full h-[42px] bg-tan text-black placeholder:text-gray-400 border border-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none"
                   type="number"
                   min="0"
                   placeholder="Type Here"
@@ -631,7 +631,7 @@ const NewGrantModal: React.FC<{
                   Amount (in $) *
                 </label>
                 <CurrencyInput
-                  className="font-family-helvetica appearance-none block w-full h-[42px] mb-[2px] bg-tan text-gray-700 border border-black rounded px-4 leading-tight focus:outline-none focus:bg-white"
+                  className="font-family-helvetica appearance-none block w-full h-[42px] mb-[2px] bg-tan text-gray-700 border border-black rounded px-4 leading-tight focus:outline-none "
                   min={0}
                   decimalsLimit={2}
                   placeholder="Type Here"
@@ -717,7 +717,7 @@ const NewGrantModal: React.FC<{
                     Does BCAN qualify? *
                   </label>
                   <select
-                    className={`font-family-helvetica appearance-none block w-full h-[42px] bg-tan border border-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white ${
+                    className={`font-family-helvetica appearance-none block w-full h-[42px] bg-tan border border-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none ${
                       doesBcanQualify == "" ? "text-gray-500" : "text-black"
                     }`}
                     id="grid-first-name"
@@ -739,7 +739,7 @@ const NewGrantModal: React.FC<{
                     Status
                   </label>
                   <select
-                    className={`font-family-helvetica appearance-none block w-full h-[42px] bg-tan placeholder:text-gray-400 border border-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white ${
+                    className={`font-family-helvetica appearance-none block w-full h-[42px] bg-tan placeholder:text-gray-400 border border-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none ${
                       status == null ? "text-gray-500" : "text-black"
                     }`}
                     id="grid-first-name"
@@ -764,7 +764,7 @@ const NewGrantModal: React.FC<{
                     Restriction type *
                   </label>
                   <select
-                    className={`font-family-helvetica appearance-none block w-full h-[42px] bg-tan border border-black rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white ${
+                    className={`font-family-helvetica appearance-none block w-full h-[42px] bg-tan border border-black rounded py-3 px-4 leading-tight focus:outline-none ${
                       isRestricted == "" ? "text-gray-500" : "text-black"
                     }`}
                     id="grid-first-name"
@@ -772,10 +772,10 @@ const NewGrantModal: React.FC<{
                     onChange={(e) => _setIsRestricted(e.target.value)}
                   >
                     <option value="">Select...</option>
-                    <option style={{ color: "black" }} value="unrestricted">
+                    <option className="text-black" value="unrestricted">
                       Unrestricted
                     </option>
-                    <option style={{ color: "black" }} value="restricted">
+                    <option className="text-black" value="restricted">
                       Restricted
                     </option>
                   </select>

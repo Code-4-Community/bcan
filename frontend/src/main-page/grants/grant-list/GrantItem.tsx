@@ -363,11 +363,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                         </label>
                         {/*Box div*/}
                         <div
-                          className="items-center flex rounded-md bg-primary-800"
-                          style={{
-                            borderColor: "black",
-                            borderWidth: "1px",
-                          }}
+                          className="items-center flex rounded-md bg-primary-800 border border-black"
                         >
                           <MdOutlinePerson2 className="w-1/5 h-full p-1" />
                           <div

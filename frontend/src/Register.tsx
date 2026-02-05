@@ -183,8 +183,8 @@ const Register = observer(() => {
             <div
               className={`min-h-28 mt-4 text-sm rounded-md flex items-center justify-center p-4 whitespace-pre-line text-left ${
                 failure.state
-                  ? "text-[#D33221] bg-[#FFA399]"
-                  : "text-[#616161] bg-[#E7E7E7]"
+                  ? "text-red bg-red-lighter"
+                  : "text-grey-600 bg-grey-200"
               }`}
             >
               {failure.state ? failure.message : defaultPasswordMessage}

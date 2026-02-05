@@ -25,24 +25,21 @@ export default function RingButton({ text, color }: RingButtonProps) {
     <>
       {ButtonColorOption.GREEN === color && (
         <div
-          className="bg-green button-default"
-          style={{ width: "100%", border: "none", cursor: "default" }}
+          className="bg-green button-default w-full border-none cursor-default"
         >
           {text}
         </div>
       )}
       {ButtonColorOption.ORANGE === color && (
         <div
-          className="bg-orange button-default"
-          style={{ width: "100%", border: "none", cursor: "default" }}
+          className="bg-orange button-default w-full border-none cursor-default"
         >
           {text}
         </div>
       )}
       {ButtonColorOption.GRAY === color && (
         <div
-          className="bg-grey-400 button-default"
-          style={{ width: "100%", border: "none", cursor: "default" }}
+          className="bg-grey-400 button-default w-full border-none cursor-default"
         >
           {text}
         </div>

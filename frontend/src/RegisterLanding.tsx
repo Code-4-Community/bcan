@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import logo from "./images/logo.svg";
-import { ButtonColorOption } from "./custom/RingButton";
 import { useAuthContext } from "./context/auth/authContext";
 
 /**
@@ -31,8 +30,7 @@ const RegisterLanding = () => {
           </h2>
           <Link to="/login">
                     <button
-                      style={styles.loginButton}
-                      className="py-2 px-4 rounded"
+                      className="py-2 my-8 px-4 rounded-md text-black bg-primary-800 border-1 border-black"
                       onClick={() => {
                         logout()
                       }}
@@ -47,26 +45,3 @@ const RegisterLanding = () => {
 };
 
 export default RegisterLanding;
-
-// Inline style objects
-const styles: { [key: string]: React.CSSProperties } = {
-  pageContainer: {
-    position: "relative",
-    width: "100vw",
-    height: "100vh",
-    margin: 0,
-    padding: 0,
-    overflow: "hidden",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "start",
-    textAlign: "start",
-  },
-  loginButton :{
-    backgroundColor: ButtonColorOption.ORANGE,
-    color: 'black',
-    borderStyle: 'solid',
-    borderColor: 'black',
-    borderWidth: '1px'
-  }
-};

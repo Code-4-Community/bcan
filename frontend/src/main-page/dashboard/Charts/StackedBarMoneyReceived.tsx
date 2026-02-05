@@ -70,12 +70,7 @@ const StackedBarMoneyReceived = observer(({ grants }: { grants: Grant[] }) => {
                 | undefined
             ) => (
               <span
-                style={{
-                  color: "black",
-                  fontWeight: 500,
-                  marginLeft: 5,
-                  marginRight: 10,
-                }}
+                className="text-black font-medium ml-1 mr-5"
               >
                 {value}
               </span>
