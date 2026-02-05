@@ -14,6 +14,8 @@
   padding: 0 12px;
   cursor: pointer;
   color: var(--color-grey-800);
+  font-family: var(--font-sans-modal);
+  font-size: 16px;
 }
 
 .user-dropdown-input:focus {
@@ -62,9 +64,9 @@
 
 .user-dropdown-email {
   font-size: 14px;
+  font-family: var(--font-sans-modal);
   color: gray;
   margin-top: 2px;
-  font-family: helvetica;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
