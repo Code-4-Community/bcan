@@ -164,6 +164,24 @@ describe('NotificationController', () => {
     
   });
 
+  describe('getNotificationByNotification', () => {
+    it('should throw NotFoundException when notification does not exist', async () => {
+      mockQuery.mockReturnValue({ 
+        promise: vi.fn().mockResolvedValueOnce({ Items: null })
+      })
+
+      await expect(notificationService.getNotificationByNotificationId('nonexistent-id')).rejects.toThrow(NotFoundException);
+
+    });
+
+
+    it('should throw InternalServerErrorException when DynamoDB query fails', async () => {
+      mockPromise.mockRejectedValueOnce(new Error('DynamoDB query failed'));
+
+      await expect(notificationService.getNotificationByNotificationId('123')).rejects.toThrow(InternalServerErrorException);
+    });
+  });
+
   it('should send email successfully with valid parameters', async () => {
     // Arrange
     const to = 'user@example.com';
@@ -318,6 +336,12 @@ describe('NotificationController', () => {
     expect(result).toEqual([]);
   });
 
+  it('should throw InternalServerError when DynamoDB query fails', async() => {
+    mockPromise.mockRejectedValueOnce(new Error('DynamoDB connection failed'));
+
+    await expect(notificationService.getCurrentNotificationsByUserId('user-1')).rejects.toThrow(InternalServerErrorException);
+  })
+
   it('should create notification with valid data in the set table', async () => {
     const mockNotification = {
       notificationId: '123',
@@ -368,6 +392,56 @@ describe('NotificationController', () => {
         sent: false
       },
     });
+  });
+
+  it('should throw BadRequestException when userId is missing', async () => {
+    const invalidNotification = {
+      notificationId: '123',
+      userId: '',
+      message: 'Test',
+      alertTime: '2024-01-15T10:30:00.000Z',
+      sent: false
+    } as Notification;
+
+    await expect(notificationService.createNotification(invalidNotification)).rejects.toThrow(BadRequestException);
+  });
+
+  it('should throw BadRequestException when notificationId is missing', async () => {
+    const invalidNotification = {
+      notificationId: '',
+      userId: 'user-123',
+      message: 'Test',
+      alertTime: '2024-01-15T10:30:00.000Z',
+      sent: false
+    } as Notification;
+
+    await expect(notificationService.createNotification(invalidNotification)).rejects.toThrow(BadRequestException);
+  });
+
+  it('should throw BadRequestException for invalid alertTime', async () => {
+    const invalidNotification = {
+      notificationId: '123',
+      userId: 'user-456',
+      message: 'Test',
+      alertTime: 'not-a-valid-date' as any,
+      sent: false
+    } as Notification;
+
+    await expect(notificationService.createNotification(invalidNotification)).rejects.toThrow(BadRequestException);
+  });
+
+  it('should throw InternalServerErrorException when DynamoDB fails', async () => {
+    const validNotification = {
+      notificationId: '123',
+      userId: 'user-456',
+      message: 'Test',
+      alertTime: '2024-01-15T10:30:00.000Z',
+      sent: false
+    } as Notification;
+
+    mockPromise.mockRejectedValueOnce(new Error('DynamoDB service unavailable'));
+
+    await expect(notificationService.createNotification(validNotification)).rejects.toThrow(InternalServerErrorException);
   });
 
   it('should update a notification successfully with multiple fields', async () => {
