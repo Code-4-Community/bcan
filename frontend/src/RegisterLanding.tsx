@@ -9,7 +9,7 @@ import { useAuthContext } from "./context/auth/authContext";
 const RegisterLanding = () => {
   const {logout} = useAuthContext();
   return (
-    <div className="bg-white grid grid-cols-2" style={styles.pageContainer}>
+    <div className="bg-white grid grid-cols-2 position-relative w-screen h-screen m-0 p-0 overflow-hidden flex justify-center items-start text-start">
       <div className="w-[35%] h-full flex flex-col justify-center items-center pb-32">
         <div className="w-full h-[70%] bg-medium-orange rounded-r-4xl flex flex-col justify-center items-center">
           <img
@@ -51,19 +51,3 @@ const RegisterLanding = () => {
 };
 
 export default RegisterLanding;
-
-// Inline style objects
-const styles: { [key: string]: React.CSSProperties } = {
-  pageContainer: {
-    position: "relative",
-    width: "100vw",
-    height: "100vh",
-    margin: 0,
-    padding: 0,
-    overflow: "hidden",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "start",
-    textAlign: "start",
-  },
-};
