@@ -9,7 +9,7 @@ import { useAuthContext } from "./context/auth/authContext";
 const RegisterLanding = () => {
   const {logout} = useAuthContext();
   return (
-    <div className="bg-white grid grid-cols-[35%_65%] position-relative w-screen h-screen m-0 p-0 overflow-hidden text-start">
+    <div className="bg-white grid grid-cols-[35%_65%] relative w-screen h-screen m-0 p-0 overflow-hidden text-start">
       <div className="h-full flex flex-col justify-center items-center pb-32">
         <div className="w-full h-[70%] bg-medium-orange rounded-r-4xl flex flex-col justify-center items-center">
           <img
@@ -31,13 +31,7 @@ const RegisterLanding = () => {
           </h2>
           <Link to="/login">
                     <button
-                      style={{
-                        backgroundColor: ButtonColorOption.ORANGE ,
-                        color: 'black',
-                        borderStyle: 'solid', borderColor: 'black', borderWidth: '1px',
-                        marginTop: '20px',
-                      }}
-                      className="py-2 px-4 rounded"
+                      className={`py-2 px-4 rounded bg-[${ButtonColorOption.ORANGE}] text-black border border-black mt-5`}
                       onClick={() => {
                         logout()
                       }}
