@@ -52,7 +52,6 @@ const Login = observer(() => {
                   required
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter your email"
-                  style={styles.inputContainer}
                   className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-grey-400"
                 />
               </div>
@@ -70,7 +69,6 @@ const Login = observer(() => {
                   required
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  style={styles.inputContainer}
                   className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-grey-400"
                 />
               </div>
@@ -88,7 +86,6 @@ const Login = observer(() => {
           <button
             type="submit"
             className="w-full block mt-8 min-w-0 rounded-md grow bg-primary-900 text-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500"
-            style={{ ...styles.button, ...styles.helloButton }}
           >
             Login
           </button>

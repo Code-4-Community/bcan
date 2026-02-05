@@ -111,7 +111,6 @@ const Register = observer(() => {
                   required
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter your username"
-                  style={styles.inputContainer}
                   className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-grey-400"
                 />
               </div>
