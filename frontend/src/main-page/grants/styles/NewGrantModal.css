@@ -24,6 +24,7 @@
     We'll use a background color similar to the screenshot's peach tone.
   */
 .modal-content {
+  font-family: var(--font-sans-modal);
   background: white; /* Peach background */
   max-width: 85%;
   max-height: 85%; /* More width to accommodate multiple columns */
@@ -85,7 +86,7 @@
   grid-column: 1 / span 2; /* let the title span across both columns */
   margin-top: 0;
   margin-bottom: 1rem;
-  font-size: 1.8rem;
+  font-size: var(--font-size-modal-title);
   font-weight: 600;
   text-align: center;
   text-align: left;
@@ -97,7 +98,7 @@
 .modal-content textarea {
   width: 100%;
   padding: 0.6rem;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   margin-bottom: 0.25rem;
   border: 0.075rem solid black;
   border-radius: 15px;
@@ -177,7 +178,7 @@
   border: black 0.075rem solid;
   color: black;
   padding: 0.75rem 1.25rem;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   border-radius: 15px;
   cursor: pointer;
   transition: background-color 0.2s ease;
