@@ -28,9 +28,9 @@ const Login = observer(() => {
   };
 
   return (
-    <div className="bg-white grid grid-cols-2" style={styles.pageContainer}>
+    <div className="bg-white grid grid-cols-[60%_40%] w-screen h-screen relative m-0 p-0 overflow-hidden flex justify-center items-start text-start">
       {/*/ Left side: Registration form */}
-      <div className="w-[60%] h-full py-20 px-24 flex flex-col justify-center items-start">
+      <div className="h-full py-20 px-24 flex flex-col justify-center items-start">
         <div className="mb-12">
           <h1 className="text-[32px] pb-4">Welcome back!</h1>
           <h2 className="text-lg">
@@ -52,7 +52,6 @@ const Login = observer(() => {
                   required
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter your email"
-                  style={styles.inputContainer}
                   className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-medium-gray"
                 />
               </div>
@@ -70,7 +69,6 @@ const Login = observer(() => {
                   required
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  style={styles.inputContainer}
                   className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-medium-gray"
                 />
               </div>
@@ -88,7 +86,6 @@ const Login = observer(() => {
           <button
             type="submit"
             className="w-full block mt-8 min-w-0 rounded-md grow bg-dark-orange text-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500"
-            style={{ ...styles.button, ...styles.helloButton }}
           >
             Login
           </button>
@@ -111,7 +108,7 @@ const Login = observer(() => {
       </div>
 
       {/*/ Right side: logo */}
-      <div className="w-[40%] h-full flex flex-col justify-center items-center">
+      <div className="h-full flex flex-col justify-center items-center">
         <div className="w-full h-full  bg-medium-orange rounded-l-4xl flex flex-col justify-center items-center">
           <img
             className="w-[60%] h-[60%] object-contain p-10 mb-40"
@@ -125,19 +122,3 @@ const Login = observer(() => {
 });
 
 export default Login;
-
-// Inline style objects
-const styles: { [key: string]: React.CSSProperties } = {
-  pageContainer: {
-    position: "relative",
-    width: "100vw",
-    height: "100vh",
-    margin: 0,
-    padding: 0,
-    overflow: "hidden",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "start",
-    textAlign: "start",
-  },
-};
