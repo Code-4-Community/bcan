@@ -4,7 +4,7 @@ import "../styles/button.css";
 export enum ButtonColorOption {
   GREEN = "var(--color-green)",
   GRAY = "var(--color-grey-400)",
-  ORANGE = "var(--color-primary-700)",
+  ORANGE = "var(--color-orange)",
 }
 
 /* API for components to setup a button with expected system colors */
@@ -33,7 +33,7 @@ export default function RingButton({ text, color }: RingButtonProps) {
       )}
       {ButtonColorOption.ORANGE === color && (
         <div
-          className="bg-primary-700 button-default"
+          className="bg-orange button-default"
           style={{ width: "100%", border: "none", cursor: "default" }}
         >
           {text}

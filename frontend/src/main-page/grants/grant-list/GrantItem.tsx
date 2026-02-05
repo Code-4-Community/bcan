@@ -451,8 +451,8 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                           <div
                             className={`w-3/5 h-9 flex items-center justify-center rounded-full px-4 text-black ${
                               curGrant.does_bcan_qualify
-                                ? ButtonColorOption.GREEN
-                                : ButtonColorOption.GRAY
+                                ? "bg-green"
+                                : "bg-grey-400"
                             }`}
                           >
                             {curGrant.does_bcan_qualify ? "Yes" : "No"}
@@ -470,10 +470,10 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                           <div
                             className={`w-3/5 h-9 flex items-center justify-center rounded-full px-4 text-black ${
                               curGrant.status === "Active"
-                                ? ButtonColorOption.GREEN
+                                ? "bg-green"
                                 : curGrant.status === "Potential"
-                                ? ButtonColorOption.ORANGE
-                                : ButtonColorOption.GRAY
+                                ? "bg-orange"
+                                : "bg-grey-400"
                             }`}
                           >
                             {curGrant.status}
@@ -490,7 +490,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                           </label>
                           <div
                             className={`w-3/5 h-9 flex items-center justify-center rounded-full px-4 text-black ${
-                              curGrant.isRestricted ? "bg-[#CD5C5C]" : ButtonColorOption.GRAY
+                              curGrant.isRestricted ? "bg-red-light" : "bg-grey-400"
                             }`}
                           >
                             {curGrant.isRestricted
@@ -508,7 +508,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                         </label>
                         <div
                           className={`p-2 rounded-md h-[11.5rem] overflow-auto grip grid-cols-1 gap-4 border border-black ${
-                            ButtonColorOption.GRAY
+                            "bg-grey-400"
                           }`}
                         >
                           {/*Map each available report deadline to a div label
@@ -609,7 +609,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
 
                     <button
                       className={`py-2 px-4 rounded-md text-black border border-black ${
-                        ButtonColorOption.ORANGE
+                        "bg-orange"
                       }`}
                       onClick={() => setShowNewGrantModal(true)}
                     >
