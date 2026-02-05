@@ -56,10 +56,7 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({ grant 
       </label>
       
       <div 
-        className="cost-benefit-container p-1 rounded-lg h-full flex flex-col"
-        style={{
-          backgroundColor: 'white'
-        }}
+        className="cost-benefit-container p-1 rounded-lg h-full flex flex-col bg-white"
       >
         {/* Hourly Rate Input */}
         <div className="mb-3">
@@ -71,8 +68,7 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({ grant 
             placeholder="Enter rate"
             value={hourlyRate}
             onChange={(e) => setHourlyRate(e.target.value)}
-            className="w-full h-[42px]  px-3 py-4 border border-gray-400 rounded-md"
-            style={{ backgroundColor: '#F2EBE4' }}
+            className="w-full h-[42px]  px-3 py-4 border border-gray-400 rounded-md bg-[#F2EBE4]"
           />
         </div>
 
@@ -89,22 +85,14 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({ grant 
                 console.log('Time per report changed to:', e.target.value);
                 setTimePerReport(e.target.value);
             }}
-            className="w-full h-[42px] px-3 py-4 border border-gray-400 rounded-md"
-            style={{ backgroundColor: '#F2EBE4' }}
+            className="w-full h-[42px] px-3 py-4 border border-gray-400 rounded-md bg-[#F2EBE4]"
           />
         </div>
 
         {/* Calculate Button */}
         <button
           onClick={calculateNetBenefit}
-          className="w-full py-1 px-4 rounded-md mb-7"
-          style={{
-            backgroundColor: '#F58D5C',
-            color: 'black',
-            borderStyle: 'solid',
-            borderColor: 'black',
-            borderWidth: '1px'
-          }}
+          className="w-full py-1 px-4 rounded-md mb-7 bg-[#F58D5C] text-black border border-black"
         >
           calculate
         </button>
@@ -114,19 +102,9 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({ grant 
             <span className="text-sm font-semibold"> Net Benefit:</span>
         <div
           onClick={calculateNetBenefit}
-          className="w-1/2 py-2 px-4 rounded-md"
-          style={{
-            backgroundColor: '#F2EBE4',
-            color: netBenefit !== null ? 'black' : 'gray',
-            borderStyle: 'solid',
-            borderColor: 'black',
-            borderWidth: '1px',
-            overflow: 'auto',
-            textAlign: 'center',
-            whiteSpace: 'nowrap',
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none'
-          }}
+          className={`w-1/2 py-2 px-4 rounded-md bg-[#F2EBE4] border border-black overflow-auto text-center whitespace-nowrap [scrollbar-width:none] [-ms-overflow-style:none] ${
+            netBenefit !== null ? 'text-black' : 'text-gray-500'
+          }`}
         >
           {netBenefit !== null ? formatCurrency(netBenefit) : 'Analysis'}
         </div>
