@@ -58,7 +58,7 @@ export class NotificationService {
     this.logger.log(`Found current notifications for userID ${userId}`);
     return notifactions.filter(notification => new Date(notification.alertTime) <= currentTime);
   } catch (error) {
-    // re throw any error from getNotificationByUserId
+    this.logger.error("Failed to notifications by user id error: " + error)
     throw error;
     }
   }
@@ -140,6 +140,7 @@ export class NotificationService {
     } catch (error) {
       // if error is already NotFoundException, we re-throw it
       if (error instanceof NotFoundException) {
+        this.logger.error("Could not find notifaction error: ", error)
         throw error;
       }
       this.logger.error(`Failed to retrieve notification with notificationId: ${notificationId}`, error);
@@ -184,8 +185,7 @@ export class NotificationService {
       return result
     } catch (err: unknown) {
       this.logger.error('Error sending email: ', err);
-      const errMessage = (err instanceof Error) ? err.message : 'Generic'; 
-      throw new InternalServerErrorException(`Failed to send email: ${errMessage}`);
+      throw new InternalServerErrorException(`Internal Server Error`);
     }
   }
 
@@ -237,7 +237,7 @@ export class NotificationService {
       return `Notification with id ${notificationId} successfully deleted`
     } catch (error: any) {
       if (error.code === "ConditionalCheckFailedException") {
-        this.logger.warn(`Notification with id ${notificationId} not found for deletion`);
+        this.logger.error(`Notification with id ${notificationId} not found for deletion`);
         throw new NotFoundException(`Notification with id ${notificationId} not found`)
       }
 
