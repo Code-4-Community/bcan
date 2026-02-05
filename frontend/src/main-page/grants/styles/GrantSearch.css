@@ -28,37 +28,10 @@
 
 .search-input:focus {
     outline: none !important;
-    border:0.1rem solid #F58D5C;
+    border:0.1rem solid var(--color-primary-800);
 }
 
 
 .filter-state {
     color: whitesmoke;
-}
-
-.dropdown-container {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background: white;
-    border: 0.1rem solid #ddd;
-    border-radius: 15px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
-    z-index: 10;
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-.dropdown-item {
-    padding: 8px;
-    cursor: pointer;
-    border-bottom: 0.1rem solid #eee;
-    transition: background 0.2s ease;
-    color: black;
-}
-
-.dropdown-item:hover {
-    background: #f1f1f1;
-    color: black;
 }

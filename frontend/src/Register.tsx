@@ -90,7 +90,7 @@ const Register = observer(() => {
 
   return (
     <div className="bg-white grid grid-cols-[60%_40%] w-screen h-screen relative m-0 p-0 overflow-hidden text-start">
-      <div className="h-full py-20 px-20 flex flex-col justify-center items-start">
+      <div className="h-full px-20 flex flex-col justify-center items-start">
         {/*/ Left side: Registration form */}
         <div className="mb-4">
           <h1 className="text-[32px]">Get Started Now</h1>
@@ -111,7 +111,7 @@ const Register = observer(() => {
                   required
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter your username"
-                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-medium-gray"
+                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-grey-400"
                 />
               </div>
             </div>
@@ -130,8 +130,8 @@ const Register = observer(() => {
                   placeholder="Enter your email"
                   className={`block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border ${
                     failure.item === "email"
-                      ? "border-[#D33221]"
-                      : "border-medium-gray"
+                      ? "border-red"
+                      : "border-grey-400"
                   }`}
                 />
               </div>
@@ -151,8 +151,8 @@ const Register = observer(() => {
                   placeholder="Enter your password"
                   className={`block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border ${
                     failure.item === "password"
-                      ? "border-[#D33221]"
-                      : "border-medium-gray"
+                      ? "border-red"
+                      : "border-grey-400"
                   }`}
                 />
               </div>
@@ -172,8 +172,8 @@ const Register = observer(() => {
                   placeholder="Re-enter your password"
                   className={`block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border ${
                     failure.item === "password"
-                      ? "border-[#D33221]"
-                      : "border-medium-gray"
+                      ? "border-red"
+                      : "border-grey-400"
                   }`}
                 />
               </div>
@@ -183,8 +183,8 @@ const Register = observer(() => {
             <div
               className={`min-h-28 mt-4 text-sm rounded-md flex items-center justify-center p-4 whitespace-pre-line text-left ${
                 failure.state
-                  ? "text-[#D33221] bg-[#FFA399]"
-                  : "text-[#616161] bg-[#E7E7E7]"
+                  ? "text-red bg-red-lighter"
+                  : "text-grey-600 bg-grey-200"
               }`}
             >
               {failure.state ? failure.message : defaultPasswordMessage}
@@ -193,21 +193,21 @@ const Register = observer(() => {
 
           <button
             type="submit"
-            className="w-full block mt-8 min-w-0 rounded-md grow bg-dark-orange text-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500"
+            className="w-full block mt-8 min-w-0 rounded-md grow bg-primary-900 text-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500"
           >
             Register
           </button>
           <div className="flex items-center justify-between gap-4 mt-4">
-            <hr className="border-[#757575] w-[45%]" />
-            <div className="text-[#757575]">or</div>
-            <hr className="border-[#757575] w-[45%]" />
+            <hr className="border-grey-600 w-[45%]" />
+            <div className="text-grey-600">or</div>
+            <hr className="border-grey-600 w-[45%]" />
           </div>
           <div className="flex items-center mt-4 justify-center">
             Have an account?{" "}
             <button
               type="button"
               onClick={() => navigate("/login")}
-              className="inline ml-2 text-dark-blue text-left"
+              className="inline ml-2 text-secondary-500 text-left"
             >
               Sign in
             </button>
@@ -216,7 +216,7 @@ const Register = observer(() => {
       </div>
       {/*/ Right side: logo */}
       <div className="h-full flex flex-col justify-center items-center">
-        <div className="w-full h-full  bg-medium-orange rounded-l-4xl flex flex-col justify-center items-center">
+        <div className="w-full h-full  bg-primary-800 rounded-l-4xl flex flex-col justify-center items-center">
           <img
             className="w-[60%] h-[60%] object-contain p-10 mb-40"
             src={logo}

@@ -35,8 +35,7 @@ function GrantSearch() {
     <div className="search-bar-main-container">
       <form className="search-container">
         <div
-          className="search-input-container"
-          style={{ position: "relative" }}
+          className="search-input-container relative"
         >
           {/* Absolutely-positioned icon */}
           <IoIosSearch
@@ -48,7 +47,6 @@ function GrantSearch() {
               pointerEvents: "none",
               zIndex: 2,
               marginLeft: "2px",
-              // color: "#aaa" // optional styling
             }}
           />
           <Input

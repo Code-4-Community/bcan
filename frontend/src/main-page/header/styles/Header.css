@@ -34,7 +34,7 @@
 .header-button-selected {
     font-weight: 600;
     color: black;
-    background-color: #F7A781;
+    background-color: var(--color-primary-700);
     border: 0.1rem black solid;
 }
 

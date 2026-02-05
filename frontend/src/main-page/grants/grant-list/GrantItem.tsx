@@ -227,7 +227,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                               Application Date
                             </label>
                             <div
-                              className="bg-[#D3D3D3] text-black h-9 flex items-center justify-center w-full rounded-full px-4"
+                              className="bg-grey-400 text-black h-9 flex items-center justify-center w-full rounded-full px-4"
                             >
                               {formatDate(curGrant.application_deadline)}
                             </div>
@@ -241,7 +241,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                               Grant Start Date
                             </label>
                             <div
-                              className={`bg-[#D3D3D3] text-black h-9 flex items-center justify-center w-full rounded-full px-4 ${
+                              className={`bg-grey-400 text-black h-9 flex items-center justify-center w-full rounded-full px-4 ${
                                 curGrant.grant_start_date ? "normal" : "italic"
                               }`}
                             >
@@ -318,7 +318,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                           Report Deadlines
                         </label>
                         <div
-                          className="p-2 rounded-md h-[13.5rem] w-4/5 overflow-auto grip bg-[#F58D5C] border border-black"
+                          className="p-2 rounded-md h-[13.5rem] w-4/5 overflow-auto grip bg-primary-800 border border-black"
                         >
                           {/*Map each available report deadline to a div label
                     If no deadlines, add "No deadlines" text */}
@@ -328,7 +328,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                               (deadline: string, index: number) => (
                                 <div
                                   key={index}
-                                  className="h-10 flex items-center justify-center w-full rounded-full mb-2 px-4 bg-[#D3D3D3] text-black"
+                                  className="h-10 flex items-center justify-center w-full rounded-full mb-2 px-4 bg-grey-400 text-black"
                                 >
                                   {formatDate(deadline)}
                                 </div>
@@ -363,17 +363,11 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                         </label>
                         {/*Box div*/}
                         <div
-                          className="items-center flex rounded-md"
-                          style={{
-                            backgroundColor: "#F58D5C",
-                            borderColor: "black",
-                            borderWidth: "1px",
-                          }}
+                          className="items-center flex rounded-md bg-primary-800 border border-black"
                         >
                           <MdOutlinePerson2 className="w-1/5 h-full p-1" />
                           <div
-                            style={{ backgroundColor: "#F2EBE4" }}
-                            className="w-4/5 border-l border-black bg-[#FFCEB6] rounded-r-md"
+                            className="w-4/5 border-l border-black rounded-r-md bg-tan"
                           >
                             <h2
                               className="truncate px-2 text-left font-bold h-8 w-full text-gray-700 rounded flex items-center"
@@ -407,11 +401,11 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                         </label>
                         {/*Box div*/}
                         <div
-                          className="items-center flex rounded-md bg-[#F58D5C] border border-black"
+                          className="items-center flex rounded-md bg-primary-800 border border-black"
                         >
                           <MdOutlinePerson2 className="w-1/5 h-full p-1" />
                           <div
-                            className="w-4/5 border-l border-black bg-[#FFCEB6] rounded-r-md"
+                            className="w-4/5 border-l border-black bg-tan rounded-r-md"
                           >
                             <h2
                               className="truncate px-2 text-left font-bold h-8 w-full text-gray-700 rounded-md flex items-center"
@@ -453,8 +447,8 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                           <div
                             className={`w-3/5 h-9 flex items-center justify-center rounded-full px-4 text-black ${
                               curGrant.does_bcan_qualify
-                                ? ButtonColorOption.GREEN
-                                : ButtonColorOption.GRAY
+                                ? "bg-green"
+                                : "bg-grey-400"
                             }`}
                           >
                             {curGrant.does_bcan_qualify ? "Yes" : "No"}
@@ -472,10 +466,10 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                           <div
                             className={`w-3/5 h-9 flex items-center justify-center rounded-full px-4 text-black ${
                               curGrant.status === "Active"
-                                ? ButtonColorOption.GREEN
+                                ? "bg-green"
                                 : curGrant.status === "Potential"
-                                ? ButtonColorOption.ORANGE
-                                : ButtonColorOption.GRAY
+                                ? "bg-orange"
+                                : "bg-grey-400"
                             }`}
                           >
                             {curGrant.status}
@@ -492,7 +486,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                           </label>
                           <div
                             className={`w-3/5 h-9 flex items-center justify-center rounded-full px-4 text-black ${
-                              curGrant.isRestricted ? "bg-[#CD5C5C]" : ButtonColorOption.GRAY
+                              curGrant.isRestricted ? "bg-red-light" : "bg-grey-400"
                             }`}
                           >
                             {curGrant.isRestricted
@@ -510,7 +504,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                         </label>
                         <div
                           className={`p-2 rounded-md h-[11.5rem] overflow-auto grip grid-cols-1 gap-4 border border-black ${
-                            ButtonColorOption.GRAY
+                            "bg-grey-400"
                           }`}
                         >
                           {/*Map each available report deadline to a div label
@@ -582,7 +576,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                 <div className="flex justify-between items-center w-full mt-6">
                   <>
                     <button
-                      className="py-2 px-4 rounded-md hover:bg-red-600 transition-colors bg-[#CD5C5C] text-white border border-[#8B0000]"
+                      className="py-2 px-4 rounded-md hover:bg-red-600 transition-colors bg-red-light text-white border border-red-dark"
                       onClick={() => setShowDeleteModal(true)}
                     >
                       Delete
@@ -611,7 +605,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
 
                     <button
                       className={`py-2 px-4 rounded-md text-black border border-black ${
-                        ButtonColorOption.ORANGE
+                        "bg-primary-800"
                       }`}
                       onClick={() => setShowNewGrantModal(true)}
                     >

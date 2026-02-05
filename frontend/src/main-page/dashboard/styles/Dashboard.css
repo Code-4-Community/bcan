@@ -16,7 +16,7 @@ input[type="checkbox"] {
   /* Additional styling for the custom checkbox container */
   width: 1.2em;
   height: 1.2em;
-  border: 2px solid #ccc;
+  border: 2px solid lightgray;
   border-radius: 4px;
   display: inline-block;
   vertical-align: middle;
@@ -47,7 +47,7 @@ input[type="checkbox"]:checked::before {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  background-color: #f2ebe4;
+  background-color: var(--color-tan);
   width: 100%;
   height: 100%;
   overflow-y: auto;
@@ -61,19 +61,15 @@ input[type="checkbox"]:checked::before {
   justify-content: flex-start;
   align-items: center;
   padding: 24px;
-  background-color: #ffffff;
+  background-color: white;
   border-radius: 1.2rem;
   border: 0.1rem solid black;
 }
 
-.kpi-card {
-  background-color: #ffd5c2;
-}
-
 .tooltip {
   border-radius: 12px;
-  background-color: "#fffff";
-  border: "1px solid #ccc";
+  background-color: white;
+  border: "1px solid lightgray";
   box-shadow: "0 2px 8px rgba(0,0,0,0.1)";
 }
 
@@ -83,8 +79,8 @@ input[type="checkbox"]:checked::before {
 .data {
   white-space: nowrap;
   border-radius: 16px;
-  background-color: #fff;
-  border: 1px solid #ccc;
+  background-color: white;
+  border: 1px solid lightgray;
 }
 
 #reactSchedulerOutsideWrapper {

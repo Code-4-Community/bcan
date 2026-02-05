@@ -9,12 +9,12 @@ const UserPositionCard = ({ position }: UserPositionCardProps) => {
   const cardStyles = useMemo(() => {
     switch (position) {
       case UserStatus.Admin:
-        return "bg-[#BCFFD8] border-[#119548] text-[#119548]";
+        return "bg-green-light border-green-dark text-green-dark";
       case UserStatus.Employee:
-        return "bg-[#FFF8CA] border-[#F8CC16] text-[#8a710c]";
+        return "bg-yellow-light border-yellow text-yellow-dark";
       case UserStatus.Inactive:
       default:
-        return "bg-[#D3D3D3] border-[#666666] text-[#666666]";
+        return "bg-grey-400 border-gray text-gray";
     }
   }, [position]);
 

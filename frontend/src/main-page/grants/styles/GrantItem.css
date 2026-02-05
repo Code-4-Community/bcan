@@ -9,10 +9,10 @@
   /* justify-content: space-between; */
   border-radius: 15px;
 
-  background-color: #f2ebe4;
+  background-color: var(--color-tan);
   /* margin: 0; Remove margin */
   transition: background-color 0.2s ease;
-  border: 0.1rem solid #f26624;
+  border: 0.1rem solid var(--color-primary-900);
 }
 
 .grant-summary.expanded {
@@ -52,7 +52,7 @@
 .grant-body.expanded {
   max-height: 100%;
   padding: 1rem;
-  border: 0.1rem solid #f26624;
+  border: 0.1rem solid var(--color-primary-900);
   border-top-width: 0cap;
 }
 
@@ -67,20 +67,7 @@
   padding-top: 1rem; /* Optional: Add some space above the button */
 }
 
-.done-button {
-  bottom: 1rem;
-  right: 1rem;
-  padding: 0.5rem 1rem;
-  background-color: #3191cf;
-  color: black;
-  border: none;
-  border-radius: 15px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
-}
-
 .gray-label {
   color: black;
-  background-color: "#D3D3D3";
+  background-color: var(--color-grey-400);
 }

@@ -10,7 +10,7 @@ html, body {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    background-color: #F2EBE4;
+    background-color: -var(--color-tan);
     width: 100%;
     height: 100%;
     overflow-y: auto;

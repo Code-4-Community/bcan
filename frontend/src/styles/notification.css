@@ -4,7 +4,7 @@
   top: 75px;
   width: min(340px, 70%);
   background-color: white;
-  border: 1px solid #343131;
+  border: 1px solid black;
   border-radius: 6px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   padding: 0.5rem;
@@ -17,7 +17,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0.5rem;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--color-grey-400);
 }
 
 
@@ -35,10 +35,10 @@
   border: none;
   font-size: 1rem;
   cursor: pointer;
-  color: #777;
+  color: gray;
 }
 .close-button:hover {
-  color: #e74c3c;
+  color: var(--color-red);
 }
 
 
@@ -53,7 +53,7 @@
 
 .grant-notification {
   position: relative;
-  border-bottom: 0.2px solid #dfd9d9;
+  border-bottom: 0.2px solid var(--color-grey-400);
   border-radius: 0px;
   padding: 8px 10px;
   padding-right: 35px;
@@ -65,7 +65,7 @@
 
 .bell-notif {
   margin-right: 10px;
-  background-color: rgb(225, 225, 225);
+  background-color: var(--color-grey-100);
   padding: 10px;
   border-radius: 100%;
   scale: 73%;
@@ -84,30 +84,30 @@
 .notification-title {
   font-weight: 600;
   font-size: 13px;
-  color: #101010;
+  color: black;
   line-height: 1.15;
 }
 
 .notification-message {
   font-size: 12.5px;
-  color: #555;
+  color: var(--color-grey-600);
   margin-top: 4px;
   line-height: 1.2;
 }
 
 .grant-notification:hover {
-  background-color: #f1f1f1;
+  background-color: var(--color-grey-100);
 }
 
 .notification-trash-icon {
   position: absolute;
   bottom: 8px;
   right: 10px;
-  color: #aaa;
+  color: gray;
   cursor: pointer;
   font-size: 0.9rem
 }
 
 .notification-trash-icon:hover {
-  color: #e74c3c
+  color: var(--color-red)
 }
