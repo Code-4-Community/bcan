@@ -97,16 +97,16 @@ describe("Grant Calculations", () => {
   it("should aggregate money by year without grouping", () => {
     const result = aggregateMoneyGrantsByYear(mockGrants);
     assert.deepEqual(result, [
-      { year: 2024, All: 1000 },
-      { year: 2025, All: 6000 },
+      { year: 2024, data: { All: 1000 } },
+      { year: 2025, data: { All: 6000 } },
     ]);
   });
 
   it("should aggregate money by year by status", () => {
     const result = aggregateMoneyGrantsByYear(mockGrants, "status");
     assert.deepEqual(result, [
-      { year: 2024, Potential: 1000 },
-      { year: 2025, Active: 2000, Potential: 4000 },
+      { year: 2024, data: { Potential: 1000 } },
+      { year: 2025, data: { Active: 2000, Potential: 4000 } },
     ]);
   });
 
@@ -118,16 +118,16 @@ describe("Grant Calculations", () => {
   it("should count by year without grouping", () => {
     const result = aggregateCountGrantsByYear(mockGrants);
     assert.deepEqual(result, [
-      { year: 2024, All: 1 },
-      { year: 2025, All: 3 },
+      { year: 2024, data: { All: 1 } },
+      { year: 2025, data: { All: 3 } },
     ]);
   });
 
   it("should count by year by status", () => {
     const result = aggregateCountGrantsByYear(mockGrants, "status");
     assert.deepEqual(result, [
-      { year: 2024, Potential: 1 },
-      { year: 2025, Active: 1, Potential: 2 },
+      { year: 2024, data: { Potential: 1 } },
+      { year: 2025, data: { Active: 1, Potential: 2 } },
     ]);
   });
 
