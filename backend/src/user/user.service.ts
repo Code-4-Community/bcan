@@ -28,7 +28,6 @@ export class UserService {
  async deleteUser(user: User, requestedBy: User): Promise<User> {
   const userPoolId = process.env.COGNITO_USER_POOL_ID;
   const tableName = process.env.DYNAMODB_USER_TABLE_NAME;
-  const username = user.userId;
 
   // 1. Validate environment variables
   if (!userPoolId) {
@@ -51,6 +50,8 @@ export class UserService {
     this.logger.error("Invalid requesting user object provided for deletion");
     throw new BadRequestException("Valid requesting user is required");
   }
+
+  const username = user.userId; // now access userID after validating
 
   // 3. Authorization check
   if (requestedBy.position !== UserStatus.Admin) {
@@ -170,6 +171,15 @@ export class UserService {
       throw new NotFoundException(
         `User '${username}' not found in authentication system`
       );
+    } else if (cognitoError.code === "InvalidParameterException") {
+      this.logger.error(`Invalid Cognito parameters`);
+      throw new BadRequestException(`Invalid parameters`);
+    } else if (cognitoError.code === "TooManyRequestsException") {
+      this.logger.error('Cognito rate limit exceeded');
+      throw new InternalServerErrorException('Too many requests, please try again later');
+    } else if (cognitoError.code === "NotAuthorizedException") {
+      this.logger.error('Not authorized to delete user from Cognito');
+      throw new UnauthorizedException('Insufficient permissions to delete user');
     }
 
     throw new InternalServerErrorException(
@@ -199,9 +209,22 @@ async getAllUsers(): Promise<any> {
       this.logger.log(`✅ Successfully retrieved ${userCount} users from database`);
       
       return data.Items;
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error('Failed to retrieve users from DynamoDB:', error);
-      throw new InternalServerErrorException("Could not retrieve users.");
+            
+      // Handle specific AWS DynamoDB errors
+      if (error.code === 'ResourceNotFoundException') {
+        this.logger.error('DynamoDB table does not exist');
+        throw new InternalServerErrorException('Database table not found');
+      } else if (error.code === 'ProvisionedThroughputExceededException') {
+        this.logger.error('DynamoDB throughput limit exceeded');
+        throw new InternalServerErrorException('Database is temporarily unavailable, please try again');
+      } else if (error.code === 'ValidationException') {
+        this.logger.error(`Invalid DynamoDB request`);
+        throw new BadRequestException(`Invalid request parameters`);
+      }
+      
+      throw new InternalServerErrorException(`Could not retrieve users`);
     }
   }
 
@@ -214,8 +237,6 @@ async addUserToGroup(
   ): Promise<User> {
     const userPoolId = process.env.COGNITO_USER_POOL_ID;
     const tableName = process.env.DYNAMODB_USER_TABLE_NAME;
-    const username = user.userId;
-    const previousGroup = user.position; // Store the old group for rollback
 
     // 1. Validate environment variables
     if (!userPoolId) {
@@ -232,22 +253,42 @@ async addUserToGroup(
       throw new InternalServerErrorException("Server configuration error");
     }
 
-    // 2. Authorization check
+    // 2. Validate input FIRST before accessing any properties
+    if (!user || !user.userId) {
+      this.logger.error("Invalid user object provided for role change");
+      throw new BadRequestException("Valid user object is required");
+    }
+
+    if (!requestedBy || !requestedBy.userId) {
+      this.logger.error("Invalid requesting user object provided for role change");
+      throw new BadRequestException("Valid requesting user is required");
+    }
+
+    if (!groupName) {
+      this.logger.error("Group name is required for role change");
+      throw new BadRequestException("Group name is required");
+    }
+
+    // Now safe to access user properties
+    const username = user.userId;
+    const previousGroup = user.position; // Store the old group for rollback
+
+    // Validate group name is a valid UserStatus
+    const validStatuses = Object.values(UserStatus);
+    if (!validStatuses.includes(groupName)) {
+      this.logger.error(`Invalid group name: ${groupName}`);
+      throw new BadRequestException(
+        `Invalid group name. Must be one of: ${validStatuses.join(", ")}`
+      );
+    }
+
+    // 3. Authorization check
     if (requestedBy.position !== UserStatus.Admin) {
       this.logger.warn(
         `Unauthorized access attempt: ${requestedBy.userId} tried to add ${username} to ${groupName}`
       );
       throw new UnauthorizedException(
         "Only administrators can modify user groups"
-      );
-    }
-
-    // 3. Validate group name is a valid UserStatus
-    const validStatuses = Object.values(UserStatus);
-    if (!validStatuses.includes(groupName)) {
-      this.logger.error(`Invalid group name: ${groupName}`);
-      throw new BadRequestException(
-        `Invalid group name. Must be one of: ${validStatuses.join(", ")}`
       );
     }
 
@@ -285,13 +326,23 @@ async addUserToGroup(
           "Administrators cannot demote themselves"
         );
       }
-    } catch (error) {
+    } catch (error: any) {
       // Re-throw known exceptions
       if (error instanceof HttpException) {
         throw error;
       }
       this.logger.error(`Error checking user existence: ${username}`, error);
-      throw new InternalServerErrorException("Failed to verify user existence");
+      
+      // Handle specific AWS DynamoDB errors
+      if (error.code === 'ResourceNotFoundException') {
+        this.logger.error('DynamoDB table does not exist');
+        throw new InternalServerErrorException('Database table not found');
+      } else if (error.code === 'ValidationException') {
+        this.logger.error(`Invalid DynamoDB parameters`);
+        throw new BadRequestException(`Invalid user data`);
+      }
+      
+      throw new InternalServerErrorException(`Failed to verify user existence`);
     }
 
     try {
@@ -373,6 +424,16 @@ async addUserToGroup(
         );
         throw new BadRequestException(
           `Invalid parameters: ${cognitoError.message}`
+        );
+      } else if (cognitoError.code === "TooManyRequestsException") {
+        this.logger.error('Cognito rate limit exceeded');
+        throw new InternalServerErrorException(
+          'Too many requests, please try again later'
+        );
+      } else if (cognitoError.code === "NotAuthorizedException") {
+        this.logger.error('Not authorized to perform this Cognito operation');
+        throw new UnauthorizedException(
+          'Insufficient permissions to modify user groups'
         );
       }
 
@@ -457,6 +518,7 @@ async addUserToGroup(
         );
       }
 
+      // Handle specific DynamoDB errors
       if (dynamoError.code === "ConditionalCheckFailedException") {
         this.logger.error(
           `Conditional check failed while updating user ${username} in DynamoDB`
@@ -464,6 +526,15 @@ async addUserToGroup(
         throw new ConflictException(
           "User data was modified by another process"
         );
+      } else if (dynamoError.code === "ResourceNotFoundException") {
+        this.logger.error('DynamoDB table does not exist');
+        throw new InternalServerErrorException('Database table not found');
+      } else if (dynamoError.code === "ValidationException") {
+        this.logger.error(`Invalid DynamoDB update parameters`);
+        throw new BadRequestException(`Invalid update parameters`);
+      } else if (dynamoError.code === "ProvisionedThroughputExceededException") {
+        this.logger.error('DynamoDB throughput limit exceeded');
+        throw new InternalServerErrorException('Database is temporarily unavailable, please try again');
       }
 
       throw new InternalServerErrorException(
@@ -475,6 +546,13 @@ async addUserToGroup(
   // purpose statement: retrieves user by their userId
   // use case: not actually sure right now, maybe is there is an option for admin to click on a specific user to see details?
   async getUserById(userId: string): Promise<User> {
+
+    // Validate input
+    if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+      this.logger.error(`Invalid userId provided: ${userId}`);
+      throw new BadRequestException("Valid user ID is required");
+    }
+
     const params = {
       TableName: process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE",
       Key: {
@@ -486,11 +564,32 @@ async addUserToGroup(
       this.logger.log(`Fetching user ${userId} from DynamoDB...`);
       const data = await this.dynamoDb.get(params).promise();
       
+      // Check if user exists
+      if (!data.Item) {
+        this.logger.warn(`User ${userId} not found in database`);
+        throw new NotFoundException(`User '${userId}' does not exist`);
+      }
+
       this.logger.log(`✅ Successfully retrieved user ${userId}`);
       return data.Item as User;
-    } catch (error) {
+    } catch (error: any) {
+      // Re-throw known exceptions
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
       this.logger.error(`Failed to retrieve user ${userId} from DynamoDB:`, error);
-      throw new InternalServerErrorException('Could not retrieve user.');
+      
+      // Handle specific AWS errors
+      if (error.code === 'ResourceNotFoundException') {
+        this.logger.error(`DynamoDB table not found`);
+        throw new InternalServerErrorException("Database table not found");
+      } else if (error.code === 'ValidationException') {
+        this.logger.error(`Invalid DynamoDB request: ${error.message}`);
+        throw new BadRequestException(`Invalid request: ${error.message}`);
+      }
+      
+      throw new InternalServerErrorException('Could not retrieve user');
     }
   }
 
@@ -523,9 +622,22 @@ async addUserToGroup(
 
       this.logger.log(`✅ Successfully retrieved ${users.length} inactive users`);
       return users;
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error("Error scanning DynamoDB:", error);
       if (error instanceof NotFoundException) throw error;
+      
+      // Handle specific AWS DynamoDB errors
+      if (error.code === 'ResourceNotFoundException') {
+        this.logger.error('DynamoDB table does not exist');
+        throw new InternalServerErrorException('Database table not found');
+      } else if (error.code === 'ProvisionedThroughputExceededException') {
+        this.logger.error('DynamoDB throughput limit exceeded');
+        throw new InternalServerErrorException('Database is temporarily unavailable, please try again');
+      } else if (error.code === 'ValidationException') {
+        this.logger.error(`Invalid scan parameters`);
+        throw new BadRequestException(`Invalid filter expression`);
+      }
+      
       throw new InternalServerErrorException(
         "Failed to retrieve inactive users."
       );
@@ -566,9 +678,22 @@ async getAllActiveUsers(): Promise<User[]> {
       this.logger.debug(`Fetched ${users.length} active users.`);
 
       return users;
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error("Error scanning DynamoDB:", error);
       if (error instanceof NotFoundException) throw error;
+      
+      // Handle specific AWS DynamoDB errors
+      if (error.code === 'ResourceNotFoundException') {
+        this.logger.error('DynamoDB table does not exist');
+        throw new InternalServerErrorException('Database table not found');
+      } else if (error.code === 'ProvisionedThroughputExceededException') {
+        this.logger.error('DynamoDB throughput limit exceeded');
+        throw new InternalServerErrorException('Database is temporarily unavailable, please try again');
+      } else if (error.code === 'ValidationException') {
+        this.logger.error(`Invalid scan parameters`);
+        throw new BadRequestException(`Invalid filter expression`);
+      }
+      
       throw new InternalServerErrorException(
         "Failed to retrieve active users."
       );

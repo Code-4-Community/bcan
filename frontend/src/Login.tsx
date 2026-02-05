@@ -28,9 +28,9 @@ const Login = observer(() => {
   };
 
   return (
-    <div className="bg-white grid grid-cols-2" style={styles.pageContainer}>
+    <div className="bg-white grid grid-cols-[60%_40%] w-screen h-screen relative m-0 p-0 overflow-hidden text-start">
       {/*/ Left side: Registration form */}
-      <div className="w-[60%] h-full py-20 px-24 flex flex-col justify-center items-start">
+      <div className="h-full py-20 px-24 flex flex-col justify-center items-start">
         <div className="mb-12">
           <h1 className="text-[32px] pb-4">Welcome back!</h1>
           <h2 className="text-lg">
@@ -111,8 +111,8 @@ const Login = observer(() => {
       </div>
 
       {/*/ Right side: logo */}
-      <div className="w-[40%] h-full flex flex-col justify-center items-center">
-        <div className="w-full h-full  bg-primary-800 rounded-l-4xl flex flex-col justify-center items-center">
+      <div className="h-full flex flex-col justify-center items-center">
+        <div className="w-full h-full bg-primary-800 rounded-l-4xl flex flex-col justify-center items-center">
           <img
             className="w-[60%] h-[60%] object-contain p-10 mb-40"
             src={logo}
@@ -125,19 +125,3 @@ const Login = observer(() => {
 });
 
 export default Login;
-
-// Inline style objects
-const styles: { [key: string]: React.CSSProperties } = {
-  pageContainer: {
-    position: "relative",
-    width: "100vw",
-    height: "100vh",
-    margin: 0,
-    padding: 0,
-    overflow: "hidden",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "start",
-    textAlign: "start",
-  },
-};

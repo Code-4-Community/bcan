@@ -9,8 +9,8 @@ import { useAuthContext } from "./context/auth/authContext";
 const RegisterLanding = () => {
   const {logout} = useAuthContext();
   return (
-    <div className="bg-white grid grid-cols-2" style={styles.pageContainer}>
-      <div className="w-[35%] h-full flex flex-col justify-center items-center pb-32">
+    <div className="bg-white grid grid-cols-[35%_65%] relative w-screen h-screen m-0 p-0 overflow-hidden text-start">
+      <div className="h-full flex flex-col justify-center items-center pb-32">
         <div className="w-full h-[70%] bg-primary-800 rounded-r-4xl flex flex-col justify-center items-center">
           <img
             className="w-[90%] h-[90%] object-contain p-20 ml-10"
@@ -19,7 +19,7 @@ const RegisterLanding = () => {
           />
         </div>
       </div>
-      <div className="w-[65%] h-full py-20 px-24 flex flex-col justify-center items-start mb-32">
+      <div className="h-full py-20 px-24 flex flex-col justify-center items-start mb-32">
         <div className="mb-24">
           <h1 className="text-[40px] pb-8 font-bold">
             Account registration successful!
@@ -31,12 +31,8 @@ const RegisterLanding = () => {
           </h2>
           <Link to="/login">
                     <button
-                      style={{
-                        backgroundColor: ButtonColorOption.ORANGE ,
-                        color: 'black',
-                        borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'
-                      }}
-                      className="py-2 mt-8 px-4 rounded-md"
+                      style={styles.loginButton}
+                      className="py-2 px-4 rounded"
                       onClick={() => {
                         logout()
                       }}
@@ -66,4 +62,11 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: "start",
     textAlign: "start",
   },
+  loginButton :{
+    backgroundColor: ButtonColorOption.ORANGE,
+    color: 'black',
+    borderStyle: 'solid',
+    borderColor: 'black',
+    borderWidth: '1px'
+  }
 };

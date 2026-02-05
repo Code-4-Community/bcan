@@ -48,7 +48,7 @@ export class NotificationController {
   }
 
   /**
-   * gets notifications based on the noticationId
+   * gets notifications based on the notificationId
   */ 
   @ApiResponse({
     status: 200,
@@ -61,6 +61,10 @@ export class NotificationController {
   @ApiResponse({
     status: 403,
     description: "Forbidden resource"
+  })
+  @ApiResponse({
+    status: 404,
+    description: "Not found"
   })
   @ApiResponse({
     status: 500,
@@ -171,6 +175,10 @@ export class NotificationController {
   @ApiResponse({
     status: 403,
     description: "Forbidden resource"
+  })
+  @ApiResponse({
+    status: 404,
+    description: "Not found"
   })
   @ApiResponse({
     status: 500,
