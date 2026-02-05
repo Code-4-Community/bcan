@@ -29,13 +29,13 @@ const RegisterLanding = () => {
             our team. You'll receive an email notification once your account has
             been approved. Please try logging in after receiving approval.
           </h2>
-          <br />
           <Link to="/login">
                     <button
                       style={{
                         backgroundColor: ButtonColorOption.ORANGE ,
                         color: 'black',
-                        borderStyle: 'solid', borderColor: 'black', borderWidth: '1px'
+                        borderStyle: 'solid', borderColor: 'black', borderWidth: '1px',
+                        marginTop: '20px',
                       }}
                       className="py-2 px-4 rounded"
                       onClick={() => {
