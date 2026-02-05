@@ -89,7 +89,7 @@ const Register = observer(() => {
   };
 
   return (
-    <div className="bg-white grid grid-cols-[60%_40%] w-screen h-screen relative m-0 p-0 overflow-hidden flex justify-center items-start text-start">
+    <div className="bg-white grid grid-cols-[60%_40%] w-screen h-screen relative m-0 p-0 overflow-hidden text-start">
       <div className="h-full py-20 px-20 flex flex-col justify-center items-start">
         {/*/ Left side: Registration form */}
         <div className="mb-4">

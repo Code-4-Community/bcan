@@ -28,7 +28,7 @@ const Login = observer(() => {
   };
 
   return (
-    <div className="bg-white grid grid-cols-[60%_40%] w-screen h-screen relative m-0 p-0 overflow-hidden flex justify-center items-start text-start">
+    <div className="bg-white grid grid-cols-[60%_40%] w-screen h-screen relative m-0 p-0 overflow-hidden text-start">
       {/*/ Left side: Registration form */}
       <div className="h-full py-20 px-24 flex flex-col justify-center items-start">
         <div className="mb-12">
