@@ -7,23 +7,14 @@
 flex-grow: 1;
 
   
-    background-color: #ffffff;
-    border-color: rgb(228, 228, 231);
+    background-color: white;
+    border-color: var(--color-grey-100);
     width: 100%;
     padding: 1em;
     
     /* Text */
     font-size: 1.3rem;
-    color: rgb(74 73 81) + 1;
-}
-
-.bcan-link {
-    background-color: "#0b303b";
-    border: "0.1rem solid #ccc";
-    border-width: 0;
-    border-radius: "100px";
-    color: "#fff";
-    text-transform: "uppercase";
+    color: var(--color-grey-700);
 }
 
 .text-block {
@@ -36,5 +27,5 @@ flex-grow: 1;
 .northeastern-uni-caption {
     font-size: 0.90rem;
     line-height: 1rem;
-    color: rgb(153 151 162);
+    color: var(--color-grey-600);
 }

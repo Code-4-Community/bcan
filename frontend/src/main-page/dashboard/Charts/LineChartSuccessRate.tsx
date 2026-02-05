@@ -123,7 +123,7 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
             ) => (
               <span
                 style={{
-                  color: "#000",
+                  color: "black",
                   fontWeight: 500,
                   marginLeft: 5,
                   marginRight: 10,
@@ -133,11 +133,11 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
               </span>
             )}
           />
-          <CartesianGrid vertical={false} stroke="#aaa" strokeDasharray="5 5" />
+          <CartesianGrid vertical={false} stroke="lightgray" strokeDasharray="5 5" />
           <Line
             type="monotone"
             dataKey="money_captured"
-            stroke="#F58D5C"
+            stroke="var(--color-primary-800)"
             strokeWidth={2}
             dot={{ r: 4 }}
             name="Money Captured"
@@ -146,7 +146,7 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
           <Line
             type="monotone"
             dataKey="grants_captured"
-            stroke="#F8CC16"
+            stroke="var(--color-yellow)"
             strokeWidth={2}
             dot={{ r: 4 }}
             name="Grants Captured"
@@ -174,8 +174,8 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
           <Tooltip
             contentStyle={{
               borderRadius: "12px",
-              backgroundColor: "#fff",
-              border: "1px solid #ccc",
+              backgroundColor: "white",
+              border: "1px solid lightgray",
               boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
             }}
             labelFormatter={(date: Date) => date.getFullYear().toString()}

@@ -12,14 +12,14 @@
   position: absolute;
   padding: 20px 40px;
   background-color: white;
-  border: 1px solid #2d2d2d;
+  border: 1px solid black;
   border-radius: 8px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
   z-index: 9999;
 }
 
 .popup-header {
-  color: #000;
+  color: black;
   font-size: 22px;
   font-style: normal;
   font-weight: 100;
@@ -35,7 +35,7 @@
   flex-direction: column;
   gap: 10px;
   margin-bottom: 20px;
-  border-left: 4px solid #ff6b35;
+  border-left: 4px solid var(--color-primary-800);
   padding-left: 20px;
   z-index: 1000;
 }
@@ -49,7 +49,7 @@
 }
 
 .info-label {
-  color: #646464;
+  color: gray;
   font-size: 15px;
   font-style: normal;
   font-weight: 700;
@@ -58,7 +58,7 @@
 }
 
 .info-value {
-  color: #000;
+  color: black;
 font-size: 15px;
 font-style: normal;
 font-weight: 400;
@@ -81,17 +81,17 @@ z-index: 1000;
   gap: 8px;
   padding: 10px 20px;
   background: white;
-  border: 2px solid #2d2d2d;
+  border: 2px solid var(--color-grey-700);
   border-radius: 10px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: #2d2d2d;
+  color: var(--color-grey-700);
 }
 
 .user-list-btn:hover {
-  background: #f8f8f8;
+  background: var(--color-grey-100);
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -103,10 +103,10 @@ z-index: 1000;
 
 .logout-btn {
   padding: 10px 26px;
-  background: #ffb3b3;
-  border: 2px solid #ff8888;
+  background: var(--color-red-lighter);
+  border: 2px solid var(--color-red-light);
   border-radius: 10px;
-  color: #d63031;
+  color: var(--color-red);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -114,9 +114,9 @@ z-index: 1000;
 }
 
 .logout-btn:hover {
-  background: #ff9999;
+  background: var(--color-primary-700);
   color: white;
-  border-color: #ff7777;
+  border-color: var(--color-primary-800);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 119, 119, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }

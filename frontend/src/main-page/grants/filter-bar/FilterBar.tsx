@@ -44,7 +44,7 @@ const FilterBar: React.FC = observer(() => {
   }
 
   return (
-    <div className="sortbar flex flex-col gap-4 bg-light-gray p-6 rounded-[1.2rem] border-[0.1rem]">
+    <div className="sortbar flex flex-col gap-4 bg-grey-100 p-6 rounded-[1.2rem] border-[0.1rem] border-black">
       <div>
         <div className="flex pb-2">{"Filter by Date"}</div>
         <CalendarDropdown />
@@ -59,15 +59,14 @@ const FilterBar: React.FC = observer(() => {
                 to={item.linkTo ? item.linkTo : "#"}
               >
                 <div
-                  className={`grant-button border hover:bg-medium-orange ${
-                    selected === item.name ? "bg-dark-orange" : "bg-white"
+                  className={`grant-button border hover:bg-primary-800 ${
+                    selected === item.name ? "bg-primary-900" : "bg-white"
                   }`}
                 >
                   <div
-                    className="flex w-full justify-between items-center"
-                    style={{
-                      color: selected === item.name ? "#FFFFFF" : "#000000",
-                    }}
+                    className={`flex w-full justify-between items-center ${
+                    selected === item.name ? "text-white" : "text-black"
+                    }`}
                   >
                     {item.name}
                     <FaChevronRight />

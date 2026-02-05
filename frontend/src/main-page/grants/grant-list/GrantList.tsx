@@ -66,7 +66,7 @@ const GrantList: React.FC<GrantListProps> = observer(
 
     return (
         <div className="paginated-grant-list">
-            <div className="bg-light-orange rounded-[1.2rem] pt-2">
+            <div className="bg-primary-700 rounded-[1.2rem] pt-2">
                 <GrantLabels/>
                 <div className="grant-list p-4">
                     {visibleItems.map((grant) => (
@@ -105,7 +105,7 @@ const GrantList: React.FC<GrantListProps> = observer(
                                 page.type === "page" ? (
                                     <IconButton
                                         key={index}
-                                        className={currentPage === page.value ? "text-dark-blue underline" : "ghost"}
+                                        className={currentPage === page.value ? "text-secondary-500 underline" : "ghost"}
                                         onClick={() => setPage(page.value)}
                                         aria-label={`Go to page ${page.value}`}
                                     >

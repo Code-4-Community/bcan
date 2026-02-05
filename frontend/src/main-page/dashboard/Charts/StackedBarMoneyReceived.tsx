@@ -70,23 +70,18 @@ const StackedBarMoneyReceived = observer(({ grants }: { grants: Grant[] }) => {
                 | undefined
             ) => (
               <span
-                style={{
-                  color: "#000",
-                  fontWeight: 500,
-                  marginLeft: 5,
-                  marginRight: 10,
-                }}
+                className="text-black font-medium ml-1 mr-5"
               >
                 {value}
               </span>
             )}
           />
-          <CartesianGrid vertical={false} stroke="#aaa" strokeDasharray="5 5" />
+          <CartesianGrid vertical={false} stroke="lightgray" strokeDasharray="5 5" />
           <Bar
             type="monotone"
             stackId="a"
             dataKey="unreceived"
-            fill="#F58D5C"
+            fill="var(--color-primary-800)"
             strokeWidth={2}
             name="Unreceived"
             radius={[15, 15, 15, 15]}
@@ -106,7 +101,7 @@ const StackedBarMoneyReceived = observer(({ grants }: { grants: Grant[] }) => {
             type="monotone"
             stackId="a"
             dataKey="received"
-            fill="#F8CC16"
+            fill="var(--color-yellow)"
             strokeWidth={2}
             name="Received"
             radius={[15, 15, 15, 15]}
@@ -134,8 +129,8 @@ const StackedBarMoneyReceived = observer(({ grants }: { grants: Grant[] }) => {
           <Tooltip
             contentStyle={{
               borderRadius: "12px",
-              backgroundColor: "#fff",
-              border: "1px solid #ccc",
+              backgroundColor: "white",
+              border: "1px solid lightgray",
               boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
             }}
             formatter={(value: number) => `$${value.toLocaleString()}`}

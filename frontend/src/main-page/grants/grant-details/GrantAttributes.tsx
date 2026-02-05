@@ -23,7 +23,7 @@ export const GrantAttributes: React.FC<GrantAttributesProps> = ({curGrant, setCu
     };
 
     return (
-        <div className="grant-attributes bg-medium-orange">
+        <div className="grant-attributes bg-primary-800">
             <div className="attribute-row">
                 <div className="attribute-label">Status</div>
                 <input

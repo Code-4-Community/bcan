@@ -31,8 +31,8 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
   );
   const total = sumReceived + sumUnreceived;
   const data = [
-    { name: "Received", value: sumReceived, fill: "#F8CC16" },
-    { name: "Unreceived", value: sumUnreceived, fill: "#F58D5C" },
+    { name: "Received", value: sumReceived, fill: "var(--color-yellow)"},
+    { name: "Unreceived", value: sumUnreceived, fill: "var(--color-primary-800)" },
   ];
 
   // Creating the label for the slices
@@ -49,17 +49,13 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
   }) => {
     return (
       <div className="w-[100px] ">
-        <div style={{ fontWeight: 500 }}>{name}</div>
-        <div
+        <div className="font-semibold">{name}</div>
+        <div className="h-[0.15rem] w-[80%] mt-0 rounded-full"
           style={{
-            height: 3,
-            width: "80%",
             backgroundColor: color,
-            marginTop: 0,
-            borderRadius: 2,
           }}
         />
-        <div style={{ fontSize: 12, color: "#555", marginTop: 0 }}>
+        <div className="text-sm font-medium text-grey-800 mt-1">
           {`${(percent * 100).toFixed(0)}% ($${(value / 1_000_000).toFixed(
             2
           )}M)`}
@@ -70,8 +66,7 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
 
   return (
     <div
-      className="chart-container"
-      style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+      className="chart-container flex flex-col align-center"
     >
       <div className="relative w-full h-full flex flex-col">
         {/* Title */}
@@ -92,7 +87,7 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
                 name="Unreceived"
                 value={sumUnreceived}
                 percent={sumUnreceived / total}
-                color="#F58D5C"
+                color="var(--color-primary-800)"
               />
             </div>
           )}
@@ -103,7 +98,7 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
                 name="Received"
                 value={sumReceived}
                 percent={sumReceived / total}
-                color="#F8CC16"
+                color="var(--color-yellow)"
               />
             </div>
           )}
@@ -122,7 +117,7 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
             innerRadius="60%"
             outerRadius="80%"
             cornerRadius={50}
-            stroke="#fff"
+            stroke="white"
             strokeWidth={2}
             label={false}
           />
@@ -133,8 +128,8 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
             ]}
             contentStyle={{
               borderRadius: "12px",
-              backgroundColor: "#fff",
-              border: "1px solid #ccc",
+              backgroundColor: "white",
+              border: "1px solid lightgray",
               boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
             }}
           />

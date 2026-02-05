@@ -177,7 +177,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
               : "No date"}
           </li>
           <li className="amount">{formatCurrency(curGrant.amount)}</li>
-          <li className="does-bcan-qualify px-8" style={{ width: "100%" }}>
+          <li className="does-bcan-qualify px-8 w-full" >
             {curGrant.does_bcan_qualify ? (
               <RingButton
                 text={DoesBcanQualifyText.Yes}
@@ -227,11 +227,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                               Application Date
                             </label>
                             <div
-                              style={{
-                                color: "black",
-                                backgroundColor: "#D3D3D3",
-                              }}
-                              className="h-9  flex items-center justify-center w-full rounded-full px-4"
+                              className="bg-grey-400 text-black h-9 flex items-center justify-center w-full rounded-full px-4"
                             >
                               {formatDate(curGrant.application_deadline)}
                             </div>
@@ -245,14 +241,9 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                               Grant Start Date
                             </label>
                             <div
-                              style={{
-                                color: "black",
-                                backgroundColor: "#D3D3D3",
-                                fontStyle: curGrant.grant_start_date
-                                  ? "normal"
-                                  : "italic",
-                              }}
-                              className="h-9 flex items-center justify-center w-full rounded-full px-4"
+                              className={`bg-grey-400 text-black h-9 flex items-center justify-center w-full rounded-full px-4 ${
+                                curGrant.grant_start_date ? "normal" : "italic"
+                              }`}
                             >
                               {curGrant.grant_start_date
                                 ? formatDate(curGrant.grant_start_date)
@@ -272,13 +263,9 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                             Estimated Completion Time
                           </label>
                           <div
-                            style={{
-                              color: "black",
-                              fontStyle: curGrant.estimated_completion_time
-                                ? "normal"
-                                : "italic",
-                            }}
-                            className="text-left  sm:text-sm lg:text-base h-10 flex w-2/3  "
+                            className={`text-left sm:text-sm lg:text-base h-10 flex w-2/3 text-black ${
+                              curGrant.estimated_completion_time ? "normal" : "italic"
+                            }`}
                           >
                             {curGrant.estimated_completion_time
                               ? curGrant.estimated_completion_time + " hours"
@@ -296,13 +283,9 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                               Timeline
                             </label>
                             <div
-                              style={{
-                                color: "black",
-                                fontStyle: curGrant.timeline
-                                  ? "normal"
-                                  : "italic",
-                              }}
-                              className="text-left  sm:text-sm lg:text-base h-10 w-full"
+                              className={`text-left sm:text-sm lg:text-base h-10 w-full text-black ${
+                                curGrant.timeline ? "" : "italic"
+                              }`}
                             >
                               {curGrant.timeline
                                 ? curGrant.timeline + " years"
@@ -318,8 +301,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                               Amount
                             </label>
                             <div
-                              style={{ color: "black" }}
-                              className="text-left  sm:text-sm lg:text-base h-10 w-full"
+                              className="text-left sm:text-sm lg:text-base h-10 w-full text-black"
                             >
                               {formatCurrency(curGrant.amount)}
                             </div>
@@ -336,13 +318,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                           Report Deadlines
                         </label>
                         <div
-                          className="p-2 rounded-md h-[13.5rem] w-4/5  overflow-auto grip "
-                          style={{
-                            backgroundColor: "#F58D5C",
-                            borderStyle: "solid",
-                            borderColor: "black",
-                            borderWidth: "1px",
-                          }}
+                          className="p-2 rounded-md h-[13.5rem] w-4/5 overflow-auto grip bg-primary-800 border border-black"
                         >
                           {/*Map each available report deadline to a div label
                     If no deadlines, add "No deadlines" text */}
@@ -352,11 +328,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                               (deadline: string, index: number) => (
                                 <div
                                   key={index}
-                                  style={{
-                                    color: "black",
-                                    backgroundColor: "#D3D3D3",
-                                  }}
-                                  className="h-10 flex items-center justify-center w-full rounded-full mb-2 px-4"
+                                  className="h-10 flex items-center justify-center w-full rounded-full mb-2 px-4 bg-grey-400 text-black"
                                 >
                                   {formatDate(deadline)}
                                 </div>
@@ -391,17 +363,11 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                         </label>
                         {/*Box div*/}
                         <div
-                          className="items-center flex rounded-md"
-                          style={{
-                            backgroundColor: "#F58D5C",
-                            borderColor: "black",
-                            borderWidth: "1px",
-                          }}
+                          className="items-center flex rounded-md bg-primary-800 border border-black"
                         >
                           <MdOutlinePerson2 className="w-1/5 h-full p-1" />
                           <div
-                            style={{ backgroundColor: "#F2EBE4" }}
-                            className="w-4/5 border-l border-black bg-[#FFCEB6] rounded-r-md"
+                            className="w-4/5 border-l border-black rounded-r-md bg-tan"
                           >
                             <h2
                               className="truncate px-2 text-left font-bold h-8 w-full text-gray-700 rounded flex items-center"
@@ -435,17 +401,11 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                         </label>
                         {/*Box div*/}
                         <div
-                          className="items-center flex rounded-md"
-                          style={{
-                            backgroundColor: "#F58D5C",
-                            borderColor: "black",
-                            borderWidth: "1px",
-                          }}
+                          className="items-center flex rounded-md bg-primary-800 border border-black"
                         >
                           <MdOutlinePerson2 className="w-1/5 h-full p-1" />
                           <div
-                            style={{ backgroundColor: "#F2EBE4" }}
-                            className="w-4/5 border-l border-black bg-[#FFCEB6] rounded-r-md"
+                            className="w-4/5 border-l border-black bg-tan rounded-r-md"
                           >
                             <h2
                               className="truncate px-2 text-left font-bold h-8 w-full text-gray-700 rounded-md flex items-center"
@@ -485,13 +445,11 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                             Does BCAN qualify?
                           </label>
                           <div
-                            style={{
-                              color: "black",
-                              backgroundColor: curGrant.does_bcan_qualify
-                                ? ButtonColorOption.GREEN
-                                : ButtonColorOption.GRAY,
-                            }}
-                            className="w-3/5 h-9 flex items-center justify-center rounded-full  px-4"
+                            className={`w-3/5 h-9 flex items-center justify-center rounded-full px-4 text-black ${
+                              curGrant.does_bcan_qualify
+                                ? "bg-green"
+                                : "bg-grey-400"
+                            }`}
                           >
                             {curGrant.does_bcan_qualify ? "Yes" : "No"}
                           </div>
@@ -506,16 +464,13 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                             Status
                           </label>
                           <div
-                            style={{
-                              color: "black",
-                              backgroundColor:
-                                curGrant.status === "Active"
-                                  ? ButtonColorOption.GREEN
-                                  : curGrant.status === "Potential"
-                                  ? ButtonColorOption.ORANGE
-                                  : ButtonColorOption.GRAY,
-                            }}
-                            className="w-3/5 h-9 flex items-center justify-center rounded-full  px-4"
+                            className={`w-3/5 h-9 flex items-center justify-center rounded-full px-4 text-black ${
+                              curGrant.status === "Active"
+                                ? "bg-green"
+                                : curGrant.status === "Potential"
+                                ? "bg-orange"
+                                : "bg-grey-400"
+                            }`}
                           >
                             {curGrant.status}
                           </div>
@@ -530,13 +485,9 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                             Is BCAN Restricted?
                           </label>
                           <div
-                            style={{
-                              color: "black",
-                              backgroundColor: curGrant.isRestricted
-                                ? "indianred"
-                                : ButtonColorOption.GRAY,
-                            }}
-                            className="w-3/5 h-9 flex items-center justify-center rounded-full  px-4"
+                            className={`w-3/5 h-9 flex items-center justify-center rounded-full px-4 text-black ${
+                              curGrant.isRestricted ? "bg-red-light" : "bg-grey-400"
+                            }`}
                           >
                             {curGrant.isRestricted
                               ? "Restricted"
@@ -552,13 +503,9 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                           Scope Documents
                         </label>
                         <div
-                          className="p-2 rounded-md h-[11.5rem] overflow-auto grip grid-cols-1 gap-4"
-                          style={{
-                            backgroundColor: ButtonColorOption.GRAY,
-                            borderStyle: "solid",
-                            borderColor: "black",
-                            borderWidth: "1px",
-                          }}
+                          className={`p-2 rounded-md h-[11.5rem] overflow-auto grip grid-cols-1 gap-4 border border-black ${
+                            "bg-grey-400"
+                          }`}
                         >
                           {/*Map each available report deadline to a div label
                       If no deadlines, add "No deadlines" text */}
@@ -570,14 +517,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                                   {attachment.url && (
                                     <div
                                       key={index}
-                                      style={{
-                                        color: "black",
-                                        borderStyle: "solid",
-                                        borderColor: "black",
-                                        borderWidth: "1px",
-                                        height: "42px",
-                                      }}
-                                      className="items-center truncate overflow-x-scroll overflow-hidden text-left justify-center w-full rounded-md p-2 mb-2 bg-tan"
+                                      className="items-center truncate overflow-x-scroll overflow-hidden text-left justify-center w-full rounded-md p-2 mb-2 bg-tan h-[42px] border border-black text-black"
                                     >
                                       <a
                                         href={attachment.url}
@@ -625,13 +565,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                 Description
               </label>
               <div
-                style={{
-                  color: "black",
-                  borderStyle: "solid",
-                  borderColor: "black",
-                  borderWidth: "1px",
-                }}
-                className="h-64 bg-tan flex  w-full rounded-md  p-5 overflow-auto"
+                className="h-64 bg-tan flex w-full rounded-md p-5 overflow-auto border border-black text-black"
               >
                 {curGrant.description}
                 </div>
@@ -642,14 +576,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                 <div className="flex justify-between items-center w-full mt-6">
                   <>
                     <button
-                      style={{
-                        backgroundColor: "indianred",
-                        color: "white",
-                        borderStyle: "solid",
-                        borderColor: "#8B0000",
-                        borderWidth: "1px",
-                      }}
-                      className="py-2 px-4 rounded-md hover:bg-red-600 transition-colors"
+                      className="py-2 px-4 rounded-md hover:bg-red-600 transition-colors bg-red-light text-white border border-red-dark"
                       onClick={() => setShowDeleteModal(true)}
                     >
                       Delete
@@ -670,28 +597,16 @@ const GrantItem: React.FC<GrantItemProps> = observer(
 
                   <div className="space-x-4">
                     <button
-                      style={{
-                        backgroundColor: "white",
-                        color: "black",
-                        borderStyle: "solid",
-                        borderColor: "black",
-                        borderWidth: "1px",
-                      }}
-                      className="py-2 px-4 rounded-md"
+                      className="py-2 px-4 rounded-md bg-white text-black border border-black"
                       onClick={() => setIsExpanded(false)}
                     >
                       {"Close"}
                     </button>
 
                     <button
-                      style={{
-                        backgroundColor: ButtonColorOption.ORANGE,
-                        color: "black",
-                        borderStyle: "solid",
-                        borderColor: "black",
-                        borderWidth: "1px",
-                      }}
-                      className="py-2 px-4 rounded-md"
+                      className={`py-2 px-4 rounded-md text-black border border-black ${
+                        "bg-primary-800"
+                      }`}
                       onClick={() => setShowNewGrantModal(true)}
                     >
                       {"Edit"}
