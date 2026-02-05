@@ -101,11 +101,11 @@ button {
 }
 
 textarea {
-  border-color: darkorange;
+  border-color: var(--color-primary-900);
 }
 
 button:hover {
-  border-color: darkorange;
+  border-color:  var(--color-primary-900);
 }
 button:focus,
 button:focus-visible {
@@ -126,5 +126,5 @@ button:focus-visible {
 }
 
 input:focus {
-  outline: 1px solid darkorange;
+  outline: 1px solid  var(--color-primary-900);
 }
