@@ -99,10 +99,10 @@
   padding: 0.6rem;
   font-size: 1rem;
   margin-bottom: 0.25rem;
-  border: 0.1rem solid lightgray;
+  border: 0.075rem solid black;
   border-radius: 15px;
   box-sizing: border-box;
-  background-color: white;
+  background-color: var(--color-tan);
   color: black;
 }
 
@@ -174,17 +174,11 @@
     Buttons 
   */
 .modal-content button {
-  background-color: gray; /* typical “primary” color */
-  border: none;
-  color: white;
+  border: black 0.075rem solid;
+  color: black;
   padding: 0.75rem 1.25rem;
   font-size: 1rem;
   border-radius: 15px;
   cursor: pointer;
   transition: background-color 0.2s ease;
-}
-
-/* Hover effect for buttons */
-.modal-content button:hover {
-  background-color: darkgray;
 }

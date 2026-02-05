@@ -564,7 +564,7 @@ const NewGrantModal: React.FC<{
                     className="p-2 rounded-[1.2rem] sm:h-52 xl:h-40 overflow-y-auto overflow-x-hidden bg-grey-400 border border-black"
                   >
                     <button
-                      className="font-family-helvetica w-full h-[42px] text-xs mb-2 flex items-center justify-center bg-primary-800 text-black border border-black"
+                      className="font-family-helvetica w-full h-[42px] text-xs mb-2 flex items-center justify-center bg-primary-800 hover:bg-primary-900 text-black border border-black"
                       onClick={_addReportDate}
                     >
                       Add Deadline +
@@ -793,7 +793,7 @@ const NewGrantModal: React.FC<{
                   <button
                     type="button"
                     onClick={_addAttachment}
-                    className="items-center flex font-family-helvetica w-full h-[42px] mt-1 mb-2 justify-center bg-gray-500 text-black border border-black"
+                    className="items-center flex font-family-helvetica w-full h-[42px] mt-1 mb-2 justify-center  bg-primary-800 hover:bg-primary-900 text-black border border-black"
                   >
                     <FiUpload className="mr-2" />
                     <span>Upload Documents</span>

@@ -609,7 +609,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
 
                     <button
                       className={`py-2 px-4 rounded-md text-black border border-black ${
-                        "bg-orange"
+                        "bg-primary-800"
                       }`}
                       onClick={() => setShowNewGrantModal(true)}
                     >
