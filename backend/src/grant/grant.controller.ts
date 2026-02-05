@@ -17,9 +17,10 @@ export class GrantController {
     @ApiBearerAuth()
     @ApiOperation({ summary: 'Retrieve all grants', description: 'Returns a list of all grants in the database. Automatically inactivates expired grants.' })
     @ApiResponse({ status: 200, description: 'Successfully retrieved all grants', type: [GrantResponseDto] })
+    @ApiResponse({ status: 400, description: 'Bad Request - Invalid request parameters or AWS validation error', example: '{Error occurred}' })
     @ApiResponse({ status: 401, description: 'Unauthorized - Invalid or missing authentication token' })
     @ApiResponse({ status: 403, description: 'Forbidden - User does not have access to this resource' })
-    @ApiResponse({ status: 500, description: 'Internal Server Error', example: 'Internal Server Error' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error - AWS error or server configuration issue', example: '{Error occurred}' })
     async getAllGrants(): Promise<Grant[]> {
         this.logger.log('GET /grant - Retrieving all grants');
         const grants = await this.grantService.getAllGrants();
@@ -33,9 +34,11 @@ export class GrantController {
     @ApiOperation({ summary: 'Inactivate grants', description: 'Marks one or more grants as inactive by their grant IDs' })
     @ApiBody({ type: InactivateGrantBody, description: 'Array of grant IDs to inactivate' })
     @ApiResponse({ status: 200, description: 'Successfully inactivated grants', type: [GrantResponseDto] })
+    @ApiResponse({ status: 400, description: 'Bad Request - Invalid grant ID or AWS validation error', example: '{Error occurred}' })
+    @ApiResponse({ status: 404, description: 'Not Found - Grant does not exist', example: '{Error occurred}' })
     @ApiResponse({ status: 401, description: 'Unauthorized - Invalid or missing authentication token' })
     @ApiResponse({ status: 403, description: 'Forbidden - User does not have access to this resource' })
-    @ApiResponse({ status: 500, description: 'Internal Server Error', example: 'Internal Server Error' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error - AWS error or server configuration issue', example: '{Error occurred}' })
     async inactivate(
         @Body() body: InactivateGrantBody
     ): Promise<Grant[]> {
@@ -76,10 +79,10 @@ export class GrantController {
     @ApiOperation({ summary: 'Update an existing grant', description: 'Updates an existing grant in the database with new grant data' })
     @ApiBody({ type: UpdateGrantBody, description: 'Updated grant data including grantId' })
     @ApiResponse({ status: 200, description: 'Successfully updated grant', type: String, example: '{"Attributes": {...}}' })
-    @ApiResponse({ status: 400, description: 'Bad Request - Invalid grant data', example: '{Error encountered}' })
+    @ApiResponse({ status: 400, description: 'Bad Request - Invalid grant data or AWS validation error', example: '{Error occurred}' })
     @ApiResponse({ status: 401, description: 'Unauthorized - Invalid or missing authentication token' })
     @ApiResponse({ status: 403, description: 'Forbidden - User does not have access to this resource' })
-    @ApiResponse({ status: 500, description: 'Internal Server Error', example: 'Internal Server Error' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error - AWS error or server configuration issue', example: '{Error occurred}' })
     async saveGrant(@Body() grantData: UpdateGrantBody): Promise<string> {
         this.logger.log(`PUT /grant/save - Updating grant with ID: ${grantData.grantId}`);
         const result = await this.grantService.updateGrant(grantData as Grant);
@@ -93,10 +96,10 @@ export class GrantController {
     @ApiOperation({ summary: 'Delete a grant', description: 'Deletes a grant from the database by its grant ID' })
     @ApiParam({ name: 'grantId', type: Number, description: 'The ID of the grant to delete' })
     @ApiResponse({ status: 200, description: 'Successfully deleted grant', type: String, example: 'Grant 1234567890 deleted successfully' })
-    @ApiResponse({ status: 400, description: 'Bad Request - Grant does not exist', example: '{Error encountered}' })
+    @ApiResponse({ status: 400, description: 'Bad Request - Invalid grant ID or grant does not exist', example: '{Error occurred}' })
     @ApiResponse({ status: 401, description: 'Unauthorized - Invalid or missing authentication token' })
     @ApiResponse({ status: 403, description: 'Forbidden - User does not have access to this resource' })
-    @ApiResponse({ status: 500, description: 'Internal Server Error', example: 'Internal Server Error' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error - AWS error or server configuration issue', example: '{Error occurred}' })
     async deleteGrant(@Param('grantId') grantId: number): Promise<string> {
         this.logger.log(`DELETE /grant/${grantId} - Deleting grant`);
         const result = await this.grantService.deleteGrantById(grantId);
@@ -110,10 +113,11 @@ export class GrantController {
     @ApiOperation({ summary: 'Get a grant by ID', description: 'Retrieves a single grant from the database by its grant ID' })
     @ApiParam({ name: 'id', type: String, description: 'The ID of the grant to retrieve' })
     @ApiResponse({ status: 200, description: 'Successfully retrieved grant', type: GrantResponseDto })
-    @ApiResponse({ status: 404, description: 'Grant not found', example: '{Error encountered}' })
+    @ApiResponse({ status: 400, description: 'Bad Request - Invalid grant ID or AWS validation error', example: '{Error occurred}' })
+    @ApiResponse({ status: 404, description: 'Not Found - Grant does not exist', example: '{Error occurred}' })
     @ApiResponse({ status: 401, description: 'Unauthorized - Invalid or missing authentication token' })
     @ApiResponse({ status: 403, description: 'Forbidden - User does not have access to this resource' })
-    @ApiResponse({ status: 500, description: 'Internal Server Error', example: 'Internal Server Error' })
+    @ApiResponse({ status: 500, description: 'Internal Server Error - AWS error or server configuration issue', example: '{Error occurred}' })
     async getGrantById(@Param('id') GrantId: string): Promise<Grant> {
         this.logger.log(`GET /grant/${GrantId} - Retrieving grant by ID`);
         const grant = await this.grantService.getGrantById(parseInt(GrantId, 10));
