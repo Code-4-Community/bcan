@@ -89,8 +89,8 @@ const Register = observer(() => {
   };
 
   return (
-    <div className="bg-white grid grid-cols-2" style={styles.pageContainer}>
-      <div className="sm:w-3/4 lg:w-[60%] h-full py-20 px-20 flex flex-col justify-center items-start">
+    <div className="bg-white grid grid-cols-[60%_40%] w-screen h-screen relative m-0 p-0 overflow-hidden flex justify-center items-start text-start">
+      <div className="h-full py-20 px-20 flex flex-col justify-center items-start">
         {/*/ Left side: Registration form */}
         <div className="mb-4">
           <h1 className="text-[32px]">Get Started Now</h1>
@@ -111,7 +111,6 @@ const Register = observer(() => {
                   required
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter your username"
-                  style={styles.inputContainer}
                   className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-medium-gray"
                 />
               </div>
@@ -129,12 +128,11 @@ const Register = observer(() => {
                   required
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
-                  style={
+                  className={`block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border ${
                     failure.item === "email"
-                      ? styles.errorItem
-                      : styles.inputContainer
-                  }
-                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-medium-gray"
+                      ? "border-[#D33221]"
+                      : "border-medium-gray"
+                  }`}
                 />
               </div>
             </div>
@@ -151,12 +149,11 @@ const Register = observer(() => {
                   required
                   onChange={(e) => handlePassword(e.target.value)}
                   placeholder="Enter your password"
-                  style={
+                  className={`block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border ${
                     failure.item === "password"
-                      ? styles.errorItem
-                      : styles.inputContainer
-                  }
-                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-medium-gray"
+                      ? "border-[#D33221]"
+                      : "border-medium-gray"
+                  }`}
                 />
               </div>
             </div>
@@ -173,20 +170,22 @@ const Register = observer(() => {
                   onChange={(e) => handlePasswordMatch(e.target.value)}
                   required
                   placeholder="Re-enter your password"
-                  style={
+                  className={`block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border ${
                     failure.item === "password"
-                      ? styles.errorItem
-                      : styles.inputContainer
-                  }
-                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-medium-gray"
+                      ? "border-[#D33221]"
+                      : "border-medium-gray"
+                  }`}
                 />
               </div>
             </div>
           </div>
           <div className="items-center">
             <div
-              style={failure.state ? styles.error : styles.warning}
-              className={`min-h-28 mt-4 text-sm rounded-md flex items-center justify-center p-4 whitespace-pre-line text-left`}
+              className={`min-h-28 mt-4 text-sm rounded-md flex items-center justify-center p-4 whitespace-pre-line text-left ${
+                failure.state
+                  ? "text-[#D33221] bg-[#FFA399]"
+                  : "text-[#616161] bg-[#E7E7E7]"
+              }`}
             >
               {failure.state ? failure.message : defaultPasswordMessage}
             </div>
@@ -195,7 +194,6 @@ const Register = observer(() => {
           <button
             type="submit"
             className="w-full block mt-8 min-w-0 rounded-md grow bg-dark-orange text-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500"
-            style={{ ...styles.button, ...styles.helloButton }}
           >
             Register
           </button>
@@ -217,7 +215,7 @@ const Register = observer(() => {
         </form>
       </div>
       {/*/ Right side: logo */}
-      <div className="sm:w-1/4 lg:w-[40%] h-full flex flex-col justify-center items-center">
+      <div className="h-full flex flex-col justify-center items-center">
         <div className="w-full h-full  bg-medium-orange rounded-l-4xl flex flex-col justify-center items-center">
           <img
             className="w-[60%] h-[60%] object-contain p-10 mb-40"
@@ -231,29 +229,3 @@ const Register = observer(() => {
 });
 
 export default Register;
-
-// Inline style objects
-const styles: { [key: string]: React.CSSProperties } = {
-  pageContainer: {
-    position: "relative",
-    width: "100%",
-    height: "100vh",
-    margin: 0,
-    padding: 0,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "start",
-    textAlign: "start",
-  },
-  warning: {
-    color: "#616161",
-    backgroundColor: "#E7E7E7",
-  },
-  error: {
-    color: "#D33221",
-    backgroundColor: "#FFA399",
-  },
-  errorItem: {
-    borderColor: "#D33221",
-  },
-};
