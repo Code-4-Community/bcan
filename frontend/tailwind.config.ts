@@ -71,10 +71,20 @@ export default {
       black: "#000000",
     },
     fontFamily: {
-      sans: ["Montserrat", "sans-serif"],
-      serif: ["Georgia", "serif"],
+      sans: ["var(--font-sans)", "sans-serif"],
+      serif: ["var(--font-serif)", "serif"],
     },
     extend: {
+      fontSize: {
+        xs: ["var(--font-size-xs)", { lineHeight: "1rem" }],
+        sm: ["var(--font-size-sm)", { lineHeight: "1.25rem" }],
+        base: ["var(--font-size-base)", { lineHeight: "1.5rem" }],
+        lg: ["var(--font-size-lg)", { lineHeight: "1.75rem" }],
+        xl: ["var(--font-size-xl)", { lineHeight: "1.75rem" }],
+        "2xl": ["var(--font-size-2xl)", { lineHeight: "2rem" }],
+        "3xl": ["var(--font-size-3xl)", { lineHeight: "2.25rem" }],
+        "4xl": ["var(--font-size-4xl)", { lineHeight: "2.5rem" }],
+      },
       spacing: {
         "8xl": "96rem",
         "9xl": "128rem",

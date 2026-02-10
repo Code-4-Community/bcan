@@ -455,7 +455,7 @@ const NewGrantModal: React.FC<{
       <div className="modal-content ">
         {" "}
         {/*Popup container */}
-        <h2 className="font-family-helvetica">New Grant</h2>
+        <h2 className="">New Grant</h2>
         <div className="flex">
           {" "}
           {/* Major components in two columns */}
@@ -464,13 +464,13 @@ const NewGrantModal: React.FC<{
             {/*Organization name and input */}
             <div className="w-full md:mb-0">
               <label
-                className="font-family-helvetica  sm:text-sm lg:text-base flex block text-black  mb-1"
+                className=" sm:text-sm lg:text-base flex block text-black  mb-1"
                 htmlFor="grid-first-name"
               >
                 Organization Name *
               </label>
               <input
-                className="font-family-helvetica block w-full h-[42px] bg-tan text-black placeholder:text-gray-400 border border-black rounded py-3 px-4 mb-3 leading-tight"
+                className="block w-full h-[42px] bg-tan text-black placeholder:text-gray-400 border border-black rounded py-3 px-4 mb-3 leading-tight"
                 id="grid-first-name"
                 type="text"
                 placeholder="Type Here"
@@ -488,13 +488,13 @@ const NewGrantModal: React.FC<{
                   {/*Application date and input */}
                   <div className="w-1/2">
                     <label
-                      className="font-family-helvetica flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1"
+                      className="flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1"
                       htmlFor="grid-city"
                     >
                       Application Date *
                     </label>
                     <input
-                      className={`font-family-helvetica appearance-none block w-full h-[42px] bg-tan border border-black rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500 ${
+                      className={`appearance-none block w-full h-[42px] bg-tan border border-black rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500 ${
                         applicationDate ? "text-black" : "text-gray-500"
                       }`}
                       id="grid-city"
@@ -510,13 +510,13 @@ const NewGrantModal: React.FC<{
                   {/*Grant Start Date and input */}
                   <div className=" w-1/2">
                     <label
-                      className="font-family-helvetica flex block tracking-wide text-black text-black  sm:text-sm lg:text-base mb-1"
+                      className="flex block tracking-wide text-black text-black  sm:text-sm lg:text-base mb-1"
                       htmlFor="grid-state"
                     >
                       Grant Start Date *
                     </label>
                     <input
-                      className={`font-family-helvetica w-full appearance-none block w-full h-[42px] bg-tan placeholder:text-gray-400 border border-black rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500 ${
+                      className={`w-full appearance-none block w-full h-[42px] bg-tan placeholder:text-gray-400 border border-black rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500 ${
                         grantStartDate ? "text-black" : "text-gray-500"
                       }`}
                       id="grid-city"
@@ -532,7 +532,7 @@ const NewGrantModal: React.FC<{
                 {/*Estimated completition time and input - need to make wider (length of application date and grant start date)*/}
                 <div className="w-full mt-11">
                   <label
-                    className="font-family-helvetica flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1"
+                    className="flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1"
                     htmlFor="grid-state"
                   >
                     Estimated Completion Time (in hours) *
@@ -540,7 +540,7 @@ const NewGrantModal: React.FC<{
                   <input
                     type="number"
                     min="0"
-                    className="font-family-helvetica appearance-none block w-full h-[42px] bg-tan text-black placeholder:text-gray-400 border border-black rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500"
+                    className="appearance-none block w-full h-[42px] bg-tan text-black placeholder:text-gray-400 border border-black rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500"
                     id="grid-city"
                     value={estimatedCompletionTimeInHours}
                     onChange={(e) =>
@@ -555,7 +555,7 @@ const NewGrantModal: React.FC<{
                 {/*Report deadlines label and grey box */}
                 <div className="h-full">
                   <label
-                    className="font-family-helvetica flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1"
+                    className="flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1"
                     htmlFor="grid-zip"
                   >
                     Report Deadlines
@@ -564,7 +564,7 @@ const NewGrantModal: React.FC<{
                     className="p-2 rounded-[1.2rem] sm:h-52 xl:h-40 overflow-y-auto overflow-x-hidden bg-grey-400 border border-black"
                   >
                     <button
-                      className="font-family-helvetica w-full h-[42px] text-xs mb-2 flex items-center justify-center bg-primary-800 hover:bg-primary-900 text-black border border-black"
+                      className="w-full h-[42px] text-xs mb-2 flex items-center justify-center bg-primary-800 hover:bg-primary-900 text-black border border-black"
                       onClick={_addReportDate}
                     >
                       Add Deadline +
@@ -573,7 +573,7 @@ const NewGrantModal: React.FC<{
                       <div key={index} className="flex gap-2 mb-2 w-full">
                         <input
                           key={index}
-                          className="font-family-helvetica flex-1 min-w-0 h-[42px] bg-tan text-black rounded border border-black"
+                          className="flex-1 min-w-0 h-[42px] bg-tan text-black rounded border border-black"
                           type="date"
                           value={
                             date
@@ -590,7 +590,7 @@ const NewGrantModal: React.FC<{
                         />
                         {reportDates.length > 0 && (
                           <button
-                            className="font-family-helvetica w-5 h-[42px] flex-shrink-0 rounded text-white font-bold flex items-center justify-center bg-red-light border border-black"
+                            className="w-5 h-[42px] flex-shrink-0 rounded text-white font-bold flex items-center justify-center bg-red-light border border-black"
                             onClick={() => _removeReportDate(index)}
                           >
                             ✕
@@ -607,13 +607,13 @@ const NewGrantModal: React.FC<{
               {/*Timeline label and input */}
               <div className="w-full">
                 <label
-                  className="font-family-helvetica flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1"
+                  className="flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1"
                   htmlFor="grid-first-name"
                 >
                   Timeline (in years) *
                 </label>
                 <input
-                  className="font-family-helvetica appearance-none block w-full h-[42px] bg-tan text-black placeholder:text-gray-400 border border-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none"
+                  className="appearance-none block w-full h-[42px] bg-tan text-black placeholder:text-gray-400 border border-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none"
                   type="number"
                   min="0"
                   placeholder="Type Here"
@@ -625,13 +625,13 @@ const NewGrantModal: React.FC<{
               {/*Amount label and input */}
               <div className="w-full ">
                 <label
-                  className="font-family-helvetica flex block tracking-wide text-black placeholder:text-gray-400  sm:text-sm lg:text-base mb-1"
+                  className="flex block tracking-wide text-black placeholder:text-gray-400  sm:text-sm lg:text-base mb-1"
                   htmlFor="grid-first-name"
                 >
                   Amount (in $) *
                 </label>
                 <CurrencyInput
-                  className="font-family-helvetica appearance-none block w-full h-[42px] mb-[2px] bg-tan text-gray-700 border border-black rounded px-4 leading-tight focus:outline-none "
+                  className="appearance-none block w-full h-[42px] mb-[2px] bg-tan text-gray-700 border border-black rounded px-4 leading-tight focus:outline-none "
                   min={0}
                   decimalsLimit={2}
                   placeholder="Type Here"
@@ -647,7 +647,7 @@ const NewGrantModal: React.FC<{
             <div className="flex w-full mb-16">
               {/*BCAN POC div*/}
               <div className="w-full pr-3">
-                  <label className="font-family-helvetica mb-1 flex block tracking-wide text-black text-lg" htmlFor="grid-zip">
+                  <label className="mb-1 flex block tracking-wide  sm:text-sm lg:text-base text-black" htmlFor="grid-zip">
                       BCAN POC *
                   </label>
                   {/*Box div*/} 
@@ -662,7 +662,7 @@ const NewGrantModal: React.FC<{
                       }}
                       placeholder="Name"
                       />
-                        <input className="font-family-helvetica w-full h-[48px] bg-tan text-gray-700 rounded border border-black"
+                        <input className="w-full h-[48px] bg-tan text-gray-700 rounded border border-black"
                          placeholder="e-mail" 
                          value={bcanPocEmail}
                          readOnly
@@ -674,7 +674,7 @@ const NewGrantModal: React.FC<{
               {/*Grant Provider POC div*/}
               <div className="w-full pl-3">
                 <label
-                  className="font-family-helvetica mb-1 flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1 text-left"
+                  className="mb-1 flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1 text-left"
                   htmlFor="grid-zip"
                 >
                   Grant Provider POC
@@ -686,14 +686,14 @@ const NewGrantModal: React.FC<{
                   <MdOutlinePerson2 className="sm:p-1 lg:p-2 w-1/4 h-full" />
                   <div className="w-3/4">
                     <input
-                      className="font-family-helvetica w-full h-[42px] bg-tan text-gray-700 rounded border border-black"
+                      className="w-full h-[42px] bg-tan text-gray-700 rounded border border-black"
                       id="grid-city"
                       placeholder="Name"
                       value={grantProviderPocName}
                       onChange={(e) => setGrantProviderPocName(e.target.value)}
                     />
                     <input
-                      className="font-family-helvetica w-full h-[42px] bg-tan text-gray-700 rounded border border-black"
+                      className="w-full h-[42px] bg-tan text-gray-700 rounded border border-black"
                       id="grid-city"
                       placeholder="e-mail"
                       value={grantProviderPocEmail}
@@ -711,13 +711,13 @@ const NewGrantModal: React.FC<{
                 {/*Qualify label and input */}
                 <div className="w-full ">
                   <label
-                    className="font-family-helvetica flex block tracking-wide text-black sm:text-sm lg:text-base mb-1 text-left"
+                    className="flex block tracking-wide text-black sm:text-sm lg:text-base mb-1 text-left"
                     htmlFor="grid-first-name"
                   >
                     Does BCAN qualify? *
                   </label>
                   <select
-                    className={`font-family-helvetica appearance-none block w-full h-[42px] bg-tan border border-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none ${
+                    className={`appearance-none block w-full h-[42px] bg-tan border border-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none ${
                       doesBcanQualify == "" ? "text-gray-500" : "text-black"
                     }`}
                     id="grid-first-name"
@@ -733,13 +733,13 @@ const NewGrantModal: React.FC<{
                 {/*Status label and input */}
                 <div className="w-full">
                   <label
-                    className="font-family-helvetica flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1"
+                    className="flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1"
                     htmlFor="grid-first-name"
                   >
                     Status
                   </label>
                   <select
-                    className={`font-family-helvetica appearance-none block w-full h-[42px] bg-tan placeholder:text-gray-400 border border-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none ${
+                    className={`appearance-none block w-full h-[42px] bg-tan placeholder:text-gray-400 border border-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none ${
                       status == null ? "text-gray-500" : "text-black"
                     }`}
                     id="grid-first-name"
@@ -758,13 +758,13 @@ const NewGrantModal: React.FC<{
                 {/*Restriction types label and input */}
                 <div className="w-full">
                   <label
-                    className="font-family-helvetica flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1 text0left"
+                    className="flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1 text0left"
                     htmlFor="grid-first-name"
                   >
                     Restriction type *
                   </label>
                   <select
-                    className={`font-family-helvetica appearance-none block w-full h-[42px] bg-tan border border-black rounded py-3 px-4 leading-tight focus:outline-none ${
+                    className={`appearance-none block w-full h-[42px] bg-tan border border-black rounded py-3 px-4 leading-tight focus:outline-none ${
                       isRestricted == "" ? "text-gray-500" : "text-black"
                     }`}
                     id="grid-first-name"
@@ -784,7 +784,7 @@ const NewGrantModal: React.FC<{
 
               {/*Scope Documents div p-2 h-full w-1/2 flex-col*/}
               <div className="w-1/2 flex-col pl-3">
-                <label className="font-family-helvetica flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1 text-start">
+                <label className="flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1 text-start">
                   Scope Documents
                 </label>
 
@@ -793,7 +793,7 @@ const NewGrantModal: React.FC<{
                   <button
                     type="button"
                     onClick={_addAttachment}
-                    className="items-center flex font-family-helvetica w-full h-[42px] mt-1 mb-2 justify-center  bg-primary-800 hover:bg-primary-900 text-black border border-black"
+                    className="items-center flex w-full h-[42px] mt-1 mb-2 justify-center  bg-primary-800 hover:bg-primary-900 text-black border border-black"
                   >
                     <FiUpload className="mr-2" />
                     <span>Upload Documents</span>
@@ -881,7 +881,7 @@ const NewGrantModal: React.FC<{
                         className="flex gap-2 mb-2 w-full items-center"
                       >
                         <div
-                          className="overflow-hidden rounded-md font-family-helvetica flex-1 min-w-0 h-[42px] bg-tan text-gray-700 border border-black flex items-center px-3 justify-between"
+                          className="overflow-hidden rounded-md flex-1 min-w-0 h-[42px] bg-tan text-gray-700 border border-black flex items-center px-3 justify-between"
                         >
                           <a
                             href={attachment.url}
@@ -900,7 +900,7 @@ const NewGrantModal: React.FC<{
                           </span>
                         </div>
                         <button
-                          className="font-family-helvetica w-5 h-[42px] flex-shrink-0 rounded text-white font-bold flex items-center justify-center bg-red-light border border-black"
+                          className="w-5 h-[42px] flex-shrink-0 rounded text-white font-bold flex items-center justify-center bg-red-light border border-black"
                           onClick={() => _removeAttachment(index)}
                         >
                           ✕
@@ -918,13 +918,13 @@ const NewGrantModal: React.FC<{
         {/*Description and input */}
         <div className="w-full mt-4">
           <label
-            className="font-family-helvetica flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1"
+            className="flex block tracking-wide text-black  sm:text-sm lg:text-base mb-1"
             htmlFor="grid-first-name"
           >
             Description
           </label>
           <textarea
-            className="font-family-helvetica h-48 block w-full bg-tan text-gray-700 border border-black rounded py-3 px-4 mb-3 leading-tight"
+            className="h-48 block w-full bg-tan text-gray-700 border border-black rounded py-3 px-4 mb-3 leading-tight"
             id="grid-first-name"
             value={description}
             onChange={(e) => _setDescription(e.target.value)}
@@ -932,13 +932,13 @@ const NewGrantModal: React.FC<{
         </div>
         <div className="button-row">
           <button
-            className="font-family-helvetica h-[42px] flex items-center justify-center text-black bg-white border border-black"
+            className="h-[42px] flex items-center justify-center text-black bg-white border border-black"
             onClick={onClose}
           >
             Close
           </button>
           <button
-            className="font-family-helvetica h-[42px] flex items-center justify-center text-black bg-primary-800 border border-black"
+            className="h-[42px] flex items-center justify-center text-black bg-primary-800 border border-black"
             onClick={handleSubmit}
           >
             Save
@@ -952,13 +952,13 @@ const NewGrantModal: React.FC<{
           <div
             className="bg-white rounded-lg p-6 max-w-md mx-4 border-2 border-black"
           >
-            <h3 className="font-family-helvetica text-xl font-bold mb-2">
+            <h3 className="text-xl font-bold mb-2">
               Error
             </h3>
-            <p className="font-family-helvetica mb-4">{_errorMessage}</p>
+            <p className="mb-4">{_errorMessage}</p>
             <button
               onClick={() => setShowErrorPopup(false)}
-              className="font-family-helvetica px-4 py-2 rounded hover:opacity-80 bg-primary-800 text-black border border-black"
+              className="px-4 py-2 rounded hover:opacity-80 bg-primary-800 text-black border border-black"
             >
               Close
             </button>
