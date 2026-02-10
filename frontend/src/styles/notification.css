@@ -22,7 +22,7 @@
 
 
 .popup-header h3 {
-  font-size: var(--font-size-notification-header);
+  font-size: var(--font-size-lg);
   font-weight: 600;
   color: black;
   margin: 0;
@@ -57,7 +57,7 @@
   padding: 8px 10px;
   padding-right: 35px;
   margin-bottom: 2px;
-  font-size: var(--font-size-notification-body);
+  font-size: var(--font-size-sm);
   transition: background-color 0.2s ease;
   display: flex;
 }
@@ -82,13 +82,13 @@
 
 .notification-title {
   font-weight: 600;
-  font-size: var(--font-size-notification-title);
+  font-size: var(--font-size-sm);
   color: black;
   line-height: 1.15;
 }
 
 .notification-message {
-  font-size: var(--font-size-notification-message);
+  font-size: var(--font-size-xs);
   color: var(--color-grey-600);
   margin-top: 4px;
   line-height: 1.2;
@@ -104,7 +104,7 @@
   right: 10px;
   color: gray;
   cursor: pointer;
-  font-size: var(--font-size-notification-body);
+  font-size: var(--font-size-sm);
 }
 
 .notification-trash-icon:hover {

@@ -25,13 +25,6 @@
   --font-size-3xl: 1.875rem;
   --font-size-4xl: 2.25rem;
   --font-size-hero: 3.2rem;
-  /* Exact sizes used by notification (match original). */
-  --font-size-notification-header: 1.1rem;
-  --font-size-notification-body: 0.9rem;
-  --font-size-notification-title: 13px;
-  --font-size-notification-message: 12.5px;
-  /* Modal title (original 1.8rem). */
-  --font-size-modal-title: 1.8rem;
 
   --color-green-dark: #119548;
   --color-green: #5ab911;
