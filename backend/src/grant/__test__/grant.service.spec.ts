@@ -6,7 +6,7 @@ type POC = { POC_name: string; POC_email: string };
 import { TDateISO } from "../../utils/date";
 
 
-import { NotFoundException } from "@nestjs/common";
+import { NotFoundException, BadRequestException, InternalServerErrorException } from "@nestjs/common";
 
 interface Grant {
   grantId: number;
@@ -207,13 +207,44 @@ describe("GrantService", () => {
       expect(data).toEqual([]);
     });
 
-    it("should throw an error if there is an issue retrieving the grants", async () => {
-      const dbError = new Error("Could not retrieve grants");
-      mockPromise.mockRejectedValue(dbError);
+    it("should throw BadRequestException if there is an AWS ResourceNotFoundException", async () => {
+      const awsError = new Error("AWS DynamoDB error");
+      (awsError as any).code = "ResourceNotFoundException";
+      mockPromise.mockRejectedValue(awsError);
 
       await expect(grantService.getAllGrants()).rejects.toThrow(
-        "Could not retrieve grants"
+        BadRequestException
       );
+      await expect(grantService.getAllGrants()).rejects.toThrow(
+        /AWS DynamoDB Error/
+      );
+    });
+
+    it("should throw InternalServerErrorException if there is an AWS throttling error", async () => {
+      const awsError = new Error("AWS DynamoDB error");
+      (awsError as any).code = "ThrottlingException";
+      mockPromise.mockRejectedValue(awsError);
+
+      await expect(grantService.getAllGrants()).rejects.toThrow(
+        InternalServerErrorException
+      );
+      await expect(grantService.getAllGrants()).rejects.toThrow(
+        /AWS DynamoDB Error/
+      );
+    });
+
+    it("should throw InternalServerErrorException if table name is not configured", async () => {
+      delete process.env.DYNAMODB_GRANT_TABLE_NAME;
+      
+      await expect(grantService.getAllGrants()).rejects.toThrow(
+        InternalServerErrorException
+      );
+      await expect(grantService.getAllGrants()).rejects.toThrow(
+        /Server configuration error/
+      );
+      
+      // Restore for other tests
+      process.env.DYNAMODB_GRANT_TABLE_NAME = 'Grants';
     });
   });
 
@@ -232,14 +263,39 @@ describe("GrantService", () => {
       })
     });
 
-    it("should throw an error if given an invalid id", async () => {
-      const noGrantFoundError = new NotFoundException(
-        "No grant with id 5 found."
-      );
-      mockPromise.mockRejectedValue(noGrantFoundError);
+    it("should throw NotFoundException if grant does not exist", async () => {
+      mockPromise.mockResolvedValue({ Item: null });
 
       await expect(grantService.getGrantById(5)).rejects.toThrow(
-        "No grant with id 5 found."
+        NotFoundException
+      );
+      await expect(grantService.getGrantById(5)).rejects.toThrow(
+        /No grant with id 5 found/
+      );
+    });
+
+    it("should throw BadRequestException if given an invalid grant ID", async () => {
+      await expect(grantService.getGrantById(null as any)).rejects.toThrow(
+        BadRequestException
+      );
+      await expect(grantService.getGrantById(undefined as any)).rejects.toThrow(
+        BadRequestException
+      );
+      await expect(grantService.getGrantById(NaN)).rejects.toThrow(
+        BadRequestException
+      );
+    });
+
+    it("should throw InternalServerErrorException if AWS error occurs", async () => {
+      const awsError = new Error("AWS DynamoDB error");
+      (awsError as any).code = "ThrottlingException";
+      mockPromise.mockRejectedValue(awsError);
+
+      await expect(grantService.getGrantById(1)).rejects.toThrow(
+        InternalServerErrorException
+      );
+      await expect(grantService.getGrantById(1)).rejects.toThrow(
+        /AWS DynamoDB Error/
       );
     });
   });
@@ -282,6 +338,36 @@ describe("GrantService", () => {
         ExpressionAttributeValues: { ":inactiveStatus": Status.Inactive },
         ReturnValues: "ALL_NEW",
       });
+    });
+
+    it("should throw BadRequestException if grant ID is invalid", async () => {
+      await expect(grantService.makeGrantsInactive(null as any)).rejects.toThrow(
+        BadRequestException
+      );
+      await expect(grantService.makeGrantsInactive(NaN)).rejects.toThrow(
+        BadRequestException
+      );
+    });
+
+    it("should throw NotFoundException if grant does not exist", async () => {
+      mockPromise.mockResolvedValue({ Attributes: null });
+
+      await expect(grantService.makeGrantsInactive(999)).rejects.toThrow(
+        NotFoundException
+      );
+    });
+
+    it("should throw InternalServerErrorException if AWS error occurs", async () => {
+      const awsError = new Error("AWS DynamoDB error");
+      (awsError as any).code = "ValidationException";
+      mockPromise.mockRejectedValue(awsError);
+
+      await expect(grantService.makeGrantsInactive(1)).rejects.toThrow(
+        BadRequestException
+      );
+      await expect(grantService.makeGrantsInactive(1)).rejects.toThrow(
+        /AWS DynamoDB Validation Error/
+      );
     });
   });
 
@@ -332,18 +418,44 @@ describe("GrantService", () => {
       })
     });
 
-    it("should throw an error if the updated grant has an invalid id", async () => {
+    it("should throw BadRequestException if grant data is invalid", async () => {
+      await expect(grantService.updateGrant(null as any)).rejects.toThrow(
+        BadRequestException
+      );
+      await expect(grantService.updateGrant({} as any)).rejects.toThrow(
+        BadRequestException
+      );
+    });
+
+    it("should throw BadRequestException if grant ID is invalid", async () => {
+      const invalidGrant = { ...mockGrants[1], grantId: NaN };
+      await expect(grantService.updateGrant(invalidGrant as any)).rejects.toThrow(
+        BadRequestException
+      );
+    });
+
+    it("should throw BadRequestException if no fields to update", async () => {
+      const grantWithOnlyId = { grantId: 1 } as any;
+      await expect(grantService.updateGrant(grantWithOnlyId)).rejects.toThrow(
+        BadRequestException
+      );
+      await expect(grantService.updateGrant(grantWithOnlyId)).rejects.toThrow(
+        /No fields provided to update/
+      );
+    });
+
+    it("should throw InternalServerErrorException if AWS error occurs", async () => {
       const mockUpdatedGrant: Grant = {
         grantId: 90,
         organization: mockGrants[1].organization,
-        does_bcan_qualify: true, // UPDATED
-        status: Status.Active, // UPDATED
+        does_bcan_qualify: true,
+        status: Status.Active,
         amount: mockGrants[1].amount,
         application_deadline: mockGrants[1].application_deadline,
         report_deadlines: mockGrants[1].report_deadlines,
         description: mockGrants[1].description,
         timeline: mockGrants[1].timeline,
-        estimated_completion_time: 400, // UPDATED
+        estimated_completion_time: 400,
         grantmaker_poc: mockGrants[1].grantmaker_poc,
         attachments: mockGrants[1].attachments,
         grant_start_date: mockGrants[1].grant_start_date,
@@ -351,12 +463,15 @@ describe("GrantService", () => {
         isRestricted: mockGrants[1].isRestricted,
       };
 
-      mockUpdate.mockRejectedValue({
-        promise: vi.fn().mockRejectedValue(new Error()),
-      });
+      const awsError = new Error("AWS DynamoDB error");
+      (awsError as any).code = "ProvisionedThroughputExceededException";
+      mockPromise.mockRejectedValue(awsError);
 
       await expect(grantService.updateGrant(mockUpdatedGrant)).rejects.toThrow(
-        new Error("Failed to update Grant 90")
+        InternalServerErrorException
+      );
+      await expect(grantService.updateGrant(mockUpdatedGrant)).rejects.toThrow(
+        /AWS DynamoDB Error/
       );
     });
   });
@@ -399,34 +514,72 @@ describe("GrantService", () => {
       });
     });
 
-    // decided this test wasn't relevant since you would never pass in something that wasn't a Grant
-    /*
-    it("should throw an error if the database put operation fails", async () => {
-      const mockCreateGrant : Grant = {
-        organization: "New Org",
-        description: "New Desc",
-        grantmaker_poc: { POC_name: "name", POC_email: "email" },
-        bcan_poc: { POC_name: "name", POC_email: "email" },
-        grant_start_date: "2025-03-01",
-        application_deadline: "2025-04-01",
-        report_deadlines: ["2025-05-01"],
-        timeline: 3,
-        estimated_completion_time: 200,
-        does_bcan_qualify: true,
-        status: Status.Active,
-        amount: 1500,
-        attachments: [],
-        grantId: 0,
-        isRestricted: false
-      };
-
-      mockPut.mockRejectedValue(new Error("DB Error"));
-
-      await expect(grantService.addGrant(mockCreateGrant)).rejects.toThrow(
-        "Failed to upload new grant from New Org"
+    it("should throw BadRequestException if grant data is invalid", async () => {
+      await expect(grantService.addGrant(null as any)).rejects.toThrow(
+        BadRequestException
+      );
+      await expect(grantService.addGrant({} as any)).rejects.toThrow(
+        BadRequestException
       );
     });
-    */
+
+    it("should throw BadRequestException if organization is missing", async () => {
+      const invalidGrant = { ...mockGrants[0], organization: "" };
+      await expect(grantService.addGrant(invalidGrant as any)).rejects.toThrow(
+        BadRequestException
+      );
+      await expect(grantService.addGrant(invalidGrant as any)).rejects.toThrow(
+        /organization is required/
+      );
+    });
+
+    it("should throw BadRequestException if bcan_poc is missing", async () => {
+      const invalidGrant = { ...mockGrants[0], bcan_poc: null };
+      await expect(grantService.addGrant(invalidGrant as any)).rejects.toThrow(
+        BadRequestException
+      );
+      await expect(grantService.addGrant(invalidGrant as any)).rejects.toThrow(
+        /bcan_poc with POC_email is required/
+      );
+    });
+
+    it("should throw BadRequestException if AWS ItemCollectionSizeLimitExceededException occurs", async () => {
+      // Use a grant with valid bcan_poc to pass validation
+      const validGrant: Grant = {
+        ...mockGrants[1], // This one has valid bcan_poc
+        grantId: 0, // Will be replaced by service
+      };
+      
+      const awsError = new Error("AWS DynamoDB error");
+      (awsError as any).code = "ItemCollectionSizeLimitExceededException";
+      mockPromise.mockRejectedValue(awsError);
+
+      await expect(grantService.addGrant(validGrant)).rejects.toThrow(
+        BadRequestException
+      );
+      await expect(grantService.addGrant(validGrant)).rejects.toThrow(
+        /AWS DynamoDB Error/
+      );
+    });
+
+    it("should throw InternalServerErrorException if AWS throttling error occurs", async () => {
+      // Use a grant with valid bcan_poc to pass validation
+      const validGrant: Grant = {
+        ...mockGrants[1], // This one has valid bcan_poc
+        grantId: 0, // Will be replaced by service
+      };
+      
+      const awsError = new Error("AWS DynamoDB error");
+      (awsError as any).code = "ThrottlingException";
+      mockPromise.mockRejectedValue(awsError);
+
+      await expect(grantService.addGrant(validGrant)).rejects.toThrow(
+        InternalServerErrorException
+      );
+      await expect(grantService.addGrant(validGrant)).rejects.toThrow(
+        /AWS DynamoDB Error/
+      );
+    });
   });
 
   // Tests for deleteGrantById method
@@ -465,13 +618,50 @@ describe('deleteGrantById', () => {
     .rejects.toThrow(/does not exist/);
   });
 
-  it('should throw a generic failure when DynamoDB fails for other reasons', async () => {
+  it('should throw BadRequestException if grant ID is invalid', async () => {
+    await expect(grantService.deleteGrantById(null as any))
+      .rejects.toThrow(BadRequestException);
+    await expect(grantService.deleteGrantById(NaN))
+      .rejects.toThrow(BadRequestException);
+  });
+
+  it('should throw BadRequestException when grant does not exist (ConditionalCheckFailedException)', async () => {
+    const conditionalError = new Error('Conditional check failed');
+    (conditionalError as any).code = 'ConditionalCheckFailedException';
+
+    mockDelete.mockReturnValue({
+      promise: vi.fn().mockRejectedValue(conditionalError)
+    });
+
+    await expect(grantService.deleteGrantById(999))
+      .rejects.toThrow(BadRequestException);
+    await expect(grantService.deleteGrantById(999))
+      .rejects.toThrow(/does not exist/);
+  });
+
+  it('should throw InternalServerErrorException when AWS error occurs', async () => {
+    const awsError = new Error('AWS DynamoDB error');
+    (awsError as any).code = 'ThrottlingException';
+
+    mockDelete.mockReturnValue({
+      promise: vi.fn().mockRejectedValue(awsError)
+    });
+
+    await expect(grantService.deleteGrantById(123))
+      .rejects.toThrow(InternalServerErrorException);
+    await expect(grantService.deleteGrantById(123))
+      .rejects.toThrow(/AWS DynamoDB Error/);
+  });
+
+  it('should throw InternalServerErrorException for generic DynamoDB errors', async () => {
     mockDelete.mockReturnValue({
       promise: vi.fn().mockRejectedValue(new Error('Some other DynamoDB error'))
     });
 
     await expect(grantService.deleteGrantById(123))
-    .rejects.toThrow(/Failed to delete/);
+      .rejects.toThrow(InternalServerErrorException);
+    await expect(grantService.deleteGrantById(123))
+      .rejects.toThrow(/Failed to delete grant/);
   });
 });
 describe('Notification helpers', () => {

@@ -1,10 +1,18 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import * as AWS from 'aws-sdk'; 
 import { Grant } from '../../../middle-layer/types/Grant';
 import { NotificationService } from '../notifications/notification.service';
 import { Notification } from '../../../middle-layer/types/Notification';
 import { TDateISO } from '../utils/date';
 import { Status } from '../../../middle-layer/types/Status';
+
+interface AWSError extends Error {
+    code?: string;
+    statusCode?: number;
+    requestId?: string;
+    retryable?: boolean;
+}
+
 @Injectable()
 export class GrantService {
     private readonly logger = new Logger(GrantService.name);
@@ -12,12 +20,79 @@ export class GrantService {
 
     constructor(private readonly notificationService: NotificationService) {}
 
+    /**
+     * Helper method to check if an error is an AWS error and extract relevant information
+     */
+    private isAWSError(error: unknown): error is AWSError {
+        return (
+            typeof error === 'object' &&
+            error !== null &&
+            ('code' in error || 'statusCode' in error || 'requestId' in error)
+        );
+    }
+
+    /**
+     * Helper method to handle AWS errors and throw appropriate NestJS exceptions
+     */
+    private handleAWSError(error: AWSError, operation: string, context?: string): never {
+        const errorContext = context ? ` (${context})` : '';
+        const errorDetails = {
+            code: error.code,
+            message: error.message,
+            requestId: error.requestId,
+            retryable: error.retryable,
+        };
+
+        this.logger.error(`AWS Error during ${operation}${errorContext}:`, {
+            ...errorDetails,
+            stack: error.stack,
+        });
+
+        // Handle specific AWS error codes
+        switch (error.code) {
+            case 'ResourceNotFoundException':
+                throw new BadRequestException(
+                    `AWS DynamoDB Error: Table or resource not found. ${error.message}`
+                );
+            case 'ValidationException':
+                throw new BadRequestException(
+                    `AWS DynamoDB Validation Error: Invalid request parameters. ${error.message}`
+                );
+            case 'ProvisionedThroughputExceededException':
+                throw new InternalServerErrorException(
+                    `AWS DynamoDB Error: Request rate too high. Please retry later. ${error.message}`
+                );
+            case 'ThrottlingException':
+                throw new InternalServerErrorException(
+                    `AWS DynamoDB Error: Request throttled. Please retry later. ${error.message}`
+                );
+            case 'ConditionalCheckFailedException':
+                throw new BadRequestException(
+                    `AWS DynamoDB Error: Conditional check failed. ${error.message}`
+                );
+            case 'ItemCollectionSizeLimitExceededException':
+                throw new BadRequestException(
+                    `AWS DynamoDB Error: Item collection size limit exceeded. ${error.message}`
+                );
+            default:
+                throw new InternalServerErrorException(
+                    `AWS DynamoDB Error during ${operation}: ${error.message || 'Unknown AWS error'}`
+                );
+        }
+    }
+
     // Retrieves all grants from the database and automatically inactivates expired grants
     async getAllGrants(): Promise<Grant[]> {
       this.logger.log('Starting to retrieve all grants from database');
         const params = {
             TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
         };
+
+        // Validate table name
+        if (params.TableName === 'TABLE_FAILURE') {
+            this.logger.error('DYNAMODB_GRANT_TABLE_NAME environment variable is not set');
+            throw new InternalServerErrorException('Server configuration error: DynamoDB table name not configured');
+        }
 
         try {
           this.logger.debug(`Scanning DynamoDB table: ${params.TableName}`);
@@ -42,10 +117,14 @@ export class GrantService {
                   if (now >= endDate) {
                       this.logger.warn(`Grant ${grant.grantId} has expired and will be marked inactive`);
                       inactiveGrantIds.push(grant.grantId);
-                      let newGrant = this.makeGrantsInactive(grant.grantId)
-                      grants.filter(g => g.grantId !== grant.grantId);
-                      grants.push(await newGrant);
-
+                      try {
+                          let newGrant = await this.makeGrantsInactive(grant.grantId);
+                          grants.filter(g => g.grantId !== grant.grantId);
+                          grants.push(newGrant);
+                      } catch (inactiveError) {
+                          this.logger.error(`Failed to inactivate expired grant ${grant.grantId}`, inactiveError instanceof Error ? inactiveError.stack : undefined);
+                          // Continue processing other grants even if one fails to inactivate
+                      }
                   }
                 }
               }
@@ -57,14 +136,31 @@ export class GrantService {
           this.logger.log(`Successfully retrieved ${grants.length} grants`);
           return grants;
         } catch (error) {
+            if (this.isAWSError(error)) {
+                this.handleAWSError(error, 'getAllGrants', `table: ${params.TableName}`);
+            }
+            
+            // Handle application logic errors
+            if (error instanceof BadRequestException || error instanceof InternalServerErrorException) {
+                throw error;
+            }
+            
+            // Generic error fallback
             this.logger.error('Failed to retrieve grants from database', error instanceof Error ? error.stack : undefined);
-            throw new Error('Could not retrieve grants.');
+            throw new InternalServerErrorException(`Failed to retrieve grants: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
 
     // Retrieves a single grant from the database by its unique grant ID
     async getGrantById(grantId: number): Promise<Grant> {
       this.logger.log(`Retrieving grant with ID: ${grantId}`);
+      
+      // Validate input
+      if (!grantId || isNaN(Number(grantId))) {
+          this.logger.error(`Invalid grant ID provided: ${grantId}`);
+          throw new BadRequestException(`Invalid grant ID: ${grantId}. Grant ID must be a valid number.`);
+      }
+      
         const params = {
             TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
             Key: {
@@ -72,31 +168,55 @@ export class GrantService {
             },
         };
 
+        // Validate table name
+        if (params.TableName === 'TABLE_FAILURE') {
+            this.logger.error('DYNAMODB_GRANT_TABLE_NAME environment variable is not set');
+            throw new InternalServerErrorException('Server configuration error: DynamoDB table name not configured');
+        }
+
         try {
             this.logger.debug(`Querying DynamoDB for grant ID: ${grantId}`);
             const data = await this.dynamoDb.get(params).promise();
 
             if (!data.Item) {
                 this.logger.warn(`Grant with ID ${grantId} not found in database`);
-                throw new NotFoundException('No grant with id ' + grantId + ' found.');
+                throw new NotFoundException(`No grant with id ${grantId} found.`);
             }
 
             this.logger.log(`Successfully retrieved grant ${grantId} from database`);
             return data.Item as Grant;
         } catch (error) {
+            // Re-throw NestJS exceptions
             if (error instanceof NotFoundException) {
               this.logger.warn(`Grant ${grantId} not found: ${error.message}`);
               throw error;
             }
             
+            if (error instanceof BadRequestException || error instanceof InternalServerErrorException) {
+                throw error;
+            }
+            
+            // Handle AWS errors
+            if (this.isAWSError(error)) {
+                this.handleAWSError(error, 'getGrantById', `grantId: ${grantId}`);
+            }
+            
+            // Generic error fallback
             this.logger.error(`Failed to retrieve grant ${grantId}`, error instanceof Error ? error.stack : undefined);
-            throw new Error('Failed to retrieve grant.');
+            throw new InternalServerErrorException(`Failed to retrieve grant ${grantId}: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
 
     // Marks a grant as inactive by updating its status in the database
     async makeGrantsInactive(grantId: number): Promise<Grant> {
       this.logger.log(`Marking grant ${grantId} as inactive`);
+      
+      // Validate input
+      if (!grantId || isNaN(Number(grantId))) {
+          this.logger.error(`Invalid grant ID provided: ${grantId}`);
+          throw new BadRequestException(`Invalid grant ID: ${grantId}. Grant ID must be a valid number.`);
+      }
+      
       let updatedGrant: Grant = {} as Grant;
 
       const params = {
@@ -112,20 +232,42 @@ export class GrantService {
           ReturnValues: "ALL_NEW",
       };
 
+      // Validate table name
+      if (params.TableName === 'TABLE_FAILURE') {
+          this.logger.error('DYNAMODB_GRANT_TABLE_NAME environment variable is not set');
+          throw new InternalServerErrorException('Server configuration error: DynamoDB table name not configured');
+      }
+
       try {
           this.logger.debug(`Updating grant ${grantId} status to inactive in DynamoDB`);
           const res = await this.dynamoDb.update(params).promise();
       
-          if (res.Attributes?.status === Status.Inactive) {
-              this.logger.log(`Grant ${grantId} successfully marked as inactive`);
-              const currentGrant = res.Attributes as Grant;
-              updatedGrant = currentGrant;
-          } else {
-              this.logger.warn(`Grant ${grantId} update failed or no change in status`);
+          if (!res.Attributes) {
+              this.logger.warn(`Grant ${grantId} update returned no attributes - grant may not exist`);
+              throw new NotFoundException(`Grant with id ${grantId} not found or could not be updated.`);
           }
-      } catch (err) {
-          this.logger.error(`Failed to update grant ${grantId} status to inactive`, err instanceof Error ? err.stack : undefined);
-          throw new Error(`Failed to update Grant ${grantId} status.`);
+          
+          if (res.Attributes.status === Status.Inactive) {
+              this.logger.log(`Grant ${grantId} successfully marked as inactive`);
+              updatedGrant = res.Attributes as Grant;
+          } else {
+              this.logger.warn(`Grant ${grantId} update completed but status is ${res.Attributes.status}, expected ${Status.Inactive}`);
+              updatedGrant = res.Attributes as Grant;
+          }
+      } catch (error) {
+          // Re-throw NestJS exceptions
+          if (error instanceof NotFoundException || error instanceof BadRequestException || error instanceof InternalServerErrorException) {
+              throw error;
+          }
+          
+          // Handle AWS errors
+          if (this.isAWSError(error)) {
+              this.handleAWSError(error, 'makeGrantsInactive', `grantId: ${grantId}`);
+          }
+          
+          // Generic error fallback
+          this.logger.error(`Failed to update grant ${grantId} status to inactive`, error instanceof Error ? error.stack : undefined);
+          throw new InternalServerErrorException(`Failed to update grant ${grantId} status: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
 
       return updatedGrant;
@@ -134,11 +276,32 @@ export class GrantService {
 
     // Updates an existing grant in the database with new grant data
     async updateGrant(grantData: Grant): Promise<string> {
+      // Validate input - check for null/undefined first
+      if (!grantData) {
+          this.logger.error('Invalid grant data provided for update');
+          throw new BadRequestException('Invalid grant data: grant object is required.');
+      }
+      
       this.logger.log(`Updating grant with ID: ${grantData.grantId}`);
+      
+      if (!grantData.grantId) {
+          this.logger.error('Invalid grant data provided for update');
+          throw new BadRequestException('Invalid grant data: grantId is required.');
+      }
+      
+      if (isNaN(Number(grantData.grantId))) {
+          this.logger.error(`Invalid grant ID provided: ${grantData.grantId}`);
+          throw new BadRequestException(`Invalid grant ID: ${grantData.grantId}. Grant ID must be a valid number.`);
+      }
       
       const updateKeys = Object.keys(grantData).filter(
           key => key != 'grantId'
       );
+      
+      if (updateKeys.length === 0) {
+          this.logger.warn(`No fields to update for grant ${grantData.grantId}`);
+          throw new BadRequestException('No fields provided to update. At least one field besides grantId is required.');
+      }
       
       this.logger.debug(`Updating ${updateKeys.length} fields for grant ${grantData.grantId}: ${updateKeys.join(', ')}`);
       
@@ -157,22 +320,56 @@ export class GrantService {
           ReturnValues: "UPDATED_NEW",
       };
 
+      // Validate table name
+      if (params.TableName === 'TABLE_FAILURE') {
+          this.logger.error('DYNAMODB_GRANT_TABLE_NAME environment variable is not set');
+          throw new InternalServerErrorException('Server configuration error: DynamoDB table name not configured');
+      }
+
       try {
           this.logger.debug(`Executing DynamoDB update for grant ${grantData.grantId}`);
           const result = await this.dynamoDb.update(params).promise();
           this.logger.log(`Successfully updated grant ${grantData.grantId} in database`);
           //await this.updateGrantNotifications(grantData);
           return JSON.stringify(result);
-      } catch(err: unknown) {
-          this.logger.error(`Failed to update grant ${grantData.grantId} in DynamoDB`, err instanceof Error ? err.stack : undefined);
-          this.logger.error(`Error details: ${JSON.stringify(err)}`);
-          throw new Error(`Failed to update Grant ${grantData.grantId}`);
+      } catch(error: unknown) {
+          // Re-throw NestJS exceptions
+          if (error instanceof BadRequestException || error instanceof InternalServerErrorException) {
+              throw error;
+          }
+          
+          // Handle AWS errors
+          if (this.isAWSError(error)) {
+              this.handleAWSError(error, 'updateGrant', `grantId: ${grantData.grantId}`);
+          }
+          
+          // Generic error fallback
+          this.logger.error(`Failed to update grant ${grantData.grantId} in DynamoDB`, error instanceof Error ? error.stack : undefined);
+          this.logger.error(`Error details: ${JSON.stringify(error)}`);
+          throw new InternalServerErrorException(`Failed to update grant ${grantData.grantId}: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
   }
     
     // Creates a new grant in the database and generates a unique grant ID
     async addGrant(grant: Grant): Promise<number> {
+      // Validate input - check for null/undefined first
+      if (!grant) {
+          this.logger.error('Invalid grant data provided');
+          throw new BadRequestException('Invalid grant data: grant object is required.');
+      }
+      
       this.logger.log(`Creating new grant for organization: ${grant.organization}`);
+      
+      if (!grant.organization || grant.organization.trim() === '') {
+          this.logger.error('Invalid organization name provided');
+          throw new BadRequestException('Invalid grant data: organization is required.');
+      }
+      
+      if (!grant.bcan_poc || !grant.bcan_poc.POC_email) {
+          this.logger.error('Invalid bcan_poc provided');
+          throw new BadRequestException('Invalid grant data: bcan_poc with POC_email is required.');
+      }
+      
       // Generate a unique grant ID (using Date.now() for simplicity, needs proper UUID)
       const newGrantId = Date.now();
       this.logger.debug(`Generated grant ID: ${newGrantId}`);
@@ -198,6 +395,12 @@ export class GrantService {
         }
       };
 
+      // Validate table name
+      if (params.TableName === 'TABLE_FAILURE') {
+          this.logger.error('DYNAMODB_GRANT_TABLE_NAME environment variable is not set');
+          throw new InternalServerErrorException('Server configuration error: DynamoDB table name not configured');
+      }
+
       try {
         this.logger.debug(`Inserting grant ${newGrantId} into DynamoDB`);
         await this.dynamoDb.put(params).promise();
@@ -209,11 +412,22 @@ export class GrantService {
         //await this.createGrantNotifications({ ...grant, grantId: newGrantId }, userId);
         
         this.logger.log(`Successfully created grant ${newGrantId} with all associated data`);
-      } catch (error: any) {
-        this.logger.error(`Failed to create new grant for organization: ${grant.organization}`);
-        this.logger.error(`Error details: ${error.message}`);
-        this.logger.error(`Stack trace: ${error.stack}`);
-        throw new Error(`Failed to upload new grant from ${grant.organization}`);
+      } catch (error: unknown) {
+          // Re-throw NestJS exceptions
+          if (error instanceof BadRequestException || error instanceof InternalServerErrorException) {
+              throw error;
+          }
+          
+          // Handle AWS errors
+          if (this.isAWSError(error)) {
+              this.handleAWSError(error, 'addGrant', `organization: ${grant.organization}, grantId: ${newGrantId}`);
+          }
+          
+          // Generic error fallback
+          this.logger.error(`Failed to create new grant for organization: ${grant.organization}`);
+          this.logger.error(`Error details: ${error instanceof Error ? error.message : JSON.stringify(error)}`);
+          this.logger.error(`Stack trace: ${error instanceof Error ? error.stack : undefined}`);
+          throw new InternalServerErrorException(`Failed to create grant for organization ${grant.organization}: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }
 
       return newGrantId;
@@ -222,24 +436,49 @@ export class GrantService {
   // Deletes a grant from the database by its grant ID
   async deleteGrantById(grantId: number): Promise<string> {
     this.logger.log(`Deleting grant with ID: ${grantId}`);
+    
+    // Validate input
+    if (!grantId || isNaN(Number(grantId))) {
+        this.logger.error(`Invalid grant ID provided: ${grantId}`);
+        throw new BadRequestException(`Invalid grant ID: ${grantId}. Grant ID must be a valid number.`);
+    }
+    
     const params = {
         TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || "TABLE_FAILURE",
         Key: { grantId: Number(grantId) },
         ConditionExpression: "attribute_exists(grantId)", // ensures grant exists
     };
 
+    // Validate table name
+    if (params.TableName === 'TABLE_FAILURE') {
+        this.logger.error('DYNAMODB_GRANT_TABLE_NAME environment variable is not set');
+        throw new InternalServerErrorException('Server configuration error: DynamoDB table name not configured');
+    }
+
     try {
         this.logger.debug(`Executing DynamoDB delete for grant ${grantId}`);
         await this.dynamoDb.delete(params).promise();
         this.logger.log(`Successfully deleted grant ${grantId} from database`);
         return `Grant ${grantId} deleted successfully`;
-    } catch (error: any) {
-        if (error.code === "ConditionalCheckFailedException") {
-            this.logger.warn(`Grant ${grantId} does not exist in database`);
-            throw new Error(`Grant ${grantId} does not exist`);
+    } catch (error: unknown) {
+        // Re-throw NestJS exceptions
+        if (error instanceof BadRequestException || error instanceof InternalServerErrorException) {
+            throw error;
         }
-        this.logger.error(`Failed to delete grant ${grantId}`, error.stack);
-        throw new Error(`Failed to delete Grant ${grantId}`);
+        
+        // Handle AWS errors
+        if (this.isAWSError(error)) {
+            // ConditionalCheckFailedException means the grant doesn't exist
+            if (error.code === "ConditionalCheckFailedException") {
+                this.logger.warn(`Grant ${grantId} does not exist in database`);
+                throw new BadRequestException(`Grant ${grantId} does not exist`);
+            }
+            this.handleAWSError(error, 'deleteGrantById', `grantId: ${grantId}`);
+        }
+        
+        // Generic error fallback
+        this.logger.error(`Failed to delete grant ${grantId}`, error instanceof Error ? error.stack : undefined);
+        throw new InternalServerErrorException(`Failed to delete grant ${grantId}: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
