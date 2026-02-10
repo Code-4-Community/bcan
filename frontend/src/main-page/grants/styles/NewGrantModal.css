@@ -24,7 +24,6 @@
     We'll use a background color similar to the screenshot's peach tone.
   */
 .modal-content {
-  font-family: var(--font-sans-modal);
   background: white; /* Peach background */
   max-width: 85%;
   max-height: 85%; /* More width to accommodate multiple columns */

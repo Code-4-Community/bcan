@@ -13,8 +13,6 @@
   /* Font families: use CSS vars so swapping is a one-line change. */
   --font-sans: "Inter", system-ui, Avenir, Helvetica, Arial, sans-serif;
   --font-serif: Georgia, "Times New Roman", serif;
-  /* Modal/form font: originally Helvetica (web-safe). */
-  --font-sans-modal: Helvetica, Arial, sans-serif;
 
   /* Size baseline and scale (all relative to base for easy swapping). */
   --font-size-base: 1rem;

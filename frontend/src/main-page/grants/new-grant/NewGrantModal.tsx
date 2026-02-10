@@ -647,7 +647,7 @@ const NewGrantModal: React.FC<{
             <div className="flex w-full mb-16">
               {/*BCAN POC div*/}
               <div className="w-full pr-3">
-                  <label className="mb-1 flex block tracking-wide text-black text-lg" htmlFor="grid-zip">
+                  <label className="mb-1 flex block tracking-wide  sm:text-sm lg:text-base text-black" htmlFor="grid-zip">
                       BCAN POC *
                   </label>
                   {/*Box div*/} 
