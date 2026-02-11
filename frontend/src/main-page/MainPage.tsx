@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Dashboard from "./dashboard/Dashboard";
 import GrantPage from "./grants/GrantPage";
-import Header from "./header/Header";
+import NavBar from "./navbar/NavBar";
 import Users from "./users/Users";
 import RestrictedPage from "./restricted/RestrictedPage";
 import CashFlowPage from "./cash-flow/CashFlowPage";
@@ -10,8 +10,9 @@ function MainPage() {
   
 
   return (
-    <div className="w-full">
-      <Header />
+    <div className="w-full h-screen flex flex-row">
+      <NavBar/>
+      <div className="flex-1 overflow-auto">
       <Routes>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/all-grants" element={<GrantPage showOnlyMyGrants={false} />} />
@@ -22,6 +23,7 @@ function MainPage() {
         {/* fallback route */}
         <Route path="*" element={<GrantPage />} />
       </Routes>
+      </div>
     </div>
   );
 }

@@ -20,6 +20,7 @@ import { toJS } from "mobx";
 import { fetchGrants } from "./filter-bar/processGrantData.ts";
 import { UserStatus } from "../../../../middle-layer/types/UserStatus.ts";
 import { Navigate } from "react-router-dom";
+import BellButton from "../navbar/Bell.tsx";
 
 interface GrantPageProps {
   showOnlyMyGrants?: boolean; //if true, filters grants by user email
@@ -29,6 +30,7 @@ function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
   const [showNewGrantModal, setShowNewGrantModal] = useState(false);
   const [wasGrantSubmitted, setWasGrantSubmitted] = useState(false);
   const [selectedGrant, setSelectedGrant] = useState<Grant | null>(null);
+  const [openModal, setOpenModal] = useState(false);
 
   const { user } = useAuthContext(); //gets current logged in user
   const userObj = toJS(user);
@@ -60,6 +62,9 @@ function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
         <div className="flex justify-end align-middle p-4 gap-4">
           <GrantSearch />
           <AddGrantButton onClick={() => setShowNewGrantModal(true)} />
+            <div className="bell-container" onClick={() => setOpenModal(!openModal)}>
+            <BellButton setOpenModal={setOpenModal} openModal={openModal} />
+          </div>
         </div>
         <div className="grid grid-cols-5 gap-8 px-4">
           <div className="col-span-1">
