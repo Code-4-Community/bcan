@@ -8,7 +8,7 @@ import { getAppStore } from "../../external/bcanSatchel/store";
 import { observer } from 'mobx-react-lite';
 
 interface NotificationPopupProps {
-    setOpenModal: (value: string | null) => void;
+    setOpenModal: (open: boolean) => void;
 }
 
 const NotificationPopup: React.FC<NotificationPopupProps> = observer(({
@@ -54,7 +54,7 @@ const NotificationPopup: React.FC<NotificationPopupProps> = observer(({
         <div className="notification-popup" role="dialog" aria-label="Notifications">
             <div className="popup-header">
                 <h3>Alerts</h3>
-                <button className="close-button" onClick={() => setOpenModal(null)} aria-label="Close notifications">
+                <button className="close-button" onClick={() => setOpenModal(false)} aria-label="Close notifications">
                     ✕
                 </button>
             </div>

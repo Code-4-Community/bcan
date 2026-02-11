@@ -22,16 +22,15 @@ interface NavBarProps {
 
 const linkList: NavBarProps[] = [
   { name: "Dashboard", linkTo: "/main/dashboard" },
-  { name: "All Grants", linkTo: "/main/all-grants" },
-  { name: "My Grants", linkTo: "/main/my-grants" },
+  { name: "Grants", linkTo: "/main/all-grants" },
+  { name: "Cash Flow", linkTo: "/main/cash-flow" },
 ];
 
 /**
  * Header component provides the main navigation along with a settings cog.
  * The cog displays a dropdown with "My Account" and "Logout" options.
  */
-const Header: React.FC = observer(() => {
-  const [openModal, setOpenModal] = useState<string | null>(null);
+const NavBar: React.FC = observer(() => {
 
   function categoryClicked(
     e: React.MouseEvent,
@@ -46,40 +45,41 @@ const Header: React.FC = observer(() => {
 
   
   return (
-    <header className="header bg-orange-light drop-shadow-md">
-      <div className="header-left-comp">
-        <img className="logo" src={logo} alt="BCAN Logo" />
+    <aside className="left-0 top-0 h-screen w-56 flex-shrink-0 bg-white drop-shadow-lg flex flex-col">
+      {/* Logo at top */}
+      <div className="p-6 flex items-center justify-center border-b border-gray-200">
+        <img className="w-12 h-12" src={logo} alt="BCAN Logo" />
+        <span className="ml-3 text-xl font-semibold">BostonCan</span>
       </div>
-      <div className="header-right-comp">
-        <ul className="flex gap-8">
+
+      {/* Navigation links - stacked vertically */}
+      <nav className="flex-1 py-8 px-4">
+        <ul className="flex flex-col gap-2">
           {linkList.map((item, index) => (
             <li key={index}>
               <Link
                 onClick={(e) => categoryClicked(e, item.name, item.linkTo)}
                 to={item.linkTo ? item.linkTo : "#"}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                  useLocation().pathname === item.linkTo
+                    ? "bg-primary-700 font-semibold border border-black"
+                    : "hover:bg-primary-800"
+                }`}
               >
-                <div
-                  className={`header-button header-button${
-                    useLocation().pathname === item.linkTo ? "-selected" : ""
-                  } hover:bg-primary-800`}
-                >
-                  {item.name}
-                </div>
+                <span className="text-sm">{item.name}</span>
               </Link>
             </li>
           ))}
         </ul>
-        <div className="header-right-controls flex items-center gap-2">
-          <div className="bell-container" onClick={() => setOpenModal(openModal === "bell" ? null : "bell")}>
-            <BellButton setOpenModal={setOpenModal} openModal={openModal} />
-          </div>
-          <div className="user-container" onClick={() => setOpenModal(openModal === "user" ? null : "user")}>
-            <UserButton setOpenModal={setOpenModal} openModal={openModal} />
-          </div>
+      </nav>
+
+      {/* Bottom controls - Settings and Sign Out */}
+      <div className="border-t border-orange py-4 px-4">
+        <div className="flex flex-col gap-2">
         </div>
       </div>
-    </header>
+    </aside>
   );
 });
 
-export default Header;
+export default NavBar;

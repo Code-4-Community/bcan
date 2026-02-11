@@ -3,7 +3,7 @@ import './styles/AccountInfo.css';
 import { logoutUser,
 } from "../../external/bcanSatchel/actions.ts";
 import { useNavigate } from 'react-router-dom';
-import { useAuthContext } from "../../context/auth/authContext";
+import { useAuthContext } from "../../context/auth/authContext.tsx";
 import { createPortal } from 'react-dom';
 
 interface AccountInfoProps {
