@@ -19,27 +19,34 @@ const KPICard = observer(
       <div className="chart-container bg-white w-full flex flex-col justify-between">
         {/* Title */}
         <div className="text-lg w-full text-left font-semibold">{title}</div>
-        <div className="text-4xl font-semibold text-left">{formattedValue}</div>
+        <div className="text-3xl lg:text-4xl font-semibold text-left">{formattedValue}</div>
         {/* Value and Percent Change */}
-        <div className="flex flex-row justify-between items-center w-full">
+        <div className="flex flex-row justify-between items-center w-full mt-auto">
           {priorYear && (
-            <div className="text-sm text-right flex items-center justify-end mr-1">
-              {percentChange >= 0 ? (
+            <div className="sm:text-xs lg:text:sm text-right flex items-center justify-end mr-1">
+              {percentChange === 0 && (
+                <span className="flex items-center text-grey-700">
+                  <span className="inline mr-1 font-bold">-</span>
+                  {` 0%`}
+                </span>
+              )}
+              {percentChange > 0 && (
                 <span className="flex items-center text-green">
-                  <FaArrowUp className="inline text-sm"></FaArrowUp>
+                  <FaArrowUp className="inline "></FaArrowUp>
                   {`${percentChange.toFixed(0)}%`}
                 </span>
                 
-              ) : (
+              )}
+              {percentChange < 0 && (
                 <span className="flex items-center text-red">
-                  <FaArrowDown className="inline text-sm"></FaArrowDown>
+                  <FaArrowDown className="inline"></FaArrowDown>
                  {`${Math.abs(percentChange).toFixed(0)}%`}
                 </span>
               )}
               </div>
           )}
           {/* Year comparison at bottom */}
-          <div className="text-sm text-left ml-1 text-grey-600 w-full">
+          <div className="text-xs lg:text-sm text-left ml-1 text-grey-600 w-full">
             {recentYear}
             {priorYear ? ` vs. ${priorYear}` : ""}
           </div>

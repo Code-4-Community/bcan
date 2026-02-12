@@ -100,14 +100,6 @@ input[type="checkbox"]:checked::before {
   fill: darkslategray;
 }
 
-
-.container {
-  container-type: inline-size; /* Define the container context */
-}
-
-/* Hide the element inside a container when the container width is 400px or less */
-@container (max-width: 400px) {
-  .my-element {
-    display: none;
-  }
+#reactSchedulerOutsideWrapper input:focus {
+  outline: 0px none;
 }

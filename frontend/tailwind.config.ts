@@ -90,6 +90,7 @@ export default {
       borderRadius: {
         "4xl": "2rem",
         md: "0.75rem",
+        DEFAULT: "0.75rem",
       },
     },
   },

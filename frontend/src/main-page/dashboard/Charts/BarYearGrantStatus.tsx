@@ -110,6 +110,7 @@ const BarYearGrantStatus = observer(
               <LabelList
                 dataKey="value"
                 position="top"
+                style={{fontSize: "var(--font-size-xs)", fill: "var(--color-grey-600)"}}
                 formatter={(label: any) =>
                   typeof label === "number"
                     ? checked

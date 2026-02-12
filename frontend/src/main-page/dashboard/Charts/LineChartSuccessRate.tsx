@@ -27,7 +27,7 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
   const moneyReceived = getListApplied(true);
   const moneyUnreceived = getListApplied(false);
 
-     const [width, setWidth] = useState(0);
+  const [width, setWidth] = useState(0);
 
   // Formatting money data
   const data_money = aggregateMoneyGrantsByYear(grants, "status").map(
@@ -48,7 +48,7 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
         date: new Date(`${grant.year}-01-03`),
         money_captured: Number(captured.toFixed(2)),
       };
-    }
+    },
   );
 
   // Formatting count data
@@ -70,13 +70,13 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
         date: new Date(`${grant.year}-01-04`),
         grants_captured: Number(captured.toFixed(2)),
       };
-    }
+    },
   );
 
   // Merging the data into format for chart
   const data = data_money.map((moneyItem) => {
     const countItem = data_count.find(
-      (c) => c.date.getFullYear() === moneyItem.date.getFullYear()
+      (c) => c.date.getFullYear() === moneyItem.date.getFullYear(),
     );
     return {
       date: moneyItem.date,
@@ -102,42 +102,48 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
       >
         <LineChart
           data={data}
-          margin={{ top: 40, right: 30, left: 50, bottom: 10 }}
+          margin={{ top: 50, right: 30, left: 30, bottom: 5 }}
         >
-          {width > 300 && (<LegendComp
-            iconType="circle"
-            verticalAlign="top"
-            align="center"
-            layout="vertical"
-            wrapperStyle={{ top: 0, left: "60%"}}
-            formatter={(
-              value:
-                | string
-                | number
-                | boolean
-                | React.ReactElement<
-                    any,
-                    string | React.JSXElementConstructor<any>
-                  >
-                | Iterable<React.ReactNode>
-                | React.ReactPortal
-                | null
-                | undefined
-            ) => (
-              <span
-                style={{
-                  color: "var(--color-grey-700)",
-                  fontWeight: 500,
-                  marginLeft: 5,
-                  marginRight: 5,
-                  fontSize: "var(--font-size-xs)",
-                }}
-              >
-                {value}
-              </span>
-            )}
-          />)}
-          <CartesianGrid vertical={false} stroke="lightgray" strokeDasharray="5 5" />
+          {width > 400 && (
+            <LegendComp
+              iconType="circle"
+              verticalAlign="top"
+              align={width > 500 ? "right" :"center"}
+              layout={width > 500 ? "horizontal" :"vertical"}
+              wrapperStyle={{ top: 0, right: "5%" }}
+              formatter={(
+                value:
+                  | string
+                  | number
+                  | boolean
+                  | React.ReactElement<
+                      any,
+                      string | React.JSXElementConstructor<any>
+                    >
+                  | Iterable<React.ReactNode>
+                  | React.ReactPortal
+                  | null
+                  | undefined,
+              ) => (
+                <span
+                  style={{
+                    color: "var(--color-grey-700)",
+                    fontWeight: 500,
+                    marginLeft: 5,
+                    marginRight: 5,
+                    fontSize: "var(--font-size-xs)",
+                  }}
+                >
+                  {value}
+                </span>
+              )}
+            />
+          )}
+          <CartesianGrid
+            vertical={false}
+            stroke="lightgray"
+            strokeDasharray="5 5"
+          />
           <Line
             type="monotone"
             dataKey="money_captured"

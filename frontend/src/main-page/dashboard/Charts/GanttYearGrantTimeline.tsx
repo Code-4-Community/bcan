@@ -152,7 +152,7 @@ export const GanttYearGrantTimeline = observer(
             : ""}
           {recentYear}
         </div>
-        <div className="w-full h-[375px] max-w-screen relative">
+        <div className="w-full h-[425px] max-w-screen relative">
           <Scheduler
             data={filteredMockedSchedulerData}
             isLoading={false}
