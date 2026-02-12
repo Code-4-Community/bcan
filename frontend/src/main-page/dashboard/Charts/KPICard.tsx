@@ -19,7 +19,7 @@ const KPICard = observer(
       <div className="chart-container bg-white w-full flex flex-col justify-between">
         {/* Title */}
         <div className="text-lg w-full text-left font-semibold">{title}</div>
-        <div className="text-3xl lg:text-4xl font-semibold text-left">{formattedValue}</div>
+        <div className="text-2xl lg:text-3xl font-semibold text-left">{formattedValue}</div>
         {/* Value and Percent Change */}
         <div className="flex flex-row justify-between items-center w-full mt-auto">
           {priorYear && (
