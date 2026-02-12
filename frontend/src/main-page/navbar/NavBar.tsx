@@ -11,7 +11,7 @@ import {
 } from "../../external/bcanSatchel/actions.ts";
 import { observer } from "mobx-react-lite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChartLine, faMoneyBill, faClipboardCheck, faGear, faRightFromBracket, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faChartLine, faMoneyBill, faClipboardCheck, faGear, faRightFromBracket, faUser } from "@fortawesome/free-solid-svg-icons";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { UserStatus } from "../../../../middle-layer/types/UserStatus";
 import NavTab from "./NavTab.tsx";
@@ -81,7 +81,7 @@ const NavBar: React.FC = observer(() => {
             <li>
               <NavTab
                 to="/main/users"
-                icon={faUsers}
+                icon={faUser}
                 label="Users"
               />
             </li>
