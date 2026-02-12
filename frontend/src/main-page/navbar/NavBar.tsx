@@ -2,25 +2,20 @@ import { useNavigate } from "react-router-dom";
 import "./styles/Header.css";
 import logo from "../../images/logo.svg";
 import {
-  Status,
-  stringToStatus,
-} from "../../../../middle-layer/types/Status.ts";
-import {
-  logoutUser,
-  updateFilter,
+  logoutUser
 } from "../../external/bcanSatchel/actions.ts";
 import { observer } from "mobx-react-lite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChartLine, faMoneyBill, faClipboardCheck, faGear, faRightFromBracket, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faChartLine, faMoneyBill, faClipboardCheck, faGear, faRightFromBracket, faUser, faBorderNone } from "@fortawesome/free-solid-svg-icons";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { UserStatus } from "../../../../middle-layer/types/UserStatus";
 import NavTab from "./NavTab.tsx";
+import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 interface NavBarProps {
   name: string;
   linkTo?: string;
-  filter?: Status;
-  icon?: any;
+  icon?: IconDefinition;
 }
 
 const linkList: NavBarProps[] = [
@@ -37,22 +32,10 @@ const NavBar: React.FC = observer(() => {
   const user = getAppStore().user;
   const isAdmin = user?.position === UserStatus.Admin;
 
-  function categoryClicked(
-    e: React.MouseEvent,
-    category: string,
-    linkTo?: string
-  ) {
-    if (!linkTo) {
-      e.preventDefault();
-      updateFilter(stringToStatus(category));
-    }
-  }
-
   const handleLogout = () => {
     logoutUser();
     navigate("/login");
   };
-
   
   return (
     <aside className="left-0 top-0 h-screen w-56 bg-white flex flex-col">
@@ -69,9 +52,8 @@ const NavBar: React.FC = observer(() => {
             <li key={index}>
               <NavTab
                 to={item.linkTo || "#"}
-                icon={item.icon}
+                icon={item.icon || faBorderNone} // default icon if not provided (shouldn't happen since all items have icons)
                 label={item.name}
-                onClick={(e) => categoryClicked(e, item.name, item.linkTo)}
               />
             </li>
           ))}
@@ -89,7 +71,7 @@ const NavBar: React.FC = observer(() => {
         </ul>
       </nav>
 
-      {/* Bottom controls - Settings and Sign Out */}
+      {/*vSettings and Sign Out Section */}
       <div className="border-t-2 border-primary-700 py-4 pr-4">
         <div className="flex flex-col gap-2 mt-2">
           <NavTab

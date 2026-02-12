@@ -12,7 +12,7 @@ function MainPage() {
 
   return (
     <div className="w-full h-screen flex flex-row">
-      <NavBar/>
+      <NavBar />
       <div className="flex-1 overflow-auto">
       <Routes>
         <Route path="/dashboard" element={<Dashboard />} />

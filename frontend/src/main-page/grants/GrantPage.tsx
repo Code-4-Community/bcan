@@ -62,7 +62,7 @@ function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
         <div className="flex justify-end align-middle p-4 gap-4">
           <GrantSearch />
           <AddGrantButton onClick={() => setShowNewGrantModal(true)} />
-            <div className="bell-container" onClick={() => setOpenModal(!openModal)}>
+          <div className="bell-container">
             <BellButton setOpenModal={setOpenModal} openModal={openModal} />
           </div>
         </div>
