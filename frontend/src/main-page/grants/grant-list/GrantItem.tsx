@@ -367,7 +367,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                         >
                           <MdOutlinePerson2 className="w-1/5 h-full p-1" />
                           <div
-                            className="w-4/5 border-l border-black rounded-r-md bg-tan"
+                            className="w-4/5 border-l border-black rounded-r-md bg-grey-200"
                           >
                             <h2
                               className="truncate px-2 text-left font-bold h-8 w-full text-gray-700 rounded flex items-center"
@@ -405,7 +405,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                         >
                           <MdOutlinePerson2 className="w-1/5 h-full p-1" />
                           <div
-                            className="w-4/5 border-l border-black bg-tan rounded-r-md"
+                            className="w-4/5 border-l border-black bg-grey-200 rounded-r-md"
                           >
                             <h2
                               className="truncate px-2 text-left font-bold h-8 w-full text-gray-700 rounded-md flex items-center"
@@ -517,7 +517,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                                   {attachment.url && (
                                     <div
                                       key={index}
-                                      className="items-center truncate overflow-x-scroll overflow-hidden text-left justify-center w-full rounded-md p-2 mb-2 bg-tan h-[42px] border border-black text-black"
+                                      className="items-center truncate overflow-x-scroll overflow-hidden text-left justify-center w-full rounded-md p-2 mb-2 bg-grey-200 h-[42px] border border-black text-black"
                                     >
                                       <a
                                         href={attachment.url}
@@ -565,7 +565,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                 Description
               </label>
               <div
-                className="h-64 bg-tan flex w-full rounded-md p-5 overflow-auto border border-black text-black"
+                className="h-64 bg-grey-200 flex w-full rounded-md p-5 overflow-auto border border-black text-black"
               >
                 {curGrant.description}
                 </div>

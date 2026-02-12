@@ -4,8 +4,6 @@ export default {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx,html}"],
   theme: {
     colors: {
-      tan: "#F2EBE4",
-
       orange: {
         DEFAULT: "#ffa500",
         light: "#FFCEB6",
