@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   LineChart,
   Line,
@@ -26,6 +26,8 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
   // Get status lists for received and unreceived
   const moneyReceived = getListApplied(true);
   const moneyUnreceived = getListApplied(false);
+
+     const [width, setWidth] = useState(0);
 
   // Formatting money data
   const data_money = aggregateMoneyGrantsByYear(grants, "status").map(
@@ -87,26 +89,27 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
   data.sort((a, b) => a.date.getTime() - b.date.getTime());
 
   return (
-    <div className="chart-container h-full">
+    <div className="h-full">
       {/* Title */}
-      <div className="text-lg w-full text-left font-semibold align">
+      <div className="text-lg w-full text-left font-semibold align absolute">
         Success Rate by Year
       </div>
       <ResponsiveContainer
         width="100%"
         height="100%"
-        maxHeight={300}
         min-width={400}
+        onResize={(w) => setWidth(w)}
       >
         <LineChart
           data={data}
-          margin={{ top: 20, right: 30, left: 50, bottom: 5 }}
+          margin={{ top: 40, right: 30, left: 50, bottom: 10 }}
         >
-          <LegendComp
-            wrapperStyle={{ paddingBottom: 40 }}
+          {width > 300 && (<LegendComp
             iconType="circle"
             verticalAlign="top"
-            align="left"
+            align="center"
+            layout="vertical"
+            wrapperStyle={{ top: 0, left: "60%"}}
             formatter={(
               value:
                 | string
@@ -123,21 +126,22 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
             ) => (
               <span
                 style={{
-                  color: "black",
+                  color: "var(--color-grey-700)",
                   fontWeight: 500,
                   marginLeft: 5,
-                  marginRight: 10,
+                  marginRight: 5,
+                  fontSize: "var(--font-size-xs)",
                 }}
               >
                 {value}
               </span>
             )}
-          />
+          />)}
           <CartesianGrid vertical={false} stroke="lightgray" strokeDasharray="5 5" />
           <Line
             type="monotone"
             dataKey="money_captured"
-            stroke="var(--color-primary-800)"
+            stroke="var(--color-primary-900)"
             strokeWidth={2}
             dot={{ r: 4 }}
             name="Money Captured"
@@ -146,7 +150,7 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
           <Line
             type="monotone"
             dataKey="grants_captured"
-            stroke="var(--color-yellow)"
+            stroke="var(--color-primary-700)"
             strokeWidth={2}
             dot={{ r: 4 }}
             name="Grants Captured"
@@ -157,6 +161,7 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
             domain={["auto", "auto"]}
             scale="time"
             dy={10}
+            style={{ fontSize: "var(--font-size-sm)" }}
             tickFormatter={(date: Date) => date.getFullYear().toString()}
             axisLine={false}
             tickLine={false}

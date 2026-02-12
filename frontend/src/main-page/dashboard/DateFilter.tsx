@@ -3,6 +3,8 @@ import { updateYearFilter } from "../../external/bcanSatchel/actions";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { observer } from "mobx-react-lite";
 import { FaChevronDown } from "react-icons/fa";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 const DateFilter: React.FC = observer(() => {
   const { allGrants, yearFilter } = getAppStore();
@@ -48,6 +50,8 @@ const DateFilter: React.FC = observer(() => {
     setShowDropdown(false);
   };
 
+  
+
   return (
     <div className="flex flex-col space-y-2 w-[300px]">
       <button
@@ -63,15 +67,18 @@ const DateFilter: React.FC = observer(() => {
         <FaChevronDown className="ms-2 text-sm" />
       </button>
       <div
-        className={`z-[100] absolute  top-[185px]  w-[300px] bg-white ${showDropdown ? "" : "hidden"} rounded-[16px] border-2 border-gray-200 shadow-lg`}
+        className={`z-[100] absolute  top-[184px]  w-[300px] bg-white ${showDropdown ? "" : "hidden"} rounded-[16px] border-2 border-gray-200 shadow-lg`}
       >
+        <button className="close-button absolute top-3 right-4 text-lg" onClick={() => setShowDropdown(false)} aria-label="Close notifications">
+                    <FontAwesomeIcon icon={faXmark} className="text-lg" />
+                </button>
         <ul
           className="h-42 p-4 pb-3 overflow-y-auto text-sm "
           aria-labelledby="dropdownSearchButton"
         >
           {uniqueYears.map((year) => (
             <li key={year}>
-              <div className="flex items-center p-2 rounded-sm hover:bg-grey-100">
+              <div className="flex items-center p-2 rounded-sm">
                 <input
                   type="checkbox"
                   className="w-4 h-4 rounded-sm accent-primary-900 bg-orange-lightest"

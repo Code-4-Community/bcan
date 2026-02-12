@@ -92,7 +92,7 @@ const KPICards = observer(
       prior.countReceived > 0 ? prior.moneyReceived / prior.countReceived : 0;
 
     return (
-      <div className="grid grid-cols-2 gap-4 h-full">
+      <div className="grid grid-cols-2 gap-5 h-full">
         <KPICard
           title="Grants Applied"
           recentYear={recentYear}

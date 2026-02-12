@@ -31,8 +31,8 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
   );
   const total = sumReceived + sumUnreceived;
   const data = [
-    { name: "Received", value: sumReceived, fill: "var(--color-yellow)"},
-    { name: "Unreceived", value: sumUnreceived, fill: "var(--color-primary-800)" },
+    { name: "Received", value: sumReceived, fill: "var(--color-primary-900)"},
+    { name: "Unreceived", value: sumUnreceived, fill: "var(--color-primary-700)" },
   ];
 
   // Creating the label for the slices
@@ -66,11 +66,11 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
 
   return (
     <div
-      className="chart-container flex flex-col align-center"
+      className="flex flex-col align-center"
     >
-      <div className="relative w-full h-full flex flex-col">
+      <div className="absolute w-full h-full flex flex-col">
         {/* Title */}
-        <div className="text-lg font-semibold relative text-left">
+        <div className="text-lg font-semibold absolute text-left">
           Money Applied For {/* Total Amount */}
           <div className="text-2xl font-semibold mt-1 absolute">
             {`$${((sumReceived + sumUnreceived) / 1000000).toLocaleString(
@@ -87,7 +87,7 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
                 name="Unreceived"
                 value={sumUnreceived}
                 percent={sumUnreceived / total}
-                color="var(--color-primary-800)"
+                color="var(--color-primary-700)"
               />
             </div>
           )}
@@ -98,15 +98,16 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
                 name="Received"
                 value={sumReceived}
                 percent={sumReceived / total}
-                color="var(--color-yellow)"
+                color="var(--color-primary-900)"
               />
             </div>
           )}
         </div>
       </div>
-      <ResponsiveContainer width="100%" height={250}>
+      <ResponsiveContainer width="100%" height={240}>
         <PieChart
-          style={{ maxWidth: "1000px", maxHeight: "300px", aspectRatio: 1 }}
+          style={{ aspectRatio: 1 }}
+          margin={{ top: 60, right:0, left: 100, bottom: 0 }}
         >
           <Pie
             data={data}
@@ -114,7 +115,7 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
             endAngle={450}
             dataKey="value"
             nameKey="name"
-            innerRadius="60%"
+            innerRadius="55%"
             outerRadius="80%"
             cornerRadius={50}
             stroke="white"

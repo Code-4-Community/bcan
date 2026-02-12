@@ -40,18 +40,18 @@ const StackedBarMoneyReceived = observer(({ grants }: { grants: Grant[] }) => {
   );
 
   return (
-    <div className="chart-container">
+    <div className="h-full flex-col">
       {/* Title */}
       <div className="text-lg w-full text-left font-semibold align">
         Money Received by Year
       </div>
-      <ResponsiveContainer width="100%" height={250} min-width={400}>
+      <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={data}
-          margin={{ top: 20, right: 30, left: 50, bottom: 5 }}
+          margin={{ top: 10, right: 10, left: 10, bottom: 30 }}
         >
           <LegendComp
-            wrapperStyle={{ paddingBottom: 40 }}
+            wrapperStyle={{ paddingBottom: 15 }}
             iconType="circle"
             verticalAlign="top"
             align="left"
@@ -70,7 +70,7 @@ const StackedBarMoneyReceived = observer(({ grants }: { grants: Grant[] }) => {
                 | undefined
             ) => (
               <span
-                className="text-black font-medium ml-1 mr-5"
+                className="text-grey-700 text-sm ml-1 mr-5"
               >
                 {value}
               </span>
@@ -81,7 +81,7 @@ const StackedBarMoneyReceived = observer(({ grants }: { grants: Grant[] }) => {
             type="monotone"
             stackId="a"
             dataKey="unreceived"
-            fill="var(--color-primary-800)"
+            fill="var(--color-primary-700)"
             strokeWidth={2}
             name="Unreceived"
             radius={[15, 15, 15, 15]}
@@ -89,7 +89,7 @@ const StackedBarMoneyReceived = observer(({ grants }: { grants: Grant[] }) => {
             <LabelList
               dataKey="unreceived"
               position="insideTop"
-              style={{ fontSize: 12 }}
+              style={{ fontSize: "var(--font-size-xs)" }}
               formatter={(label: any) =>
                 typeof label === "number" && label > 0
                   ? `$${label / 1000}k`
@@ -101,7 +101,7 @@ const StackedBarMoneyReceived = observer(({ grants }: { grants: Grant[] }) => {
             type="monotone"
             stackId="a"
             dataKey="received"
-            fill="var(--color-yellow)"
+            fill="var(--color-primary-900)"
             strokeWidth={2}
             name="Received"
             radius={[15, 15, 15, 15]}
@@ -109,7 +109,7 @@ const StackedBarMoneyReceived = observer(({ grants }: { grants: Grant[] }) => {
             <LabelList
               dataKey="received"
               position="insideTop"
-              style={{ fontSize: 12 }}
+              style={{ fontSize: "var(--font-size-xs)" }}
               formatter={(label: any) =>
                 typeof label === "number" && label > 0
                   ? `$${label / 1000}k`
@@ -117,15 +117,8 @@ const StackedBarMoneyReceived = observer(({ grants }: { grants: Grant[] }) => {
               }
             />
           </Bar>
-          <XAxis dataKey="name" axisLine={false} dy={10} tickLine={false} />
-          <YAxis
-            className="axis"
-            width="auto"
-            axisLine={false}
-            tickLine={false}
-            key={grants.length}
-            tickFormatter={(value) => `$${value / 1000}k`}
-          />
+          <XAxis dataKey="name" axisLine={true} dy={10} tickLine={false}  style={{fontSize: "var(--font-size-xs)"}}/>
+          
           <Tooltip
             contentStyle={{
               borderRadius: "12px",

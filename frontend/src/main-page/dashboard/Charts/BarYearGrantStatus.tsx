@@ -47,12 +47,12 @@ const BarYearGrantStatus = observer(
       .sort((a, b) => b.value - a.value);
 
     return (
-      <div className="chart-container">
+      <div className="">
         <div className="flex flex-row w-full justify-between">
           <div>
             {/* Title */}
             <div className="text-lg w-full text-left font-semibold align">
-              Year Grant Status
+              Grant Status
             </div>
             {/* Year */}
             <div className="text-sm w-full text-left align">{recentYear}</div>
@@ -77,20 +77,19 @@ const BarYearGrantStatus = observer(
             </label>
           </div>
         </div>
-        <ResponsiveContainer width="100%" height={450} min-width={400}>
+        <ResponsiveContainer width="100%" height={150} min-width={400}>
           <BarChart
             data={checked ? data_money : data_count}
-            layout="vertical"
-            margin={{ top: 10, right: 60, left: 40, bottom: 30 }}
+            layout="horizontal"
+            margin={{ top: 25, right: 20, left: 20, bottom: 0 }}
           >
-            <YAxis
+            <XAxis
               axisLine={false}
               type="category"
-              dx={-10}
               dataKey="name"
               tickLine={false}
             />
-            <XAxis
+            <YAxis
               type="number"
               width="auto"
               hide
@@ -103,14 +102,14 @@ const BarYearGrantStatus = observer(
               type="monotone"
               stackId="a"
               dataKey="value"
-              fill="var(--color-primary-800)"
+              fill="var(--color-primary-900)"
               strokeWidth={2}
               name="Grants"
               radius={[15, 15, 15, 15]}
             >
               <LabelList
                 dataKey="value"
-                position="right"
+                position="top"
                 formatter={(label: any) =>
                   typeof label === "number"
                     ? checked
