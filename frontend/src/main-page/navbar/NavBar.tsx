@@ -10,11 +10,11 @@ import {
   updateFilter,
 } from "../../external/bcanSatchel/actions.ts";
 import { observer } from "mobx-react-lite";
-import { useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartLine, faMoneyBill, faClipboardCheck, faGear, faRightFromBracket, faUsers } from "@fortawesome/free-solid-svg-icons";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { UserStatus } from "../../../../middle-layer/types/UserStatus";
+import NavTab from "./NavTab.tsx";
 
 interface NavBarProps {
   name: string;
@@ -67,35 +67,23 @@ const NavBar: React.FC = observer(() => {
         <ul className="flex flex-col gap-2">
           {linkList.map((item, index) => (
             <li key={index}>
-              <Link
+              <NavTab
+                to={item.linkTo || "#"}
+                icon={item.icon}
+                label={item.name}
                 onClick={(e) => categoryClicked(e, item.name, item.linkTo)}
-                to={item.linkTo ? item.linkTo : "#"}
-                className={`flex items-center gap-3 pl-8 pr-4 py-3 rounded-r-full transition-colors hover:text-white ${
-                  useLocation().pathname === item.linkTo
-                    ? "bg-primary-900 font-medium text-white"
-                    : "hover:bg-grey-500"
-                }`}
-              >
-                <FontAwesomeIcon icon={item.icon} className="w-5 h-5" />
-                <span className="text-md">{item.name}</span>
-              </Link>
+              />
             </li>
           ))}
           
           {/* Admin-only Users tab */}
           {isAdmin && (
             <li>
-              <Link
+              <NavTab
                 to="/main/users"
-                className={`flex items-center gap-3 pl-8 pr-4 py-3 rounded-r-full transition-colors hover:text-white ${
-                  useLocation().pathname === "/main/users"
-                    ? "bg-primary-900 font-medium text-white"
-                    : "hover:bg-grey-500"
-                }`}
-              >
-                <FontAwesomeIcon icon={faUsers} className="w-5 h-5" />
-                <span className="text-md">Users</span>
-              </Link>
+                icon={faUsers}
+                label="Users"
+              />
             </li>
           )}
         </ul>
@@ -104,17 +92,11 @@ const NavBar: React.FC = observer(() => {
       {/* Bottom controls - Settings and Sign Out */}
       <div className="border-t-2 border-primary-700 py-4 pr-4">
         <div className="flex flex-col gap-2 mt-2">
-          <Link
+          <NavTab
             to="/main/settings"
-            className={`flex items-center gap-3 pl-8 pr-4 py-3 rounded-r-full transition-colors hover:text-white ${
-              useLocation().pathname === "/main/settings"
-                ? "bg-primary-900 font-medium text-white"
-                : "hover:bg-grey-500"
-            }`}
-          >
-            <FontAwesomeIcon icon={faGear} className="w-5 h-5" />
-            <span className="text-md">Settings</span>
-          </Link>
+            icon={faGear}
+            label="Settings"
+          />
           <button
             onClick={handleLogout}
             className="flex items-center gap-3 pl-8 pr-4 py-3 rounded-r-full transition-colors hover:bg-grey-500 hover:text-white text-left border-none font-medium"
