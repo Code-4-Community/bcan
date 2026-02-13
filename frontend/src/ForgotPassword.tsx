@@ -24,14 +24,14 @@ const ForgotPassword = () => {
       {/* Left side: Forgot Password form */}
       <div className="w-1/2 h-full py-20 px-24 flex flex-col justify-center">
         <div className="mb-8">
-          <h1 className="text-[2.5rem] font-semibold mb-0 text-left">Forgot Password</h1>
+          <h1 className="text-[2.75rem] font-bold mb-0 text-left">Forgot Password</h1>
         </div>
 
         {!submitted ? (
           <form onSubmit={handleSubmit} className="w-full">
             {/* Email Input */}
             <div className="mb-6">
-              <label htmlFor="email" className="block text-lg font-medium mb-2 text-left">
+              <label htmlFor="email" className="block text-xl font-semibold mb-2 text-left">
                 Email
               </label>
               <input
@@ -42,14 +42,14 @@ const ForgotPassword = () => {
                 required
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email address"
-                className="w-full rounded-xl border border-gray bg-white py-3 px-4 text-base text-black placeholder:text-gray focus:outline-none focus:ring-2 focus:ring-dark-orange focus:border-transparent"
+                className="w-full rounded-xl border border-grey-600 bg-white py-3 px-4 text-base text-black placeholder:text-grey-600 focus:outline-none focus:ring-2 focus:ring-primary-900 focus:border-transparent"
               />
             </div>
 
             {/* Send Email Button */}
             <button
               type="submit"
-              className="w-full bg-medium-orange hover:bg-[#d95a1f] text-white rounded-full py-3 px-4 text-base font-medium transition-colors"
+              className="w-full bg-primary-900 hover:bg-primary-800 text-white rounded-full py-3 px-4 text-base font-medium transition-colors"
             >
               Send Email
             </button>
@@ -60,7 +60,7 @@ const ForgotPassword = () => {
               <button
                 type="button"
                 onClick={() => navigate("/login")}
-                className="text-dark-blue hover:underline font-medium"
+                className="text-secondary-500 hover:underline font-medium"
               >
                 Log in here
               </button>
@@ -69,13 +69,13 @@ const ForgotPassword = () => {
         ) : (
           // Success message after submission
           <div className="w-full">
-            <div className="mb-6 bg-light-blue text-dark-blue rounded-xl py-3 px-4 text-center">
+            <div className="mb-6 bg-secondary-100 text-secondary-900 rounded-xl py-3 px-4 text-center">
               If an account exists with this email, you'll receive password reset instructions.
             </div>
             <button
               type="button"
               onClick={() => navigate("/login")}
-              className="w-full bg-medium-orange hover:bg-[#d95a1f] text-white rounded-full py-3 px-4 text-base font-medium transition-colors"
+              className="w-full bg-primary-900 hover:bg-primary-800 text-white rounded-full py-3 px-4 text-base font-medium transition-colors"
             >
               Back to Login
             </button>
@@ -85,7 +85,7 @@ const ForgotPassword = () => {
 
       {/* Right side: Logo */}
       <div className="w-1/2 h-full bg-white flex items-center justify-center p-8">
-        <div className="w-full h-full bg-medium-orange rounded-[1.2rem] flex items-center justify-center">
+        <div className="w-full h-full bg-primary-900 rounded-[1.2rem] flex items-center justify-center">
           <img
             src={logo}
             alt="BCAN Logo"

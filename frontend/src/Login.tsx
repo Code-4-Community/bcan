@@ -51,7 +51,7 @@ const Login = observer(() => {
                   required
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter your email address"
-                  className="w-full rounded-xl border border-gray bg-white py-3 px-4 text-base placeholder:text-gray focus:outline-none focus:ring-2 focus:ring-dark-orange focus:border-transparent"
+                  className="w-full rounded-xl border border-grey-600 bg-white py-3 px-4 text-base placeholder:text-grey-600 focus:outline-none focus:ring-2 focus:ring-primary-900 focus:border-transparent"
                 />
               </div>
             </div>
@@ -68,7 +68,7 @@ const Login = observer(() => {
                   required
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="w-full rounded-xl border border-gray bg-white py-3 px-4 pr-12 text-base placeholder:text-gray focus:outline-none focus:ring-2 focus:ring-dark-orange focus:border-transparent"
+                  className="w-full rounded-xl border border-grey-600 bg-white py-3 px-4 pr-12 text-base placeholder:text-grey-600 focus:outline-none focus:ring-2 focus:ring-primary-900 focus:border-transparent"
                 />
                 <button
                   type="button"
@@ -98,14 +98,14 @@ const Login = observer(() => {
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="w-4 h-4 rounded border-medium-gray text-dark-orange focus:ring-dark-orange focus:ring-2 cursor-pointer"
+                className="w-4 h-4 rounded border-grey-400 text-primary-900 focus:ring-primary-900 focus:ring-2 cursor-pointer"
               />
               <span className="ml-2 text-base">Remember Me</span>
             </label>
             <button
               type="button"
               onClick={() => navigate("/forgot-password")}
-              className="text-base text-black hover:text-dark-orange transition-colors"
+              className="text-base text-black hover:text-primary-900 transition-colors"
             >
               Forgot Password?
             </button>
@@ -114,14 +114,14 @@ const Login = observer(() => {
           {/* Error Message */}
           <div className="">
             {failure && (
-              <div className="mb-6 text-[#D33221] bg-[#FFA399] rounded-xl py-3 px-4 text-center">
+              <div className="mb-6 bg-red-lighter text-red rounded-xl py-3 px-4 text-center">
                 Your password is incorrect or this account doesn't exist.
               </div>
             )}
           </div>
           <button
             type="submit"
-            className="w-full bg-medium-orange hover:bg-[#d95a1f] text-white rounded-full py-3 px-4 text-base font-medium transition-colors"
+            className="w-full bg-primary-900 hover:bg-primary-800 text-white rounded-full py-3 px-4 text-base font-medium transition-colors"
           >
             Log In
           </button>
@@ -131,7 +131,7 @@ const Login = observer(() => {
             <button
               type="button"
               onClick={() => navigate("/register")}
-              className="text-dark-blue hover:underline font-medium"
+              className="text-secondary-500 hover:underline font-medium"
             >
               Sign up here
             </button>
@@ -141,7 +141,7 @@ const Login = observer(() => {
 
       {/*/ Right side: logo */}
       <div className="w-1/2 h-full bg-white flex items-center justify-center p-8">
-        <div className="w-full h-full bg-medium-orange rounded-[1.2rem] flex items-center justify-center">
+        <div className="w-full h-full bg-primary-900 rounded-[1.2rem] flex items-center justify-center">
           <img
             className="w-1/2 h-1/2 object-contain"
             src={logo}
