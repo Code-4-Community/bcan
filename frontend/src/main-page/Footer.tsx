@@ -2,7 +2,6 @@ import React from "react";
 import "../styles/Footer.css";
 import { Group, Text, Link } from "@chakra-ui/react";
 import { FooterText } from "../translations/general";
-import tailwindConfig from "../../tailwind.config.js";
 
 const Footer: React.FC = () => {
   return (
@@ -14,7 +13,7 @@ const Footer: React.FC = () => {
             {FooterText.C4C}
           </Link>{" "}
           for{" "}
-          <Link variant="underline" _hover={{color: `${tailwindConfig.theme.colors["dark-orange"]}`}}  href={FooterText.Org_Link}>
+          <Link variant="underline" _hover={{color: "var(--color-primary-900)"}}  href={FooterText.Org_Link}>
             {FooterText.Org}
           </Link>
         </Text>

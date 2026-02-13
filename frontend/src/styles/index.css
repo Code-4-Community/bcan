@@ -1,15 +1,88 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
+/*
+ * Design style guide: global font definitions (single source of truth).
+ * - Font family and size baseline live here. Non-web-safe fonts are loaded via
+ *   Google Fonts in index.html (see https://getdevdone.com/blog/non-web-fonts.html).
+ * - To swap fonts: (1) update the link in index.html to the new font’s Google Fonts URL,
+ *   (2) set --font-sans (or --font-serif) in :root below to the new family name.
+ */
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* Font families: use CSS vars so swapping is a one-line change. */
+  --font-sans: "Inter", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-serif: Georgia, "Times New Roman", serif;
+
+  /* Size baseline and scale (all relative to base for easy swapping). */
+  --font-size-base: 1rem;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-hero: 3.2rem;
+
+  --color-green-dark: #119548;
+  --color-green: #5ab911;
+  --color-green-light: #c6fbd3;
+
+  --color-yellow: #f8cc16;
+  --color-yellow-light: #fff8ca;
+  --color-yellow-dark: #8a710c;
+
+  --color-red: #d33221;
+  --color-red-dark: #771505;
+  --color-red-light: #ff6b6b;
+  --color-red-lighter: #ffa399;
+  --color-red-lightest: #ffdfdf;
+
+  --color-tan: #f2ebe4;
+
+  --color-orange: #ffa500;
+  --color-orange-light: #ffceb6;
+  --color-orange-lightest: #fff1eb;
+
+  --color-primary-900: #e16f39;
+  --color-primary-800: #e78c61;
+  --color-primary-700: #eca380;
+
+  --color-secondary-900: #001733;
+  --color-secondary-800: #002f66;
+  --color-secondary-700: #004899;
+  --color-secondary-600: #0061cc;
+  --color-secondary-500: #007aff;
+  --color-secondary-400: #3b98ff;
+  --color-secondary-300: #75b6ff;
+  --color-secondary-200: #b0d5ff;
+  --color-secondary-100: #ebf4ff;
+
+  --color-accent: #5f5ac6;
+
+  --color-grey-900: #212529;
+  --color-grey-800: #343a40;
+  --color-grey-700: #495057;
+  --color-grey-600: #6c757d;
+  --color-grey-500: #adb5bd;
+  --color-grey-400: #ced4da;
+  --color-grey-300: #dee2e6;
+  --color-grey-200: #e9ecef;
+  --color-grey-100: #f8f9fa;
+
+  --color-black: #000000;
+  --color-white: #ffffff;
+
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
   color: rgba(0, 0, 0, 0.87);
-  background-color: #F2EBE4;
+  background-color: var(--color-tan);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -19,11 +92,11 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--color-secondary-500);
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: var(--color-secondary-500);
 }
 
 body {
@@ -35,7 +108,7 @@ body {
 }
 
 h1 {
-  font-size: 3.2em;
+  font-size: var(--font-size-hero);
   line-height: 1.1;
 }
 
@@ -43,20 +116,20 @@ button {
   border-radius: 15px;
   border: 0.1rem solid transparent;
   padding: 0.6em 1.2em;
-  font-size: 1em;
+  font-size: var(--font-size-base);
   font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+  font-family: var(--font-sans);
+  background-color: black;
   cursor: pointer;
   transition: border-color 0.25s;
 }
 
 textarea {
-  border-color: darkorange;
+  border-color: var(--color-primary-900);
 }
 
 button:hover {
-  border-color: darkorange;
+  border-color:  var(--color-primary-900);
 }
 button:focus,
 button:focus-visible {
@@ -65,17 +138,17 @@ button:focus-visible {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    color: var(--color-grey-800);
+    background-color: white;
   }
   a:hover {
-    color: #747bff;
+    color: var(--color-secondary-500);
   }
   button {
-    background-color: #f9f9f9;
+    background-color: var(--color-grey-100);
   }
 }
 
-    input:focus {
-      outline: 1px solid darkorange;
-    }
+input:focus {
+  outline: 1px solid  var(--color-primary-900);
+}

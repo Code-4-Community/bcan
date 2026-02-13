@@ -339,6 +339,21 @@ describe("AuthService", () => {
         "Authentication failed: Missing IdToken or AccessToken"
       );
     });
+
+    it("handle generic Cognito errors with descriptive message", async () => {
+      const mockInitiateAuth = () => ({
+        promise: () =>
+          Promise.reject({
+            code: "SomeAwsError",
+            message: "AWS error occurred",
+          }),
+      });
+
+      (service["cognito"] as any).initiateAuth = mockInitiateAuth;
+      await expect(service.login("testuser", "Pass123!")).rejects.toThrow(
+        InternalServerErrorException
+      );
+    });
   });
 
   describe("setNewPassword", () => {
@@ -425,16 +440,67 @@ describe("AuthService", () => {
 
     // 1. Mock DynamoDB to throw error
     // 2. Verify error handling
-    it("should handle DynamoDB update errors", async () => {
-  const mockUpdate = vi.fn().mockReturnValue({
-    promise: vi.fn().mockRejectedValue(new Error("DB error"))
-  });
-  
-  (service['dynamoDb'] as any).update = mockUpdate;
+    it("handle DynamoDB update errors", async () => {
+      const mockUpdate = vi.fn().mockReturnValue({
+        promise: vi.fn().mockRejectedValue(new Error("DB error"))
+      });
+      
+      (service['dynamoDb'] as any).update = mockUpdate;
 
-  await expect(
-    service.updateProfile("c4c", "c4c@example.com", "Active")
-  ).rejects.toThrow("DB error");
-});
+      await expect(
+        service.updateProfile("c4c", "c4c@example.com", "Active")
+      ).rejects.toThrow("DB error");
+    });
+  });
+
+  describe("validateSession", () => {
+    it("should successfully validate a session", async () => {
+      // Mock Cognito getUser response
+      mockCognitoPromise.mockResolvedValueOnce({
+        Username: "c4c",
+        UserAttributes: [{ Name: "email", Value: "c4c@example.com" }],
+      });
+
+      // Mock DynamoDB get response
+      mockDynamoPromise.mockResolvedValueOnce({
+        Item: { userId: "c4c", email: "c4c@example.com", position: "Active" },
+      });
+
+      const result = await service.validateSession("valid-token");
+
+      expect(result).toEqual({
+        userId: "c4c",
+        email: "c4c@example.com",
+        position: "Active",
+      });
+    });
+
+    it("should reject missing access token", async () => {
+      await expect(
+        service.validateSession("")
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it("should handle NotAuthorizedException", async () => {
+      mockCognitoPromise.mockRejectedValueOnce({
+        code: "NotAuthorizedException",
+        message: "Invalid token",
+      });
+
+      await expect(
+        service.validateSession("invalid-token")
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it("should handle InvalidParameterException", async () => {
+      mockCognitoPromise.mockRejectedValueOnce({
+        code: "InvalidParameterException",
+        message: "Invalid token format",
+      });
+
+      await expect(
+        service.validateSession("bad-format")
+      ).rejects.toThrow(UnauthorizedException);
+    });
   });
 });

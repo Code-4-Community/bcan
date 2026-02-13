@@ -46,7 +46,7 @@ const Header: React.FC = observer(() => {
 
   
   return (
-    <header className="header bg-pale-orange drop-shadow-md">
+    <header className="header bg-orange-light drop-shadow-md">
       <div className="header-left-comp">
         <img className="logo" src={logo} alt="BCAN Logo" />
       </div>
@@ -61,7 +61,7 @@ const Header: React.FC = observer(() => {
                 <div
                   className={`header-button header-button${
                     useLocation().pathname === item.linkTo ? "-selected" : ""
-                  } hover:bg-medium-orange`}
+                  } hover:bg-primary-800`}
                 >
                   {item.name}
                 </div>

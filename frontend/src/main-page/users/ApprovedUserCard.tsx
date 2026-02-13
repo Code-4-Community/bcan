@@ -155,7 +155,7 @@ const ApprovedUserCard = ({
             <Menu.Content>
               <Button
                 px={4}
-                className="text-sm focus:outline-none block w-full bg-[#D3D3D3] border-[#666666] text-[#666666] mb-1"
+                className="text-sm focus:outline-none block w-full bg-grey-400 border-grey-600 text-grey-600 mb-1"
                 onClick={() => setIsChangeGroupModalOpen(true)}
               >
                 Change to {position === UserStatus.Admin ? "employee" : "admin"}
@@ -164,7 +164,7 @@ const ApprovedUserCard = ({
               </Button>
               <Button
                 px={4}
-                className="text-sm focus:outline-none block w-full bg-[#FFDFDF] border-[#D33221] text-[#D33221]"
+                className="text-sm focus:outline-none block w-full bg-red-lightest border-red text-red"
                 onClick={() => setIsDeleteUserModalOpen(true)}
               >
                 Delete user{"  "}

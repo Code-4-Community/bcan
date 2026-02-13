@@ -49,7 +49,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
     <div ref={dropdownRef} className="user-dropdown-container">
       {/* Input field that opens dropdown */}
       <input
-        className="user-dropdown-input font-family-helvetica"
+        className="user-dropdown-input"
         placeholder={placeholder}
         value={selectedUser ? selectedUser.name : searchTerm}
         onChange={(e) => {

@@ -45,7 +45,7 @@ const BellButton: React.FC<BellButtonProps> = observer(({ setOpenModal, openModa
   return (
     <div className="bell-container">
       <div
-        className="bell-wrapper inline-block relative p-2 hover:bg-light-orange rounded-md"
+        className="bell-wrapper inline-block relative p-2 hover:bg-primary-700 rounded-md"
       >
         <button
           className={`bell-button ${openModal === "bell" ? "hovered" : ""} bg-none border-none relative`}

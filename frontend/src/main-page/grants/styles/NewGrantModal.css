@@ -85,18 +85,10 @@
   grid-column: 1 / span 2; /* let the title span across both columns */
   margin-top: 0;
   margin-bottom: 1rem;
-  font-size: 1.8rem;
+  font-size: var(--font-size-2xl);
   font-weight: 600;
   text-align: center;
   text-align: left;
-}
-
-/* Error message styling */
-.error-message {
-  grid-column: 1 / span 2; /* span across both columns */
-  margin: 0.5rem 0;
-  color: #d9534f;
-  font-weight: bold;
 }
 
 /* For text inputs, selects, textareas */
@@ -105,13 +97,13 @@
 .modal-content textarea {
   width: 100%;
   padding: 0.6rem;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   margin-bottom: 0.25rem;
-  border: 0.1rem solid #ccc;
+  border: 0.075rem solid black;
   border-radius: 15px;
   box-sizing: border-box;
-  background-color: #fff;
-  color: #000;
+  background-color: var(--color-tan);
+  color: black;
 }
 
 /* Make textareas bigger by default */
@@ -182,17 +174,11 @@
     Buttons 
   */
 .modal-content button {
-  background-color: #007bff; /* typical “primary” color */
-  border: none;
-  color: #fff;
+  border: black 0.075rem solid;
+  color: black;
   padding: 0.75rem 1.25rem;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   border-radius: 15px;
   cursor: pointer;
   transition: background-color 0.2s ease;
-}
-
-/* Hover effect for buttons */
-.modal-content button:hover {
-  background-color: #0056b3;
 }

@@ -16,7 +16,7 @@ const KPICard = observer(
     percentChange: number;
   }) => {
     return (
-      <div className="chart-container kpi-card w-full flex flex-col justify-between">
+      <div className="chart-container !bg-orange-light w-full flex flex-col justify-between">
         {/* Title */}
         <div className="text-lg w-full text-left font-semibold">{title}</div>
 
@@ -32,16 +32,16 @@ const KPICard = observer(
                 ? `+${percentChange.toFixed(0)}%`
                 : `-${Math.abs(percentChange).toFixed(0)}%`}
               {percentChange >= 0 ? (
-                <FaArrowTrendUp className="inline ms-2 text-green-600 text-sm" />
+                <FaArrowTrendUp className="inline ms-2 text-green-dark text-sm" />
               ) : (
-                <FaArrowTrendDown className="inline ms-2 text-red-600 text-sm" />
+                <FaArrowTrendDown className="inline ms-2 text-red-dark text-sm" />
               )}
             </div>
           )}
         </div>
 
         {/* Year comparison at bottom */}
-        <div className="text-sm text-left mt-auto text-gray-500 w-full">
+        <div className="text-sm text-left mt-auto text-gray-700 w-full">
           {recentYear}
           {priorYear ? ` vs. ${priorYear}` : ""}
         </div>
