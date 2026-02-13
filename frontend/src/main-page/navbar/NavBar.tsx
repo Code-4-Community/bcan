@@ -9,7 +9,7 @@ import { faGear, faRightFromBracket, faUser, faBorderNone } from "@fortawesome/f
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { UserStatus } from "../../../../middle-layer/types/UserStatus";
 import NavTab, { NavTabProps } from "./NavTab.tsx";
-import logo from "../images/logo.svg";
+import logo from "../../images/logo.svg";
 import { faChartLine, faMoneyBill, faClipboardCheck } from "@fortawesome/free-solid-svg-icons";
 
 const tabs: NavTabProps[] = [
