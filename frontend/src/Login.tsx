@@ -121,7 +121,7 @@ const Login = observer(() => {
           </div>
           <button
             type="submit"
-            className="w-full bg-dark-orange hover:bg-[#d95a1f] text-white rounded-full py-3 px-4 text-base font-medium transition-colors"
+            className="w-full bg-medium-orange hover:bg-[#d95a1f] text-white rounded-full py-3 px-4 text-base font-medium transition-colors"
           >
             Log In
           </button>
@@ -141,7 +141,7 @@ const Login = observer(() => {
 
       {/*/ Right side: logo */}
       <div className="w-1/2 h-full bg-white flex items-center justify-center p-8">
-        <div className="w-full h-full  bg-dark-orange rounded-[3rem] flex items-center justify-center">
+        <div className="w-full h-full bg-medium-orange rounded-[1.5rem] flex items-center justify-center">
           <img
             className="w-3/5 h-3/5 object-contain"
             src={logo}
