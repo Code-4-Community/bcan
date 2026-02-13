@@ -107,14 +107,14 @@ const CsvExportButton: React.FC = observer(() => {
 
   return (
     <button
-      className="dashboard-button bg-orange-lightest flex justify-between items-center"
+      className="dashboard-button text-xs lg:text-sm bg-orange-lightest flex justify-between items-center"
       type="button"
       onClick={onClickDownload}
       disabled={isProcessing}
       title="Export the grants data including any applied filters."
     >
       {isProcessing ? "Exporting..." : "Export CSV"}
-      <BiExport className="ms-2 text-sm" />
+      <BiExport className="ms-2 text-sm " />
     </button>
   );
 });

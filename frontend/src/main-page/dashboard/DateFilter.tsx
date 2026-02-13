@@ -13,8 +13,8 @@ const DateFilter: React.FC = observer(() => {
   // Generate unique years dynamically from grants
   const uniqueYears = Array.from(
     new Set(
-      allGrants.map((g) => new Date(g.application_deadline).getFullYear())
-    )
+      allGrants.map((g) => new Date(g.application_deadline).getFullYear()),
+    ),
   ).sort((a, b) => a - b);
 
   // Initialize selection from store or fallback to all years
@@ -50,28 +50,33 @@ const DateFilter: React.FC = observer(() => {
     setShowDropdown(false);
   };
 
-  
-
   return (
-    <div className="flex flex-col space-y-2 w-[300px]">
+    <div className="flex flex-col space-y-2 w- lg:w-80">
       <button
-        className="dashboard-button bg-white inline-flex items-center justify-between px-4 py-2 text-sm text-center text-white bg-blue-700 rounded-lg"
+        className="dashboard-button bg-white inline-flex items-center justify-between px-4 py-2  text-xs lg:text-sm text-center text-white bg-blue-700 rounded-lg"
         type="button"
         onClick={() => setShowDropdown(!showDropdown)}
       >
-        {selectedYears.length === 0
-          ? "Select years"
-          : selectedYears.length === uniqueYears.length
-          ? "Select years (showing all)"
-          : selectedYears.join(", ")}
+        <span className="flex flex-row overflow-hidden whitespace-nowrap text-ellipsis">
+          {selectedYears.length === 0
+            ? "Select years"
+            : selectedYears.length === uniqueYears.length
+              ? "Select years (showing all)"
+              : selectedYears.join(", ")}
+        </span>
+
         <FaChevronDown className="ms-2 text-sm" />
       </button>
       <div
         className={`z-[100] absolute  top-[184px]  w-[300px] bg-white ${showDropdown ? "" : "hidden"} rounded-md border-2 border-gray-200 shadow-lg`}
       >
-        <button className="close-button absolute top-3 right-4 text-lg" onClick={() => setShowDropdown(false)} aria-label="Close notifications">
-                    <FontAwesomeIcon icon={faXmark} className="text-lg" />
-                </button>
+        <button
+          className="close-button absolute top-3 right-4 text-lg"
+          onClick={() => setShowDropdown(false)}
+          aria-label="Close notifications"
+        >
+          <FontAwesomeIcon icon={faXmark} className="text-lg" />
+        </button>
         <ul
           className="h-42 p-4 pb-3 overflow-y-auto text-sm "
           aria-labelledby="dropdownSearchButton"
@@ -99,7 +104,9 @@ const DateFilter: React.FC = observer(() => {
           ))}
         </ul>
         <hr className="border-t mx-4 border-gray-200" />
-        <button className="p-2" onClick={()=>handleReset()}>Reset</button>
+        <button className="p-2" onClick={() => handleReset()}>
+          Reset
+        </button>
       </div>
     </div>
   );
