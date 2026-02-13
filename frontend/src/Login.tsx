@@ -141,9 +141,9 @@ const Login = observer(() => {
 
       {/*/ Right side: logo */}
       <div className="w-1/2 h-full bg-white flex items-center justify-center p-8">
-        <div className="w-full h-full bg-medium-orange rounded-[1.5rem] flex items-center justify-center">
+        <div className="w-full h-full bg-medium-orange rounded-[1.2rem] flex items-center justify-center">
           <img
-            className="w-3/5 h-3/5 object-contain"
+            className="w-1/2 h-1/2 object-contain"
             src={logo}
             alt="BCAN Logo"
           />
