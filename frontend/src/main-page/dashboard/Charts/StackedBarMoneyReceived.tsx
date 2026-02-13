@@ -54,7 +54,7 @@ const StackedBarMoneyReceived = observer(({ grants }: { grants: Grant[] }) => {
       >
         <BarChart
           data={data}
-          margin={{ top: 20, right: 10, left: 10, bottom: 20 }}
+          margin={{ top: 20, right: 10, left: 10, bottom: 30 }}
         >
           {width > 210 && (
             <LegendComp
