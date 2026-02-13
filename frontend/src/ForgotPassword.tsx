@@ -49,7 +49,7 @@ const ForgotPassword = () => {
             {/* Send Email Button */}
             <button
               type="submit"
-              className="w-full bg-primary-900 hover:bg-primary-800 text-white rounded-full py-3 px-4 text-base font-medium transition-colors"
+              className="w-full bg-primary-900 hover:bg-primary-800 text-white rounded-full py-3 px-4 text-base font-medium text-xl transition-colors"
             >
               Send Email
             </button>

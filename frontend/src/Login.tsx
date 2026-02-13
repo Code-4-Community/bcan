@@ -126,12 +126,12 @@ const Login = observer(() => {
             Log In
           </button>
 
-          <div className="mt-8 text-center text-base">
+          <div className="mt-8 text-center font-semibold text-base">
             Don't have an account?{" "}
             <button
               type="button"
               onClick={() => navigate("/register")}
-              className="text-secondary-500 hover:underline font-medium"
+              className="text-secondary-500 hover:underline font-semibold"
             >
               Sign up here
             </button>
