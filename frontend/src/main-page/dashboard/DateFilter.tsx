@@ -55,7 +55,7 @@ const DateFilter: React.FC = observer(() => {
   return (
     <div className="flex flex-col space-y-2 w-[300px]">
       <button
-        className="grant-button bg-white inline-flex items-center justify-between px-4 py-2 text-sm text-center text-white bg-blue-700 rounded-lg"
+        className="dashboard-button bg-white inline-flex items-center justify-between px-4 py-2 text-sm text-center text-white bg-blue-700 rounded-lg"
         type="button"
         onClick={() => setShowDropdown(!showDropdown)}
       >

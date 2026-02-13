@@ -44,7 +44,7 @@ const StackedBarMoneyReceived = observer(({ grants }: { grants: Grant[] }) => {
   return (
     <div className="h-full flex-col">
       {/* Title */}
-      <div className="text-lg w-full text-left font-semibold align">
+      <div className="text-md lg:text-lg w-full text-left font-semibold align">
         Money Received by Year
       </div>
       <ResponsiveContainer

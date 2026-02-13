@@ -51,7 +51,7 @@ const BarYearGrantStatus = observer(
         <div className="flex flex-row w-full justify-between">
           <div>
             {/* Title */}
-            <div className="text-lg w-full text-left font-semibold align">
+            <div className="text-md lg:text-lg w-full text-left font-semibold align">
               Grant Status
             </div>
             {/* Year */}
@@ -88,6 +88,7 @@ const BarYearGrantStatus = observer(
               type="category"
               dataKey="name"
               tickLine={false}
+              style={{fontSize: "var(--font-size-sm)"}}
             />
             <YAxis
               type="number"

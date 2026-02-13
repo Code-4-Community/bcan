@@ -142,7 +142,7 @@ export const GanttYearGrantTimeline = observer(
     return (
       <div className="h-full w-full">
         {/* Title */}
-        <div className="text-lg w-full text-left font-semibold">
+        <div className="text-md lg:text-lg w-full text-left font-semibold">
           Grant Timeline
         </div>
         {/* Year */}

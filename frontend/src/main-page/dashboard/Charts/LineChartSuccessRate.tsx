@@ -91,7 +91,7 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
   return (
     <div className="h-full">
       {/* Title */}
-      <div className="text-lg w-full text-left font-semibold align absolute">
+      <div className="text-md lg:text-lg w-full text-left font-semibold align absolute">
         Success Rate by Year
       </div>
       <ResponsiveContainer
