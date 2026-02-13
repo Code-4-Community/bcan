@@ -6,7 +6,6 @@ import Users from "./users/Users";
 import RestrictedPage from "./restricted/RestrictedPage";
 import CashFlowPage from "./cash-flow/CashFlowPage";
 import SettingsPage from "./settings/SettingsPage";
-import logo from "../images/logo.svg";
 
 function MainPage() {
 
