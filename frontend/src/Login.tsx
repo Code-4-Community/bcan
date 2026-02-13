@@ -32,14 +32,14 @@ const Login = observer(() => {
   return (
     <div className="bg-white w-screen h-screen flex overflow-hidden">
       {/*/ Left side: Registration form */}
-      <div className="w-3/5 h-full py-20 px-24 flex flex-col justify-center">
-        <div className="mb-12">
-          <h1 className="text-[2rem] font-bold mb-0">Log in</h1>
+      <div className="w-1/2 h-full py-20 px-24 flex flex-col justify-center">
+        <div className="mb-8">
+          <h1 className="text-[2.75rem] font-bold mb-0 text-left">Log in</h1>
         </div>
         <form onSubmit={handleSubmit} className="w-full">
           <div className="grid grid-cols-1 gap-x-6 gap-y-4">
-            <div className="mb-6">
-              <label htmlFor="email" className="block text-base font-medium mb-2">
+            <div className="mb-4">
+              <label htmlFor="email" className="block text-xl font-semibold mb-2 text-left">
                 Email
               </label>
               <div>
@@ -51,12 +51,12 @@ const Login = observer(() => {
                   required
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter your email address"
-                  className="w-full rounded-xl border border-medium-gray bg-white py-3 px-4 text-base placeholder:text-gray focus:outline-none focus:ring-2 focus:ring-dark-orange focus:border-transparent"
+                  className="w-full rounded-xl border border-gray bg-white py-3 px-4 text-base placeholder:text-gray focus:outline-none focus:ring-2 focus:ring-dark-orange focus:border-transparent"
                 />
               </div>
             </div>
             <div className="mb-4">
-              <label htmlFor="password" className="block text-base font-semibold mb-2">
+              <label htmlFor="password" className="block text-xl font-semibold mb-2 text-left">
                 Password
               </label>
               <div className="relative">
@@ -68,12 +68,12 @@ const Login = observer(() => {
                   required
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="w-full rounded-xl border border-medium-gray bg-white py-3 px-4 pr-12 text-base placeholder:text-gray focus:outline-none focus:ring-2 focus:ring-dark-orange focus:border-transparent"
+                  className="w-full rounded-xl border border-gray bg-white py-3 px-4 pr-12 text-base placeholder:text-gray focus:outline-none focus:ring-2 focus:ring-dark-orange focus:border-transparent"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray hover:text-black transition colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-black hover:text-black transition colors"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
@@ -90,45 +90,60 @@ const Login = observer(() => {
               </div>
             </div>
           </div>
-          <div className="h-12 items-center">
-            {failure ? (
-              <div className="text-[#D33221] mt-4 bg-[#FFA399] h-full rounded-md text-center flex items-center justify-center p-2">
+
+          {/* Remember Me & Forgot Password */}
+          <div className="flex items-center justify-between mb-6">
+            <label className="flex items-center cursor pointer">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="w-4 h-4 rounded border-medium-gray text-dark-orange focus:ring-dark-orange focus:ring-2 cursor-pointer"
+              />
+              <span className="ml-2 text-base">Remember Me</span>
+            </label>
+            <button
+              type="button"
+              onClick={() => navigate("/forgot-password")}
+              className="text-base text-black hover:text-dark-orange transition-colors"
+            >
+              Forgot Password?
+            </button>
+          </div>
+
+          {/* Error Message */}
+          <div className="">
+            {failure && (
+              <div className="mb-6 text-[#D33221] bg-[#FFA399] rounded-xl py-3 px-4 text-center">
                 Your password is incorrect or this account doesn't exist.
               </div>
-            ) : (
-              <div className="h-fit p-4 mt-4">{"    "}</div>
             )}
           </div>
           <button
             type="submit"
-            className="w-full block mt-8 min-w-0 rounded-md grow bg-dark-orange text-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500"
-            style={{ ...styles.button, ...styles.helloButton }}
+            className="w-full bg-dark-orange hover:bg-[#d95a1f] text-white rounded-full py-3 px-4 text-base font-medium transition-colors"
           >
-            Login
+            Log In
           </button>
-          <div className="flex items-center justify-between gap-4 mt-8">
-            <hr className="border-[#757575] w-[45%]" />
-            <div className="text-[#757575]">or</div>
-            <hr className="border-[#757575] w-[45%]" />
-          </div>
-          <div className="flex items-center mt-8 justify-center">
+
+          <div className="mt-8 text-center text-base">
             Don't have an account?{" "}
             <button
               type="button"
               onClick={() => navigate("/register")}
-              className="inline ml-2 text-dark-blue text-left"
+              className="text-dark-blue hover:underline font-medium"
             >
-              Sign up
+              Sign up here
             </button>
           </div>
         </form>
       </div>
 
       {/*/ Right side: logo */}
-      <div className="w-[40%] h-full flex flex-col justify-center items-center">
-        <div className="w-full h-full  bg-medium-orange rounded-l-4xl flex flex-col justify-center items-center">
+      <div className="w-1/2 h-full bg-white flex items-center justify-center p-8">
+        <div className="w-full h-full  bg-dark-orange rounded-[3rem] flex items-center justify-center">
           <img
-            className="w-[60%] h-[60%] object-contain p-10 mb-40"
+            className="w-3/5 h-3/5 object-contain"
             src={logo}
             alt="BCAN Logo"
           />
@@ -139,19 +154,3 @@ const Login = observer(() => {
 });
 
 export default Login;
-
-// Inline style objects
-const styles: { [key: string]: React.CSSProperties } = {
-  pageContainer: {
-    position: "relative",
-    width: "100vw",
-    height: "100vh",
-    margin: 0,
-    padding: 0,
-    overflow: "hidden",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "start",
-    textAlign: "start",
-  },
-};
