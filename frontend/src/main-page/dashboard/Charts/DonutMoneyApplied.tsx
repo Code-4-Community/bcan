@@ -68,7 +68,7 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
       <div className={`w-full ${width > 250 ? "mb-0" : "mb-14"}`}>
         {/* Title */}
         <div className="text-md lg:text-lg font-semibold text-left h-full align">
-          Money Applied For {/* Total Amount */}
+          Money Applied All Time {/* Total Amount */}
           <div className={`text-2xl lg:text-3xl  font-semibold`}>
             {`$${((sumReceived + sumUnreceived) / 1000000).toLocaleString(
               "en-us",
