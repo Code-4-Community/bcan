@@ -4,7 +4,6 @@ import {
   Bar,
   CartesianGrid,
   XAxis,
-  YAxis,
   Tooltip,
   Legend,
   ResponsiveContainer,
