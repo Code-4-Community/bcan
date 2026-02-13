@@ -9,19 +9,14 @@ import { faGear, faRightFromBracket, faUser, faBorderNone } from "@fortawesome/f
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { UserStatus } from "../../../../middle-layer/types/UserStatus";
 import NavTab, { NavTabProps } from "./NavTab.tsx";
-import logo from "../../images/logo.svg";
 import { faChartLine, faMoneyBill, faClipboardCheck } from "@fortawesome/free-solid-svg-icons";
+import { NavBarBranding } from "../../translations/general.ts";
 
 const tabs: NavTabProps[] = [
   { name: "Dashboard", linkTo: "/main/dashboard", icon: faChartLine },
   { name: "Grants", linkTo: "/main/all-grants", icon: faClipboardCheck },
   { name: "Cash Flow", linkTo: "/main/cash-flow", icon: faMoneyBill },
 ];
-
-const NavBarBranding = {
-  logo: logo,
-  name: "BostonCan"
-};
 
 /**
  * Sidebar component provides the main navigation.
@@ -80,7 +75,7 @@ const NavBar: React.FC = observer(() => {
           />
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 pl-8 pr-4 py-3 rounded-r-full transition-colors hover:bg-grey-500 hover:text-white text-left border-none font-medium"
+            className="flex items-center gap-3 w-[85%] pl-8 pr-4 py-3 rounded-r-full transition-colors hover:bg-grey-500 hover:text-white text-left border-none font-medium"
           >
             <FontAwesomeIcon icon={faRightFromBracket} className="w-5 h-5" />
             <span className="text-md">Sign Out</span>
