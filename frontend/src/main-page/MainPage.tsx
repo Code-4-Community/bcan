@@ -6,13 +6,13 @@ import Users from "./users/Users";
 import RestrictedPage from "./restricted/RestrictedPage";
 import CashFlowPage from "./cash-flow/CashFlowPage";
 import SettingsPage from "./settings/SettingsPage";
+import logo from "../images/logo.svg";
 
 function MainPage() {
-  
 
   return (
     <div className="w-full h-screen flex flex-row">
-      <NavBar />
+      <NavBar/>
       <div className="flex-1 overflow-auto">
       <Routes>
         <Route path="/dashboard" element={<Dashboard />} />

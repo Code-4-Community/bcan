@@ -1,28 +1,27 @@
 import { useNavigate } from "react-router-dom";
 import "./styles/Header.css";
-import logo from "../../images/logo.svg";
 import {
   logoutUser
 } from "../../external/bcanSatchel/actions.ts";
 import { observer } from "mobx-react-lite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChartLine, faMoneyBill, faClipboardCheck, faGear, faRightFromBracket, faUser, faBorderNone } from "@fortawesome/free-solid-svg-icons";
+import { faGear, faRightFromBracket, faUser, faBorderNone } from "@fortawesome/free-solid-svg-icons";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { UserStatus } from "../../../../middle-layer/types/UserStatus";
-import NavTab from "./NavTab.tsx";
-import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import NavTab, { NavTabProps } from "./NavTab.tsx";
+import logo from "../images/logo.svg";
+import { faChartLine, faMoneyBill, faClipboardCheck } from "@fortawesome/free-solid-svg-icons";
 
-interface NavBarProps {
-  name: string;
-  linkTo?: string;
-  icon?: IconDefinition;
-}
-
-const linkList: NavBarProps[] = [
+const tabs: NavTabProps[] = [
   { name: "Dashboard", linkTo: "/main/dashboard", icon: faChartLine },
   { name: "Grants", linkTo: "/main/all-grants", icon: faClipboardCheck },
   { name: "Cash Flow", linkTo: "/main/cash-flow", icon: faMoneyBill },
 ];
+
+const NavBarBranding = {
+  logo: logo,
+  name: "BostonCan"
+};
 
 /**
  * Sidebar component provides the main navigation.
@@ -41,19 +40,19 @@ const NavBar: React.FC = observer(() => {
     <aside className="left-0 top-0 h-screen w-56 bg-white flex flex-col">
       {/* Logo at top */}
       <div className="p-6 flex items-center justify-center mr-6">
-        <img className="w-12 h-12" src={logo} alt="BCAN Logo" />
-        <span className="ml-3 text-xl font-semibold">BostonCan</span>
+        <img className="w-12 h-12" src={NavBarBranding.logo} alt={`${NavBarBranding.name} Logo`} />
+        <span className="ml-3 text-xl font-semibold">{NavBarBranding.name}</span>
       </div>
 
       {/* Navigation links - stacked vertically */}
       <nav className="py-8 pr-4">
         <ul className="flex flex-col gap-2">
-          {linkList.map((item, index) => (
+          {tabs.map((item, index) => (
             <li key={index}>
               <NavTab
-                to={item.linkTo || "#"}
+                name={item.name} // default name if not provided (shouldn't happen since all items have names)
                 icon={item.icon || faBorderNone} // default icon if not provided (shouldn't happen since all items have icons)
-                label={item.name}
+                linkTo={item.linkTo || "#"}
               />
             </li>
           ))}
@@ -62,9 +61,9 @@ const NavBar: React.FC = observer(() => {
           {isAdmin && (
             <li>
               <NavTab
-                to="/main/users"
+                name="Users"
+                linkTo="/main/users"
                 icon={faUser}
-                label="Users"
               />
             </li>
           )}
@@ -75,9 +74,9 @@ const NavBar: React.FC = observer(() => {
       <div className="border-t-2 border-primary-700 py-4 pr-4">
         <div className="flex flex-col gap-2 mt-2">
           <NavTab
-            to="/main/settings"
+            name="Settings"
+            linkTo="/main/settings"
             icon={faGear}
-            label="Settings"
           />
           <button
             onClick={handleLogout}
