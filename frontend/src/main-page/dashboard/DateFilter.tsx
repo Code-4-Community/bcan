@@ -51,7 +51,7 @@ const DateFilter: React.FC = observer(() => {
   };
 
   return (
-    <div className="flex flex-col space-y-2 w- lg:w-80">
+    <div className="flex flex-col space-y-2 w-64 lg:w-80">
       <button
         className="dashboard-button bg-white inline-flex items-center justify-between px-4 py-2  text-xs lg:text-sm text-center text-white bg-blue-700 rounded-lg"
         type="button"
@@ -68,7 +68,7 @@ const DateFilter: React.FC = observer(() => {
         <FaChevronDown className="ms-2 text-sm" />
       </button>
       <div
-        className={`z-[100] absolute  top-[184px]  w-[300px] bg-white ${showDropdown ? "" : "hidden"} rounded-md border-2 border-gray-200 shadow-lg`}
+        className={`z-[100] absolute  top-56  w-64 lg:w-80 bg-white ${showDropdown ? "" : "hidden"} rounded-md border-2 border-gray-200 shadow-lg`}
       >
         <button
           className="close-button absolute top-3 right-4 text-lg"
