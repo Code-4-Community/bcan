@@ -1,3 +1,5 @@
+import logo from "../images/logo.svg";
+
 export enum FooterText {
     C4C_Motto = "Made with love by ",
     C4C = "Code4Community",
@@ -12,3 +14,8 @@ export enum DoesBcanQualifyText {
     Yes = "Yes",
     No = "No"
 }
+
+export const NavBarBranding = {
+  logo: logo,
+  name: "BostonCan"
+};

@@ -13,8 +13,8 @@ import { api } from "../../api";
 
 interface BellButtonProps {
   // onClick handler to open notification popup
-  setOpenModal: (modal: string | null) => void;
-  openModal: string | null;
+  setOpenModal: (open: boolean) => void;
+  openModal: boolean;
 }
 
 const BellButton: React.FC<BellButtonProps> = observer(({ setOpenModal, openModal }) => {
@@ -38,7 +38,7 @@ const BellButton: React.FC<BellButtonProps> = observer(({ setOpenModal, openModa
     console.log(response);
     const currNotifications = await response.json();
     setNotificationsAction(currNotifications);
-    setOpenModal(openModal === "bell" ? null : "bell");
+    setOpenModal(!openModal);
     return notifications;
   };
 
@@ -48,7 +48,7 @@ const BellButton: React.FC<BellButtonProps> = observer(({ setOpenModal, openModa
         className="bell-wrapper inline-block relative p-2 hover:bg-primary-700 rounded-md"
       >
         <button
-          className={`bell-button ${openModal === "bell" ? "hovered" : ""} bg-none border-none relative`}
+          className={`bell-button ${openModal ? "hovered" : ""} bg-none border-none relative`}
           onClick={handleClick}
         >
           <FontAwesomeIcon
@@ -63,7 +63,7 @@ const BellButton: React.FC<BellButtonProps> = observer(({ setOpenModal, openModa
         
       </div>
 
-      {(openModal === "bell" ? (
+      {(openModal ? (
         <NotificationPopup
           setOpenModal={setOpenModal}
         />
