@@ -23,11 +23,125 @@ export class UserService {
   private dynamoDb = new AWS.DynamoDB.DocumentClient();
   private ses = new AWS.SES({ region: process.env.AWS_REGION });
   private s3 = new AWS.S3();
-  private profilePicBucket = process.env.PROFILE_PICTURE_BUCKET;
+  private profilePicBucket : string = process.env.PROFILE_PICTURE_BUCKET!;
 
-  async uploadProfilePic(user : User, pic : Express.Multer.File) : Promise<User>{
-    throw new Error("Not implemented")
+  async uploadProfilePic(user: User, pic: Express.Multer.File): Promise<User> {
+  const tableName = process.env.DYNAMODB_USER_TABLE_NAME;
+
+  // 1. Validate all inputs
+  this.validateUploadInputs(user, pic, tableName);
+
+  // 2. Generate filename: userId-profilepic.ext
+  const fileExtension = pic.originalname.split('.').pop()?.toLowerCase() || 'jpg';
+  const key = `${user.userId}-profilepic.${fileExtension}`;
+
+  this.logger.log(`Uploading profile picture for user ${user.userId} with key: ${key}`);
+
+  try {
+    // 3. Upload to S3
+    const uploadParams: AWS.S3.PutObjectRequest = {
+      Bucket: this.profilePicBucket,
+      Key: key,
+      Body: pic.buffer,
+      ContentType: pic.mimetype,
+    };
+
+    const uploadResult = await this.s3.upload(uploadParams).promise();
+    this.logger.log(`✓ Profile picture uploaded to S3: ${uploadResult.Location}`);
+
+    // 4. Update user's profile picture URL in DynamoDB
+    const updateParams = {
+      TableName: tableName!,
+      Key: { userId: user.userId },
+      UpdateExpression: "SET profilePictureUrl = :url",
+      ExpressionAttributeValues: {
+        ":url": uploadResult.Location,
+      },
+      ReturnValues: "ALL_NEW" as const,
+    };
+
+    const updateResult = await this.dynamoDb.update(updateParams).promise();
+
+    if (!updateResult.Attributes) {
+      this.logger.error(`DynamoDB update did not return updated attributes for ${user.userId}`);
+      throw new InternalServerErrorException("Failed to retrieve updated user data");
+    }
+
+    this.logger.log(`✅ Profile picture uploaded successfully for user ${user.userId}`);
+    return updateResult.Attributes as User;
+
+  } catch (error: any) {
+    this.logger.error(`Failed to upload profile picture for ${user.userId}:`, error);
+
+    // Handle S3 errors
+    if (error.code === 'NoSuchBucket') {
+      this.logger.error(`S3 bucket does not exist: ${this.profilePicBucket}`);
+      throw new InternalServerErrorException('Storage bucket not found');
+    } else if (error.code === 'AccessDenied') {
+      this.logger.error('Access denied to S3 bucket');
+      throw new InternalServerErrorException('Insufficient permissions to upload file');
+    }
+
+    // Handle DynamoDB errors
+    if (error.code === 'ResourceNotFoundException') {
+      this.logger.error('DynamoDB table does not exist');
+      throw new InternalServerErrorException('Database table not found');
+    } else if (error.code === 'ValidationException') {
+      this.logger.error(`Invalid DynamoDB update parameters`);
+      throw new BadRequestException(`Invalid update parameters`);
+    }
+
+    if (error instanceof HttpException) {
+      throw error;
+    }
+
+    throw new InternalServerErrorException('Failed to upload profile picture');
   }
+}
+
+// Validation helper method for profile picture uploads
+private validateUploadInputs(user: User, pic: Express.Multer.File, tableName: string | undefined): void {
+  // Validate environment variables
+  if (!this.profilePicBucket) {
+    this.logger.error("Profile Picture Bucket is not defined in environment variables");
+    throw new InternalServerErrorException("Server configuration error");
+  }
+
+  if (!tableName) {
+    this.logger.error("DynamoDB User Table Name is not defined in environment variables");
+    throw new InternalServerErrorException("Server configuration error");
+  }
+
+  // Validate user object
+  if (!user || !user.userId) {
+    this.logger.error("Invalid user object provided for profile picture upload");
+    throw new BadRequestException("Valid user object is required");
+  }
+
+  // Validate file exists
+  if (!pic || !pic.buffer) {
+    this.logger.error("Invalid file provided for upload");
+    throw new BadRequestException("Valid image file is required");
+  }
+
+  // Validate file type
+  const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+  if (!allowedMimeTypes.includes(pic.mimetype)) {
+    this.logger.error(`Invalid file type: ${pic.mimetype}`);
+    throw new BadRequestException(
+      `Invalid file type. Allowed types: ${allowedMimeTypes.join(', ')}`
+    );
+  }
+
+  // Validate file size (5MB max)
+  const maxSizeInBytes = 5 * 1024 * 1024;
+  if (pic.size > maxSizeInBytes) {
+    this.logger.error(`File too large: ${pic.size} bytes`);
+    throw new BadRequestException(
+      `File too large. Maximum size: ${maxSizeInBytes / (1024 * 1024)}MB`
+    );
+  }
+}
   // purpose statement: deletes user from database; only admin can delete users
   // use case: employee is no longer with BCAN
  async deleteUser(user: User, requestedBy: User): Promise<User> {

@@ -236,8 +236,8 @@ export class UserController {
   @Post('upload-pfp')
   @UseInterceptors(FileInterceptor('profilePic'))
   async uploadProfilePic(
-@Body() UploadProfilePicBody: UploadProfilePicBody,  
+@Body() body: UploadProfilePicBody,  
 ){
-    
+    return await this.userService.uploadProfilePic(body.user,body.file)
   }
 }
