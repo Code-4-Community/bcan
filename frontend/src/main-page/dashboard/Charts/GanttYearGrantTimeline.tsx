@@ -116,7 +116,7 @@ export const GanttYearGrantTimeline = observer(
     // Filtering events that are included in current date range
     // Example can be also found on video https://youtu.be/9oy4rTVEfBQ?t=118&si=52BGKSIYz6bTZ7fx
     // and in the react-scheduler repo App.tsx file https://github.com/Bitnoise/react-scheduler/blob/master/src/App.tsx
-    const filteredMockedSchedulerData = data.map((grant) => ({
+    const filteredSchedulerData = data.map((grant) => ({
       ...grant,
       data: grant.data.filter((project) => {
         const startInRange =
@@ -140,10 +140,10 @@ export const GanttYearGrantTimeline = observer(
     }));
 
     return (
-      <div className="chart-container h-full w-full">
+      <div className="h-full w-full">
         {/* Title */}
-        <div className="text-lg w-full text-left font-semibold">
-          Year Grant Timeline
+        <div className="text-md lg:text-lg w-full text-left font-semibold">
+          Grant Timeline
         </div>
         {/* Year */}
         <div className="text-sm w-full text-left">
@@ -152,9 +152,9 @@ export const GanttYearGrantTimeline = observer(
             : ""}
           {recentYear}
         </div>
-        <div className="w-full h-full max-w-screen relative">
+        <div className="w-full h-96 max-w-screen relative">
           <Scheduler
-            data={filteredMockedSchedulerData}
+            data={filteredSchedulerData}
             isLoading={false}
             onRangeChange={handleRangeChange}
             config={{

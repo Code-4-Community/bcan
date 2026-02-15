@@ -36,8 +36,8 @@ const Dashboard = observer(() => {
     new Set(
       yearFilter && yearFilter?.length > 0
         ? yearFilter
-        : allGrants.map((g) => new Date(g.application_deadline).getFullYear())
-    )
+        : allGrants.map((g) => new Date(g.application_deadline).getFullYear()),
+    ),
   ).sort((a, b) => b - a);
 
   const recentYear = uniqueYears[0];
@@ -45,41 +45,52 @@ const Dashboard = observer(() => {
 
   const { grants } = ProcessGrantData();
 
-  return(<div className="dashboard-page px-12 py-4 mb-8 ">
-        <div className="flex flex-row justify-end gap-4 mb-6">
-          <CsvExportButton />
-          <DateFilter />
+  return (
+    <div className="dashboard-page px-12 py-4 mb-8 ">
+      <div className="flex flex-row justify-start gap-4 mb-12 mt-12 items-center">
+        <div className="text-3xl font-bold mr-4">Dashboard</div>
+        <DateFilter />
+        <CsvExportButton />
+      </div>
+
+      <div className="gap-5 grid grid-cols-4">
+        {/* ROW 1 */}
+        <div className="col-span-2 h-full">
+          <KPICards
+            grants={grants}
+            recentYear={recentYear}
+            priorYear={priorYear}
+          />
         </div>
 
-        <div className=" gap-6 grid grid-cols-7">
-          <div className="col-span-3 h-full">
-            <KPICards
-              grants={grants}
-              recentYear={recentYear}
-              priorYear={priorYear}
-            />
-          </div>
-          <div className="col-span-4">
-            <LineChartSuccessRate grants={grants} />
-          </div>
-          <div className="col-span-3">
-            <DonutMoneyApplied grants={grants} />
-          </div>
-          <div className="col-span-4">
-            <StackedBarMoneyReceived grants={grants} />
-          </div>
-          <div className="col-span-5">
-            <GanttYearGrantTimeline
-              recentYear={recentYear}
-              grants={grants}
-              uniqueYears={uniqueYears}
-            />
-          </div>
-          <div className="col-span-2">
-            <BarYearGrantStatus recentYear={recentYear} grants={grants} />
-          </div>
+        <div className="chart-container col-span-1 h-full">
+          <DonutMoneyApplied grants={grants} />
         </div>
-      </div>)
+
+        <div className="chart-container col-span-1 h-full">
+          <StackedBarMoneyReceived grants={grants} />
+        </div>
+
+        {/* ROW 2 */}
+        <div className="chart-container col-span-2 h-full">
+          <LineChartSuccessRate grants={grants} />
+        </div>
+
+        <div className="chart-container col-span-2 h-full">
+          <BarYearGrantStatus recentYear={recentYear} grants={grants} />
+        </div>
+
+        {/* ROW 3 (Scrollable) */}
+        <div className="chart-container col-span-4 ">
+          <GanttYearGrantTimeline
+            recentYear={recentYear}
+            grants={grants}
+            uniqueYears={uniqueYears}
+          />
+        </div>
+      </div>
+    </div>
+  );
 });
 
 export default Dashboard;

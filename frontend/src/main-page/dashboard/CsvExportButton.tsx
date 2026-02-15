@@ -3,7 +3,6 @@ import { downloadCsv, CsvColumn } from "../../utils/csvUtils";
 import { Grant } from "../../../../middle-layer/types/Grant";
 import { ProcessGrantData } from "../../main-page/grants/filter-bar/processGrantData";
 import { observer } from "mobx-react-lite";
-import "../grants/styles/GrantButton.css";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { BiExport } from "react-icons/bi";
 import Attachment from "../../../../middle-layer/types/Attachment";
@@ -108,14 +107,14 @@ const CsvExportButton: React.FC = observer(() => {
 
   return (
     <button
-      className="grant-button bg-orange-lightest flex justify-between items-center"
+      className="dashboard-button text-xs lg:text-sm bg-grey-400 flex justify-between items-center"
       type="button"
       onClick={onClickDownload}
       disabled={isProcessing}
       title="Export the grants data including any applied filters."
     >
       {isProcessing ? "Exporting..." : "Export CSV"}
-      <BiExport className="ms-2 text-sm" />
+      <BiExport className="ms-2 text-sm " />
     </button>
   );
 });

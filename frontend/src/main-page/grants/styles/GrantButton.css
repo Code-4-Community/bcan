@@ -2,12 +2,12 @@
     color: black;
     
     /* Shape and layout */
-    border-radius: 15px;
-    padding: 8px 16px;
-    font-size: 16px;
+    border-radius: 0.85rem;
+    padding: 0.5rem 1.2rem;
+    align-items: center;
     cursor: pointer;
     height: 42px;
-    border: 0.1rem solid;
+    font-size: var(--font-size-base);
     transition: opacity 0.2s ease-in-out;
   }
 
