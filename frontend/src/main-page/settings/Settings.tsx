@@ -18,18 +18,19 @@ export default function Settings() {
 
           {/* Buttons + helper text */}
           <div className="flex flex-col gap-2">
-            <h2 className="text-2xl font-bold mb-4 flex justify-start">Profile Picture</h2>
+            <h2 className="text-2xl font-bold mb-1 flex justify-start">Profile Picture</h2>
             <div className="flex gap-3">
               
               <Button
                 text="Upload Image"
                 onClick={() => alert("add upload functionality")}
-                className="bg-primary-800 text-white"
+                //To-do: add a upload logo next to the "Upload Image" button
+                className="bg-primary-900 text-white"
               />
               <Button
                 text="Remove"
                 onClick={() => alert("remove image")}
-                className="bg-white text-black border border-gray-300"
+                className="bg-white text-black border-2 border-grey-500"
               />
             </div>
 
@@ -42,6 +43,14 @@ export default function Settings() {
 
       <InfoCard
         title="Personal Information"
+        action={
+          <Button
+            //To-do: add a edit logo next to the "Edit" button
+            text="Edit"
+            onClick={() => alert("edit personal info")}
+            className="bg-white text-black border-2 border-grey-500"
+          />
+        }
         fields={[
           { label: "First Name", value: "John" },
           { label: "Last Name", value: "Doe" },
@@ -49,7 +58,7 @@ export default function Settings() {
         ]}
       />
 
-      <div className="flex justify-between items-center mt-12">
+      <div className="flex gap-40 items-center mt-12">
         <div>
           <h2 className="text-2xl font-bold mb-1 flex justify-start">Change Password</h2>
           <p className="text-gray-500">
@@ -60,7 +69,7 @@ export default function Settings() {
         <Button
           text="Change Password"
           onClick={() => alert("change password")}
-          className="bg-white text-black border border-gray-300"
+          className="bg-white text-black border-2 border-grey-500"
         />
       </div>
     </div>

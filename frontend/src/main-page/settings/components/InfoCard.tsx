@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 type InfoField = {
   label: string;
   value: string;
@@ -6,22 +8,28 @@ type InfoField = {
 type InfoCardProps = {
   title?: string;
   fields: InfoField[];
+  action?: ReactNode;
 };
 
-export default function InfoCard({ title, fields }: InfoCardProps) {
+export default function InfoCard({ title, fields, action }: InfoCardProps) {
   return (
-    <div className="w-full max-w-md rounded-lg bg-white p-4 shadow-sm flex flex-col">
-      {title && (
-        <h2 className="mb-4 text-lg font-bold flex justify-start">
-          {title}
-        </h2>
+    <div className="w-full max-w-3xl rounded-lg bg-white p-6 shadow-sm flex flex-col">
+      {(title || action) && (
+        <div className="mb-4 flex items-center justify-between">
+          {title && (
+            <h2 className="text-xl font-bold flex justify-start">
+              {title}
+            </h2>
+          )}
+          {action}
+        </div>
       )}
 
-      <div className="grid grid-cols-2 gap-4 text-left">
+      <div className="grid grid-cols-2 gap-6 text-left">
         {fields.map((field) => (
           <div key={field.label}>
-            <p className="text-xs text-gray-500">{field.label}</p>
-            <p className="text-sm font-medium text-gray-900">
+            <p className="text-sm text-gray-500">{field.label}</p>
+            <p className="text-base font-medium text-gray-900">
               {field.value}
             </p>
           </div>
