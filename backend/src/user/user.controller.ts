@@ -1,10 +1,11 @@
-import { Controller, Get, Patch, Delete, Body, Param, UseGuards, Req } from "@nestjs/common";
+import { Controller, Get, Patch, Delete, Body, Param, UseGuards, Req, Post, UseInterceptors, UploadedFile } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { User } from "../../../middle-layer/types/User";
 import { UserStatus } from "../../../middle-layer/types/UserStatus";
 import { VerifyAdminRoleGuard, VerifyUserGuard, VerifyAdminOrEmployeeRoleGuard } from "../guards/auth.guard";
 import { ApiResponse, ApiParam , ApiBearerAuth} from "@nestjs/swagger";
-import { ChangeRoleBody } from "./types/user.types";
+import { ChangeRoleBody, UploadProfilePicBody } from "./types/user.types";
+import { FileInterceptor } from "@nestjs/platform-express";
 
 @Controller("user")
 export class UserController {
@@ -230,5 +231,13 @@ export class UserController {
   @ApiBearerAuth()
   async getUserById(@Param('id') userId: string): Promise<User> {
     return await this.userService.getUserById(userId);
+  }
+
+  @Post('upload-pfp')
+  @UseInterceptors(FileInterceptor('profilePic'))
+  async uploadProfilePic(
+@Body() UploadProfilePicBody: UploadProfilePicBody,  
+){
+    
   }
 }

@@ -22,7 +22,12 @@ export class UserService {
   private readonly logger = new Logger(UserService.name);
   private dynamoDb = new AWS.DynamoDB.DocumentClient();
   private ses = new AWS.SES({ region: process.env.AWS_REGION });
+  private s3 = new AWS.S3();
+  private profilePicBucket = process.env.PROFILE_PICTURE_BUCKET;
 
+  async uploadProfilePic(user : User, pic : Express.Multer.File) : Promise<User>{
+    throw new Error("Not implemented")
+  }
   // purpose statement: deletes user from database; only admin can delete users
   // use case: employee is no longer with BCAN
  async deleteUser(user: User, requestedBy: User): Promise<User> {
