@@ -5,7 +5,8 @@ import NavBar from "./navbar/NavBar";
 import Users from "./users/Users";
 import RestrictedPage from "./restricted/RestrictedPage";
 import CashFlowPage from "./cash-flow/CashFlowPage";
-import SettingsPage from "./settings/SettingsPage";
+import Settings from "./settings/Settings";
+
 
 function MainPage() {
 
@@ -20,7 +21,7 @@ function MainPage() {
         <Route path="/users" element={<Users />} />
         <Route path="/restricted" element={<RestrictedPage />} />
         <Route path="/cash-flow" element={<CashFlowPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/settings" element={<Settings />} />
         {/* fallback route */}
         <Route path="*" element={<GrantPage />} />
       </Routes>
