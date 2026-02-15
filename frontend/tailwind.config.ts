@@ -4,8 +4,6 @@ export default {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx,html}"],
   theme: {
     colors: {
-      tan: "#F2EBE4",
-
       orange: {
         DEFAULT: "#ffa500",
         light: "#FFCEB6",
@@ -92,6 +90,7 @@ export default {
       borderRadius: {
         "4xl": "2rem",
         md: "0.75rem",
+        DEFAULT: "0.75rem",
       },
     },
   },
