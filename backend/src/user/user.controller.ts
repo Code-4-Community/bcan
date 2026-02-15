@@ -284,7 +284,7 @@ export class UserController {
 async uploadProfilePic(
   @UploadedFile() file: Express.Multer.File,
   @Body('user') userJson: string, // ✅ Comes as JSON string
-) {
+) : Promise<String> {
   try {
     // Parse the JSON string to User object
     const user: User = JSON.parse(userJson);

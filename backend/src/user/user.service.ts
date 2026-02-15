@@ -25,7 +25,7 @@ export class UserService {
   private s3 = new AWS.S3();
   private profilePicBucket : string = process.env.PROFILE_PICTURE_BUCKET!;
 
-  async uploadProfilePic(user: User, pic: Express.Multer.File): Promise<User> {
+  async uploadProfilePic(user: User, pic: Express.Multer.File): Promise<String> {
   const tableName = process.env.DYNAMODB_USER_TABLE_NAME;
 
   // 1. Validate all inputs
@@ -68,7 +68,7 @@ export class UserService {
     }
 
     this.logger.log(`✅ Profile picture uploaded successfully for user ${user.userId}`);
-    return updateResult.Attributes as User;
+    return updateResult.Attributes.profilePictureUrl;
 
   } catch (error: any) {
     this.logger.error(`Failed to upload profile picture for ${user.userId}:`, error);
