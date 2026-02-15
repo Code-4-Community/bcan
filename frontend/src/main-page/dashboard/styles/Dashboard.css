@@ -82,20 +82,20 @@ input[type="checkbox"]:checked::before {
 }
 
 .dashboard-button {
-    color: black;
-    /* Shape and layout */
-    border-radius: 0.6rem;
-    padding: 0.5rem 0.8rem;
-    align-items: center;
-    cursor: pointer;
-    height: 1.75rem;
-    font-size: var(--font-size-base);
-    transition: opacity 0.2s ease-in-out;
-  }
-  
-  .dashboard-button:hover {
-    opacity: 0.8;
-  }
+  color: black;
+  /* Shape and layout */
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.8rem;
+  align-items: center;
+  cursor: pointer;
+  height: 1.75rem;
+  font-size: var(--font-size-base);
+  transition: opacity 0.2s ease-in-out;
+}
+
+.dashboard-button:hover {
+  opacity: 0.8;
+}
 
 #reactSchedulerOutsideWrapper {
   overflow: hidden;
