@@ -9,7 +9,7 @@
   /* justify-content: space-between; */
   border-radius: 15px;
 
-  background-color: var(--color-grey-200);
+  background-color: var(--color-grey-150);
   /* margin: 0; Remove margin */
   transition: background-color 0.2s ease;
   border: 0.1rem solid var(--color-primary-900);

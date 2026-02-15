@@ -6,7 +6,7 @@
 .user-dropdown-input {
   height: 48px;
   width: 100%;
-  background-color: var(--color-grey-200);
+  background-color: var(--color-grey-150);
   border-style: solid;
   border-color: black;
   border-width: 1px;
@@ -29,7 +29,7 @@
   right: 0;
   max-height: 200px;
   overflow-y: auto;
-  background-color: var(--color-grey-200);
+  background-color: var(--color-grey-150);
   border-style: solid;
   border-color: black;
   border-width: 1px;

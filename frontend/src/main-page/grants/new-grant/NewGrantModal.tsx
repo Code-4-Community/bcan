@@ -470,7 +470,7 @@ const NewGrantModal: React.FC<{
                 Organization Name *
               </label>
               <input
-                className="block w-full h-[42px] bg-grey-200 text-black placeholder:text-gray-400 border border-black rounded py-3 px-4 mb-3 leading-tight"
+                className="block w-full h-[42px] bg-grey-150 text-black placeholder:text-gray-400 border border-black rounded py-3 px-4 mb-3 leading-tight"
                 id="grid-first-name"
                 type="text"
                 placeholder="Type Here"
@@ -494,7 +494,7 @@ const NewGrantModal: React.FC<{
                       Application Date *
                     </label>
                     <input
-                      className={`appearance-none block w-full h-[42px] bg-grey-200 border border-black rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500 ${
+                      className={`appearance-none block w-full h-[42px] bg-grey-150 border border-black rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500 ${
                         applicationDate ? "text-black" : "text-gray-500"
                       }`}
                       id="grid-city"
@@ -516,7 +516,7 @@ const NewGrantModal: React.FC<{
                       Grant Start Date *
                     </label>
                     <input
-                      className={`w-full appearance-none block w-full h-[42px] bg-grey-200 placeholder:text-gray-400 border border-black rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500 ${
+                      className={`w-full appearance-none block w-full h-[42px] bg-grey-150 placeholder:text-gray-400 border border-black rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500 ${
                         grantStartDate ? "text-black" : "text-gray-500"
                       }`}
                       id="grid-city"
@@ -540,7 +540,7 @@ const NewGrantModal: React.FC<{
                   <input
                     type="number"
                     min="0"
-                    className="appearance-none block w-full h-[42px] bg-grey-200 text-black placeholder:text-gray-400 border border-black rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500"
+                    className="appearance-none block w-full h-[42px] bg-grey-150 text-black placeholder:text-gray-400 border border-black rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500"
                     id="grid-city"
                     value={estimatedCompletionTimeInHours}
                     onChange={(e) =>
@@ -573,7 +573,7 @@ const NewGrantModal: React.FC<{
                       <div key={index} className="flex gap-2 mb-2 w-full">
                         <input
                           key={index}
-                          className="flex-1 min-w-0 h-[42px] bg-grey-200 text-black rounded border border-black"
+                          className="flex-1 min-w-0 h-[42px] bg-grey-150 text-black rounded border border-black"
                           type="date"
                           value={
                             date
@@ -613,7 +613,7 @@ const NewGrantModal: React.FC<{
                   Timeline (in years) *
                 </label>
                 <input
-                  className="appearance-none block w-full h-[42px] bg-grey-200 text-black placeholder:text-gray-400 border border-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none"
+                  className="appearance-none block w-full h-[42px] bg-grey-150 text-black placeholder:text-gray-400 border border-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none"
                   type="number"
                   min="0"
                   placeholder="Type Here"
@@ -631,7 +631,7 @@ const NewGrantModal: React.FC<{
                   Amount (in $) *
                 </label>
                 <CurrencyInput
-                  className="appearance-none block w-full h-[42px] mb-[2px] bg-grey-200 text-gray-700 border border-black rounded px-4 leading-tight focus:outline-none "
+                  className="appearance-none block w-full h-[42px] mb-[2px] bg-grey-150 text-gray-700 border border-black rounded px-4 leading-tight focus:outline-none "
                   min={0}
                   decimalsLimit={2}
                   placeholder="Type Here"
@@ -662,7 +662,7 @@ const NewGrantModal: React.FC<{
                       }}
                       placeholder="Name"
                       />
-                        <input className="w-full h-[48px] bg-grey-200 text-gray-700 rounded border border-black"
+                        <input className="w-full h-[48px] bg-grey-150 text-gray-700 rounded border border-black"
                          placeholder="e-mail" 
                          value={bcanPocEmail}
                          readOnly
@@ -686,14 +686,14 @@ const NewGrantModal: React.FC<{
                   <MdOutlinePerson2 className="sm:p-1 lg:p-2 w-1/4 h-full" />
                   <div className="w-3/4">
                     <input
-                      className="w-full h-[42px] bg-grey-200 text-gray-700 rounded border border-black"
+                      className="w-full h-[42px] bg-grey-150 text-gray-700 rounded border border-black"
                       id="grid-city"
                       placeholder="Name"
                       value={grantProviderPocName}
                       onChange={(e) => setGrantProviderPocName(e.target.value)}
                     />
                     <input
-                      className="w-full h-[42px] bg-grey-200 text-gray-700 rounded border border-black"
+                      className="w-full h-[42px] bg-grey-150 text-gray-700 rounded border border-black"
                       id="grid-city"
                       placeholder="e-mail"
                       value={grantProviderPocEmail}
@@ -717,7 +717,7 @@ const NewGrantModal: React.FC<{
                     Does BCAN qualify? *
                   </label>
                   <select
-                    className={`appearance-none block w-full h-[42px] bg-grey-200 border border-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none ${
+                    className={`appearance-none block w-full h-[42px] bg-grey-150 border border-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none ${
                       doesBcanQualify == "" ? "text-gray-500" : "text-black"
                     }`}
                     id="grid-first-name"
@@ -739,7 +739,7 @@ const NewGrantModal: React.FC<{
                     Status
                   </label>
                   <select
-                    className={`appearance-none block w-full h-[42px] bg-grey-200 placeholder:text-gray-400 border border-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none ${
+                    className={`appearance-none block w-full h-[42px] bg-grey-150 placeholder:text-gray-400 border border-black rounded py-3 px-4 mb-3 leading-tight focus:outline-none ${
                       status == null ? "text-gray-500" : "text-black"
                     }`}
                     id="grid-first-name"
@@ -764,7 +764,7 @@ const NewGrantModal: React.FC<{
                     Restriction type *
                   </label>
                   <select
-                    className={`appearance-none block w-full h-[42px] bg-grey-200 border border-black rounded py-3 px-4 leading-tight focus:outline-none ${
+                    className={`appearance-none block w-full h-[42px] bg-grey-150 border border-black rounded py-3 px-4 leading-tight focus:outline-none ${
                       isRestricted == "" ? "text-gray-500" : "text-black"
                     }`}
                     id="grid-first-name"
@@ -807,7 +807,7 @@ const NewGrantModal: React.FC<{
                       <input
                         type="text"
                         placeholder="Name"
-                        className="flex-1 px-2 h-[42px] bg-grey-200 border border-black rounded-md"
+                        className="flex-1 px-2 h-[42px] bg-grey-150 border border-black rounded-md"
                         value={currentAttachment.attachment_name}
                         onChange={(e) =>
                           setCurrentAttachment({
@@ -819,7 +819,7 @@ const NewGrantModal: React.FC<{
                       <input
                         type="text"
                         placeholder="URL"
-                        className="flex-1 px-2 h-[42px] bg-grey-200 border border-black rounded-md"
+                        className="flex-1 px-2 h-[42px] bg-grey-150 border border-black rounded-md"
                         value={currentAttachment.url}
                         onChange={(e) =>
                           setCurrentAttachment({
@@ -829,7 +829,7 @@ const NewGrantModal: React.FC<{
                         }
                       />
                       <select
-                        className="h-[42px] bg-grey-200 border border-black rounded-md px-2 items-center justify-center"
+                        className="h-[42px] bg-grey-150 border border-black rounded-md px-2 items-center justify-center"
                         value={currentAttachment.type}
                         onChange={(e) =>
                           setCurrentAttachment({
@@ -881,7 +881,7 @@ const NewGrantModal: React.FC<{
                         className="flex gap-2 mb-2 w-full items-center"
                       >
                         <div
-                          className="overflow-hidden rounded-md flex-1 min-w-0 h-[42px] bg-grey-200 text-gray-700 border border-black flex items-center px-3 justify-between"
+                          className="overflow-hidden rounded-md flex-1 min-w-0 h-[42px] bg-grey-150 text-gray-700 border border-black flex items-center px-3 justify-between"
                         >
                           <a
                             href={attachment.url}
@@ -924,7 +924,7 @@ const NewGrantModal: React.FC<{
             Description
           </label>
           <textarea
-            className="h-48 block w-full bg-grey-200 text-gray-700 border border-black rounded py-3 px-4 mb-3 leading-tight"
+            className="h-48 block w-full bg-grey-150 text-gray-700 border border-black rounded py-3 px-4 mb-3 leading-tight"
             id="grid-first-name"
             value={description}
             onChange={(e) => _setDescription(e.target.value)}
