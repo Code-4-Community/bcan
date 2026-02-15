@@ -97,12 +97,11 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
       <ResponsiveContainer
         width="100%"
         height="100%"
-        min-width={400}
         onResize={(w) => setWidth(w)}
       >
         <LineChart
           data={data}
-          margin={{ top: 50, right: 30, left: 30, bottom: 5 }}
+          margin={{ top: 40, right: 30, left: 50, bottom: 5 }}
         >
           {width > 400 && (
             <LegendComp

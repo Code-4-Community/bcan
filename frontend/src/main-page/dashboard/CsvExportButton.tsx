@@ -107,7 +107,7 @@ const CsvExportButton: React.FC = observer(() => {
 
   return (
     <button
-      className="dashboard-button text-xs lg:text-sm bg-orange-lightest flex justify-between items-center"
+      className="dashboard-button text-xs lg:text-sm bg-grey-400 flex justify-between items-center"
       type="button"
       onClick={onClickDownload}
       disabled={isProcessing}
