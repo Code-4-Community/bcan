@@ -68,6 +68,7 @@
   --color-grey-400: #ced4da;
   --color-grey-300: #dee2e6;
   --color-grey-200: #e9ecef;
+  --color-grey-150: #F2F2F2;
   --color-grey-100: #f8f9fa;
 
   --color-black: #000000;
@@ -80,7 +81,7 @@
 
   color-scheme: light dark;
   color: rgba(0, 0, 0, 0.87);
-  background-color: var(--color-grey-200);
+  background-color: var(--color-grey-150);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;

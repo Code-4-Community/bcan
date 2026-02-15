@@ -47,12 +47,11 @@ input[type="checkbox"]:checked::before {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  background-color: var(--color-grey-200);
+  background-color: var(--color-grey-150);
   width: 100%;
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-bottom: 1em;
 }
 
 .chart-container {

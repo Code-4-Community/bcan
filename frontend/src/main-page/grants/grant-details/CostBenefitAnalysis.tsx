@@ -68,7 +68,7 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({ grant 
             placeholder="Enter rate"
             value={hourlyRate}
             onChange={(e) => setHourlyRate(e.target.value)}
-            className="w-full h-[42px]  px-3 py-4 border border-gray-400 rounded-md bg-grey-200"
+            className="w-full h-[42px]  px-3 py-4 border border-gray-400 rounded-md bg-grey-150"
           />
         </div>
 
@@ -85,7 +85,7 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({ grant 
                 console.log('Time per report changed to:', e.target.value);
                 setTimePerReport(e.target.value);
             }}
-            className="w-full h-[42px] px-3 py-4 border border-gray-400 rounded-md bg-grey-200"
+            className="w-full h-[42px] px-3 py-4 border border-gray-400 rounded-md bg-grey-150"
           />
         </div>
 
@@ -102,7 +102,7 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({ grant 
             <span className="text-sm font-semibold"> Net Benefit:</span>
         <div
           onClick={calculateNetBenefit}
-          className={`w-1/2 py-2 px-4 rounded-md bg-grey-200 border border-black overflow-auto text-center whitespace-nowrap [scrollbar-width:none] [-ms-overflow-style:none] ${
+          className={`w-1/2 py-2 px-4 rounded-md bg-grey-150 border border-black overflow-auto text-center whitespace-nowrap [scrollbar-width:none] [-ms-overflow-style:none] ${
             netBenefit !== null ? 'text-black' : 'text-gray-500'
           }`}
         >

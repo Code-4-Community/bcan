@@ -4,8 +4,8 @@ import logo from "../../images/logo.svg";
 
 export default function Settings() {
   return (
-    <div className="px-12 py-8 max-w-5xl">
-      <h1 className="text-4xl font-bold mb-8 flex justify-start">Settings</h1>
+    <div className="max-w-5xl ">
+      <h1 className="text-3xl lg:text-4xl font-bold mb-8 flex justify-start">Settings</h1>
 
       <div className="mb-12">
         <div className="flex items-center gap-6">

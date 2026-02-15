@@ -46,14 +46,14 @@ const Dashboard = observer(() => {
   const { grants } = ProcessGrantData();
 
   return (
-    <div className="dashboard-page px-12 py-4 mb-8 ">
-      <div className="flex flex-row justify-start gap-4 mb-12 mt-12 items-center">
-        <div className="text-3xl font-bold mr-4">Dashboard</div>
+    <div className="dashboard-page">
+      <div className="flex flex-row justify-start gap-4 mb-12 items-center">
+        <div className="text-3xl lg:text-4xl font-bold mr-4">Dashboard</div>
         <DateFilter />
         <CsvExportButton />
       </div>
 
-      <div className="gap-5 grid grid-cols-4">
+      <div className="gap-3 lg:gap-5 grid grid-cols-4">
         {/* ROW 1 */}
         <div className="col-span-2 h-full">
           <KPICards
