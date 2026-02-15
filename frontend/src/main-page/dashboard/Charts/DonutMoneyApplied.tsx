@@ -64,7 +64,7 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
   };
 
   return (
-    <div className="flex flex-col align-center h-full">
+    <div className="flex flex-col align-center h-full relative">
       <div className={`w-full ${width > 250 ? "mb-0" : "mb-14"}`}>
         {/* Title */}
         <div className="text-md lg:text-lg font-semibold text-left h-full align">

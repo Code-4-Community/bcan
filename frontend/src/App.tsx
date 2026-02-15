@@ -10,7 +10,6 @@ import { observer } from "mobx-react-lite";
 // Register store and mutators
 import "./external/bcanSatchel/mutators";
 import AppRoutes from "./routes/AppRoutes";
-import Footer from "./main-page/Footer";
 
 /**
  * Main app component that renders routes
@@ -23,7 +22,6 @@ const App = observer(() => {
         <div className="app-container">
           <AppRoutes />
         </div>
-        <Footer/>
         </div>
       </ChakraProvider>
     </Router>

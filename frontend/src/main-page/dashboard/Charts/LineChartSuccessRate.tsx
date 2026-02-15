@@ -89,7 +89,7 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
   data.sort((a, b) => a.date.getTime() - b.date.getTime());
 
   return (
-    <div className="h-full">
+    <div className="h-full relative">
       {/* Title */}
       <div className="text-md lg:text-lg w-full text-left font-semibold align absolute">
         Success Rate by Year

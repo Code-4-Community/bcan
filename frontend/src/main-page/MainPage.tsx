@@ -6,29 +6,36 @@ import Users from "./users/Users";
 import RestrictedPage from "./restricted/RestrictedPage";
 import CashFlowPage from "./cash-flow/CashFlowPage";
 import Settings from "./settings/Settings";
-
+import Footer from "./Footer";
 
 function MainPage() {
-
   return (
-    <div className="w-full flex-row flex">
+    <div className="w-full flex-row flex h-screen overflow-hiden">
       <div>
-<NavBar />
+        <NavBar />
       </div>
-    <div className="px-6 lg:px-12 py-8 pt-16 w-full">
-    <Routes>
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/all-grants" element={<GrantPage showOnlyMyGrants={false} />} />
-      <Route path="/my-grants" element={<GrantPage showOnlyMyGrants={true} />} />
-      <Route path="/users" element={<Users />} />
-      <Route path="/restricted" element={<RestrictedPage />} />
-      <Route path="/cash-flow" element={<CashFlowPage />} />
-      <Route path="/settings" element={<Settings />} />
-      <Route path="*" element={<GrantPage />} />
-    </Routes>
-  </div>
-</div>
-
+      <div className="px-6 lg:px-12 py-8 pt-16 w-full h-screen overflow-y-auto">
+        <div className="min-h-screen mb-16">
+          <Routes>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route
+              path="/all-grants"
+              element={<GrantPage showOnlyMyGrants={false} />}
+            />
+            <Route
+              path="/my-grants"
+              element={<GrantPage showOnlyMyGrants={true} />}
+            />
+            <Route path="/users" element={<Users />} />
+            <Route path="/restricted" element={<RestrictedPage />} />
+            <Route path="/cash-flow" element={<CashFlowPage />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="*" element={<GrantPage />} />
+          </Routes>
+        </div>
+        <Footer />
+      </div>
+    </div>
   );
 }
 

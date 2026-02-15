@@ -52,7 +52,6 @@ input[type="checkbox"]:checked::before {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-bottom: 1em;
 }
 
 .chart-container {
