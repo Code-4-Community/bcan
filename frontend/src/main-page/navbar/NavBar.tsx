@@ -32,7 +32,7 @@ const NavBar: React.FC = observer(() => {
   };
   
   return (
-    <aside className="left-0 top-0 h-screen w-56 bg-white flex flex-col">
+    <aside className="left-0 top-0 h-screen w-56 bg-white flex flex-col rounded-br-2xl">
       {/* Logo at top */}
       <div className="p-6 flex items-center justify-center mr-6">
         <img className="w-12 h-12" src={NavBarBranding.logo} alt={`${NavBarBranding.name} Logo`} />
