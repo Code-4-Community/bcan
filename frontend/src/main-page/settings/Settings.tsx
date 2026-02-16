@@ -46,7 +46,6 @@ export default function Settings() {
         title="Personal Information"
         action={
           <Button
-            //To-do: add a edit logo next to the "Edit" button
             text="Edit"
             onClick={() => alert("edit personal info")}
             className="bg-white text-black border-2 border-grey-500"
