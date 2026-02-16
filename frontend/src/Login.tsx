@@ -76,7 +76,7 @@ const Login = observer(() => {
           </div>
           <div className="h-12 items-center">
             {failure ? (
-              <div className="text-red mt-4 bg-red-lighter h-full rounded-md text-center flex items-center justify-center p-2">
+              <div className="text-red mt-4 bg-red-light h-full rounded-md text-center flex items-center justify-center p-2">
                 Your password is incorrect or this account doesn't exist.
               </div>
             ) : (

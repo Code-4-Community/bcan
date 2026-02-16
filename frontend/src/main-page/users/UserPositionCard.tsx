@@ -11,7 +11,7 @@ const UserPositionCard = ({ position }: UserPositionCardProps) => {
       case UserStatus.Admin:
         return "bg-green-light border-green-dark text-green-dark";
       case UserStatus.Employee:
-        return "bg-yellow-light border-yellow text-yellow-dark";
+        return "bg-yellow-light border-yellow-dark text-yellow-dark";
       case UserStatus.Inactive:
       default:
         return "bg-grey-400 border-gray text-gray";

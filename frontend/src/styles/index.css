@@ -26,23 +26,19 @@
   --font-size-4xl: 2.25rem;
   --font-size-hero: 3.2rem;
 
-  --color-green-dark: #119548;
-  --color-green: #5ab911;
-  --color-green-light: #c6fbd3;
+  --color-green-dark: #007E4C;
+  --color-green: #04A967;
+  --color-green-light: #D0FFEF;
 
-  --color-yellow: #f8cc16;
-  --color-yellow-light: #fff8ca;
-  --color-yellow-dark: #8a710c;
+  --color-blue-dark: #006CA1;
+  --color-blue-light: #D0EDFF;
 
-  --color-red: #d33221;
-  --color-red-dark: #771505;
-  --color-red-light: #ff6b6b;
-  --color-red-lighter: #ffa399;
-  --color-red-lightest: #ffdfdf;
+  --color-yellow-dark: #9B6000;
+  --color-yellow-light: #FFF0D3;
 
-  --color-orange: #ffa500;
-  --color-orange-light: #ffceb6;
-  --color-orange-lightest: #fff1eb;
+  --color-red-dark: #C80000;
+  --color-red-light: #FFD8D8;
+  --color-red-lightest: #FFF0F0;
 
   --color-primary-900: #e16f39;
   --color-primary-800: #e78c61;

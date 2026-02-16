@@ -468,7 +468,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                               curGrant.status === "Active"
                                 ? "bg-green"
                                 : curGrant.status === "Potential"
-                                ? "bg-orange"
+                                ? "bg-blue-dark"
                                 : "bg-grey-400"
                             }`}
                           >
@@ -576,7 +576,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                 <div className="flex justify-between items-center w-full mt-6">
                   <>
                     <button
-                      className="py-2 px-4 rounded-md hover:bg-red-600 transition-colors bg-red-light text-white border border-red-dark"
+                      className="py-2 px-4 rounded-md hover:bg-red-600 transition-colors bg-red text-white border border-black"
                       onClick={() => setShowDeleteModal(true)}
                     >
                       Delete

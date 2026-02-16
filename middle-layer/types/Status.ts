@@ -43,10 +43,10 @@ export function getColorStatus(status: string) {
     switch (status) {
         case "Active": return "var(--color-green)"; // green
         case "Inactive": return "var(--color-grey-500)" // gray
-        case "Potential": return "var(--color-yellow)" // TODO: no color given for potential yet
+        case "Potential": return "var(--color-blue-dark)" // blue
         // TODO add colors for rejected and pending
         case "Rejected": return "var(--color-red)" // red
-        case "Pending": return "var(--color-orange)" // orange
+        case "Pending": return "var(--color-yellow-dark)" // yellow
         default: return 'gray';
     }
 }
