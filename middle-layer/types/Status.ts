@@ -5,57 +5,96 @@
  *  (3) Inactive: Grant earnings are used up
  */
 export enum Status {
-    Potential = "Potential",
-    Active = "Active",
-    Inactive = "Inactive",
-    Rejected = "Rejected",
-    Pending = "Pending"
+  Potential = "Potential",
+  Active = "Active",
+  Inactive = "Inactive",
+  Rejected = "Rejected",
+  Pending = "Pending",
 }
 
 // TODO: 1) override stringify behavior of status enum 2) stringify, and then go back and modify enum (create helper function to generalize)
 // 3) turn enums to string
 
 // string rep of status
-export function stringToStatus(status: string): Status | null{
-    switch (status) {
-        case 'All': return null; // no filter
-        case 'Active': return Status.Active;
-        case 'Inactive': return Status.Inactive;
-        case 'Potential': return Status.Potential;
-        case 'Rejected': return Status.Rejected;
-        case 'Pending': return Status.Pending;
-        default: throw new Error(`Unknown status: ${status}`);
-    }
+export function stringToStatus(status: string): Status | null {
+  switch (status) {
+    case "All":
+      return null; // no filter
+    case "Active":
+      return Status.Active;
+    case "Inactive":
+      return Status.Inactive;
+    case "Potential":
+      return Status.Potential;
+    case "Rejected":
+      return Status.Rejected;
+    case "Pending":
+      return Status.Pending;
+    default:
+      throw new Error(`Unknown status: ${status}`);
+  }
 }
 
-export function statusToString(status : Status): string {
-    switch (status) {
-        case  Status.Active : return 'Active';
-        case Status.Inactive : return "Inactive";
-        case Status.Potential : return "Potential";
-        case Status.Rejected : return "Rejected";
-        case Status.Pending : return "Pending";   
-    }   
+export function statusToString(status: Status): string {
+  switch (status) {
+    case Status.Active:
+      return "Active";
+    case Status.Inactive:
+      return "Inactive";
+    case Status.Potential:
+      return "Potential";
+    case Status.Rejected:
+      return "Rejected";
+    case Status.Pending:
+      return "Pending";
+  }
 }
 
 // color associated with status on UI, represented as a string
-export function getColorStatus(status: string) {
+export function getColorStatus(
+  status: string,
+  variant: "light" | "dark" = "dark",
+): string {
+  if (variant === "light") {
     switch (status) {
-        case "Active": return "var(--color-green)"; // green
-        case "Inactive": return "var(--color-grey-500)" // gray
-        case "Potential": return "var(--color-blue-dark)" // blue
-        // TODO add colors for rejected and pending
-        case "Rejected": return "var(--color-red)" // red
-        case "Pending": return "var(--color-yellow-dark)" // yellow
-        default: return 'gray';
+      case "Active":
+        return "var(--color-green-light)"; // green
+      case "Inactive":
+        return "var(--color-grey-400)"; // gray
+      case "Potential":
+        return "var(--color-blue-light)"; // blue
+      // TODO add colors for rejected and pending
+      case "Rejected":
+        return "var(--color-red-light)"; // red
+      case "Pending":
+        return "var(--color-yellow-light)"; // yellow
+      default:
+        return "gray";
     }
+  } else {
+    switch (status) {
+      case "Active":
+        return "var(--color-green-dark)"; // green
+      case "Inactive":
+        return "var(--color-grey-700)"; // gray
+      case "Potential":
+        return "var(--color-blue-dark)"; // blue
+      // TODO add colors for rejected and pending
+      case "Rejected":
+        return "var(--color-red-dark)"; // red
+      case "Pending":
+        return "var(--color-yellow-dark)"; // yellow
+      default:
+        return "gray";
+    }
+  }
 }
 
 // Get list of status types for received and unreceived grants
-export function getListApplied(received: boolean){
-    if(received){
-        return ["Active", "Inactive"]
-    } else{
-        return ["Pending", "Rejected"]
-    }
+export function getListApplied(received: boolean) {
+  if (received) {
+    return ["Active", "Inactive"];
+  } else {
+    return ["Pending", "Rejected"];
+  }
 }

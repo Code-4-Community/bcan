@@ -89,9 +89,10 @@ export default {
         "9xl": "128rem",
       },
       borderRadius: {
-        "4xl": "2rem",
+        sm: "0.5rem",
         md: "0.75rem",
         DEFAULT: "0.75rem",
+        "4xl": "2rem",
       },
     },
   },
