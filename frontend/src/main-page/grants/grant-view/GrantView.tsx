@@ -1,12 +1,16 @@
 import React, { useEffect, useState, useLayoutEffect } from "react";
-import "../styles/GrantItem.css";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { api } from "../../../api";
 import { observer } from "mobx-react-lite";
 import { fetchGrants } from "../filter-bar/processGrantData";
 import StatusIndicator from "../../grants/grant-list/StatusIndicator";
-import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPenToSquare,
+  faCheckSquare,
+} from "@fortawesome/free-solid-svg-icons";
 import Button from "../../settings/components/Button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import logo from "../../../images/logo.svg";
 
 interface GrantItemProps {
   grant: Grant;
@@ -126,6 +130,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
   };
 
   function formatDate(isoString: string): string {
+    if (!isoString) return "N/A";
     const date = new Date(isoString);
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
@@ -164,20 +169,172 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
       </div>
       <hr className="border-grey-400 border-t-2 rounded-full" />
       {/* Middle info part */}
-      <div className="flex flex-col gap-2 items-start text-left">
+      <div className="flex flex-col gap-4 items-start text-left">
         {/* Description */}
         <div>
-            <p className="text-grey-600 mb-2">Description</p>
+          <p className="text-grey-600 mb-1">Description</p>
           <p ref={ref} className={` ${!isShowingMore && "line-clamp-3"}`}>
             {curGrant?.description || "N/A"}
           </p>
           {isTruncated && (
             <button className="text-secondary" onClick={toggleIsShowingMore}>
-              {isShowingMore ? "See less" : "see more"}
+              {isShowingMore ? "Show less" : "show more"}
             </button>
           )}
         </div>
         {/* Other details */}
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 w-full gap-4">
+          <div className="flex flex-col gap-4 col-span-1">
+            <div>
+              <p className="text-grey-600 mb-1">Amount ($)</p>
+              <p className="text-black font-semibold">
+                {formatCurrency(curGrant.amount) || "N/A"}
+              </p>
+            </div>
+            <div>
+              <p className="text-grey-600 mb-1">BCAN Eligible</p>
+              <p className="text-black font-semibold">
+                {curGrant.does_bcan_qualify ? (
+                  <span className="text-green">
+                    <FontAwesomeIcon icon={faCheckSquare} /> Yes
+                  </span>
+                ) : (
+                  <span className="text-red">
+                    <FontAwesomeIcon icon={faCheckSquare} /> No
+                  </span>
+                )}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-col gap-4 col-span-1">
+            <div>
+              <p className="text-grey-600 mb-1">Due Date</p>
+              <p className="text-black font-semibold">
+                {formatDate(curGrant.application_deadline) || "N/A"}
+              </p>
+            </div>
+            <div>
+              <p className="text-grey-600 mb-1">Application Date</p>
+              <p className="text-black font-medium">
+                {formatDate(curGrant.application_deadline) || "N/A"}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-col gap-4 col-span-1">
+            <div>
+              <p className="text-grey-600 mb-1">Grant Start Date</p>
+              <p className="text-black font-medium">
+                {formatDate(curGrant.grant_start_date) || "N/A"}
+              </p>
+            </div>
+            <div>
+              <p className="text-grey-600 mb-1">Report Deadlines</p>
+              <p className="text-black font-medium">
+                {curGrant.report_deadlines &&
+                curGrant.report_deadlines.length > 0 ? (
+                  curGrant.report_deadlines.map(
+                    (deadline: string, index: number) => (
+                      <div key={index} className="text-black font-medium">
+                        {formatDate(deadline)}
+                      </div>
+                    ),
+                  )
+                ) : (
+                  <div className="">N/A</div>
+                )}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-col gap-4 col-span-2">
+            <div>
+              <p className="text-grey-600 mb-1">Timeline (years)</p>
+              <p className="text-black font-medium">
+                {curGrant.timeline ? curGrant.timeline : "N/A"}
+              </p>
+            </div>
+            <div>
+              <p className="text-grey-600 mb-1">
+                Estimated Completion Time (hours)
+              </p>
+              <p className="text-black font-medium">
+                {curGrant.estimated_completion_time
+                  ? curGrant.estimated_completion_time
+                  : "N/A"}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr className="border-grey-400 border-t-2 rounded-full" />
+      {/* Bottom info */}
+      <div className="flex flex-col gap-4 items-start text-left">
+        {/* Contacts */}
+        <div className="w-full">
+          <p className="text-grey-600 mb-1">Contacts</p>
+          <div className="grid grid-cols-1 xl:grid-cols-2 w-full xl:w-[85%] gap-4">
+            <div className="flex flex-row gap-4 w-full justify-items-start rounded-sm border p-3 h-fit border-grey-400">
+              <img
+                src={logo}
+                alt="Profile"
+                className="max-w-14 rounded-full hidden lg:block"
+              />
+              <div className="flex flex-col align-middle justify-center">
+                <p className="text-black text-md font-semibold ">
+                  {grant.bcan_poc?.POC_name || "N/A"}
+                </p>
+                <p className="text-black text-sm break-all">
+                  <a
+                    href={"mailto:" + grant.bcan_poc?.POC_email}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline truncate"
+                  >
+                    {grant.bcan_poc?.POC_email}
+                  </a>
+                </p>
+              </div>
+              <div className="place-items-end justify-end ml-auto flex items-start">
+                <div className="w-fit h-fit p-2 text-xs rounded-full text-white bg-primary-900">
+                  BCAN
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-row gap-4 justify-start rounded-sm border p-3 h-fit border-grey-400">
+              <img
+                src={logo}
+                alt="Profile"
+                className="max-w-14 rounded-full hidden lg:block"
+              />
+              <div className="flex flex-col align-middle justify-center">
+                <p className="text-black text-md font-semibold">
+                  {grant.bcan_poc?.POC_name || "N/A"}
+                </p>
+                <p className="text-black text-sm break-all !font-normal">
+                  <a
+                    href={"mailto:" + grant.bcan_poc?.POC_email}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline truncate"
+                  >
+                    {grant.grantmaker_poc?.POC_email || "N/A"}
+                  </a>
+                </p>
+              </div>
+              <div className="place-items-end col-span-1 ml-auto justify-end flex items-start">
+                <div className="w-fit h-fit p-2 text-xs rounded-full text-white bg-secondary-500">
+                  Granter
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Documents */}
+        <div>
+          <p className="text-grey-600 mb-1">Documents</p>
+          <p ref={ref} className={` ${!isShowingMore && "line-clamp-3"}`}>
+            {curGrant?.description || "N/A"}
+          </p>
+        </div>
       </div>
     </div>
   );

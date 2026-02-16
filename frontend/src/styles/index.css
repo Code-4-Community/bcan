@@ -86,7 +86,6 @@
 }
 
 a {
-  font-weight: 500;
   color: var(--color-secondary-500);
   text-decoration: inherit;
 }

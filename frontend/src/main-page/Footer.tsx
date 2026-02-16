@@ -9,11 +9,11 @@ const Footer: React.FC = () => {
       <Group className="text-block">
         <Text>
           {FooterText.C4C_Motto}
-          <Link variant="underline" href={FooterText.C4C_Link}>
+          <Link className="font-medium" variant="underline" href={FooterText.C4C_Link}>
             {FooterText.C4C}
           </Link>{" "}
           for{" "}
-          <Link variant="underline" _hover={{color: "var(--color-primary-900)"}}  href={FooterText.Org_Link}>
+          <Link className="font-medium" variant="underline" _hover={{color: "var(--color-primary-900)"}}  href={FooterText.Org_Link}>
             {FooterText.Org}
           </Link>
         </Text>
