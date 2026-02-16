@@ -4,7 +4,7 @@ import "../styles/button.css";
 export enum ButtonColorOption {
   GREEN = "var(--color-green)",
   GRAY = "var(--color-grey-400)",
-  ORANGE = "var(--color-orange)",
+  BLUE = "var(--color-blue-light)",
 }
 
 /* API for components to setup a button with expected system colors */
@@ -30,9 +30,9 @@ export default function RingButton({ text, color }: RingButtonProps) {
           {text}
         </div>
       )}
-      {ButtonColorOption.ORANGE === color && (
+      {ButtonColorOption.BLUE === color && (
         <div
-          className="bg-orange button-default w-full border-none cursor-default"
+          className="bg-blue-light button-default w-full border-none cursor-default"
         >
           {text}
         </div>

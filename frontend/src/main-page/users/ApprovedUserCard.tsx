@@ -164,7 +164,7 @@ const ApprovedUserCard = ({
               </Button>
               <Button
                 px={4}
-                className="text-sm focus:outline-none block w-full bg-red-lightest border-red text-red"
+                className="text-sm focus:outline-none block w-full bg-red-light border-red text-red"
                 onClick={() => setIsDeleteUserModalOpen(true)}
               >
                 Delete user{"  "}
