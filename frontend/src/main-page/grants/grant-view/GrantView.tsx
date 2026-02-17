@@ -98,7 +98,6 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
 
   return (
     <div className="w-full bg-white rounded-md flex flex-col gap-6 p-6">
-
       {/* Top header part */}
       <div className="flex justify-between">
         {/* Left side */}
@@ -234,7 +233,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
             {
               label: "Contacts",
               item: (
-                <div className="grid grid-cols-1 xl:grid-cols-2 w-full h-full lg:w-[95%] gap-4">
+                <div className="grid grid-cols-1 xl:grid-cols-2 w-full h-full lg:w-[90%] gap-4">
                   <ContactCard contact={grant.bcan_poc} type="BCAN" />
                   <ContactCard contact={grant.grantmaker_poc} type="Granter" />
                 </div>
@@ -249,7 +248,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
               label: "Documents",
               item:
                 curGrant.attachments && curGrant.attachments.length > 0 ? (
-                  <div className="columns-2 xl:columns-4 gap-4 lg:w-[95%]">
+                  <div className="columns-2 xl:columns-4 gap-4 lg:w-[90%]">
                     {curGrant.attachments.map((attachment, index) => (
                       <p key={index} className="text-sm truncate w-full mb-1">
                         <a
