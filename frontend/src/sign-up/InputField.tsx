@@ -20,7 +20,7 @@ export default function InputField({
 }: InputFieldProps) {
   return (
     <div className="w-full">
-      <label htmlFor={id} className="text-baseblock text-left font-bold text-black">
+      <label htmlFor={id} className="block text-left font-bold text-black">
         {label}
         {required && <span className="text-red">*</span>}
       </label>
