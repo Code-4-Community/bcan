@@ -618,6 +618,8 @@ async addUserToGroup(
         position: item.position as UserStatus,
         email: item.email,
         name: item.userId, // Keep name as name
+        firstName: item.firstName,
+        lastName: item.lastName
       }));
 
       this.logger.log(`✅ Successfully retrieved ${users.length} inactive users`);
@@ -673,6 +675,8 @@ async getAllActiveUsers(): Promise<User[]> {
         position: item.position as UserStatus,
         email: item.email,
         name: item.userId, // Keep name as name
+        firstName: item.firstName,
+        lastName: item.lastName
       }));
       
       this.logger.debug(`Fetched ${users.length} active users.`);

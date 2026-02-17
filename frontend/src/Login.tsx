@@ -9,7 +9,7 @@ import "./external/bcanSatchel/mutators";
  * Registered users can log in here
  */
 const Login = observer(() => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -20,7 +20,7 @@ const Login = observer(() => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const success = await login(username, password);
+    const success = await login(email, password);
 
     if (success) {
       navigate("/main/all-grants");
@@ -47,9 +47,9 @@ const Login = observer(() => {
                   id="email"
                   type="email"
                   name="email"
-                  value={username}
+                  value={email}
                   required
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email address"
                   className="w-full rounded-xl border border-grey-600 bg-white py-3 px-4 text-base placeholder:text-grey-600 focus:outline-none focus:ring-2 focus:ring-primary-900 focus:border-transparent"
                 />

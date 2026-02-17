@@ -77,7 +77,7 @@ export class AuthController {
   async register(
    @Body() body: RegisterBody
   ): Promise<{ message: string }> {
-    await this.authService.register(body.username, body.password, body.email);
+    await this.authService.register(body.email, body.password,body.firstName,body.lastName);
     return { message: 'User registered successfully' };
   }
   
@@ -110,10 +110,11 @@ export class AuthController {
     session?: string;
     challenge?: string;
     requiredAttributes?: string[];
+    refreshToken?: string;
     username?: string;
     position?: string;
   }> {
-    const result = await this.authService.login(body.username, body.password);
+    const result = await this.authService.login(body.email, body.password);
   
   // Set cookie with access token
   if (result.access_token) {
@@ -125,7 +126,19 @@ export class AuthController {
       path: '/',           // Cookie available on all routes
     });
   }
+
+  if (result.refreshToken) {
+  response.cookie('refresh_token', result.refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days (match your Cognito refresh token expiry)
+    path: '/auth/refresh',  // more restrictive path than access token
+  });
+}
+  
   delete result.access_token;
+  delete result.refreshToken;
     return result
   }
 

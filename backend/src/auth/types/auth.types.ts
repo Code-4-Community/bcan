@@ -1,11 +1,12 @@
 export class RegisterBody {
-  username!: string;
   password!: string;
   email!: string;
+  firstName!: string;
+  lastName!: string;
 }
 
 export class LoginBody {
-  username!: string;
+  email!: string;
   password!: string;
 }
 

@@ -12,7 +12,7 @@ import { fetchUsers } from '../../main-page/users/UserActions.ts';
  */
 interface AuthContextProps {
   isAuthenticated: boolean;
-  login: (username: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<boolean>;
   register: (username: string, password: string, email: string) => Promise<{ state: boolean; message: string; }>;
   logout: () => void;
   user: User | null;
@@ -33,12 +33,12 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
   const store = getAppStore();
 
   /** Attempt to log in the user */
-  const login = async (username: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string): Promise<boolean> => {
     try {
       const response = await api('/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
