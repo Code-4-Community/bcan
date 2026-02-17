@@ -26,9 +26,9 @@ export default function GrantFieldCol({
       {fields.map((field) => (
         <div className="w-full" key={field.label}>
           <p className="text-grey-600 mb-1">{field.label}</p>
-          <p className={`text-black ${field.important && "font-semibold"}`}>
+          <div className={`text-black ${field.important && "font-semibold"}`}>
             {field.item ? field.item : field.value || "N/A"}
-          </p>
+          </div>
         </div>
       ))}
     </div>
