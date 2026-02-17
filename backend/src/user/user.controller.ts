@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Delete, Body, Param, UseGuards, Req } from "@nestjs/common";
+import { Controller, Get, Delete, Body, Param, UseGuards, Req, Post } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { User } from "../../../middle-layer/types/User";
 import { UserStatus } from "../../../middle-layer/types/UserStatus";
@@ -101,7 +101,7 @@ export class UserController {
   /**
    * Change a user's role (make sure guard is on this route)
    */
-  @Patch("change-role")
+  @Post("change-role")
   @ApiResponse({
     status : 200,
     description : "User role changed successfully"

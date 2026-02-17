@@ -254,6 +254,7 @@ async login(
   requiredAttributes?: string[];
   username?: string;
   message?: string;
+  idToken?: string
 }> {
   const clientId = process.env.COGNITO_CLIENT_ID;
   const clientSecret = process.env.COGNITO_CLIENT_SECRET;
@@ -317,6 +318,7 @@ async login(
 
     const accessToken = response.AuthenticationResult.AccessToken;
     const refreshToken = response.AuthenticationResult.RefreshToken;
+    const idToken = response.AuthenticationResult.IdToken;
 
     if (!accessToken) {
       throw new Error("Access token is undefined.");
@@ -374,7 +376,7 @@ async login(
       user = newUser;
     }
 
-    return { access_token: accessToken, user,refreshToken, message: "Login Successful!" };
+    return { access_token: accessToken, user,refreshToken, idToken,message: "Login Successful!" };
   } catch (error: unknown) {
     const cognitoError = error as AwsCognitoError;
 

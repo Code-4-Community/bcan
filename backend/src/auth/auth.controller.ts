@@ -110,7 +110,6 @@ export class AuthController {
     session?: string;
     challenge?: string;
     requiredAttributes?: string[];
-    refreshToken?: string;
     username?: string;
     position?: string;
   }> {
@@ -128,7 +127,8 @@ export class AuthController {
   }
 
   if (result.refreshToken) {
-  response.cookie('refresh_token', result.refreshToken, {
+    console.log("refresh token set")
+    response.cookie('refresh_token', result.refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
@@ -136,7 +136,19 @@ export class AuthController {
     path: '/auth/refresh',  // more restrictive path than access token
   });
 }
+
+ if (result.idToken) {
+    response.cookie('id_token', result.idToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 3600000, // 1 hour, same expiry as access token
+      path: '/',
+    });
+  }
+
   
+  delete result.idToken;
   delete result.access_token;
   delete result.refreshToken;
     return result
