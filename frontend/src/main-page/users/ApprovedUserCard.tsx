@@ -11,7 +11,7 @@ import { User } from "../../../../middle-layer/types/User";
 import { toJS } from "mobx";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { setActiveUsers } from "../../external/bcanSatchel/actions";
-
+// Did not change this to using the email/first name last name due to user page redesign so someone will be changing all of this anyway
 interface ApprovedUserCardProps {
   userId: string;
   email: string;
@@ -40,7 +40,6 @@ const ApprovedUserCard = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user: {
-            userId,
             email,
             position,
           } as User,

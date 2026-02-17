@@ -11,6 +11,7 @@ import { Navigate } from "react-router-dom";
 import { UserStatus } from "../../../../middle-layer/types/UserStatus";
 import { useAuthContext } from "../../context/auth/authContext";
 
+// Did not change this to using the email/first name last name due to user page redesign so someone will be changing all of this anyway
 // Represents a specific tab to show on the user page
 enum UsersTab {
   PendingUsers,

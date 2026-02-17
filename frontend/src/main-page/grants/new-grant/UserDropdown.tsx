@@ -5,7 +5,8 @@ import '../styles/UserDropdown.css';
 
 interface UserDropdownProps {
   selectedUser: { name: string; email: string } | null;
-  onSelect: (user: { name: string; email: string }) => void;
+  // Might be worth combining first and last into one fieldto display
+  onSelect: (user: { firstName: string; lastName : string; email: string }) => void;
   placeholder?: string;
 }
 
@@ -41,7 +42,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
   }, []);
 
   const handleUserSelect = (user: User) => {
-    onSelect({ name: user.userId, email: user.email });
+    onSelect({ firstName: user.firstName,lastName:user.lastName, email: user.email });
     setIsOpen(false);
     setSearchTerm('');
   };
@@ -67,11 +68,11 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
           {filteredUsers.length > 0 ? (
             filteredUsers.map((user: User) => (
               <div
-                key={user.userId}
+                key={user.email}
                 onClick={() => handleUserSelect(user)}
                 className="user-dropdown-item"
               >
-                <div className="user-dropdown-name">{user.userId}</div>
+                <div className="user-dropdown-name">{user.firstName} {user.lastName}</div>
                 <div className="user-dropdown-email">{user.email}</div>
               </div>
             ))
