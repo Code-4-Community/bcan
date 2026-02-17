@@ -6,6 +6,7 @@ import StatusIndicator from "../../grants/grant-list/StatusIndicator";
 import {
   faPenToSquare,
   faCheckSquare,
+  faXmarkSquare,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../settings/components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -165,7 +166,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
                   </span>
                 ) : (
                   <span className="text-red">
-                    <FontAwesomeIcon icon={faCheckSquare} /> No
+                    <FontAwesomeIcon icon={faXmarkSquare} /> No
                   </span>
                 ),
               },
