@@ -9,7 +9,7 @@ import { api } from "../../../api";
 import { MdOutlinePerson2 } from "react-icons/md";
 import Attachment from "../../../../../middle-layer/types/Attachment";
 import NewGrantModal from "../new-grant/NewGrantModal";
-import { CostBenefitAnalysis } from "../grant-details/CostBenefitAnalysis";
+import { CostBenefitAnalysis } from "../grant-view/CostBenefitAnalysis";
 import ActionConfirmation from "../../../custom/ActionConfirmation";
 import { observer } from "mobx-react-lite";
 import { fetchGrants } from "../filter-bar/processGrantData";

@@ -12,6 +12,7 @@ import Button from "../../settings/components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ContactCard from "./ContactCard";
 import GrantFieldCol from "./GrantFieldCol";
+import { CostBenefitAnalysis } from "./CostBenefitAnalysis";
 
 interface GrantItemProps {
   grant: Grant;
@@ -181,7 +182,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
               },
               {
                 label: "Application Date",
-                value: formatDate(curGrant.application_deadline),
+                value: "TBD (add to DB)",
               },
             ]}
           />
@@ -234,7 +235,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
             {
               label: "Contacts",
               item: (
-                <div className="grid grid-cols-1 xl:grid-cols-2 w-full h-full lg:w-[90%] gap-4">
+                <div className="grid grid-cols-1 xl:grid-cols-2 w-full h-full lg:w-[85%] gap-6">
                   <ContactCard contact={grant.bcan_poc} type="BCAN" />
                   <ContactCard contact={grant.grantmaker_poc} type="Granter" />
                 </div>
@@ -270,6 +271,21 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
           ]}
         />
       </div>
+      <hr className="border-grey-400 border-t-2 rounded-full" />
+
+      {/* Cost Benefit */}
+      <div className="flex flex-col gap-6 items-start text-left">
+      <GrantFieldCol
+          fields={[
+            {
+              label: "Cost Analysis Calculator",
+              item: (
+                <CostBenefitAnalysis grant={curGrant} />
+              ),
+            },
+          ]}
+        />
+    </div>
     </div>
   );
 });

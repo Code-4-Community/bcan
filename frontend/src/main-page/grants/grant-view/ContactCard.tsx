@@ -8,7 +8,7 @@ type ContactCardProps = {
 
 export default function ContactCard({ contact, type }: ContactCardProps) {
   return (
-    <div className="flex flex-row gap-4 w-full justify-items-start rounded-sm border p-3 h-full border-grey-400">
+    <div className="flex flex-row gap-4 w-full justify-items-start rounded-sm border p-3 h-full border-grey-500">
       <img
         src={logo}
         alt="Profile"

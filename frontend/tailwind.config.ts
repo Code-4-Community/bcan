@@ -88,6 +88,10 @@ export default {
         "8xl": "96rem",
         "9xl": "128rem",
       },
+      borderWidth: {
+        DEFAULT: "1.5px",
+        0: "0",
+      },
       borderRadius: {
         sm: "0.5rem",
         md: "0.75rem",
