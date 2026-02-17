@@ -92,17 +92,13 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
   }
 
   function formatCurrency(amount: number): string {
-    const formattedCurrency = new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      maximumFractionDigits: 0,
-    }).format(amount);
+    const formattedCurrency = new Intl.NumberFormat().format(amount);
     return formattedCurrency;
   }
 
   return (
-    <div className="w-full bg-white rounded-md flex flex-col gap-4 p-6">
-      
+    <div className="w-full bg-white rounded-md flex flex-col gap-6 p-6">
+
       {/* Top header part */}
       <div className="flex justify-between">
         {/* Left side */}
@@ -135,6 +131,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
                   <p
                     ref={ref}
                     className={` ${!isShowingMore && "line-clamp-3"}`}
+                    onClick={toggleIsShowingMore}
                   >
                     {curGrant?.description || "N/A"}
                   </p>
@@ -254,12 +251,12 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
                 curGrant.attachments && curGrant.attachments.length > 0 ? (
                   <div className="columns-2 xl:columns-4 gap-4 lg:w-[95%]">
                     {curGrant.attachments.map((attachment, index) => (
-                      <p key={index} className="text-sm truncate w-full">
+                      <p key={index} className="text-sm truncate w-full mb-1">
                         <a
                           href={attachment.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-secondary text-sm underline"
+                          className="text-secondary font-medium text-sm underline"
                         >
                           {attachment.attachment_name || attachment.url}
                         </a>
