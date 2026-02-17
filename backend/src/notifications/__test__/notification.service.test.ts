@@ -106,7 +106,7 @@ describe('NotificationController', () => {
 
     mockNotification_id1_user1 = {
       notificationId: '1',
-      userId: 'user-1',
+      userEmail: 'user-1',
       message: 'New Grant Created 🎉 ',
       alertTime: '2024-01-15T10:30:00.000Z',
       sent: false
@@ -114,7 +114,7 @@ describe('NotificationController', () => {
 
     mockNotification_id1_user2 = {
       notificationId: '1',
-      userId: 'user-2',
+      userEmail: 'user-2',
       message: 'New Grant Created',
       alertTime: '2025-01-15T10:30:00.000Z',
       sent: false
@@ -122,7 +122,7 @@ describe('NotificationController', () => {
 
     mockNotification_id2_user1= {
       notificationId: '2',
-      userId: 'user-1',
+      userEmail: 'user-1',
       message: 'New Grant Created',
       alertTime: '2025-01-15T10:30:00.000Z',
       sent: false
@@ -130,7 +130,7 @@ describe('NotificationController', () => {
 
     mockNotification_id2_user2= {
       notificationId: '2',
-      userId: 'user-2',
+      userEmail: 'user-2',
       message: 'New Grant Created',
       alertTime: '2025-01-15T10:30:00.000Z',
       sent: false
@@ -149,7 +149,7 @@ describe('NotificationController', () => {
     mockQuery.mockReturnValue({ promise: vi.fn().mockResolvedValue(mockQueryResponse) });
 
     // Act
-    const result = await notificationService.getNotificationByUserId('user-1');
+    const result = await notificationService.getNotificationByUserEmail('user-1');
 
     //Assert
     expect(mockQuery).toHaveBeenCalledWith({
@@ -332,20 +332,20 @@ describe('NotificationController', () => {
     mockQuery.mockReturnValue({ promise: vi.fn().mockResolvedValue(mockQueryResponse) });
 
     // Act & Assert
-    const result = await notificationService.getNotificationByUserId('nonexistent-user');
+    const result = await notificationService.getNotificationByUserEmail('nonexistent-user');
     expect(result).toEqual([]);
   });
 
   it('should throw InternalServerError when DynamoDB query fails', async() => {
     mockPromise.mockRejectedValueOnce(new Error('DynamoDB connection failed'));
 
-    await expect(notificationService.getCurrentNotificationsByUserId('user-1')).rejects.toThrow(InternalServerErrorException);
+    await expect(notificationService.getCurrentNotificationsByEmail('user-1')).rejects.toThrow(InternalServerErrorException);
   })
 
   it('should create notification with valid data in the set table', async () => {
     const mockNotification = {
       notificationId: '123',
-      userId : 'user-456',
+      userEmail : 'user-456',
       message : 'Test notification',
       alertTime : '2024-01-15T10:30:00.000Z',
       sent: false
@@ -371,7 +371,7 @@ describe('NotificationController', () => {
     
     const mockNotification = {
       notificationId: '123',
-      userId: 'user-456',
+      userEmail: 'user-456',
       message: 'Test notification',
       alertTime: '2024-01-15T10:30:00.000Z',
       sent: false
@@ -397,7 +397,7 @@ describe('NotificationController', () => {
   it('should throw BadRequestException when userId is missing', async () => {
     const invalidNotification = {
       notificationId: '123',
-      userId: '',
+      userEmail: '',
       message: 'Test',
       alertTime: '2024-01-15T10:30:00.000Z',
       sent: false
@@ -409,7 +409,7 @@ describe('NotificationController', () => {
   it('should throw BadRequestException when notificationId is missing', async () => {
     const invalidNotification = {
       notificationId: '',
-      userId: 'user-123',
+      userEmail: 'user-123',
       message: 'Test',
       alertTime: '2024-01-15T10:30:00.000Z',
       sent: false
@@ -421,7 +421,7 @@ describe('NotificationController', () => {
   it('should throw BadRequestException for invalid alertTime', async () => {
     const invalidNotification = {
       notificationId: '123',
-      userId: 'user-456',
+      userEmail: 'user-456',
       message: 'Test',
       alertTime: 'not-a-valid-date' as any,
       sent: false
@@ -433,7 +433,7 @@ describe('NotificationController', () => {
   it('should throw InternalServerErrorException when DynamoDB fails', async () => {
     const validNotification = {
       notificationId: '123',
-      userId: 'user-456',
+      userEmail: 'user-456',
       message: 'Test',
       alertTime: '2024-01-15T10:30:00.000Z',
       sent: false

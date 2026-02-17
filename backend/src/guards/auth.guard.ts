@@ -64,36 +64,43 @@ export class VerifyAdminRoleGuard implements CanActivate {
     }
   }
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    try {
-      const request = context.switchToHttp().getRequest();
-      const accessToken = request.cookies["access_token"];
-       if (!accessToken) {
-        this.logger.error("No access token found in cookies");
-        return false;
-      }
-      const result = await this.verifier.verify(accessToken);
-      const groups = result['cognito:groups'] || [];
-      
-      // Attach user info to request for use in controllers
-      request.user = {
-        userId: result['username'] || result['cognito:username'],
-        email: result['email'],
-        position: groups.includes('Admin') ? 'Admin' : (groups.includes('Employee') ? 'Employee' : 'Inactive')
-      };
-      
-      console.log("User groups from token:", groups); 
-      if (!groups.includes('Admin')) {
-        console.warn("Access denied: User is not an Admin");
-        return false;
-      } else { 
-        return true;
-      }
+  try {
+    const request = context.switchToHttp().getRequest();
+    const accessToken = request.cookies["access_token"];
 
-    } catch (error) {
-      console.error("Token verification failed:", error); // Debug log
+    if (!accessToken) {
+      this.logger.error("No access token found in cookies");
       return false;
     }
+
+    const result = await this.verifier.verify(accessToken);
+    const groups = result['cognito:groups'] || [];
+    const email = result['email'];
+
+    if (!email) {
+      this.logger.error("No email found in token claims");
+      return false;
+    }
+
+    // Attach user info to request for use in controllers
+    request.user = {
+      email: email,
+      position: groups.includes('Admin') ? 'Admin' : (groups.includes('Employee') ? 'Employee' : 'Inactive')
+    };
+
+    console.log("User groups from token:", groups);
+
+    if (!groups.includes('Admin')) {
+      console.warn("Access denied: User is not an Admin");
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Token verification failed:", error);
+    return false;
   }
+}
 }
 
 @Injectable()

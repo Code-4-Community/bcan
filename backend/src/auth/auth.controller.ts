@@ -199,7 +199,7 @@ export class AuthController {
     async updateProfile(
       @Body() body: UpdateProfileBody
     ): Promise<{ message: string }> {
-      await this.authService.updateProfile(body.username, body.email, body.position_or_role);
+      await this.authService.updateProfile(body.email, body.position_or_role);
       return { message: 'Profile has been updated' };
     }
 

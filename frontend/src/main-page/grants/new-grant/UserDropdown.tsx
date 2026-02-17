@@ -23,7 +23,8 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
 
   // Filter users based on search
   const filteredUsers = activeUsers.filter((user: User) =>
-    user.userId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  user.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 

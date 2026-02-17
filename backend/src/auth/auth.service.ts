@@ -180,7 +180,6 @@ async register(
 
     // Step 4: Save user to DynamoDB using sub as the key
     const user: User = {
-      userId: "",
       position: UserStatus.Inactive,
       email: email,
       firstName: firstName,
@@ -359,7 +358,6 @@ async login(
 
     if (!user) {
       const newUser: User = {
-        userId: sub,
         email: resolvedEmail,
         position: UserStatus.Inactive,
         firstName : "",
@@ -481,15 +479,10 @@ async login(
   // purpose statement: updates user profile info in dynamodb
   // use case: employee is updating their profile information
   async updateProfile(
-    username: string,
     email: string,
     position_or_role: string
   ) {
     // Validate input parameters for username, email, and position_or_role
-    if (!username || username.trim().length === 0) {
-      this.logger.error("Update Profile failed: Username is required");
-      throw new BadRequestException("Username is required");
-    }
 
     if (!email || email.trim().length === 0) {
       this.logger.error("Update Profile failed: Email is required");
@@ -500,12 +493,12 @@ async login(
       this.logger.error("Update Profile failed: Position or role is required");
       throw new BadRequestException("Position or role is required");
     }
-    this.logger.log(`Updating profile for user ${username}`);
+    this.logger.log(`Updating profile for user ${email}`);
     const tableName = process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE";
 
     const params = {
       TableName: tableName,
-      Key: { userId: username },
+      Key: { email: email },
       // Update both fields in one go:
       UpdateExpression:
         "SET email = :email, position_or_role = :position_or_role",
@@ -519,7 +512,7 @@ async login(
 
     try {
       await this.dynamoDb.update(params).promise();
-      this.logger.log(`User ${username} updated user profile.`);
+      this.logger.log(`User ${email} updated user profile.`);
     } catch (error: unknown) {
       if (error instanceof Error) {
         this.logger.error("Updating the profile failed", error.stack);
@@ -535,29 +528,31 @@ async login(
 // use case: employee is accessing the app with an existing session token
 async validateSession(accessToken: string): Promise<any> {
   try {
-    // Use Cognito's getUser method to validate the token
     const getUserResponse = await this.cognito
       .getUser({ AccessToken: accessToken })
       .promise();
 
-    const username = getUserResponse.Username;
     let email: string | undefined;
 
     // Extract email from user attributes
     for (const attribute of getUserResponse.UserAttributes) {
       if (attribute.Name === 'email') {
-        this.logger.log(`Extracted email from user attributes: ${attribute.Value}`);
         email = attribute.Value;
         break;
       }
     }
 
-    // Get additional user info from DynamoDB
+    if (!email) {
+      this.logger.error('Failed to extract email from Cognito user attributes');
+      throw new Error('Failed to retrieve user email from token');
+    }
+
+    // Get user from DynamoDB using email as the partition key
     const tableName = process.env.DYNAMODB_USER_TABLE_NAME || 'TABLE_FAILURE';
     const params = {
       TableName: tableName,
       Key: {
-        userId: username,
+        email: email,
       },
     };
 
@@ -565,20 +560,20 @@ async validateSession(accessToken: string): Promise<any> {
     const user = userResult.Item;
 
     if (!user) {
-      this.logger.error(`User not found in database for username: ${username}`);
+      this.logger.error(`User not found in database for email: ${email}`);
       throw new Error('User not found in database');
     }
 
-    this.logger.log(`Session validated successfully for user ${username}`);
+    this.logger.log(`Session validated successfully for user ${email}`);
     return user;
   } catch (error: unknown) {
     this.logger.error('Session validation failed', error);
-    
+
     const cognitoError = error as AwsCognitoError;
     if (cognitoError.code === 'NotAuthorizedException') {
       throw new UnauthorizedException('Session expired or invalid');
     }
-    
+
     throw new UnauthorizedException('Failed to validate session');
   }
 }
