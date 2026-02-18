@@ -183,7 +183,7 @@ const Register = observer(() => {
             <div
               className={`min-h-28 mt-4 text-sm rounded-md flex items-center justify-center p-4 whitespace-pre-line text-left ${
                 failure.state
-                  ? "text-red bg-red-lighter"
+                  ? "text-red bg-red-light"
                   : "text-grey-600 bg-grey-200"
               }`}
             >

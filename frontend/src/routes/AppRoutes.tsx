@@ -7,8 +7,9 @@ import Login from "../Login";
 import Register from "../Register";
 import ForgotPassword from "../ForgotPassword";
 import RegisterLanding from "../RegisterLanding";
-import { getAppStore } from "../external/bcanSatchel/store"
+import { getAppStore } from "../external/bcanSatchel/store";
 import RestrictedPage from "../main-page/restricted/RestrictedPage";
+import Footer from "../main-page/Footer";
 
 /**
  * AppRoutes:
@@ -19,6 +20,15 @@ const AppRoutes = observer(() => {
   const { isAuthenticated } = useAuthContext();
   const user = getAppStore().user;
 
+  const FooterLayout = ({ children }: { children: React.ReactNode }) => {
+    return (
+      <div className="flex flex-col">
+        <div className="flex-1 min-h-screen ">{children}</div>
+        <Footer />
+      </div>
+    );
+  };
+
   return (
     <Routes location={location}>
       <Route
@@ -27,30 +37,57 @@ const AppRoutes = observer(() => {
       />
       <Route
         path="/login"
-        element={isAuthenticated ? <Navigate to="/main/all-grants" /> : <Login />}
+        element={
+          isAuthenticated ? (
+            <Navigate to="/main/all-grants" />
+          ) : (
+            <FooterLayout>
+              <Login />
+            </FooterLayout>
+          )
+        }
       />
       <Route
         path="/register"
         element={
-          isAuthenticated ? <Navigate to="/main/all-grants" /> : <Register />
+          isAuthenticated ? (
+            <Navigate to="/main/all-grants" />
+          ) : (
+            <FooterLayout>
+              <Register />
+            </FooterLayout>
+          )
         }
-      /> 
+      />
       <Route
         path="/registered"
-        element={<RegisterLanding />}
-      />
-      <Route path="/restricted" element={<RestrictedPage/>} />
-      
-      {/* Check user status and render MainPage or redirect */}
-      <Route 
-        path="/main/*" 
         element={
-          user?.position === "Inactive" 
-            ? <Navigate to="/restricted" replace /> 
-            : <MainPage />
-        } 
+          <FooterLayout>
+            <RegisterLanding />
+          </FooterLayout>
+        }
       />
-      
+      <Route
+        path="/restricted"
+        element={
+          <FooterLayout>
+            <RestrictedPage />
+          </FooterLayout>
+        }
+      />
+
+      {/* Check user status and render MainPage or redirect */}
+      <Route
+        path="/main/*"
+        element={
+          user?.position === "Inactive" ? (
+            <Navigate to="/restricted" replace />
+          ) : (
+            <MainPage />
+          )
+        }
+      />
+
       <Route
         path="*"
         element={

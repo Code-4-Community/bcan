@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   LineChart,
   Line,
@@ -27,6 +27,8 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
   const moneyReceived = getListApplied(true);
   const moneyUnreceived = getListApplied(false);
 
+  const [width, setWidth] = useState(0);
+
   // Formatting money data
   const data_money = aggregateMoneyGrantsByYear(grants, "status").map(
     (grant: YearAmount) => {
@@ -46,7 +48,7 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
         date: new Date(`${grant.year}-01-03`),
         money_captured: Number(captured.toFixed(2)),
       };
-    }
+    },
   );
 
   // Formatting count data
@@ -68,13 +70,13 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
         date: new Date(`${grant.year}-01-04`),
         grants_captured: Number(captured.toFixed(2)),
       };
-    }
+    },
   );
 
   // Merging the data into format for chart
   const data = data_money.map((moneyItem) => {
     const countItem = data_count.find(
-      (c) => c.date.getFullYear() === moneyItem.date.getFullYear()
+      (c) => c.date.getFullYear() === moneyItem.date.getFullYear(),
     );
     return {
       date: moneyItem.date,
@@ -87,57 +89,64 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
   data.sort((a, b) => a.date.getTime() - b.date.getTime());
 
   return (
-    <div className="chart-container h-full">
+    <div className="h-full relative">
       {/* Title */}
-      <div className="text-lg w-full text-left font-semibold align">
+      <div className="text-md lg:text-lg w-full text-left font-semibold align absolute">
         Success Rate by Year
       </div>
       <ResponsiveContainer
         width="100%"
         height="100%"
-        maxHeight={300}
-        min-width={400}
+        onResize={(w) => setWidth(w)}
       >
         <LineChart
           data={data}
-          margin={{ top: 20, right: 30, left: 50, bottom: 5 }}
+          margin={{ top: 40, right: 30, left: 50, bottom: 5 }}
         >
-          <LegendComp
-            wrapperStyle={{ paddingBottom: 40 }}
-            iconType="circle"
-            verticalAlign="top"
-            align="left"
-            formatter={(
-              value:
-                | string
-                | number
-                | boolean
-                | React.ReactElement<
-                    any,
-                    string | React.JSXElementConstructor<any>
-                  >
-                | Iterable<React.ReactNode>
-                | React.ReactPortal
-                | null
-                | undefined
-            ) => (
-              <span
-                style={{
-                  color: "black",
-                  fontWeight: 500,
-                  marginLeft: 5,
-                  marginRight: 10,
-                }}
-              >
-                {value}
-              </span>
-            )}
+          {width > 400 && (
+            <LegendComp
+              iconType="circle"
+              verticalAlign="top"
+              align={width > 500 ? "right" :"center"}
+              layout={width > 500 ? "horizontal" :"vertical"}
+              wrapperStyle={{ top: 0, right: "5%" }}
+              formatter={(
+                value:
+                  | string
+                  | number
+                  | boolean
+                  | React.ReactElement<
+                      any,
+                      string | React.JSXElementConstructor<any>
+                    >
+                  | Iterable<React.ReactNode>
+                  | React.ReactPortal
+                  | null
+                  | undefined,
+              ) => (
+                <span
+                  style={{
+                    color: "var(--color-grey-700)",
+                    fontWeight: 500,
+                    marginLeft: 5,
+                    marginRight: 5,
+                    fontSize: "var(--font-size-xs)",
+                  }}
+                >
+                  {value}
+                </span>
+              )}
+            />
+          )}
+          <CartesianGrid
+            vertical={false}
+            stroke="lightgray"
+            strokeDasharray="5 5"
           />
-          <CartesianGrid vertical={false} stroke="lightgray" strokeDasharray="5 5" />
           <Line
             type="monotone"
             dataKey="money_captured"
-            stroke="var(--color-primary-800)"
+            stroke="var(--color-primary-900)"
             strokeWidth={2}
             dot={{ r: 4 }}
             name="Money Captured"
@@ -146,7 +155,7 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
           <Line
             type="monotone"
             dataKey="grants_captured"
-            stroke="var(--color-yellow)"
+            stroke="var(--color-primary-700)"
             strokeWidth={2}
             dot={{ r: 4 }}
             name="Grants Captured"
@@ -157,6 +166,7 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
             domain={["auto", "auto"]}
             scale="time"
             dy={10}
+            style={{ fontSize: "var(--font-size-sm)" }}
             tickFormatter={(date: Date) => date.getFullYear().toString()}
             axisLine={false}
             tickLine={false}

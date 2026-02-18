@@ -103,7 +103,7 @@ const PendingUserCard = ({
           <FontAwesomeIcon icon={faCheck} className="text-black" />
         </button>
         <button 
-        className="bg-red-lighter w-8 h-8 focus:outline-none rounded"
+        className="bg-red-light w-8 h-8 focus:outline-none rounded"
           onClick={rejectUser}
           disabled={isLoading}>
           <FontAwesomeIcon icon={faX} className="text-black"/>

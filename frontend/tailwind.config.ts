@@ -4,32 +4,30 @@ export default {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx,html}"],
   theme: {
     colors: {
-      tan: "#F2EBE4",
-
-      orange: {
-        DEFAULT: "#ffa500",
-        light: "#FFCEB6",
-        lightest: "#FFF1EB",
-      },
 
       green: {
-        dark: "#119548",
-        DEFAULT: "#5AB911",
-        light: "#c6fbd3",
+        dark: "#007E4C",
+        DEFAULT: "#04A967",
+        light: "#D0FFEF",
+      },
+
+      blue: {
+        dark: "#006CA1",
+        DEFAULT: "#006CA1",
+        light: "#D0EDFF",
       },
 
       yellow: {
-        dark: "#8A710C",
-        DEFAULT: "#F8CC16",
-        light: "#FFF8CA",
+        dark: "#9B6000",
+        DEFAULT: "#9B6000",
+        light: "#FFF0D3",
       },
 
       red: {
-        dark: "#771505",
-        DEFAULT: "#d33221",
-        light: "#FF6B6B",
-        lighter: "#FFA399",
-        lightest: "#FFDFDF",
+        dark: "#C80000",
+        DEFAULT: "#C80000",
+        light: "#FFD8D8",
+        lightest: "#FFF0F0",
       },
 
       primary: {
@@ -64,6 +62,7 @@ export default {
         400: "#CED4DA",
         300: "#DEE2E6",
         200: "#E9ECEF",
+        150: "#F2F2F2",
         100: "#F8F9FA",
       },
 
@@ -92,6 +91,7 @@ export default {
       borderRadius: {
         "4xl": "2rem",
         md: "0.75rem",
+        DEFAULT: "0.75rem",
       },
     },
   },
