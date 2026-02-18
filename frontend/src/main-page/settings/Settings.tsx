@@ -1,6 +1,7 @@
 import Button from "./components/Button";
 import InfoCard from "./components/InfoCard";
 import logo from "../../images/logo.svg";
+import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 
 export default function Settings() {
   return (
@@ -45,10 +46,11 @@ export default function Settings() {
         title="Personal Information"
         action={
           <Button
-            //To-do: add a edit logo next to the "Edit" button
             text="Edit"
             onClick={() => alert("edit personal info")}
             className="bg-white text-black border-2 border-grey-500"
+            logo={faPenToSquare}
+            logoPosition="right"
           />
         }
         fields={[
