@@ -114,7 +114,7 @@ const Login = observer(() => {
           {/* Error Message */}
           <div className="">
             {failure && (
-              <div className="mb-6 bg-red-lighter text-red rounded-xl py-3 px-4 text-center">
+              <div className="mb-6 bg-red-light text-red rounded-xl py-3 px-4 text-center">
                 Your password is incorrect or this account doesn't exist.
               </div>
             )}
