@@ -1,4 +1,5 @@
 .search-bar-main-container {
+    width: 100%;
     min-width: 300px;
     min-width: 300px;
 }
@@ -22,8 +23,9 @@
     color: black;
     padding: 8px;
     border-radius: 15px;
-    border: 0.1rem solid black;
+    border: 0.1rem solid var(--color-grey-500);
     width: 100%;
+    background-color: var(--color-grey-100);
 }
 
 .search-input:focus {

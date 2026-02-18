@@ -50,7 +50,7 @@ function GrantSearch() {
             }}
           />
           <Input
-            placeholder="Search"
+            placeholder="Search for a grant..."
             variant="subtle"
             className="search-input"
             onChange={handleInputChange}

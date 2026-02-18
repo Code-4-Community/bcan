@@ -12,9 +12,13 @@
   }
 
   .add-grant-button {
-  width: 168.42px;
+  border-radius: 0.85rem;
+  padding: 0.5rem;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
   font-weight: 600;
-  border-color: transparent;
+  border-color: var(--color-grey-500);
   }
   
   
