@@ -19,9 +19,6 @@ interface GrantItemProps {
 }
 
 const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
-  const [curGrant, setCurGrant] = useState(grant);
-  const [wasGrantSubmitted, setWasGrantSubmitted] = useState(false);
-
   const useTruncatedElement = ({
     ref,
   }: {
@@ -54,36 +51,6 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
       ref,
     });
 
-  // If the NewGrantModal has been closed and a new grant submitted (or existing grant edited),
-  // fetch the grant at this index so that all new changes are immediately reflected
-  useEffect(() => {
-    const updateGrant = async () => {
-      if (wasGrantSubmitted) {
-        try {
-          const response = await api(`/grant/${grant.grantId}`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-
-          if (response.ok) {
-            const updatedGrant = await response.json();
-            setCurGrant(updatedGrant);
-            console.log("✅ Grant refreshed:", updatedGrant);
-          } else {
-            console.error("❌ Failed to fetch updated grant");
-          }
-        } catch (err) {
-          console.error("Error fetching updated grant:", err);
-        }
-        setWasGrantSubmitted(false);
-      }
-    };
-
-    updateGrant();
-  }, [wasGrantSubmitted]);
-
   function formatDate(isoString: string): string {
     if (!isoString) return "N/A";
     const date = new Date(isoString);
@@ -104,8 +71,8 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
       <div className="flex justify-between">
         {/* Left side */}
         <div className="flex flex-col gap-2 items-start text-left">
-          <h2 className="text-2xl font-semibold">{curGrant.organization}</h2>
-          <StatusIndicator curStatus={curGrant.status} />
+          <h2 className="text-2xl font-semibold">{grant.organization}</h2>
+          <StatusIndicator curStatus={grant.status} />
         </div>
         {/* Right side */}
         <div className="flex flex-col gap-2 items-end">
@@ -134,7 +101,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
                     className={` ${!isShowingMore && "line-clamp-3"}`}
                     onClick={toggleIsShowingMore}
                   >
-                    {curGrant?.description || "N/A"}
+                    {grant?.description || "N/A"}
                   </p>
                   {isTruncated && (
                     <button
@@ -155,13 +122,13 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
             fields={[
               {
                 label: "Amount ($)",
-                value: formatCurrency(curGrant.amount),
+                value: formatCurrency(grant.amount),
                 important: true,
               },
               {
                 label: "BCAN Eligible",
                 important: true,
-                item: curGrant.does_bcan_qualify ? (
+                item: grant.does_bcan_qualify ? (
                   <span className="text-green">
                     <FontAwesomeIcon icon={faCheckSquare} /> Yes
                   </span>
@@ -178,7 +145,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
               {
                 label: "Due Date",
                 important: true,
-                value: formatDate(curGrant.application_deadline),
+                value: formatDate(grant.application_deadline),
               },
               {
                 label: "Application Date",
@@ -190,14 +157,14 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
             fields={[
               {
                 label: "Grant Start Date",
-                value: formatDate(curGrant.grant_start_date),
+                value: formatDate(grant.grant_start_date),
               },
               {
                 label: "Report Deadlines",
                 item:
-                  curGrant.report_deadlines &&
-                  curGrant.report_deadlines.length > 0 ? (
-                    curGrant.report_deadlines.map(
+                  grant.report_deadlines &&
+                  grant.report_deadlines.length > 0 ? (
+                    grant.report_deadlines.map(
                       (deadline: string, index: number) => (
                         <div key={index} className="text-black">
                           {formatDate(deadline)}
@@ -215,11 +182,11 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
             fields={[
               {
                 label: "Timeline (years)",
-                value: curGrant.timeline,
+                value: grant.timeline,
               },
               {
                 label: "Estimated Completion Time (hours)",
-                value: curGrant.estimated_completion_time,
+                value: grant.estimated_completion_time,
               },
             ]}
           />
@@ -249,9 +216,9 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
             {
               label: "Documents",
               item:
-                curGrant.attachments && curGrant.attachments.length > 0 ? (
+                grant.attachments && grant.attachments.length > 0 ? (
                   <div className="columns-2 xl:columns-4 gap-4 lg:w-[90%]">
-                    {curGrant.attachments.map((attachment, index) => (
+                    {grant.attachments.map((attachment, index) => (
                       <p key={index} className="text-sm truncate w-full mb-1">
                         <a
                           href={attachment.url}
@@ -280,7 +247,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
             {
               label: "Cost Analysis Calculator",
               item: (
-                <CostBenefitAnalysis grant={curGrant} />
+                <CostBenefitAnalysis grant={grant} />
               ),
             },
           ]}

@@ -6,7 +6,7 @@ import GrantSearch from "./filter-bar/GrantSearch.tsx";
 import NewGrantModal from "./new-grant/NewGrantModal.tsx";
 import { useEffect, useState } from "react";
 import { Grant } from "../../../../middle-layer/types/Grant.ts";
-//import FilterBar from "./filter-bar/FilterBar.tsx";
+// import FilterBar from "./filter-bar/FilterBar.tsx";
 import GrantItem from "./grant-view/GrantView.tsx";
 import { useAuthContext } from "../../context/auth/authContext";
 import {
@@ -15,24 +15,81 @@ import {
   updateSearchQuery,
   updateStartDateFilter,
   updateYearFilter,
+  fetchAllGrants,
 } from "../../external/bcanSatchel/actions.ts";
 import { toJS } from "mobx";
+import { observer } from "mobx-react-lite";
 import { ProcessGrantData } from "./filter-bar/processGrantData.ts";
-import { fetchGrants } from "./filter-bar/processGrantData.ts";
 import { UserStatus } from "../../../../middle-layer/types/UserStatus.ts";
 import { Navigate } from "react-router-dom";
 import BellButton from "../navbar/Bell.tsx";
 import GrantCard from "./grant-list/GrantCard.tsx";
+import { api } from "../../api.ts";
 
 interface GrantPageProps {
   showOnlyMyGrants?: boolean; //if true, filters grants by user email
 }
 
-function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
+function GrantPage({}: GrantPageProps) {
   const [showNewGrantModal, setShowNewGrantModal] = useState(false);
   const [wasGrantSubmitted, setWasGrantSubmitted] = useState(false);
-  const [grants, setGrants] = useState<Grant[]>(ProcessGrantData().grants)
-  const [selectedGrant, setSelectedGrant] = useState<Grant>(grants[0]);
+  
+  // Use ProcessGrantData reactively to get filtered grants
+  const { grants } = ProcessGrantData();
+  const [curGrant, setCurGrant] = useState<Grant | null>(null);
+
+  // Set the first grant when grants are loaded (only on initial mount)
+  useEffect(() => {
+    if (grants.length > 0 && curGrant === null) {
+      setCurGrant(grants[0]);
+    }
+  }, [grants]);
+
+   // If the NewGrantModal has been closed and a new grant submitted (or existing grant edited),
+   // refetch the grants list and update the current grant to reflect any changes
+    useEffect(() => {
+      if (!wasGrantSubmitted || !curGrant) return;
+
+      const updateGrant = async () => {
+        try {
+          const response = await api(`/grant/${curGrant.grantId}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (response.ok) {
+            const updatedGrant = await response.json();
+            setCurGrant(updatedGrant);
+            console.log("✅ Grant refreshed:", updatedGrant);
+          } else {
+            console.error("❌ Failed to fetch updated grant");
+          }
+        } catch (err) {
+          console.error("Error fetching updated grant:", err);
+        }
+      };
+
+      const updateGrants = async () => {
+        try {
+          const response = await api("/grant");
+          if (!response.ok) {
+            throw new Error(`HTTP Error, Status: ${response.status}`);
+          }
+          const updatedGrants: Grant[] = await response.json();
+          fetchAllGrants(updatedGrants);
+          console.log("✅ Grants list refreshed");
+        } catch (error) {
+          console.error("Error fetching grants:", error);
+        }
+      };
+
+      updateGrants();
+      updateGrant();
+      setWasGrantSubmitted(false);
+    }, [wasGrantSubmitted]);
+  
   const [openModal, setOpenModal] = useState(false);
 
   const { user } = useAuthContext(); //gets current logged in user
@@ -50,14 +107,6 @@ function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
     updateSearchQuery("");
   }, []);
 
-  useEffect(() => {
-    if (!showNewGrantModal && wasGrantSubmitted) {
-      fetchGrants();
-      setWasGrantSubmitted(false);
-      console.log("Use effect called in GrantPage");
-    }
-  }, [showNewGrantModal, wasGrantSubmitted]);
-
   return user ? (
     user?.position !== UserStatus.Inactive ? (
       <div className="grant-page w-full px-8 items-end">
@@ -73,20 +122,24 @@ function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
         </div>
 
         <div className="flex flex-row w-full gap-4 px-4 justify-between">
-          <div className="flex flex-col w-[33%] h-auto overflow-y-scroll p-2">
+          <div className="flex flex-col w-[33%] h-[150vh] overflow-y-scroll p-2">
             {grants.map((grant) => (
               <GrantCard
                 key={grant.grantId}
                 grant={grant}
-                isSelected={selectedGrant?.grantId === grant.grantId}
-                onClick={() => setSelectedGrant(grant)}
+                isSelected={curGrant?.grantId === grant.grantId}
+                onClick={() => setCurGrant(grant)}
               />
             ))}
           </div>
           <div className="w-[65%]">
-            <GrantItem
-              grant={selectedGrant}
-            />
+            {curGrant ? (
+              <GrantItem grant={curGrant} />
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-500">
+                No grants found.
+              </div>
+            )}
           </div>
         </div>
 
@@ -98,14 +151,14 @@ function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
             <div className="grant-list-container">
               <GrantList
                 selectedGrantId={
-                  selectedGrant ? selectedGrant.grantId : undefined
+                  curGrant ? curGrant.grantId : undefined
                 }
                 currentUserEmail={currentUserEmail}
                 showOnlyMyGrants={showOnlyMyGrants}
               />
             </div>
           </div>
-        </div> */}
+        </div>  */}
         <div className="hidden-features">
           {showNewGrantModal && (
             <NewGrantModal
@@ -127,4 +180,4 @@ function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
   );
 }
 
-export default GrantPage;
+export default observer(GrantPage);
