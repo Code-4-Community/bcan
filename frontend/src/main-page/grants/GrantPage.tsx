@@ -26,6 +26,7 @@ import BellButton from "../navbar/Bell.tsx";
 import GrantCard from "./grant-list/GrantCard.tsx";
 import { api } from "../../api.ts";
 
+// still needed potentially?
 interface GrantPageProps {
   showOnlyMyGrants?: boolean; //if true, filters grants by user email
 }
@@ -47,6 +48,7 @@ function GrantPage({}: GrantPageProps) {
 
    // If the NewGrantModal has been closed and a new grant submitted (or existing grant edited),
    // refetch the grants list and update the current grant to reflect any changes
+   // SHOULD BE CHANGED TO ALSO ACCOMODATE DELETIONS (CURRENTLY ONLY UPDATES IF GRANT WAS CREATED/EDITED, NOT DELETED)
     useEffect(() => {
       if (!wasGrantSubmitted || !curGrant) return;
 
@@ -115,9 +117,9 @@ function GrantPage({}: GrantPageProps) {
         </div>
         <GrantSearch />
         <div className="flex w-full justify-between p-4 gap-4">
-          <text className="text-lg font-semibold">
+          <span className="text-lg font-semibold">
             FILTERS GO HERE
-          </text>
+          </span>
           <AddGrantButton onClick={() => setShowNewGrantModal(true)} />
         </div>
 
