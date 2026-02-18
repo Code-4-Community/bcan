@@ -29,7 +29,7 @@ const ApprovedUserCard = ({
 
   const changeUserGroup = async () => {
     console.log(
-      `Changing user ${userId} to ${
+      `Changing user ${email} to ${
         position === UserStatus.Admin ? "employee" : "admin"
       }...`
     );
@@ -63,7 +63,7 @@ const ApprovedUserCard = ({
           }`
         );
         const updatedUser = await response.json();
-        setActiveUsers([...store.activeUsers.filter(u => u.userId !== userId), updatedUser as User]);
+        setActiveUsers([...store.activeUsers.filter(u => u.email !== email), updatedUser as User]);
 
         setIsChangeGroupModalOpen(false);
       } else {
@@ -82,7 +82,6 @@ const ApprovedUserCard = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user: {
-            userId,
             email,
             position,
           } as User,
@@ -91,9 +90,9 @@ const ApprovedUserCard = ({
       });
 
       if (response.ok) {
-        console.log(`User ${userId} has been deleted successfully`);
-        alert(`User ${userId} has been deleted successfully`);
-        setActiveUsers(store.activeUsers.filter(u => u.userId !== userId));
+        console.log(`User ${email} has been deleted successfully`);
+        alert(`User ${email} has been deleted successfully`);
+        setActiveUsers(store.activeUsers.filter(u => u.email !== email));
 
       } else {
         const errorBody = await response.json();

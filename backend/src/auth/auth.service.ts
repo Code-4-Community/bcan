@@ -23,7 +23,7 @@ export class AuthService {
   private dynamoDb;
 
   private computeHatch(
-    username: string,
+    email: string,
     clientId: string,
     clientSecret: string,
   ): string {
@@ -33,7 +33,7 @@ export class AuthService {
     }
     return crypto
       .createHmac(hatch, clientSecret)
-      .update(username + clientId)
+      .update(email + clientId)
       .digest("base64");
   }
 
@@ -304,7 +304,6 @@ export class AuthService {
     session?: string;
     challenge?: string;
     requiredAttributes?: string[];
-    username?: string;
     message?: string;
     idToken?: string;
   }> {
@@ -356,7 +355,6 @@ export class AuthService {
           challenge: "NEW_PASSWORD_REQUIRED",
           session: response.Session,
           requiredAttributes,
-          username: email,
           user: {} as User,
         };
       }
@@ -482,8 +480,7 @@ export class AuthService {
   async setNewPassword(
     newPassword: string,
     session: string,
-    username: string,
-    email?: string,
+    email: string,
   ): Promise<{ access_token: string }> {
     const clientId = process.env.COGNITO_CLIENT_ID;
     const clientSecret = process.env.COGNITO_CLIENT_SECRET;
@@ -504,15 +501,12 @@ export class AuthService {
       throw new BadRequestException("Session is required");
     }
 
-    if (!username || username.trim().length === 0) {
-      this.logger.error("Set New Password failed: Username is required");
-      throw new BadRequestException("Username is required");
-    }
+   
 
-    const hatch = this.computeHatch(username, clientId, clientSecret);
+    const hatch = this.computeHatch(email, clientId, clientSecret);
 
     const challengeResponses: any = {
-      USERNAME: username,
+      USERNAME: email,
       NEW_PASSWORD: newPassword,
       SECRET_HASH: hatch,
     };
@@ -543,7 +537,7 @@ export class AuthService {
       }
 
       const token = response.AuthenticationResult.IdToken;
-      this.logger.log(`New password set successfully for user ${username}`);
+      this.logger.log(`New password set successfully for user ${email}`);
       return { access_token: token };
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -559,7 +553,7 @@ export class AuthService {
   async updateProfile(email: string, position_or_role: string) {
     // Validate input parameters for username, email, and position_or_role
 
-    if (!email || email.trim().length === 0) {
+    if (!email || email.trim().length === 0 || !this.isValidEmail(email)) {
       this.logger.error("Update Profile failed: Email is required");
       throw new BadRequestException("Email is required");
     }

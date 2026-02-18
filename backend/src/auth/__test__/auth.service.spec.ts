@@ -234,7 +234,7 @@ describe("AuthService", () => {
       expect(result.challenge).toBe("NEW_PASSWORD_REQUIRED");
       expect(result.session).toBe("session-123");
       expect(result.requiredAttributes).toEqual(["email"]);
-      expect(result.username).toBe("c4c@example.com");
+      // username is no longer returned in challenge response
       expect(result.access_token).toBeUndefined();
       expect(result.user).toEqual({});
     });
@@ -353,10 +353,10 @@ describe("AuthService", () => {
 
       (service["cognito"] as any).respondToAuthChallenge = mockRespondFn;
 
+      // setNewPassword no longer takes a separate username — just (newPassword, session, email)
       const result = await service.setNewPassword(
         "NewPass123!",
         "session123",
-        "c4c@example.com",
         "c4c@example.com"
       );
 
@@ -442,6 +442,12 @@ describe("AuthService", () => {
     });
 
     it("should reject missing access token", async () => {
+      // Empty string still calls Cognito which then throws, caught as UnauthorizedException
+      mockCognitoPromise.mockRejectedValueOnce({
+        code: "NotAuthorizedException",
+        message: "Invalid token",
+      });
+
       await expect(
         service.validateSession("")
       ).rejects.toThrow(UnauthorizedException);

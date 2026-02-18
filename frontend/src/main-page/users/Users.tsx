@@ -138,8 +138,8 @@ const Users = observer(() => {
                 </div>
                 {currentPageUsers.map((user) => (
                   <ApprovedUserCard
-                    key={user.userId}
-                    userId={user.userId}
+                    key={user.email}
+                    userId={user.email}
                     email={user.email}
                     position={user.position}
                   />
@@ -155,8 +155,8 @@ const Users = observer(() => {
                 </div>
                 {currentPageUsers.map((user) => (
                   <PendingUserCard
-                    key={user.userId}
-                    userId={user.userId}
+                    key={user.email}
+                    userId={user.email}
                     email={user.email}
                     position={user.position}
                   />

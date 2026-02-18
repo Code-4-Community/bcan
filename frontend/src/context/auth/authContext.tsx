@@ -13,7 +13,7 @@ import { fetchUsers } from '../../main-page/users/UserActions.ts';
 interface AuthContextProps {
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<boolean>;
-  register: (username: string, password: string, email: string) => Promise<{ state: boolean; message: string; }>;
+  register: (password: string, email: string, firstName: string, lastName:string) => Promise<{ state: boolean; message: string; }>;
   logout: () => void;
   user: User | null;
 }
@@ -60,18 +60,18 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
    /**
    * Register a new user and automatically log them in
    */
-   const register = async (username: string, password: string, email: string): Promise<{ state: boolean; message: string; }>=> {
+   const register = async ( password: string, email: string, firstName :string, lastName:string): Promise<{ state: boolean; message: string; }>=> {
     try {
       const response = await api('/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password, email }),
+        body: JSON.stringify({ password, email,firstName, lastName }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        const loggedIn = await login(username, password);
+        const loggedIn = await login(email, password);
         if (loggedIn) return {state: true, message: ''};
         console.warn('User registered but auto-login failed');
         return {state: false, message: 'User registered but auto-login failed'};
@@ -79,7 +79,7 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
 
       if (response.status === 409 || data.message?.includes('exists')) {
         //alert('An account with this username or email already exists.');
-              return {state: false, message: 'An account with this username or email already exists.'}
+              return {state: false, message: 'An account with this email already exists.'}
       } else if (response.status === 400) {
         //alert(data.message || 'Invalid registration details.');
               return {state: false, message: 'Invalid registration details. ' + (data.message || '')}

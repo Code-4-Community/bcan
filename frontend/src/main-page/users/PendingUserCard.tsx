@@ -36,7 +36,6 @@ const PendingUserCard = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user: {
-            userId,
             email,
             position
           } as User,
@@ -67,7 +66,6 @@ const PendingUserCard = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user: {
-            userId,
             email: email,
             position,
           } as User,

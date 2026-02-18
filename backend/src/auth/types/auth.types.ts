@@ -13,13 +13,11 @@ export class LoginBody {
 export class SetPasswordBody {
   newPassword!: string;
   session!: string;
-  username!: string;
-  email?: string;
+  email!: string;
   
 }
 
 export class UpdateProfileBody {
-  username!: string;
   email!: string;
   position_or_role!: string;
 }

@@ -110,7 +110,6 @@ export class AuthController {
     session?: string;
     challenge?: string;
     requiredAttributes?: string[];
-    username?: string;
     position?: string;
   }> {
     const result = await this.authService.login(body.email, body.password);
@@ -181,12 +180,12 @@ export class AuthController {
   async setNewPassword(
     @Body() body: SetPasswordBody
   ): Promise<{ message: string }> {
-    await this.authService.setNewPassword(body.newPassword, body.session, body.username, body.email);
+    await this.authService.setNewPassword(body.newPassword, body.session, body.email);
     return { message: 'Password has been set successfully' };
   }
 
   /**
-   * Update user profile for username, email, and position_or_role
+   * Update user profile for email, and position_or_role
    */
   @Post('update-profile')
   @UseGuards(VerifyUserGuard)
