@@ -95,7 +95,7 @@ function GrantPage({}: GrantPageProps) {
   const { user } = useAuthContext(); //gets current logged in user
   const userObj = toJS(user);
 
-  const currentUserEmail = userObj?.email || ""; //safe fallback
+  // const currentUserEmail = userObj?.email || ""; //safe fallback
 
   console.log("Current logged-in user:", userObj);
   // reset filters on initial render
@@ -121,7 +121,7 @@ function GrantPage({}: GrantPageProps) {
           <AddGrantButton onClick={() => setShowNewGrantModal(true)} />
         </div>
 
-        <div className="flex flex-row w-full gap-4 px-4 justify-between">
+        <div className="flex flex-row w-full gap-4 justify-between">
           <div className="flex flex-col w-[33%] h-[150vh] overflow-y-scroll p-2">
             {grants.map((grant) => (
               <GrantCard

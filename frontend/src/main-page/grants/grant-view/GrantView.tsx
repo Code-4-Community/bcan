@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import { Grant } from "../../../../../middle-layer/types/Grant";
-import { api } from "../../../api";
 import { observer } from "mobx-react-lite";
 import StatusIndicator from "../../grants/grant-list/StatusIndicator";
 import {
