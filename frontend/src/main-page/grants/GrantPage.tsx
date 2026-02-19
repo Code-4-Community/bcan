@@ -111,7 +111,7 @@ function GrantPage({}: GrantPageProps) {
 
   return user ? (
     user?.position !== UserStatus.Inactive ? (
-      <div className="grant-page w-full px-8 items-end">
+      <div className="grant-page w-full items-end">
         <div className="bell-container">
           <BellButton setOpenModal={setOpenModal} openModal={openModal} />
         </div>
@@ -124,7 +124,7 @@ function GrantPage({}: GrantPageProps) {
         </div>
 
         <div className="flex flex-row w-full gap-4 justify-between">
-          <div className="flex flex-col w-[33%] h-[150vh] overflow-y-scroll p-2">
+          <div className="flex flex-col w-[33%] h-[150vh] overflow-y-scroll pr-2">
             {grants.map((grant) => (
               <GrantCard
                 key={grant.grantId}
