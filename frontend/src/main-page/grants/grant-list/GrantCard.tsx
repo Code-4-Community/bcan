@@ -22,7 +22,8 @@ const GrantCard: React.FC<GrantCardProps> = ({ grant, isSelected, onClick }) => 
     <div
       onClick={onClick}
       className={`
-        relative w-[100%] h-fit flex-shrink-0 rounded-2xl p-4 mb-3 cursor-pointer bg-white flex flex-row justify-between items-center
+        relative w-[100%] h-fit flex-shrink-0 rounded-2xl p-4 mb-3 cursor-pointer bg-white 
+        flex flex-col lg:flex-row justify-between items-center
         ${isSelected ? 'border-2 border-secondary-500' : 'border border-grey-200'}
         hover:shadow-md
       `}

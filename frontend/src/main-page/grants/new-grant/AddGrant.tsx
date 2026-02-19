@@ -1,4 +1,5 @@
 import '../styles/GrantButton.css';
+import Button from '../../settings/components/Button.tsx';
 
 // TODO: Fix 'any' typing here
 const AddGrantButton = ({ onClick } : any) => {
