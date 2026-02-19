@@ -31,7 +31,7 @@ const GrantCard: React.FC<GrantCardProps> = ({ grant, isSelected, onClick }) => 
       <div className="h-full w-[55%] flex flex-row gap-3 py-4">
         <div 
           className="relative group w-[5px] min-w-[5px] h-full rounded-full flex-shrink-0" 
-          style={{ backgroundColor: grant.does_bcan_qualify ? "green" : "red" }}
+          style={{ backgroundColor: grant.does_bcan_qualify ? "var(--color-green)" : "var(--color-red-dark)" }}
         >
           {/* Eligibility Badge - Shows on hover over the line */}
           <div className={`
