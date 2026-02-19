@@ -57,7 +57,7 @@ const GrantCard: React.FC<GrantCardProps> = ({ grant, isSelected, onClick }) => 
 
       {/* Card content */}
       <div className="h-full w-[40%] flex flex-col justify-between items-end">
-        <span className="text-md text-gray-600 whitespace-nowrap">
+        <span className="text-md text-gray-600 text-right">
           Due: <span className="font-semibold">{formattedDate}</span>
         </span>
         <StatusIndicator curStatus={grant.status} />
