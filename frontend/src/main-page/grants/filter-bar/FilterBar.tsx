@@ -44,40 +44,26 @@ const FilterBar: React.FC = observer(() => {
   }
 
   return (
-    <div className="sortbar flex flex-col gap-4 bg-grey-100 p-6 rounded-[1.2rem] border-[0.1rem] border-black">
-      <div>
-        <div className="flex pb-2">{"Filter by Date"}</div>
-        <CalendarDropdown />
-      </div>
-      <div>
-        <div className="flex pb-2">{"Filter by Status"}</div>
-        <ul className="flex flex-col gap-2">
-          {linkList.map((item, index) => (
-            <li key={index}>
-              <Link
-                onClick={(e) => categoryClicked(e, item.name, item.linkTo)}
-                to={item.linkTo ? item.linkTo : "#"}
-              >
-                <div
-                  className={`grant-button border hover:bg-primary-800 ${
-                    selected === item.name ? "bg-primary-900" : "bg-white"
-                  }`}
-                >
-                  <div
-                    className={`flex w-full justify-between items-center ${
-                    selected === item.name ? "text-white" : "text-black"
-                    }`}
-                  >
-                    {item.name}
-                    <FaChevronRight />
-                  </div>
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+  <div className="flex items-center gap-2">
+    <button className="flex items-center gap-2 border-2 border-grey-400 rounded-full px-5 py-2 bg-white text-grey-900 text-base whitespace-nowrap">
+      My Grants
+    </button>
+    <button className="flex items-center gap-2 border border-grey-400 rounded-full px-5 py-2 bg-white text-grey-900 text-base whitespace-nowrap">
+      BCAN Eligible
+    </button>
+    <button className="flex items-center gap-2 border border-grey-400 rounded-full px-5 py-2 bg-white text-grey-900 text-base whitespace-nowrap">
+      ⇅ Alphabetical
+    </button>
+    <button className="flex items-center gap-2 border border-grey-400 rounded-full px-5 py-2 bg-white text-grey-900 text-base whitespace-nowrap">
+      ⇅ Due Date
+    </button>
+    <button className="flex items-center gap-2 border border-grey-400 rounded-full px-5 py-2 bg-white text-grey-900 text-base whitespace-nowrap">
+      ⇅ Grant Amount
+    </button>
+    <button className="flex items-center gap-2 border border-grey-400 rounded-full px-5 py-2 bg-white text-grey-900 text-base whitespace-nowrap">
+      Status ∨
+    </button>
+  </div>
   );
 });
 

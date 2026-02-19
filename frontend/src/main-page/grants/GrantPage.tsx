@@ -57,19 +57,19 @@ function GrantPage({ showOnlyMyGrants = false }: GrantPageProps) {
 
   return user ? (
     user?.position !== UserStatus.Inactive ? (
-      <div className="grant-page px-8">
+      <div className="grant-page px-8 -mt-14">
         <div className="top-half"></div>
-        <div className="flex justify-end align-middle p-4 gap-4">
-          <GrantSearch />
-          <AddGrantButton onClick={() => setShowNewGrantModal(true)} />
-          <div className="bell-container">
+        <div className="flex flex-col px-4 pb-4 gap-2">
+          <div className="flex justify-end">
             <BellButton setOpenModal={setOpenModal} openModal={openModal} />
           </div>
+          <GrantSearch />
+          <div className="flex justify-between items-center">
+          <FilterBar />
+          <AddGrantButton onClick={() => setShowNewGrantModal(true)} />
+        </div>
         </div>
         <div className="grid grid-cols-5 gap-8 px-4">
-          <div className="col-span-1">
-            <FilterBar />
-          </div>
           <div className="bot-half col-span-4">
             <div className="grant-list-container">
               <GrantList
