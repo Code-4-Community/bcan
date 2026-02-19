@@ -22,13 +22,13 @@ const GrantCard: React.FC<GrantCardProps> = ({ grant, isSelected, onClick }) => 
     <div
       onClick={onClick}
       className={`
-        relative w-[100%] h-[120px] flex-shrink-0 rounded-2xl p-4 mb-3 cursor-pointer bg-white flex flex-row justify-between items-center
+        relative w-[100%] h-fit flex-shrink-0 rounded-2xl p-4 mb-3 cursor-pointer bg-white flex flex-row justify-between items-center
         ${isSelected ? 'border-2 border-secondary-500' : 'border border-grey-200'}
         hover:shadow-md
       `}
     >
       {/* Colored left border indicator + Grant Name + Amount*/}
-      <div className="h-[70%] w-[55%] flex flex-row gap-3">
+      <div className="h-full w-[55%] flex flex-row gap-3 py-4">
         <div 
           className="relative group w-[5px] min-w-[5px] h-full rounded-full flex-shrink-0" 
           style={{ backgroundColor: grant.does_bcan_qualify ? "green" : "red" }}
