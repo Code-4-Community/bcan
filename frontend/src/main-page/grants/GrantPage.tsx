@@ -111,7 +111,7 @@ function GrantPage({}: GrantPageProps) {
   return user ? (
     user?.position !== UserStatus.Inactive ? (
       <div className="grant-page w-full items-end">
-        <div className="bell-container">
+        <div className="bell-container flex justify-end w-full">
           <BellButton setOpenModal={setOpenModal} openModal={openModal} />
         </div>
         <GrantSearch />

@@ -29,7 +29,7 @@ const GrantCard: React.FC<GrantCardProps> = ({ grant, isSelected, onClick }) => 
       `}
     >
       {/* Colored left border indicator + Grant Name + Amount*/}
-      <div className="h-full w-[55%] flex flex-row gap-3 py-4">
+      <div className="h-full w-[85%] lg:w-[55%] flex flex-row gap-3 py-4">
         <div 
           className="relative group w-[5px] min-w-[5px] h-full rounded-full flex-shrink-0" 
           style={{ backgroundColor: grant.does_bcan_qualify ? "var(--color-green)" : "var(--color-red-dark)" }}
@@ -57,7 +57,7 @@ const GrantCard: React.FC<GrantCardProps> = ({ grant, isSelected, onClick }) => 
       </div>
 
       {/* Card content */}
-      <div className="h-full w-[40%] flex flex-col justify-between items-end">
+      <div className="h-full w-[85%] lg:w-[40%] flex flex-col justify-between items-end pb-4 lg:pb-0">
         <span className="text-md text-gray-600 text-right">
           Due: <span className="font-semibold">{formattedDate}</span>
         </span>
