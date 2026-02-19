@@ -22,7 +22,7 @@ const GrantCard: React.FC<GrantCardProps> = ({ grant, isSelected, onClick }) => 
     <div
       onClick={onClick}
       className={`
-        relative w-[100%] h-fit flex-shrink-0 rounded-2xl p-4 mb-3 cursor-pointer bg-white 
+        relative w-[100%] h-fit flex-shrink-0 rounded-2xl p-2 lg:p-4 mb-3 cursor-pointer bg-white 
         flex flex-col lg:flex-row justify-between items-center
         ${isSelected ? 'border-2 border-secondary-500' : 'border border-grey-200'}
         hover:shadow-md
@@ -47,7 +47,7 @@ const GrantCard: React.FC<GrantCardProps> = ({ grant, isSelected, onClick }) => 
           </div>
         </div>
         <div className="overflow-hidden">
-          <div className="text-lg font-semibold text-gray-900 truncate text-left">
+          <div className="text-lg font-semibold text-gray-900 lg:truncate text-left">
             {grant.organization}
           </div>
           <div className="text-md font-medium text-gray-900 text-left">
