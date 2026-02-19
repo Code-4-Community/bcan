@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { observer } from "mobx-react-lite";
 import StatusIndicator from "../../grants/grant-list/StatusIndicator";
@@ -18,6 +18,10 @@ interface GrantItemProps {
 }
 
 const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
+  
+  useEffect(() => {
+  }, [grant]);
+  
   const useTruncatedElement = ({
     ref,
   }: {
@@ -34,7 +38,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
       } else {
         setIsTruncated(false);
       }
-    }, [ref]);
+    }, [ref, grant.description]);
 
     const toggleIsShowingMore = () => setIsShowingMore((prev) => !prev);
 
@@ -218,12 +222,12 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
                 grant.attachments && grant.attachments.length > 0 ? (
                   <div className="columns-2 xl:columns-4 gap-4 lg:w-[90%]">
                     {grant.attachments.map((attachment, index) => (
-                      <p key={index} className="text-sm truncate w-full mb-1">
+                      <p key={index} className="truncate w-full mb-1">
                         <a
                           href={attachment.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-secondary font-medium text-sm underline"
+                          className="text-secondary underline"
                         >
                           {attachment.attachment_name || attachment.url}
                         </a>
