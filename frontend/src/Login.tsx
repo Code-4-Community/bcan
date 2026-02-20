@@ -21,7 +21,7 @@ const Login = observer(() => {
     const success = await login(username, password);
 
     if (success) {
-      navigate("/grant-info");
+      navigate("/main/all-grants");
     } else {
       setFailure(true);
     }
