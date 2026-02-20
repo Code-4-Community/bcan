@@ -36,7 +36,7 @@ const GrantCard: React.FC<GrantCardProps> = ({ grant, isSelected, onClick }) => 
         >
           {/* Eligibility Badge - Shows on hover over the line */}
           <div className={`
-            absolute -top-6 -left-6 px-3 py-1 rounded-lg text-sm font-semibold whitespace-nowrap
+            absolute -top-7 -left-4 px-3 py-1 rounded-full text-sm font-semibold whitespace-nowrap
             opacity-0 group-hover:opacity-100 transition-opacity z-10
             ${grant.does_bcan_qualify 
               ? 'bg-green-light text-green-dark' 

@@ -17,7 +17,7 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({ curStatus }) => {
 
   return (
     <div
-      className="inline-flex w-fit flex-none items-center rounded-sm px-2 py-1"
+      className="inline-flex w-fit flex-none items-center rounded-full px-2 py-1"
       style={{ color: darkColor, backgroundColor: lightColor }}
     >
       <span className="text-md">{labelText}</span>
