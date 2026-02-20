@@ -25,6 +25,9 @@ const mockAdminDeleteUser = vi.fn();
 // Mock SES functions
 const mockSendEmail = vi.fn();
 
+// Mock S3 functions
+const mockS3Upload = vi.fn();
+
 // Mock AWS SDK ONCE with proper structure for import * as AWS
 vi.mock('aws-sdk', () => {
   return {
@@ -51,6 +54,11 @@ vi.mock('aws-sdk', () => {
         return {
           sendEmail: mockSendEmail,
         };
+      }),
+      S3: vi.fn(function() {
+        return {
+          upload: mockS3Upload,
+        };
       })
     },
     CognitoIdentityServiceProvider: vi.fn(function() {
@@ -74,6 +82,11 @@ vi.mock('aws-sdk', () => {
     SES: vi.fn(function() {
       return {
         sendEmail: mockSendEmail,
+      };
+    }),
+    S3: vi.fn(function() {
+      return {
+        upload: mockS3Upload,
       };
     })
   };
@@ -142,6 +155,7 @@ describe('UserController', () => {
     // Set up environment variables
     process.env.DYNAMODB_USER_TABLE_NAME = 'test-users-table';
     process.env.COGNITO_USER_POOL_ID = 'test-pool-id';
+    process.env.PROFILE_PICTURE_BUCKET = 'test-profile-pics-bucket';
   });
 
   beforeEach(async () => {
@@ -163,6 +177,9 @@ describe('UserController', () => {
     // Setup SES mocks to return chainable objects with .promise()
     mockSendEmail.mockReturnValue({ promise: mockPromise });
     
+    // Setup S3 mocks to return chainable objects with .promise()
+    mockS3Upload.mockReturnValue({ promise: mockPromise });
+    
     // Reset promise mocks to default resolved state
     mockPromise.mockResolvedValue({});
 
@@ -174,6 +191,270 @@ describe('UserController', () => {
     controller = module.get<UserController>(UserController);
     userService = module.get<UserService>(UserService);
   });
+
+  // ========================================
+  // Tests for uploadProfilePic
+  // ========================================
+
+  describe('uploadProfilePic', () => {
+    const createMockFile = (overrides?: Partial<Express.Multer.File>): Express.Multer.File => ({
+      fieldname: 'profilePic',
+      originalname: 'test-image.jpg',
+      encoding: '7bit',
+      mimetype: 'image/jpeg',
+      size: 1024 * 1024, // 1MB
+      buffer: Buffer.from('fake-image-data'),
+      destination: '',
+      filename: '',
+      path: '',
+      stream: null as any,
+      ...overrides,
+    });
+
+    it('should successfully upload profile picture', async () => {
+      const user = mockDatabase.users.find(u => u.userId === 'emp1')!;
+      const mockFile = createMockFile();
+
+      // Mock S3 upload success
+      mockPromise.mockResolvedValueOnce({
+        Location: 'https://test-profile-pics-bucket.s3.amazonaws.com/emp1-profilepic.jpg',
+        Key: 'emp1-profilepic.jpg',
+        Bucket: 'test-profile-pics-bucket',
+      });
+
+      // Mock DynamoDB update success
+      mockPromise.mockResolvedValueOnce({
+        Attributes: {
+          ...user,
+          profilePictureUrl: 'https://test-profile-pics-bucket.s3.amazonaws.com/emp1-profilepic.jpg',
+        },
+      });
+
+      const result = await userService.uploadProfilePic(user, mockFile);
+
+      // ✅ Result is now just the URL string, not the User object
+      expect(result).toBe('https://test-profile-pics-bucket.s3.amazonaws.com/emp1-profilepic.jpg');
+      expect(mockS3Upload).toHaveBeenCalledWith({
+        Bucket: 'test-profile-pics-bucket',
+        Key: 'emp1-profilepic.jpg',
+        Body: mockFile.buffer,
+        ContentType: 'image/jpeg',
+      });
+      expect(mockUpdate).toHaveBeenCalledWith({
+        TableName: 'test-users-table',
+        Key: { userId: 'emp1' },
+        UpdateExpression: 'SET profilePictureUrl = :url',
+        ExpressionAttributeValues: {
+          ':url': 'https://test-profile-pics-bucket.s3.amazonaws.com/emp1-profilepic.jpg',
+        },
+        ReturnValues: 'ALL_NEW',
+      });
+    });
+
+    it('should generate correct filename with different extensions', async () => {
+      const user = mockDatabase.users.find(u => u.userId === 'emp1')!;
+      const mockFile = createMockFile({ originalname: 'test.png', mimetype: 'image/png' });
+
+      mockPromise.mockResolvedValueOnce({
+        Location: 'https://test-profile-pics-bucket.s3.amazonaws.com/emp1-profilepic.png',
+        Key: 'emp1-profilepic.png',
+      });
+      mockPromise.mockResolvedValueOnce({
+        Attributes: { ...user, profilePictureUrl: 'https://test-profile-pics-bucket.s3.amazonaws.com/emp1-profilepic.png' },
+      });
+
+      await userService.uploadProfilePic(user, mockFile);
+
+      expect(mockS3Upload).toHaveBeenCalledWith(
+        expect.objectContaining({
+          Key: 'emp1-profilepic.png',
+        })
+      );
+    });
+
+    it('should throw BadRequestException when user object is invalid', async () => {
+      const mockFile = createMockFile();
+
+      await expect(
+        userService.uploadProfilePic(null as any, mockFile)
+      ).rejects.toThrow('Valid user object is required');
+
+      await expect(
+        userService.uploadProfilePic({ userId: '' } as any, mockFile)
+      ).rejects.toThrow('Valid user object is required');
+    });
+
+    it('should throw BadRequestException when file is invalid', async () => {
+      const user = mockDatabase.users.find(u => u.userId === 'emp1')!;
+
+      await expect(
+        userService.uploadProfilePic(user, null as any)
+      ).rejects.toThrow('Valid image file is required');
+
+      await expect(
+        userService.uploadProfilePic(user, { buffer: null } as any)
+      ).rejects.toThrow('Valid image file is required');
+    });
+
+    it('should throw BadRequestException for invalid file type', async () => {
+      const user = mockDatabase.users.find(u => u.userId === 'emp1')!;
+      const mockFile = createMockFile({ mimetype: 'application/pdf' });
+
+      await expect(
+        userService.uploadProfilePic(user, mockFile)
+      ).rejects.toThrow('Invalid file type');
+    });
+
+    it('should throw BadRequestException for file too large', async () => {
+      const user = mockDatabase.users.find(u => u.userId === 'emp1')!;
+      const mockFile = createMockFile({ size: 10 * 1024 * 1024 }); // 10MB
+
+      await expect(
+        userService.uploadProfilePic(user, mockFile)
+      ).rejects.toThrow('File too large');
+    });
+
+    it('should accept all allowed image types', async () => {
+      const user = mockDatabase.users.find(u => u.userId === 'emp1')!;
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+
+      for (const mimetype of allowedTypes) {
+        // Clear all mocks
+        vi.clearAllMocks();
+        
+        // Reset the mock implementations
+        mockS3Upload.mockReturnValue({ promise: mockPromise });
+        mockUpdate.mockReturnValue({ promise: mockPromise });
+        
+        // Mock S3 upload success
+        mockPromise
+          .mockResolvedValueOnce({ 
+            Location: 'https://test.com/image.jpg', 
+            Key: 'key',
+            Bucket: 'test-profile-pics-bucket'
+          })
+          // Mock DynamoDB update success
+          .mockResolvedValueOnce({ 
+            Attributes: { 
+              ...user, 
+              profilePictureUrl: 'https://test.com/image.jpg' 
+            } 
+          });
+
+        const mockFile = createMockFile({ mimetype });
+        const result = await userService.uploadProfilePic(user, mockFile);
+        
+        // ✅ Result is now just the URL string
+        expect(result).toBeDefined();
+        expect(result).toBe('https://test.com/image.jpg');
+      }
+    });
+
+    it('should handle S3 NoSuchBucket error', async () => {
+      const user = mockDatabase.users.find(u => u.userId === 'emp1')!;
+      const mockFile = createMockFile();
+
+      const s3Error = { code: 'NoSuchBucket', message: 'Bucket does not exist' };
+      mockPromise.mockRejectedValueOnce(s3Error);
+
+      await expect(
+        userService.uploadProfilePic(user, mockFile)
+      ).rejects.toThrow('Storage bucket not found');
+    });
+
+    it('should handle S3 AccessDenied error', async () => {
+      const user = mockDatabase.users.find(u => u.userId === 'emp1')!;
+      const mockFile = createMockFile();
+
+      const s3Error = { code: 'AccessDenied', message: 'Access denied' };
+      mockPromise.mockRejectedValueOnce(s3Error);
+
+      await expect(
+        userService.uploadProfilePic(user, mockFile)
+      ).rejects.toThrow('Insufficient permissions to upload file');
+    });
+
+    it('should handle DynamoDB update failure', async () => {
+      const user = mockDatabase.users.find(u => u.userId === 'emp1')!;
+      const mockFile = createMockFile();
+
+      // S3 upload succeeds
+      mockPromise.mockResolvedValueOnce({
+        Location: 'https://test-profile-pics-bucket.s3.amazonaws.com/emp1-profilepic.jpg',
+        Key: 'emp1-profilepic.jpg',
+      });
+
+      // DynamoDB update fails
+      const dynamoError = { code: 'ResourceNotFoundException', message: 'Table not found' };
+      mockPromise.mockRejectedValueOnce(dynamoError);
+
+      await expect(
+        userService.uploadProfilePic(user, mockFile)
+      ).rejects.toThrow('Database table not found');
+    });
+
+    it('should handle DynamoDB ValidationException', async () => {
+      const user = mockDatabase.users.find(u => u.userId === 'emp1')!;
+      const mockFile = createMockFile();
+
+      // S3 upload succeeds
+      mockPromise.mockResolvedValueOnce({
+        Location: 'https://test-profile-pics-bucket.s3.amazonaws.com/emp1-profilepic.jpg',
+        Key: 'emp1-profilepic.jpg',
+      });
+
+      // DynamoDB update fails with ValidationException
+      const dynamoError = { code: 'ValidationException', message: 'Invalid parameters' };
+      mockPromise.mockRejectedValueOnce(dynamoError);
+
+      await expect(
+        userService.uploadProfilePic(user, mockFile)
+      ).rejects.toThrow('Invalid update parameters');
+    });
+
+    it('should throw InternalServerErrorException when DynamoDB does not return attributes', async () => {
+      const user = mockDatabase.users.find(u => u.userId === 'emp1')!;
+      const mockFile = createMockFile();
+
+      // S3 upload succeeds
+      mockPromise.mockResolvedValueOnce({
+        Location: 'https://test-profile-pics-bucket.s3.amazonaws.com/emp1-profilepic.jpg',
+        Key: 'emp1-profilepic.jpg',
+      });
+
+      // DynamoDB update succeeds but doesn't return Attributes
+      mockPromise.mockResolvedValueOnce({});
+
+      await expect(
+        userService.uploadProfilePic(user, mockFile)
+      ).rejects.toThrow('Failed to retrieve updated user data');
+    });
+
+    it('should throw InternalServerErrorException when bucket env var is not set', async () => {
+      const originalBucket = process.env.PROFILE_PICTURE_BUCKET;
+      delete process.env.PROFILE_PICTURE_BUCKET;
+
+      // Create a new service instance to pick up the env change
+      const module: TestingModule = await Test.createTestingModule({
+        providers: [UserService],
+      }).compile();
+      const testService = module.get<UserService>(UserService);
+
+      const user = mockDatabase.users.find(u => u.userId === 'emp1')!;
+      const mockFile = createMockFile();
+
+      await expect(
+        testService.uploadProfilePic(user, mockFile)
+      ).rejects.toThrow('Server configuration error');
+
+      // Restore env var
+      process.env.PROFILE_PICTURE_BUCKET = originalBucket;
+    });
+  });
+
+  // ========================================
+  // Existing tests...
+  // ========================================
 
   it('should get all users from mock database', async () => {
     // Setup the mock response using our mock database
