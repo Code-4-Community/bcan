@@ -494,10 +494,10 @@ export class GrantService {
   }
 
   // Creates notifications for a grant's application and report deadlines
-  private async createGrantNotifications(grant: Grant, userId: string) {
+  private async createGrantNotifications(grant: Grant, email: string) {
     const { grantId, organization, application_deadline, report_deadlines } = grant;
     this.logger.log(
-      `Creating notifications for grant ${grantId} (${organization}) for user ${userId}`,
+      `Creating notifications for grant ${grantId} (${organization}) for user ${email}`,
     );
 
     // Application deadline notifications
@@ -513,7 +513,7 @@ export class GrantService {
         const message = `Application due in ${this.daysUntil(alertTime, application_deadline)} days for ${organization}`;
         const notification: Notification = {
           notificationId: `${grantId}-app`,
-          userId,
+          userEmail: email,
           message,
           alertTime: alertTime as TDateISO,
           sent: false,
@@ -540,7 +540,7 @@ export class GrantService {
           const message = `Report due in ${this.daysUntil(alertTime, reportDeadline)} days for ${organization}`;
           const notification: Notification = {
             notificationId: `${grantId}-report`,
-            userId,
+            userEmail: email,
             message,
             alertTime: alertTime as TDateISO,
             sent: false,
@@ -555,7 +555,7 @@ export class GrantService {
     }
 
     this.logger.log(
-      `Finished creating notifications for grant ${grantId} (${organization}) for user ${userId}`,
+      `Finished creating notifications for grant ${grantId} (${organization}) for user ${email}`,
     );
   }
 

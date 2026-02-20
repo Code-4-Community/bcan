@@ -5,6 +5,7 @@ import { useAuthContext } from "../context/auth/authContext";
 import MainPage from "../main-page/MainPage";
 import Login from "../Login";
 import Register from "../Register";
+import ForgotPassword from "../ForgotPassword";
 import RegisterLanding from "../RegisterLanding";
 import { getAppStore } from "../external/bcanSatchel/store";
 import RestrictedPage from "../main-page/restricted/RestrictedPage";
@@ -30,6 +31,10 @@ const AppRoutes = observer(() => {
 
   return (
     <Routes location={location}>
+      <Route
+        path="/forgot-password"
+        element={<ForgotPassword />}
+      />
       <Route
         path="/login"
         element={

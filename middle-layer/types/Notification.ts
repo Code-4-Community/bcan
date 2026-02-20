@@ -5,7 +5,7 @@ import { TDateISO } from "../../backend/src/utils/date";
  */
 export interface Notification {
     notificationId: string; // Partition
-    userId: string;
+    userEmail: string;
     message: string;
     alertTime: TDateISO; // Sort
     sent: boolean; // email has been sent for this notification

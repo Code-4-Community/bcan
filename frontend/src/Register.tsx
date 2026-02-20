@@ -67,11 +67,7 @@ const Register = observer(() => {
 
     const first = values.firstName.trim();
     const last = values.lastName.trim();
-    const username =
-      first || last
-        ? `${first}_${last}`.replace(/\s+/g, "_").replace(/_+/g, "_")
-        : values.email;
-    const success = await register(username, values.password, values.email);
+    const success = await register(values.password, values.email,first,last);
 
     if (success.state) {
       navigate("/registered");

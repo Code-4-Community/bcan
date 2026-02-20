@@ -13,12 +13,12 @@ export class NotificationService {
   // Function to create a notification in DynamoDB for a specific user
   // Should this have a check to prevent duplicate notifications?
   async createNotification(notification: Notification): Promise<Notification> {
-    this.logger.log(`Starting notification creation for userId: ${notification.userId}`);
+    this.logger.log(`Starting notification creation for user: ${notification.userEmail}`);
 
     // validate required fields
-    if (!notification.userId || !notification.notificationId) {
+    if (!notification.userEmail || !notification.notificationId) {
       this.logger.error('Missing required fields in notification');
-      throw new BadRequestException('userId and notificationId are required');
+      throw new BadRequestException('user and notificationId are required');
     }
 
     // validate and parse alertTime
@@ -42,20 +42,20 @@ export class NotificationService {
     this.logger.log(`Notification created successfully with Id: ${notification.notificationId}`);
     return notification;
   } catch (error) {
-    this.logger.error(`Failed to create notification for userId ${notification.userId}:`, error);
+    this.logger.error(`Failed to create notification for userEmail ${notification.userEmail}:`, error);
     throw new InternalServerErrorException('Failed to create notification');
   }
 }
 
   // Function that retreives all current notifications for a user
-  async  getCurrentNotificationsByUserId(userId: string): Promise<Notification[]> {
-    this.logger.log(`Fetching current notifications for userID: ${userId}`);
+  async  getCurrentNotificationsByEmail(userEmail: string): Promise<Notification[]> {
+    this.logger.log(`Fetching current notifications for userEmail: ${userEmail}`);
     
-    try {const notifactions = await this.getNotificationByUserId(userId);
+    try {const notifactions = await this.getNotificationByUserEmail(userEmail);
     
     const currentTime = new Date();
 
-    this.logger.log(`Found current notifications for userID ${userId}`);
+    this.logger.log(`Found current notifications for userEmail ${userEmail}`);
     return notifactions.filter(notification => new Date(notification.alertTime) <= currentTime);
   } catch (error) {
     this.logger.error("Failed to notifications by user id error: " + error)
@@ -64,15 +64,15 @@ export class NotificationService {
   }
 
 
-  // Function that returns array of notifications by user id (sorted by most recent notifications first)
-  async getNotificationByUserId(userId: string): Promise<Notification[]> {
+  // Function that returns array of notifications by user email (sorted by most recent notifications first)
+  async getNotificationByUserEmail(email: string): Promise<Notification[]> {
 
     // KeyConditionExpression specifies the query condition
     // ExpressionAttributeValues specifies the actual value of the key
     // IndexName specifies our Global Secondary Index, which was created in the BCANNotifs table to 
-    // allow for querying by userId, as it is not a primary/partition key
+    // allow for querying by userEmail, as it is not a primary/partition key
     const notificationTableName = process.env.DYNAMODB_NOTIFICATION_TABLE_NAME;
-    this.logger.log(`Fetching notifications for userId: ${userId} from table: ${notificationTableName}`);
+    this.logger.log(`Fetching notifications for userEmail: ${email} from table: ${notificationTableName}`);
 
         if (!notificationTableName) {
             this.logger.error('DYNAMODB_NOTIFICATION_TABLE_NAME is not defined in environment variables');
@@ -80,10 +80,10 @@ export class NotificationService {
         }
     const params = {
       TableName: notificationTableName,
-      IndexName: 'userId-alertTime-index',
-      KeyConditionExpression: 'userId = :userId',
+      IndexName: 'userEmail-alertTime-index',
+      KeyConditionExpression: 'userEmail = :userEmail',
       ExpressionAttributeValues: {
-        ':userId': userId,
+        ':userEmail': email,
       },
       ScanIndexForward: false // sort in descending order
     };
@@ -93,16 +93,16 @@ export class NotificationService {
       
       const data = await this.dynamoDb.query(params).promise();
 
-      // This is never hit, because no present userId throws an error
+      // This is never hit, because no present userEmail throws an error
       if (!data || !data.Items || data.Items.length == 0) {
-        this.logger.warn(`No notifications found for userId: ${userId}`);
+        this.logger.warn(`No notifications found for user : ${email}`);
         return [] as Notification[];
       }
 
-      this.logger.log(`Retrieved ${data.Items.length} notifications for userId ${userId}`);
+      this.logger.log(`Retrieved ${data.Items.length} notifications for user ${email}`);
       return data.Items as Notification[];
     } catch (error) {
-      this.logger.error(`Error retrieving notifications for userId: ${userId}`, error as string);
+      this.logger.error(`Error retrieving notifications for user : ${email}`, error as string);
       throw new InternalServerErrorException('Failed to retrieve notifications.');
     }
   }

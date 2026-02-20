@@ -721,7 +721,6 @@ describe('Notification helpers', () => {
       expect(notificationServiceMock.createNotification).toHaveBeenCalledTimes(6);
       expect(notificationServiceMock.createNotification).toHaveBeenCalledWith(
         expect.objectContaining({
-          userId: 'user123',
           notificationId: expect.stringContaining('-app'),
           message: expect.stringContaining('Application due in'),
           alertTime: expect.any(String),
