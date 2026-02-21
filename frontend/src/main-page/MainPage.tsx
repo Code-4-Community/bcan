@@ -15,7 +15,7 @@ function MainPage() {
         <NavBar />
       </div>
       <div className="px-6 lg:px-10 py-8 pt-12 w-full h-screen overflow-y-auto">
-        <div className="min-h-screen mb-16">
+        <div className="min-h-screen mb-8">
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route

@@ -19,8 +19,8 @@ export default function Button({ text, onClick, className, logo, logoPosition, d
   return (
     <button onClick={onClick} disabled={disabled || false} type={type || "button"}
     className={`
-        px-4 py-2 rounded-3xl font-medium text-black border-2
-        flex items-center justify-center
+        px-4 py-2 rounded-3xl font-medium text-black border-2 active:bg-primary-900 active:text-white
+        flex items-center justify-center 
         ${className}
       `}
     >

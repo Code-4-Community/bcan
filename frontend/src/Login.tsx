@@ -100,7 +100,7 @@ const Login = observer(() => {
             <button
               type="button"
               onClick={() => navigate("/register")}
-              className="inline ml-2 text-secondary-500 text-left"
+              className="inline ml-2 text-secondary-500 text-left hover:underline border-none"
             >
               Sign up
             </button>
