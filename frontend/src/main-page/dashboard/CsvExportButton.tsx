@@ -122,7 +122,7 @@ const CsvExportButton: React.FC = observer(() => {
       disabled={isProcessing}
       logo={faDownload}
       logoPosition="right"
-      className="text-xs lg:text-sm bg-white border-grey-500 flex justify-between items-center"
+      className="text-sm lg:text-base bg-white border-grey-500 flex justify-between items-center"
     />
   );
 });
