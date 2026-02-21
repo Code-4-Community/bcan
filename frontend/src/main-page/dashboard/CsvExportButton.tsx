@@ -4,9 +4,10 @@ import { Grant } from "../../../../middle-layer/types/Grant";
 import { ProcessGrantData } from "../../main-page/grants/filter-bar/processGrantData";
 import { observer } from "mobx-react-lite";
 import { getAppStore } from "../../external/bcanSatchel/store";
-import { BiExport } from "react-icons/bi";
+import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import Attachment from "../../../../middle-layer/types/Attachment";
 import POC from "../../../../middle-layer/types/POC";
+import Button from "../settings/components/Button";
 // Define the columns for the CSV export, including any necessary formatting.
 const columns: CsvColumn<Grant>[] = [
   { key: "grantId", title: "Grant ID" },
@@ -14,7 +15,8 @@ const columns: CsvColumn<Grant>[] = [
   {
     key: "does_bcan_qualify",
     title: "BCAN Qualifies?",
-    formatValue: (value: boolean) => (value !== null ? (value ? "Yes" : "No") : ""),
+    formatValue: (value: boolean) =>
+      value !== null ? (value ? "Yes" : "No") : "",
   },
   { key: "status", title: "Status" },
   {
@@ -25,18 +27,19 @@ const columns: CsvColumn<Grant>[] = [
   {
     key: "grant_start_date",
     title: "Grant Start Date",
-    formatValue: (value: string) => (value ? new Date(value).toLocaleDateString() : ""),
+    formatValue: (value: string) =>
+      value ? new Date(value).toLocaleDateString() : "",
   },
   {
     key: "application_deadline",
     title: "Application Deadline",
-    formatValue: (value: string) => (value ? new Date(value).toLocaleDateString() : ""),
+    formatValue: (value: string) =>
+      value ? new Date(value).toLocaleDateString() : "",
   },
   {
     key: "report_deadlines",
     title: "Report Deadlines",
-    formatValue: (value?: string[]) =>
-      value?.length ? value.join(", ") : "",
+    formatValue: (value?: string[]) => (value?.length ? value.join(", ") : ""),
   },
   {
     key: "description",
@@ -59,20 +62,27 @@ const columns: CsvColumn<Grant>[] = [
   {
     key: "bcan_poc",
     title: "BCAN POC",
-    formatValue: (value: POC) => 
-      value && value.POC_name && value.POC_email ?
-      `${value.POC_name}${value.POC_email ? ` (${value.POC_email})` : ""}` : "",
+    formatValue: (value: POC) =>
+      value && value.POC_name && value.POC_email
+        ? `${value.POC_name}${value.POC_email ? ` (${value.POC_email})` : ""}`
+        : "",
   },
   {
     key: "attachments",
     title: "Attachments",
     formatValue: (attachments: Attachment[]) =>
-      attachments?.length ? attachments.map((a) => a.url).filter((u) => u).join(" | ") : "",
+      attachments?.length
+        ? attachments
+            .map((a) => a.url)
+            .filter((u) => u)
+            .join(" | ")
+        : "",
   },
   {
     key: "isRestricted",
     title: "Restricted?",
-    formatValue: (value: boolean) => (value !== null ? (value ? "Yes" : "No") : ""),
+    formatValue: (value: boolean) =>
+      value !== null ? (value ? "Yes" : "No") : "",
   },
 ];
 
@@ -100,22 +110,20 @@ const CsvExportButton: React.FC = observer(() => {
       columns,
       `BCAN Data ${(yearFilter ?? []).join("_")} as of ${
         new Date().toISOString().split("T")[0]
-      }`
+      }`,
     );
     setIsProcessing(false);
   };
 
   return (
-    <button
-      className="dashboard-button text-xs lg:text-sm bg-grey-400 flex justify-between items-center"
-      type="button"
+    <Button
+      text={isProcessing ? "Exporting..." : "Export CSV"}
       onClick={onClickDownload}
       disabled={isProcessing}
-      title="Export the grants data including any applied filters."
-    >
-      {isProcessing ? "Exporting..." : "Export CSV"}
-      <BiExport className="ms-2 text-sm " />
-    </button>
+      logo={faDownload}
+      logoPosition="right"
+      className="text-xs lg:text-sm bg-white border-grey-500 flex justify-between items-center"
+    />
   );
 });
 

@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { updateYearFilter } from "../../external/bcanSatchel/actions";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { observer } from "mobx-react-lite";
-import { FaChevronDown } from "react-icons/fa";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import Button from "../settings/components/Button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const DateFilter: React.FC = observer(() => {
   const { allGrants, yearFilter } = getAppStore();
@@ -52,30 +53,26 @@ const DateFilter: React.FC = observer(() => {
 
   return (
     <div className="flex flex-col space-y-2 w-64 lg:w-80 relative">
-      <button
-        className="dashboard-button bg-white inline-flex items-center justify-between px-4 py-2  text-xs lg:text-sm text-center text-white bg-blue-700 rounded-lg"
-        type="button"
-        onClick={() => setShowDropdown(!showDropdown)}
-      >
-        <span className="flex flex-row overflow-hidden whitespace-nowrap text-ellipsis">
-          {selectedYears.length === 0
+      <Button
+        text={selectedYears.length === 0
             ? "Select years"
             : selectedYears.length === uniqueYears.length
               ? "Select years (showing all)"
               : selectedYears.join(", ")}
-        </span>
-
-        <FaChevronDown className="ms-2 text-sm" />
-      </button>
+        onClick={() => setShowDropdown(!showDropdown)}
+        logo={faChevronDown}
+        logoPosition="right"
+        className="bg-white border-grey-500 inline-flex items-center justify-between text-xs lg:text-sm"
+      />
       <div
-        className={`z-[100] absolute  top-6 w-64 lg:w-80 bg-white ${showDropdown ? "" : "hidden"} rounded-md border-2 border-gray-200 shadow-lg`}
+        className={`z-[100] absolute  top-10 w-64 lg:w-80 bg-white ${showDropdown ? "" : "hidden"} rounded-md border-2 border-gray-200 shadow-lg`}
       >
         <button
           className="close-button absolute top-3 right-4 text-lg"
           onClick={() => setShowDropdown(false)}
           aria-label="Close notifications"
         >
-          <FontAwesomeIcon icon={faXmark} className="text-lg" />
+          <FontAwesomeIcon icon={faXmark} className="text-lg hover:text-red" />
         </button>
         <ul
           className="h-42 p-4 pb-3 overflow-y-auto text-sm "

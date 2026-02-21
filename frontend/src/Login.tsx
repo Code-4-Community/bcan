@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import logo from "./images/logo.svg";
 import { useNavigate } from "react-router-dom";
 import "./external/bcanSatchel/mutators";
+import Button from "./main-page/settings/components/Button";
 
 /**
  * Registered users can log in here
@@ -83,12 +84,12 @@ const Login = observer(() => {
               <div className="h-fit p-4 mt-4">{"    "}</div>
             )}
           </div>
-          <button
+          <Button
+            text="Login"
             type="submit"
-            className="w-full block mt-8 min-w-0 rounded-md grow bg-primary-900 text-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500"
-          >
-            Login
-          </button>
+            onClick={() => {}}
+            className="w-full block grow bg-primary-900 text-white mt-8 text-base placeholder:text-gray-500"
+          />
           <div className="flex items-center justify-between gap-4 mt-8">
             <hr className="border-grey-600 w-[45%]" />
             <div className="text-grey-600">or</div>
