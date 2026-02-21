@@ -107,7 +107,7 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({
         <Button
           text="Calculate"
           onClick={calculateCostBenefit}
-          className="text-white border-2 ml-auto"
+          className="border-2 ml-auto bg-primary-900 text-white"
         />
       </div>
 
@@ -115,7 +115,7 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({
       <div className="flex flex-col w-full gap-4 items-start text-left col-span-1 xl:mt-7">
         {costBenefitResult && (
           <div className="flex flex-col w-full gap-3">
-            <div className="text-center rounded-sm border-grey-400 border p-4">
+            <div className="text-center rounded-sm border-grey-400 border-2 p-4">
               <p className="text-gray-600 text-2xl font-bold">
                 {formatCurrency(costBenefitResult.costPerReport)}
               </p>

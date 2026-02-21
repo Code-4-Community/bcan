@@ -3,8 +3,7 @@ import "../styles/GrantItem.css";
 import StatusIndicator from "./StatusIndicator";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { Grant } from "../../../../../middle-layer/types/Grant";
-import { DoesBcanQualifyText } from "../../../translations/general";
-import RingButton, { ButtonColorOption } from "../../../custom/RingButton";
+// import { DoesBcanQualifyText } from "../../../translations/general";
 import { api } from "../../../api";
 import { MdOutlinePerson2 } from "react-icons/md";
 import Attachment from "../../../../../middle-layer/types/Attachment";
@@ -177,7 +176,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
               : "No date"}
           </li>
           <li className="amount">{formatCurrency(curGrant.amount)}</li>
-          <li className="does-bcan-qualify px-8 w-full" >
+          {/* <li className="does-bcan-qualify px-8 w-full" >
             {curGrant.does_bcan_qualify ? (
               <RingButton
                 text={DoesBcanQualifyText.Yes}
@@ -189,7 +188,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                 color={ButtonColorOption.GRAY}
               />
             )}
-          </li>
+          </li> */}
           <li className="flex justify-center items-center text-center">
             <StatusIndicator curStatus={curGrant.status} />
           </li>

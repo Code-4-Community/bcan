@@ -13,7 +13,7 @@ export default function LoginPrompt() {
       <button
         type="button"
         onClick={() => navigate("/login")}
-        className="font-medium text-secondary-500 hover:underline"
+        className="font-medium text-secondary-500 hover:underline border-none"
       >
         Log in here
       </button>

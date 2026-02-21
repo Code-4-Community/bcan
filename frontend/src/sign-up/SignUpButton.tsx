@@ -1,3 +1,5 @@
+import Button from "../main-page/settings/components/Button";
+
 type SignUpButtonProps = {
   disabled?: boolean;
 };
@@ -9,16 +11,15 @@ type SignUpButtonProps = {
  */
 export default function SignUpButton({ disabled }: SignUpButtonProps) {
   return (
-    <button
-      type="submit"
-      disabled={disabled}
-      className={`mt-8 w-full rounded-md py-2.5 text-base font-bold text-white transition-opacity ${
+    <Button
+                text="Sign Up"
+                type="submit"
+                disabled={disabled}
+                onClick={() => {}}
+                className={`mt-8 w-full text-base font-bold text-white transition-opacity ${
         disabled
           ? "cursor-not-allowed bg-primary-700 opacity-70"
           : "bg-primary-900 hover:opacity-95"
-      }`}
-    >
-      Sign Up
-    </button>
+      }`}/>
   );
 }
