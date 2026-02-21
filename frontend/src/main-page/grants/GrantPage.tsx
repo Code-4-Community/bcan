@@ -115,7 +115,7 @@ function GrantPage({}: GrantPageProps) {
           <BellButton setOpenModal={setOpenModal} openModal={openModal} />
         </div>
         <GrantSearch />
-        <div className="flex w-full justify-between p-4 gap-4">
+        <div className="flex w-full justify-between py-4 gap-4">
           <span className="text-lg font-semibold">
             FILTERS GO HERE
           </span>
