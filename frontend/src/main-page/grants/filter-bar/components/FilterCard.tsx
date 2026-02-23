@@ -40,7 +40,7 @@ export default function FilterCard({
 				<Button
 					text="Clear all"
 					onClick={handleClearAll}
-					className="bg-opacity-0 border-0 hover:border-0 text-xs font-semibold text-secondary-400 px-0 py-0"
+					className="bg-opacity-0 border-0 hover:border-0 focus:outline-none focus:ring-0 focus:border-0 text-xs font-semibold text-secondary-400 px-0 py-0"
 				/>
 			</div>
 			<div className="flex gap-2">
@@ -106,7 +106,7 @@ export default function FilterCard({
 		: [dateRangeSection, directionSection];
 
 	return (
-		<div className="flex flex-col gap-2 rounded-[0.5rem] border-[0.1rem] border-x-primary-900 p-4">
+		<div className="flex flex-col gap-2 rounded-[1rem] border-[0.13rem] border-primary-900 p-4">
 			{sections}
 		</div>
 	);
