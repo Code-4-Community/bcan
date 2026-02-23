@@ -5,7 +5,7 @@ import GrantSearch from "./filter-bar/GrantSearch.tsx";
 import NewGrantModal from "./new-grant/NewGrantModal.tsx";
 import { useEffect, useState } from "react";
 import { Grant } from "../../../../middle-layer/types/Grant.ts";
-// import FilterBar from "./filter-bar/FilterBar.tsx";
+import FilterBar from "./filter-bar/FilterBar.tsx";
 import GrantItem from "./grant-view/GrantView.tsx";
 import { useAuthContext } from "../../context/auth/authContext";
 import {
@@ -117,7 +117,7 @@ function GrantPage({}: GrantPageProps) {
         <GrantSearch />
         <div className="flex w-full justify-between p-4 gap-4">
           <span className="text-lg font-semibold">
-            FILTERS GO HERE
+            <FilterBar />
           </span>
           <AddGrantButton onClick={() => setShowNewGrantModal(true)} />
         </div>
