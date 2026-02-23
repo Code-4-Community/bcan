@@ -95,6 +95,7 @@ export class UserService {
       throw error;
     }
 
+    this.logger.error(`Failed to upload profile pic error: ${error}`)
     throw new InternalServerErrorException('Failed to upload profile picture');
   }
 }
@@ -110,12 +111,6 @@ private validateUploadInputs(user: User, pic: Express.Multer.File, tableName: st
   if (!tableName) {
     this.logger.error("DynamoDB User Table Name is not defined in environment variables");
     throw new InternalServerErrorException("Server configuration error");
-  }
-
-  // Validate user object
-  if (!user || !user.userId) {
-    this.logger.error("Invalid user object provided for profile picture upload");
-    throw new BadRequestException("Valid user object is required");
   }
 
   // Validate file exists
