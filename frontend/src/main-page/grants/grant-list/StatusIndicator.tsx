@@ -1,23 +1,26 @@
 // StatusIndicator.tsx
 
 import React from "react";
-import { FaCircle } from "react-icons/fa";
-import { Status, getColorStatus } from "../../../../../middle-layer/types/Status.ts";
+import {
+  Status,
+  getColorStatus,
+} from "../../../../../middle-layer/types/Status.ts";
 
 interface StatusIndicatorProps {
   curStatus: Status;
 }
 
 const StatusIndicator: React.FC<StatusIndicatorProps> = ({ curStatus }) => {
-  const circleColor = getColorStatus(curStatus.toString())
+  const lightColor = getColorStatus(curStatus.toString(), "light");
+  const darkColor = getColorStatus(curStatus.toString(), "dark");
   const labelText = curStatus; // curStatus from the json is stored as a string, so can directly use
 
   return (
-    <div className="justify-self-center">
-    <span className="flex items-center">
-      <FaCircle style={{ color: circleColor}} className="mr-4" />
-      <span className="w-20 text-left">{labelText}</span>
-    </span>
+    <div
+      className="inline-flex w-fit flex-none items-center rounded-full px-2 py-1"
+      style={{ color: darkColor, backgroundColor: lightColor }}
+    >
+      <span className="text-md">{labelText}</span>
     </div>
   );
 };

@@ -1,8 +1,11 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+
 type ButtonProps = {
     text: string;
     onClick: () => void;
     className?: string;
-    logo?: string;
+    logo?: IconProp;
     logoPosition?: 'left' | 'right';
 }
 
@@ -21,13 +24,12 @@ export default function Button({ text, onClick, className, logo, logoPosition }:
     >
       {logo && logoPosition === 'left' &&
       <span className="mr-2">
-        <img src={logo}
-        alt="" className="w-4 h-4" />
+        <FontAwesomeIcon icon={logo} className="text-lg w-4 h-4" />
       </span>}
       {text}
       {logo && logoPosition === 'right' &&
       <span className="ml-2">
-        <img src={logo} alt="" className="w-4 h-4" />
+        <FontAwesomeIcon icon={logo} className="text-lg w-4 h-4" />
       </span>}
     </button>
   );
