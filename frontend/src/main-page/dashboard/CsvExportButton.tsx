@@ -7,7 +7,7 @@ import { getAppStore } from "../../external/bcanSatchel/store";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import Attachment from "../../../../middle-layer/types/Attachment";
 import POC from "../../../../middle-layer/types/POC";
-import Button from "../settings/components/Button";
+import Button from "../../components/Button";
 // Define the columns for the CSV export, including any necessary formatting.
 const columns: CsvColumn<Grant>[] = [
   { key: "grantId", title: "Grant ID" },

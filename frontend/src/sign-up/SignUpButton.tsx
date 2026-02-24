@@ -1,4 +1,4 @@
-import Button from "../main-page/settings/components/Button";
+import Button from "../components/Button";
 
 type SignUpButtonProps = {
   disabled?: boolean;

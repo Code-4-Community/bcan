@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Grant } from "../../../../../middle-layer/types/Grant";
-import InputField from "../../../sign-up/InputField";
-import Button from "../../../main-page/settings/components/Button";
+import InputField from "../../../components/InputField";
+import Button from "../../../components/Button";
 
 interface CostBenefitAnalysisProps {
   grant: Grant;

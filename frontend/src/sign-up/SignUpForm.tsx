@@ -1,4 +1,4 @@
-import InputField from "./InputField";
+import InputField from "../components/InputField";
 import PasswordField from "./PasswordField";
 import PasswordRequirements from "./PasswordRequirements";
 import SignUpButton from "./SignUpButton";

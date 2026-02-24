@@ -4,7 +4,7 @@ import { getAppStore } from "../../external/bcanSatchel/store";
 import { observer } from "mobx-react-lite";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import Button from "../settings/components/Button";
+import Button from "../../components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const DateFilter: React.FC = observer(() => {

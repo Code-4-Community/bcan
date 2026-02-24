@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import logo from "./images/logo.svg";
 import { useNavigate } from "react-router-dom";
 import "./external/bcanSatchel/mutators";
-import Button from "./main-page/settings/components/Button";
+import Button from "./components/Button";
 
 /**
  * Registered users can log in here

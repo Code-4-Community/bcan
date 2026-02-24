@@ -21,7 +21,7 @@ import { Navigate } from "react-router-dom";
 import BellButton from "../navbar/Bell.tsx";
 import GrantCard from "./grant-list/GrantCard.tsx";
 import { api } from "../../api.ts";
-import Button from "../settings/components/Button.tsx";
+import Button from "../../components/Button.tsx";
 
 // still needed potentially?
 interface GrantPageProps {

@@ -7,7 +7,7 @@ import {
   faCheckSquare,
   faXmarkSquare,
 } from "@fortawesome/free-solid-svg-icons";
-import Button from "../../settings/components/Button";
+import Button from "../../../components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ContactCard from "./ContactCard";
 import GrantFieldCol from "./GrantFieldCol";

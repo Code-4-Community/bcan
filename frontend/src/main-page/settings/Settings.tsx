@@ -1,4 +1,4 @@
-import Button from "./components/Button";
+import Button from "../../components/Button";
 import InfoCard from "./components/InfoCard";
 import logo from "../../images/logo.svg";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
