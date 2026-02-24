@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "./images/logo.svg";
 import { BrandingPanel, InputField } from "../sign-up";
 import Button from "../components/Button";
 
