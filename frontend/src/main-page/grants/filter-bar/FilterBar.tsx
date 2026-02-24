@@ -59,7 +59,7 @@ const FilterBar: React.FC = observer(() => {
                 to={item.linkTo ? item.linkTo : "#"}
               >
                 <div
-                  className={`grant-button border hover:bg-primary-800 ${
+                  className={`border hover:bg-primary-800 ${
                     selected === item.name ? "bg-primary-900" : "bg-white"
                   }`}
                 >

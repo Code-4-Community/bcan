@@ -1,12 +1,10 @@
-import '../styles/GrantButton.css';
+import Button from '../../../components/Button.tsx';
 
 // TODO: Fix 'any' typing here
 const AddGrantButton = ({ onClick } : any) => {
 
   return (
-    <button className="grant-button add-grant-button bg-primary-800" onClick={onClick}>
-      + ADD
-    </button>
+    <Button text= "+ Add" className="bg-white rounded-full border-2 border-grey-500 border-solid" onClick={onClick} />
   );
 };
 

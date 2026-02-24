@@ -1,5 +1,5 @@
 export { default as BrandingPanel } from "./BrandingPanel";
-export { default as InputField } from "./InputField";
+export { default as InputField } from "../components/InputField";
 export { default as LoginPrompt } from "./LoginPrompt";
 export { default as PasswordField } from "./PasswordField";
 export { default as PasswordRequirements } from "./PasswordRequirements";

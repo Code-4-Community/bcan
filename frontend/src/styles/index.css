@@ -31,12 +31,14 @@
   --color-green-light: #D0FFEF;
 
   --color-blue-dark: #006CA1;
+  --color-blue: #006CA1;
   --color-blue-light: #D0EDFF;
 
   --color-yellow-dark: #9B6000;
   --color-yellow-light: #FFF0D3;
 
   --color-red-dark: #C80000;
+  --color-red: #C80000;
   --color-red-light: #FFD8D8;
   --color-red-lightest: #FFF0F0;
 
@@ -86,7 +88,6 @@
 }
 
 a {
-  font-weight: 500;
   color: var(--color-secondary-500);
   text-decoration: inherit;
 }
@@ -144,6 +145,12 @@ button:focus-visible {
   }
 }
 
+input {
+  border-width: 2px;
+  background-color: white;
+}
+
 input:focus {
-  outline: 1px solid  var(--color-primary-900);
+  border-color: var(--color-primary-900);
+  outline: transparent;
 }

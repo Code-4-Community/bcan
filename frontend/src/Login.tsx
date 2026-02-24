@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import logo from "./images/logo.svg";
 import { useNavigate } from "react-router-dom";
 import "./external/bcanSatchel/mutators";
+import Button from "./components/Button";
 
 /**
  * Registered users can log in here
@@ -119,7 +120,8 @@ const Login = observer(() => {
               </div>
             )}
           </div>
-          <button
+          <Button
+            text="Login"
             type="submit"
             className="w-full bg-primary-900 hover:bg-primary-800 text-white rounded-full py-3 px-4 text-base font-medium transition-colors"
           >
