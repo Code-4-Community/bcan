@@ -25,10 +25,6 @@ const StatusDropdown: React.FC = observer(() => {
     updateFilter(newSelected);
   }
 
-  function handleClear() {
-    setSelected(null);
-    updateFilter(null);
-  }
 
   return (
     <div className="relative">
@@ -40,17 +36,9 @@ const StatusDropdown: React.FC = observer(() => {
       </button>
 
       {isOpen && (
-        <div className="absolute top-12 left-0 bg-white border border-grey-400 rounded-md p-4 z-50 shadow-lg min-w-[250px]">
-          <div className="flex justify-end mb-2">
-            <button
-              className="text-sm text-grey-600"
-              onClick={handleClear}
-            >
-              Clear all
-            </button>
-          </div>
+        <div className="absolute top-12 left-0 bg-white border border-primary-900 rounded-md p-4 z-50 shadow-lg min-w-[400px]">
 
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             {statuses.map((status) => (
               <div
                 key={status}
@@ -61,7 +49,7 @@ const StatusDropdown: React.FC = observer(() => {
                   type="checkbox"
                   checked={selected === status}
                   onChange={() => handleSelect(status)}
-                  className="cursor-pointer"
+                  className="cursor-pointer w-4 h-4 flex-shrink-0"
                 />
                 <span
                   className="px-3 py-1 rounded-full text-sm font-medium"
