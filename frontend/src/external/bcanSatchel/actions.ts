@@ -75,6 +75,11 @@ export const updateSearchQuery = action(
   (searchQuery: string) => ({ searchQuery })
 );
 
+export const updateUserQuery = action(
+  "updateUserQuery",
+  (userQuery: string) => ({ userQuery })
+);
+
 export const setNotifications = action(
   'setNotifications',
   (notifications: Notification[]) => ({notifications})

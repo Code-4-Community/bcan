@@ -19,6 +19,7 @@ export interface AppState {
   inactiveUsers: User[] | [];
   sort: {header: keyof Grant, asc: boolean} | null;
   notifications: Notification[];
+  userQuery: string;
 }
 
 // Define initial state
@@ -36,6 +37,7 @@ const initialState: AppState = {
   inactiveUsers: [],
   notifications: [],
   sort: null,
+  userQuery: '',
 };
 
 /**

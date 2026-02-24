@@ -2,11 +2,11 @@ import { Routes, Route } from "react-router-dom";
 import Dashboard from "./dashboard/Dashboard";
 import GrantPage from "./grants/GrantPage";
 import NavBar from "./navbar/NavBar";
-import Users from "./users/Users";
 import RestrictedPage from "./restricted/RestrictedPage";
 import CashFlowPage from "./cash-flow/CashFlowPage";
 import Settings from "./settings/Settings";
-import Footer from "./Footer";
+import Footer from "../main-page/Footer";
+import UsersPage from "./users/UsersPage";
 
 function MainPage() {
   return (
@@ -26,7 +26,7 @@ function MainPage() {
               path="/my-grants"
               element={<GrantPage showOnlyMyGrants={true} />}
             />
-            <Route path="/users" element={<Users />} />
+            <Route path="/users" element={<UsersPage />} />
             <Route path="/restricted" element={<RestrictedPage />} />
             <Route path="/cash-flow" element={<CashFlowPage />} />
             <Route path="/settings" element={<Settings />} />
