@@ -47,10 +47,12 @@ const Dashboard = observer(() => {
 
   return (
     <div className="dashboard-page">
-      <div className="flex flex-row justify-start gap-4 mb-12 items-center">
+      <div className="flex flex-wrap flex-row justify-start gap-4 mb-12 items-center">
         <div className="text-3xl lg:text-4xl font-bold mr-4">Dashboard</div>
+        <div className="flex flex-wrap flex-row gap-4">
         <DateFilter />
         <CsvExportButton />
+        </div>
       </div>
 
       <div className="gap-3 lg:gap-5 grid grid-cols-4">

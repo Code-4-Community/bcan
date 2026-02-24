@@ -89,7 +89,7 @@ export default {
         "9xl": "128rem",
       },
       borderWidth: {
-        DEFAULT: "1.5px",
+        DEFAULT: "2px",
         0: "0",
       },
       borderRadius: {

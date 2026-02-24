@@ -7,7 +7,7 @@ import {
   faCheckSquare,
   faXmarkSquare,
 } from "@fortawesome/free-solid-svg-icons";
-import Button from "../../settings/components/Button";
+import Button from "../../../components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ContactCard from "./ContactCard";
 import GrantFieldCol from "./GrantFieldCol";
@@ -81,7 +81,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
         <div className="flex flex-col gap-2 items-end">
           <Button
             text="Edit"
-            onClick={() => alert("edit personal info")}
+            onClick={() => alert("edit grant info")}
             className="bg-white text-black border-2 border-grey-500"
             logo={faPenToSquare}
             logoPosition="right"

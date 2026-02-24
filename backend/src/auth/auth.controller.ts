@@ -77,7 +77,7 @@ export class AuthController {
   async register(
    @Body() body: RegisterBody
   ): Promise<{ message: string }> {
-    await this.authService.register(body.username, body.password, body.email);
+    await this.authService.register(body.email, body.password,body.firstName,body.lastName);
     return { message: 'User registered successfully' };
   }
   
@@ -110,10 +110,9 @@ export class AuthController {
     session?: string;
     challenge?: string;
     requiredAttributes?: string[];
-    username?: string;
     position?: string;
   }> {
-    const result = await this.authService.login(body.username, body.password);
+    const result = await this.authService.login(body.email, body.password);
   
   // Set cookie with access token
   if (result.access_token) {
@@ -125,7 +124,32 @@ export class AuthController {
       path: '/',           // Cookie available on all routes
     });
   }
+
+  if (result.refreshToken) {
+    console.log("refresh token set")
+    response.cookie('refresh_token', result.refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days (match your Cognito refresh token expiry)
+    path: '/auth/refresh',  // more restrictive path than access token
+  });
+}
+
+ if (result.idToken) {
+    response.cookie('id_token', result.idToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 3600000, // 1 hour, same expiry as access token
+      path: '/',
+    });
+  }
+
+  
+  delete result.idToken;
   delete result.access_token;
+  delete result.refreshToken;
     return result
   }
 
@@ -156,12 +180,12 @@ export class AuthController {
   async setNewPassword(
     @Body() body: SetPasswordBody
   ): Promise<{ message: string }> {
-    await this.authService.setNewPassword(body.newPassword, body.session, body.username, body.email);
+    await this.authService.setNewPassword(body.newPassword, body.session, body.email);
     return { message: 'Password has been set successfully' };
   }
 
   /**
-   * Update user profile for username, email, and position_or_role
+   * Update user profile for email, and position_or_role
    */
   @Post('update-profile')
   @UseGuards(VerifyUserGuard)
@@ -186,7 +210,7 @@ export class AuthController {
     async updateProfile(
       @Body() body: UpdateProfileBody
     ): Promise<{ message: string }> {
-      await this.authService.updateProfile(body.username, body.email, body.position_or_role);
+      await this.authService.updateProfile(body.email, body.position_or_role);
       return { message: 'Profile has been updated' };
     }
 

@@ -1,4 +1,4 @@
-import Button from '../../settings/components/Button.tsx';
+import Button from '../../../components/Button.tsx';
 
 // TODO: Fix 'any' typing here
 const AddGrantButton = ({ onClick } : any) => {

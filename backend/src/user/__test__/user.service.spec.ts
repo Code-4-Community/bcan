@@ -3,167 +3,133 @@ import { UserController } from '../user.controller';
 import { UserService } from '../user.service';
 import { User } from '../../../../middle-layer/types/User';
 import { UserStatus } from '../../../../middle-layer/types/UserStatus';
-
-import * as AWS from 'aws-sdk';
-
 import { VerifyUserGuard, VerifyAdminRoleGuard, VerifyAdminOrEmployeeRoleGuard } from '../../guards/auth.guard';
 import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 
-// Create mock functions at module level (BEFORE mock)
-const mockScan = vi.fn();
-const mockGet = vi.fn();
-const mockUpdate = vi.fn();
-const mockPut = vi.fn();
-const mockDelete = vi.fn();
+// ─── Mock function declarations ───────────────────────────────────────────────
 const mockPromise = vi.fn();
 
-// Mock Cognito functions
-const mockAdminAddUserToGroup = vi.fn();
-const mockAdminRemoveUserFromGroup = vi.fn();
-const mockAdminDeleteUser = vi.fn();
+const mockScan   = vi.fn(() => ({ promise: mockPromise }));
+const mockGet    = vi.fn(() => ({ promise: mockPromise }));
+const mockUpdate = vi.fn(() => ({ promise: mockPromise }));
+const mockPut    = vi.fn(() => ({ promise: mockPromise }));
+const mockDelete = vi.fn(() => ({ promise: mockPromise }));
 
-// Mock SES functions
-const mockSendEmail = vi.fn();
+const mockAdminAddUserToGroup      = vi.fn(() => ({ promise: mockPromise }));
+const mockAdminRemoveUserFromGroup = vi.fn(() => ({ promise: mockPromise }));
+const mockAdminDeleteUser          = vi.fn(() => ({ promise: mockPromise }));
+const mockSendEmail                = vi.fn(() => ({ promise: mockPromise }));
+const mockS3Upload                 = vi.fn(() => ({ promise: mockPromise }));
 
-// Mock AWS SDK ONCE with proper structure for import * as AWS
+// ─── AWS SDK mock ─────────────────────────────────────────────────────────────
 vi.mock('aws-sdk', () => {
-  return {
-    default: {
-      CognitoIdentityServiceProvider: vi.fn(function() {
-        return {
-          adminAddUserToGroup: mockAdminAddUserToGroup,
-          adminRemoveUserFromGroup: mockAdminRemoveUserFromGroup,
-          adminDeleteUser: mockAdminDeleteUser,
-        };
-      }),
-      DynamoDB: {
-        DocumentClient: vi.fn(function() {
-          return {
-            scan: mockScan,
-            get: mockGet,
-            update: mockUpdate,
-            put: mockPut,
-            delete: mockDelete,
-          };
-        })
-      },
-      SES: vi.fn(function() {
-        return {
-          sendEmail: mockSendEmail,
-        };
-      })
-    },
-    CognitoIdentityServiceProvider: vi.fn(function() {
-      return {
-        adminAddUserToGroup: mockAdminAddUserToGroup,
-        adminRemoveUserFromGroup: mockAdminRemoveUserFromGroup,
-        adminDeleteUser: mockAdminDeleteUser,
-      };
-    }),
-    DynamoDB: {
-      DocumentClient: vi.fn(function() {
-        return {
-          scan: mockScan,
-          get: mockGet,
-          update: mockUpdate,
-          put: mockPut,
-          delete: mockDelete,
-        };
-      })
-    },
-    SES: vi.fn(function() {
-      return {
-        sendEmail: mockSendEmail,
-      };
-    })
+  const cognitoFactory = vi.fn(function () {
+    return {
+      adminAddUserToGroup:      mockAdminAddUserToGroup,
+      adminRemoveUserFromGroup: mockAdminRemoveUserFromGroup,
+      adminDeleteUser:          mockAdminDeleteUser,
+    };
+  });
+
+  const documentClientFactory = vi.fn(function () {
+    return { scan: mockScan, get: mockGet, update: mockUpdate, put: mockPut, delete: mockDelete };
+  });
+
+  const sesFactory = vi.fn(function () {
+    return { sendEmail: mockSendEmail };
+  });
+
+  const s3Factory = vi.fn(function () {
+    return { upload: mockS3Upload };
+  });
+
+  const awsMock = {
+    CognitoIdentityServiceProvider: cognitoFactory,
+    DynamoDB: { DocumentClient: documentClientFactory },
+    SES: sesFactory,
+    S3: s3Factory,
   };
+
+  return { ...awsMock, default: awsMock };
 });
 
-// ✅ Mock the auth guards
+// ─── Auth guard mock ──────────────────────────────────────────────────────────
 vi.mock('../../guards/auth.guard', () => ({
-  VerifyUserGuard: vi.fn(class MockVerifyUserGuard {
-    canActivate = vi.fn().mockResolvedValue(true);
-  }),
-  VerifyAdminRoleGuard: vi.fn(class MockVerifyAdminRoleGuard {
-    canActivate = vi.fn().mockResolvedValue(true);
-  }),
-  VerifyAdminOrEmployeeRoleGuard: vi.fn(class MockVerifyAdminOrEmployeeRoleGuard {
-    canActivate = vi.fn().mockResolvedValue(true);
-  })
+  VerifyUserGuard: vi.fn(class { canActivate = vi.fn().mockResolvedValue(true); }),
+  VerifyAdminRoleGuard: vi.fn(class { canActivate = vi.fn().mockResolvedValue(true); }),
+  VerifyAdminOrEmployeeRoleGuard: vi.fn(class { canActivate = vi.fn().mockResolvedValue(true); }),
 }));
 
-// 🗄️ Mock Database with test data
-// This simulates a DynamoDB table with realistic test data
-// Contains: 2 Admins, 3 Employees, 4 Inactive users (9 total)
+// ─── Mock database (email is now the partition key) ───────────────────────────
 const mockDatabase = {
   users: [
-    { userId: 'admin1', email: 'admin1@example.com', position: UserStatus.Admin },
-    { userId: 'admin2', email: 'admin2@example.com', position: UserStatus.Admin },
-    { userId: 'emp1', email: 'emp1@example.com', position: UserStatus.Employee },
-    { userId: 'emp2', email: 'emp2@example.com', position: UserStatus.Employee },
-    { userId: 'emp3', email: 'emp3@example.com', position: UserStatus.Employee },
-    { userId: 'inactive1', email: 'inactive1@example.com', position: UserStatus.Inactive },
-    { userId: 'inactive2', email: 'inactive2@example.com', position: UserStatus.Inactive },
-    { userId: 'inactive3', email: 'inactive3@example.com', position: UserStatus.Inactive },
-    { userId: 'inactive4', email: 'inactive4@example.com', position: UserStatus.Inactive },
+    { email: 'admin1@example.com', position: UserStatus.Admin,    firstName: 'Admin',    lastName: 'One'   },
+    { email: 'admin2@example.com', position: UserStatus.Admin,    firstName: 'Admin',    lastName: 'Two'   },
+    { email: 'emp1@example.com',   position: UserStatus.Employee, firstName: 'Emp',      lastName: 'One'   },
+    { email: 'emp2@example.com',   position: UserStatus.Employee, firstName: 'Emp',      lastName: 'Two'   },
+    { email: 'emp3@example.com',   position: UserStatus.Employee, firstName: 'Emp',      lastName: 'Three' },
+    { email: 'inactive1@example.com', position: UserStatus.Inactive, firstName: 'Inactive', lastName: 'One'   },
+    { email: 'inactive2@example.com', position: UserStatus.Inactive, firstName: 'Inactive', lastName: 'Two'   },
+    { email: 'inactive3@example.com', position: UserStatus.Inactive, firstName: 'Inactive', lastName: 'Three' },
+    { email: 'inactive4@example.com', position: UserStatus.Inactive, firstName: 'Inactive', lastName: 'Four'  },
   ] as User[],
-  
-  // Helper function to simulate DynamoDB scan with FilterExpression
-  scan: (params: any) => {
-    let filteredUsers = [...mockDatabase.users];
-    
-    if (params.FilterExpression) {
-      // Handle FilterExpression for inactive users: #pos IN (:inactive)
-      if (params.FilterExpression.includes('(:inactive)')) {
-        filteredUsers = filteredUsers.filter(u => u.position === 'Inactive');
-      }
-      // Handle FilterExpression for active users: #pos IN (:admin, :employee)
-      else if (params.FilterExpression.includes('(:admin, :employee)')) {
-        filteredUsers = filteredUsers.filter(u => u.position === 'Admin' || u.position === 'Employee');
-      }
+
+  scan(params: any) {
+    let users = [...this.users];
+    if (params.FilterExpression?.includes('(:inactive)')) {
+      users = users.filter(u => u.position === UserStatus.Inactive);
+    } else if (params.FilterExpression?.includes('(:admin, :employee)')) {
+      users = users.filter(u => u.position === UserStatus.Admin || u.position === UserStatus.Employee);
     }
-    
-    return { Items: filteredUsers };
+    return { Items: users };
   },
-  
-  // Helper function to simulate DynamoDB get operation
-  get: (params: any) => {
-    const userId = params.Key.userId;
-    const user = mockDatabase.users.find(u => u.userId === userId);
+
+  get(params: any) {
+    const user = this.users.find(u => u.email === params.Key.email);
     return user ? { Item: user } : {};
-  }
+  },
 };
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+const createMockFile = (overrides?: Partial<Express.Multer.File>): Express.Multer.File => ({
+  fieldname: 'profilePic',
+  originalname: 'test-image.jpg',
+  encoding: '7bit',
+  mimetype: 'image/jpeg',
+  size: 1024 * 1024,
+  buffer: Buffer.from('fake-image-data'),
+  destination: '',
+  filename: '',
+  path: '',
+  stream: null as any,
+  ...overrides,
+});
+
+// ─── Test suite ───────────────────────────────────────────────────────────────
 describe('UserController', () => {
   let controller: UserController;
   let userService: UserService;
 
   beforeAll(() => {
-    // Set up environment variables
     process.env.DYNAMODB_USER_TABLE_NAME = 'test-users-table';
-    process.env.COGNITO_USER_POOL_ID = 'test-pool-id';
+    process.env.COGNITO_USER_POOL_ID     = 'test-pool-id';
+    process.env.PROFILE_PICTURE_BUCKET   = 'test-profile-pics-bucket';
   });
 
   beforeEach(async () => {
-    // Clear all mocks before each test
     vi.clearAllMocks();
 
-    // Setup DynamoDB mocks to return chainable objects with .promise()
     mockScan.mockReturnValue({ promise: mockPromise });
     mockGet.mockReturnValue({ promise: mockPromise });
-    mockDelete.mockReturnValue({ promise: mockPromise });
     mockUpdate.mockReturnValue({ promise: mockPromise });
     mockPut.mockReturnValue({ promise: mockPromise });
-
-    // Setup Cognito mocks to return chainable objects with .promise()
+    mockDelete.mockReturnValue({ promise: mockPromise });
     mockAdminAddUserToGroup.mockReturnValue({ promise: mockPromise });
     mockAdminRemoveUserFromGroup.mockReturnValue({ promise: mockPromise });
     mockAdminDeleteUser.mockReturnValue({ promise: mockPromise });
-    
-    // Setup SES mocks to return chainable objects with .promise()
     mockSendEmail.mockReturnValue({ promise: mockPromise });
-    
-    // Reset promise mocks to default resolved state
+    mockS3Upload.mockReturnValue({ promise: mockPromise });
+
     mockPromise.mockResolvedValue({});
 
     const module: TestingModule = await Test.createTestingModule({
@@ -171,500 +137,436 @@ describe('UserController', () => {
       providers: [UserService],
     }).compile();
 
-    controller = module.get<UserController>(UserController);
+    controller  = module.get<UserController>(UserController);
     userService = module.get<UserService>(UserService);
   });
 
-  it('should get all users from mock database', async () => {
-    // Setup the mock response using our mock database
+  // ── uploadProfilePic ────────────────────────────────────────────────────────
+
+  describe('uploadProfilePic', () => {
+    it('should successfully upload profile picture', async () => {
+      const user = mockDatabase.users.find(u => u.email === 'emp1@example.com')!;
+      const file = createMockFile();
+      // key format: firstName-lastName-firstThreeOfEmail-profilepic.ext
+      const s3Url = 'https://test-profile-pics-bucket.s3.amazonaws.com/Emp-One-emp-profilepic.jpg';
+
+      mockPromise
+        .mockResolvedValueOnce({ Location: s3Url, Key: 'Emp-One-emp-profilepic.jpg', Bucket: 'test-profile-pics-bucket' })
+        .mockResolvedValueOnce({ Attributes: { ...user, profilePicUrl: s3Url } });
+
+      const result = await userService.uploadProfilePic(user, file);
+
+      expect(result).toBe(s3Url);
+      expect(mockS3Upload).toHaveBeenCalledWith({
+        Bucket: 'test-profile-pics-bucket',
+        Key: 'Emp-One-emp-profilepic.jpg',
+        Body: file.buffer,
+        ContentType: 'image/jpeg',
+      });
+      expect(mockUpdate).toHaveBeenCalledWith({
+        TableName: 'test-users-table',
+        Key: { email: 'emp1@example.com' },
+        UpdateExpression: 'SET profilePicUrl = :url',
+        ExpressionAttributeValues: { ':url': s3Url },
+        ReturnValues: 'ALL_NEW',
+      });
+    });
+
+    it('should generate correct filename for non-jpg extensions', async () => {
+      const user = mockDatabase.users.find(u => u.email === 'emp1@example.com')!;
+      const file = createMockFile({ originalname: 'test.png', mimetype: 'image/png' });
+      const s3Url = 'https://test-profile-pics-bucket.s3.amazonaws.com/Emp-One-emp-profilepic.png';
+
+      mockPromise
+        .mockResolvedValueOnce({ Location: s3Url, Key: 'Emp-One-emp-profilepic.png' })
+        .mockResolvedValueOnce({ Attributes: { ...user, profilePicUrl: s3Url } });
+
+      await userService.uploadProfilePic(user, file);
+
+      expect(mockS3Upload).toHaveBeenCalledWith(
+        expect.objectContaining({ Key: 'Emp-One-emp-profilepic.png' })
+      );
+    });
+
+    it('should throw BadRequestException when user object is invalid', async () => {
+      const file = createMockFile();
+      await expect(userService.uploadProfilePic(null as any, file)).rejects.toThrow('Valid user object is required');
+      await expect(userService.uploadProfilePic({ email: '' } as any, file)).rejects.toThrow('Valid user object is required');
+    });
+
+    it('should throw BadRequestException when file is invalid', async () => {
+      const user = mockDatabase.users.find(u => u.email === 'emp1@example.com')!;
+      await expect(userService.uploadProfilePic(user, null as any)).rejects.toThrow('Valid image file is required');
+      await expect(userService.uploadProfilePic(user, { buffer: null } as any)).rejects.toThrow('Valid image file is required');
+    });
+
+    it('should throw BadRequestException for invalid file type', async () => {
+      const user = mockDatabase.users.find(u => u.email === 'emp1@example.com')!;
+      await expect(userService.uploadProfilePic(user, createMockFile({ mimetype: 'application/pdf' }))).rejects.toThrow('Invalid file type');
+    });
+
+    it('should throw BadRequestException for file too large', async () => {
+      const user = mockDatabase.users.find(u => u.email === 'emp1@example.com')!;
+      await expect(userService.uploadProfilePic(user, createMockFile({ size: 10 * 1024 * 1024 }))).rejects.toThrow('File too large');
+    });
+
+    it('should accept all allowed image types', async () => {
+      const user = mockDatabase.users.find(u => u.email === 'emp1@example.com')!;
+      const s3Url = 'https://test.com/image.jpg';
+
+      for (const mimetype of ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']) {
+        vi.clearAllMocks();
+        mockS3Upload.mockReturnValue({ promise: mockPromise });
+        mockUpdate.mockReturnValue({ promise: mockPromise });
+        mockPromise
+          .mockResolvedValueOnce({ Location: s3Url, Key: 'key', Bucket: 'test-profile-pics-bucket' })
+          .mockResolvedValueOnce({ Attributes: { ...user, profilePicUrl: s3Url } });
+
+        const result = await userService.uploadProfilePic(user, createMockFile({ mimetype }));
+        expect(result).toBe(s3Url);
+      }
+    });
+
+    it('should handle S3 NoSuchBucket error', async () => {
+      const user = mockDatabase.users.find(u => u.email === 'emp1@example.com')!;
+      mockPromise.mockRejectedValueOnce({ code: 'NoSuchBucket', message: 'Bucket does not exist' });
+      await expect(userService.uploadProfilePic(user, createMockFile())).rejects.toThrow('Storage bucket not found');
+    });
+
+    it('should handle S3 AccessDenied error', async () => {
+      const user = mockDatabase.users.find(u => u.email === 'emp1@example.com')!;
+      mockPromise.mockRejectedValueOnce({ code: 'AccessDenied', message: 'Access denied' });
+      await expect(userService.uploadProfilePic(user, createMockFile())).rejects.toThrow('Insufficient permissions to upload file');
+    });
+
+    it('should handle DynamoDB update failure after S3 upload succeeds', async () => {
+      const user = mockDatabase.users.find(u => u.email === 'emp1@example.com')!;
+      mockPromise
+        .mockResolvedValueOnce({ Location: 'https://test.com/img.jpg', Key: 'key' })
+        .mockRejectedValueOnce({ code: 'ResourceNotFoundException', message: 'Table not found' });
+      await expect(userService.uploadProfilePic(user, createMockFile())).rejects.toThrow('Database table not found');
+    });
+
+    it('should handle DynamoDB ValidationException', async () => {
+      const user = mockDatabase.users.find(u => u.email === 'emp1@example.com')!;
+      mockPromise
+        .mockResolvedValueOnce({ Location: 'https://test.com/img.jpg', Key: 'key' })
+        .mockRejectedValueOnce({ code: 'ValidationException', message: 'Invalid parameters' });
+      await expect(userService.uploadProfilePic(user, createMockFile())).rejects.toThrow('Invalid update parameters');
+    });
+
+    it('should throw InternalServerErrorException when DynamoDB returns no Attributes', async () => {
+      const user = mockDatabase.users.find(u => u.email === 'emp1@example.com')!;
+      mockPromise
+        .mockResolvedValueOnce({ Location: 'https://test.com/img.jpg', Key: 'key' })
+        .mockResolvedValueOnce({});
+      await expect(userService.uploadProfilePic(user, createMockFile())).rejects.toThrow('Failed to retrieve updated user data');
+    });
+
+    it('should throw InternalServerErrorException when bucket env var is not set', async () => {
+      const original = process.env.PROFILE_PICTURE_BUCKET;
+      delete process.env.PROFILE_PICTURE_BUCKET;
+
+      const module = await Test.createTestingModule({ providers: [UserService] }).compile();
+      const svc = module.get<UserService>(UserService);
+
+      await expect(svc.uploadProfilePic(mockDatabase.users[2], createMockFile())).rejects.toThrow('Server configuration error');
+      process.env.PROFILE_PICTURE_BUCKET = original;
+    });
+  });
+
+  // ── getAllUsers ──────────────────────────────────────────────────────────────
+
+  it('should get all users', async () => {
     mockPromise.mockResolvedValueOnce(mockDatabase.scan({ TableName: 'test-users-table' }));
-
     const result = await userService.getAllUsers();
-    
-    expect(result).toHaveLength(9); // All 9 users in mock database
-    expect(mockScan).toHaveBeenCalledWith({
-      TableName: 'test-users-table'
-    });
+    expect(result).toHaveLength(9);
+    expect(mockScan).toHaveBeenCalledWith({ TableName: 'test-users-table' });
   });
 
-  it('should get user by id from mock database', async () => {
-    // Setup the mock response using our mock database
-    mockPromise.mockResolvedValueOnce(mockDatabase.get({ Key: { userId: 'admin1' } }));
-
-    const result = await userService.getUserById('admin1');
-    
-    expect(result.userId).toBe('admin1');
-    expect(result.position).toBe('Admin');
-    expect(result.email).toBe('admin1@example.com');
-    expect(mockGet).toHaveBeenCalledWith({
-      TableName: 'test-users-table',
-      Key: { userId: 'admin1' }
-    });
-  });
-
-  it('should throw BadRequestException when userId is invalid', async () => {
-    await expect(userService.getUserById('')).rejects.toThrow('Valid user ID is required');
-    await expect(userService.getUserById(null as any)).rejects.toThrow('Valid user ID is required');
-    await expect(userService.getUserById('   ')).rejects.toThrow('Valid user ID is required');
-  });
-
-  it('should throw NotFoundException when user does not exist in mock database', async () => {
-    // Mock empty response (user not found) using mock database
-    mockPromise.mockResolvedValueOnce(mockDatabase.get({ Key: { userId: 'nonexistent' } }));
-
-    await expect(userService.getUserById('nonexistent')).rejects.toThrow("User 'nonexistent' does not exist");
-    expect(mockGet).toHaveBeenCalled();
-  });
-
-  it('should handle errors when getting all users', async () => {
-    // Mock an error with AWS error structure
-    const awsError = { code: 'ResourceNotFoundException', message: 'Table not found' };
-    mockPromise.mockRejectedValueOnce(awsError);
-
+  it('should handle ResourceNotFoundException when getting all users', async () => {
+    mockPromise.mockRejectedValueOnce({ code: 'ResourceNotFoundException', message: 'Table not found' });
     await expect(userService.getAllUsers()).rejects.toThrow('Database table not found');
-    expect(mockScan).toHaveBeenCalled();
   });
 
   it('should handle generic DynamoDB errors when getting all users', async () => {
-    // Mock a generic error
-    const awsError = { code: 'UnknownError', message: 'Unknown DynamoDB error' };
-    mockPromise.mockRejectedValueOnce(awsError);
-
+    mockPromise.mockRejectedValueOnce({ code: 'UnknownError', message: 'Unknown error' });
     await expect(userService.getAllUsers()).rejects.toThrow('Could not retrieve users');
-    expect(mockScan).toHaveBeenCalled();
   });
 
-  it('should handle errors when getting user by id', async () => {
-    // Mock an AWS error with specific error code
-    const awsError = { code: 'ValidationException', message: 'Invalid request' };
-    mockPromise.mockRejectedValueOnce(awsError);
+  // ── getUserByEmail ───────────────────────────────────────────────────────────
 
-    await expect(userService.getUserById('1')).rejects.toThrow('Invalid request: Invalid request');
-    expect(mockGet).toHaveBeenCalled();
+  it('should get user by email', async () => {
+    mockPromise.mockResolvedValueOnce(mockDatabase.get({ Key: { email: 'admin1@example.com' } }));
+    const result = await userService.getUserByEmail('admin1@example.com');
+    expect(result.email).toBe('admin1@example.com');
+    expect(result.position).toBe(UserStatus.Admin);
+    expect(mockGet).toHaveBeenCalledWith({ TableName: 'test-users-table', Key: { email: 'admin1@example.com' } });
   });
 
-  it('should handle ResourceNotFoundException when getting user by id', async () => {
-    // Mock a ResourceNotFoundException
-    const awsError = { code: 'ResourceNotFoundException', message: 'Table not found' };
-    mockPromise.mockRejectedValueOnce(awsError);
-
-    await expect(userService.getUserById('1')).rejects.toThrow('Database table not found');
-    expect(mockGet).toHaveBeenCalled();
+  it('should throw BadRequestException for invalid email', async () => {
+    await expect(userService.getUserByEmail('')).rejects.toThrow('Valid user email is required');
+    await expect(userService.getUserByEmail(null as any)).rejects.toThrow('Valid user email is required');
+    await expect(userService.getUserByEmail('   ')).rejects.toThrow('Valid user email is required');
   });
 
-  it('should get all inactive users from mock database', async () => {
-    // Setup the mock response using our mock database with filter
+  it('should throw NotFoundException when user does not exist', async () => {
+    mockPromise.mockResolvedValueOnce(mockDatabase.get({ Key: { email: 'nonexistent@example.com' } }));
+    await expect(userService.getUserByEmail('nonexistent@example.com')).rejects.toThrow("User 'nonexistent@example.com' does not exist");
+  });
+
+  it('should handle ValidationException when getting user by email', async () => {
+    mockPromise.mockRejectedValueOnce({ code: 'ValidationException', message: 'Invalid request' });
+    await expect(userService.getUserByEmail('user@example.com')).rejects.toThrow('Invalid request: Invalid request');
+  });
+
+  it('should handle ResourceNotFoundException when getting user by email', async () => {
+    mockPromise.mockRejectedValueOnce({ code: 'ResourceNotFoundException', message: 'Table not found' });
+    await expect(userService.getUserByEmail('user@example.com')).rejects.toThrow('Database table not found');
+  });
+
+  // ── getAllInactiveUsers ──────────────────────────────────────────────────────
+
+  it('should get all inactive users', async () => {
     const scanParams = {
       TableName: 'test-users-table',
       FilterExpression: '#pos IN (:inactive)',
       ExpressionAttributeNames: { '#pos': 'position' },
-      ExpressionAttributeValues: { ':inactive': 'Inactive' }
+      ExpressionAttributeValues: { ':inactive': 'Inactive' },
     };
-    
     mockPromise.mockResolvedValueOnce(mockDatabase.scan(scanParams));
-
     const result = await userService.getAllInactiveUsers();
-    
-    // Should return exactly 4 inactive users from mock database
     expect(result).toHaveLength(4);
-    expect(result.every(u => u.position === 'Inactive')).toBe(true);
-    expect(result.map(u => u.userId).sort()).toEqual(['inactive1', 'inactive2', 'inactive3', 'inactive4']);
+    expect(result.every((u: User) => u.position === UserStatus.Inactive)).toBe(true);
+    expect(result.map((u: User) => u.email).sort()).toEqual([
+      'inactive1@example.com', 'inactive2@example.com', 'inactive3@example.com', 'inactive4@example.com',
+    ]);
     expect(mockScan).toHaveBeenCalledWith(scanParams);
   });
 
-  it('should handle errors when getting inactive users', async () => {
-    const awsError = { code: 'ValidationException', message: 'Invalid filter' };
-    mockPromise.mockRejectedValueOnce(awsError);
-
+  it('should handle ValidationException when getting inactive users', async () => {
+    mockPromise.mockRejectedValueOnce({ code: 'ValidationException', message: 'Invalid filter' });
     await expect(userService.getAllInactiveUsers()).rejects.toThrow('Invalid filter expression');
-    expect(mockScan).toHaveBeenCalled();
   });
 
-  it('should get all active users from mock database', async () => {
-    // Setup the mock response using our mock database with filter
+  // ── getAllActiveUsers ────────────────────────────────────────────────────────
+
+  it('should get all active users', async () => {
     const scanParams = {
       TableName: 'test-users-table',
       FilterExpression: '#pos IN (:admin, :employee)',
       ExpressionAttributeNames: { '#pos': 'position' },
-      ExpressionAttributeValues: { ':admin': 'Admin', ':employee': 'Employee' }
+      ExpressionAttributeValues: { ':admin': 'Admin', ':employee': 'Employee' },
     };
-    
     mockPromise.mockResolvedValueOnce(mockDatabase.scan(scanParams));
-
     const result = await userService.getAllActiveUsers();
-    
-    // Should return exactly 5 active users (2 admins + 3 employees) from mock database
     expect(result).toHaveLength(5);
-    expect(result.every(u => u.position === 'Admin' || u.position === 'Employee')).toBe(true);
-    
-    const admins = result.filter(u => u.position === 'Admin');
-    const employees = result.filter(u => u.position === 'Employee');
-    expect(admins).toHaveLength(2);
-    expect(employees).toHaveLength(3);
-    
+    expect(result.filter((u: User) => u.position === UserStatus.Admin)).toHaveLength(2);
+    expect(result.filter((u: User) => u.position === UserStatus.Employee)).toHaveLength(3);
     expect(mockScan).toHaveBeenCalledWith(scanParams);
   });
 
   it('should throw NotFoundException when no active users found', async () => {
-    // Mock empty response
     mockPromise.mockResolvedValueOnce({ Items: undefined });
-
     await expect(userService.getAllActiveUsers()).rejects.toThrow('No active users found.');
-    expect(mockScan).toHaveBeenCalled();
   });
 
   it('should handle ProvisionedThroughputExceededException', async () => {
-    const awsError = { code: 'ProvisionedThroughputExceededException', message: 'Throughput exceeded' };
-    mockPromise.mockRejectedValueOnce(awsError);
-
+    mockPromise.mockRejectedValueOnce({ code: 'ProvisionedThroughputExceededException', message: 'Throughput exceeded' });
     await expect(userService.getAllActiveUsers()).rejects.toThrow('Database is temporarily unavailable, please try again');
-    expect(mockScan).toHaveBeenCalled();
   });
 
-  // ========================================
-  // Tests for addUserToGroup (Change Role)
-  // ========================================
+  // ── addUserToGroup ───────────────────────────────────────────────────────────
 
-  it('should successfully change user role from Inactive to Employee', async () => {
-    const user = mockDatabase.users.find(u => u.userId === 'inactive1')!;
-    const admin = mockDatabase.users.find(u => u.userId === 'admin1')!;
-    
-    // Mock DynamoDB get to verify user exists
-    mockPromise.mockResolvedValueOnce({ Item: user });
-    
-    // Mock Cognito remove from old group (no-op for Inactive)
-    mockPromise.mockResolvedValueOnce({});
-    
-    // Mock Cognito add to new group
-    mockPromise.mockResolvedValueOnce({});
-    
-    // Mock SES sendEmail (verification email for Inactive -> Employee)
-    mockPromise.mockResolvedValueOnce({ MessageId: 'test-message-id' });
-    
-    // Mock DynamoDB update
-    mockPromise.mockResolvedValueOnce({
-      Attributes: { ...user, position: UserStatus.Employee }
-    });
+  it('should change role from Inactive to Employee and send email', async () => {
+    const user  = mockDatabase.users.find(u => u.email === 'inactive1@example.com')!;
+    const admin = mockDatabase.users.find(u => u.email === 'admin1@example.com')!;
+
+    mockPromise
+      .mockResolvedValueOnce({ Item: user })
+      .mockResolvedValueOnce({})
+      .mockResolvedValueOnce({})
+      .mockResolvedValueOnce({ MessageId: 'test-id' })
+      .mockResolvedValueOnce({ Attributes: { ...user, position: UserStatus.Employee } });
 
     const result = await userService.addUserToGroup(user, UserStatus.Employee, admin);
-    
     expect(result.position).toBe(UserStatus.Employee);
-    expect(mockGet).toHaveBeenCalled();
-    expect(mockAdminAddUserToGroup).toHaveBeenCalledWith({
-      GroupName: 'Employee',
-      UserPoolId: 'test-pool-id',
-      Username: 'inactive1'
-    });
-    expect(mockSendEmail).toHaveBeenCalled(); // Verify email was sent
+    expect(mockAdminAddUserToGroup).toHaveBeenCalledWith({ GroupName: 'Employee', UserPoolId: 'test-pool-id', Username: 'inactive1@example.com' });
+    expect(mockSendEmail).toHaveBeenCalled();
     expect(mockUpdate).toHaveBeenCalled();
   });
 
-  it('should successfully promote Employee to Admin', async () => {
-    const user = mockDatabase.users.find(u => u.userId === 'emp1')!;
-    const admin = mockDatabase.users.find(u => u.userId === 'admin1')!;
-    
-    // Mock DynamoDB get
-    mockPromise.mockResolvedValueOnce({ Item: user });
-    
-    // Mock Cognito remove from Employee group
-    mockPromise.mockResolvedValueOnce({});
-    
-    // Mock Cognito add to Admin group
-    mockPromise.mockResolvedValueOnce({});
-    
-    // Mock DynamoDB update
-    mockPromise.mockResolvedValueOnce({
-      Attributes: { ...user, position: UserStatus.Admin }
-    });
+  it('should promote Employee to Admin', async () => {
+    const user  = mockDatabase.users.find(u => u.email === 'emp1@example.com')!;
+    const admin = mockDatabase.users.find(u => u.email === 'admin1@example.com')!;
+
+    mockPromise
+      .mockResolvedValueOnce({ Item: user })
+      .mockResolvedValueOnce({})
+      .mockResolvedValueOnce({})
+      .mockResolvedValueOnce({ Attributes: { ...user, position: UserStatus.Admin } });
 
     const result = await userService.addUserToGroup(user, UserStatus.Admin, admin);
-    
     expect(result.position).toBe(UserStatus.Admin);
-    expect(mockAdminRemoveUserFromGroup).toHaveBeenCalledWith({
-      GroupName: 'Employee',
-      UserPoolId: 'test-pool-id',
-      Username: 'emp1'
-    });
-    expect(mockAdminAddUserToGroup).toHaveBeenCalledWith({
-      GroupName: 'Admin',
-      UserPoolId: 'test-pool-id',
-      Username: 'emp1'
-    });
+    expect(mockAdminRemoveUserFromGroup).toHaveBeenCalledWith({ GroupName: 'Employee', UserPoolId: 'test-pool-id', Username: 'emp1@example.com' });
+    expect(mockAdminAddUserToGroup).toHaveBeenCalledWith({ GroupName: 'Admin', UserPoolId: 'test-pool-id', Username: 'emp1@example.com' });
   });
 
   it('should return user unchanged if already in requested group', async () => {
-    const user = mockDatabase.users.find(u => u.userId === 'admin1')!;
-    const requestedBy = mockDatabase.users.find(u => u.userId === 'admin2')!;
-    
-    // Mock DynamoDB get - user already Admin
+    const user  = mockDatabase.users.find(u => u.email === 'admin1@example.com')!;
+    const admin = mockDatabase.users.find(u => u.email === 'admin2@example.com')!;
+
     mockPromise.mockResolvedValueOnce({ Item: user });
 
-    const result = await userService.addUserToGroup(user, UserStatus.Admin, requestedBy);
-    
+    const result = await userService.addUserToGroup(user, UserStatus.Admin, admin);
     expect(result.position).toBe(UserStatus.Admin);
-    // Should not call Cognito if already in group
     expect(mockAdminAddUserToGroup).not.toHaveBeenCalled();
   });
 
-  it('should throw BadRequestException when user object is invalid', async () => {
-    const admin = mockDatabase.users.find(u => u.userId === 'admin1')!;
-    
-    await expect(
-      userService.addUserToGroup(null as any, UserStatus.Employee, admin)
-    ).rejects.toThrow('Valid user object is required');
-    
-    await expect(
-      userService.addUserToGroup({ userId: '' } as any, UserStatus.Employee, admin)
-    ).rejects.toThrow('Valid user object is required');
+  it('should throw BadRequestException for invalid user in addUserToGroup', async () => {
+    const admin = mockDatabase.users.find(u => u.email === 'admin1@example.com')!;
+    await expect(userService.addUserToGroup(null as any, UserStatus.Employee, admin)).rejects.toThrow('Valid user object is required');
+    await expect(userService.addUserToGroup({ email: '' } as any, UserStatus.Employee, admin)).rejects.toThrow('Valid user object is required');
   });
 
-  it('should throw BadRequestException when group name is invalid', async () => {
-    const user = mockDatabase.users.find(u => u.userId === 'inactive1')!;
-    const admin = mockDatabase.users.find(u => u.userId === 'admin1')!;
-    
-    await expect(
-      userService.addUserToGroup(user, '' as any, admin)
-    ).rejects.toThrow('Group name is required');
-    
-    await expect(
-      userService.addUserToGroup(user, 'InvalidGroup' as any, admin)
-    ).rejects.toThrow('Invalid group name');
+  it('should throw BadRequestException for invalid group name', async () => {
+    const user  = mockDatabase.users.find(u => u.email === 'inactive1@example.com')!;
+    const admin = mockDatabase.users.find(u => u.email === 'admin1@example.com')!;
+    await expect(userService.addUserToGroup(user, '' as any, admin)).rejects.toThrow('Group name is required');
+    await expect(userService.addUserToGroup(user, 'InvalidGroup' as any, admin)).rejects.toThrow('Invalid group name');
   });
 
-  it('should throw UnauthorizedException when non-admin tries to change role', async () => {
-    const user = mockDatabase.users.find(u => u.userId === 'inactive1')!;
-    const employee = mockDatabase.users.find(u => u.userId === 'emp1')!;
-    
-    await expect(
-      userService.addUserToGroup(user, UserStatus.Employee, employee)
-    ).rejects.toThrow('Only administrators can modify user groups');
+  it('should throw UnauthorizedException when non-admin changes role', async () => {
+    const user     = mockDatabase.users.find(u => u.email === 'inactive1@example.com')!;
+    const employee = mockDatabase.users.find(u => u.email === 'emp1@example.com')!;
+    await expect(userService.addUserToGroup(user, UserStatus.Employee, employee)).rejects.toThrow('Only administrators can modify user groups');
   });
 
-  it('should throw BadRequestException when admin tries to demote themselves', async () => {
-    const admin = mockDatabase.users.find(u => u.userId === 'admin1')!;
-    
-    // Mock DynamoDB get
+  it('should throw BadRequestException when admin demotes themselves', async () => {
+    const admin = mockDatabase.users.find(u => u.email === 'admin1@example.com')!;
     mockPromise.mockResolvedValueOnce({ Item: admin });
-    
-    await expect(
-      userService.addUserToGroup(admin, UserStatus.Employee, admin)
-    ).rejects.toThrow('Administrators cannot demote themselves');
+    await expect(userService.addUserToGroup(admin, UserStatus.Employee, admin)).rejects.toThrow('Administrators cannot demote themselves');
   });
 
-  it('should throw NotFoundException when user does not exist', async () => {
-    const admin = mockDatabase.users.find(u => u.userId === 'admin1')!;
-    const fakeUser: User = { userId: 'nonexistent', email: 'fake@test.com', position: UserStatus.Inactive };
-    
-    // Mock DynamoDB get - user not found
+  it('should throw NotFoundException when user does not exist in addUserToGroup', async () => {
+    const admin    = mockDatabase.users.find(u => u.email === 'admin1@example.com')!;
+    const fakeUser: User = { email: 'fake@test.com', position: UserStatus.Inactive, firstName: '', lastName: '' };
     mockPromise.mockResolvedValueOnce({});
-    
-    await expect(
-      userService.addUserToGroup(fakeUser, UserStatus.Employee, admin)
-    ).rejects.toThrow("User 'nonexistent' does not exist");
+    await expect(userService.addUserToGroup(fakeUser, UserStatus.Employee, admin)).rejects.toThrow("User 'fake@test.com' does not exist");
   });
 
-  it('should handle Cognito UserNotFoundException', async () => {
-    const user = mockDatabase.users.find(u => u.userId === 'inactive1')!;
-    const admin = mockDatabase.users.find(u => u.userId === 'admin1')!;
-    
-    // Mock DynamoDB get
-    mockPromise.mockResolvedValueOnce({ Item: user });
-    
-    // Mock Cognito remove from old group (no-op for Inactive, but still called)
-    mockPromise.mockResolvedValueOnce({});
-    
-    // Mock Cognito add to new group - this should fail
-    const cognitoError = { code: 'UserNotFoundException', message: 'User not found in Cognito' };
-    mockPromise.mockRejectedValueOnce(cognitoError);
-    
-    await expect(
-      userService.addUserToGroup(user, UserStatus.Employee, admin)
-    ).rejects.toThrow('not found in authentication system');
+  it('should handle Cognito UserNotFoundException in addUserToGroup', async () => {
+    const user  = mockDatabase.users.find(u => u.email === 'inactive1@example.com')!;
+    const admin = mockDatabase.users.find(u => u.email === 'admin1@example.com')!;
+
+    mockPromise
+      .mockResolvedValueOnce({ Item: user })
+      .mockResolvedValueOnce({})
+      .mockRejectedValueOnce({ code: 'UserNotFoundException', message: 'User not found in Cognito' });
+
+    await expect(userService.addUserToGroup(user, UserStatus.Employee, admin)).rejects.toThrow('not found in authentication system');
   });
 
   it('should rollback Cognito change if DynamoDB update fails', async () => {
-    const user = mockDatabase.users.find(u => u.userId === 'emp1')!;
-    const admin = mockDatabase.users.find(u => u.userId === 'admin1')!;
-    
-    // Mock DynamoDB get
-    mockPromise.mockResolvedValueOnce({ Item: user });
-    
-    // Mock Cognito operations succeed
-    mockPromise.mockResolvedValueOnce({}); // Remove from old group
-    mockPromise.mockResolvedValueOnce({}); // Add to new group
-    
-    // Mock DynamoDB update fails
-    const dynamoError = { code: 'ValidationException', message: 'Invalid update' };
-    mockPromise.mockRejectedValueOnce(dynamoError);
-    
-    // Mock rollback operations
-    mockPromise.mockResolvedValueOnce({}); // Remove from new group
-    mockPromise.mockResolvedValueOnce({}); // Add back to old group
-    
-    await expect(
-      userService.addUserToGroup(user, UserStatus.Admin, admin)
-    ).rejects.toThrow('Invalid update parameters');
-    
-    // Verify rollback was attempted
-    expect(mockAdminRemoveUserFromGroup).toHaveBeenCalledTimes(2); // Once for change, once for rollback
-    expect(mockAdminAddUserToGroup).toHaveBeenCalledTimes(2); // Once for change, once for rollback
+    const user  = mockDatabase.users.find(u => u.email === 'emp1@example.com')!;
+    const admin = mockDatabase.users.find(u => u.email === 'admin1@example.com')!;
+
+    mockPromise
+      .mockResolvedValueOnce({ Item: user })
+      .mockResolvedValueOnce({})
+      .mockResolvedValueOnce({})
+      .mockRejectedValueOnce({ code: 'ValidationException', message: 'Invalid update' })
+      .mockResolvedValueOnce({})
+      .mockResolvedValueOnce({});
+
+    await expect(userService.addUserToGroup(user, UserStatus.Admin, admin)).rejects.toThrow('Invalid update parameters');
+    expect(mockAdminRemoveUserFromGroup).toHaveBeenCalledTimes(2);
+    expect(mockAdminAddUserToGroup).toHaveBeenCalledTimes(2);
   });
 
-  // ========================================
-  // Tests for deleteUser
-  // ========================================
+  // ── deleteUser ───────────────────────────────────────────────────────────────
 
   it('should successfully delete a user', async () => {
-    const userToDelete = mockDatabase.users.find(u => u.userId === 'emp1')!;
-    const admin = mockDatabase.users.find(u => u.userId === 'admin1')!;
-    
-    // Mock DynamoDB get to verify user exists
-    mockPromise.mockResolvedValueOnce({ Item: userToDelete });
-    
-    // Mock DynamoDB delete
-    mockPromise.mockResolvedValueOnce({
-      Attributes: userToDelete
-    });
-    
-    // Mock Cognito delete
-    mockPromise.mockResolvedValueOnce({});
+    const user  = mockDatabase.users.find(u => u.email === 'emp1@example.com')!;
+    const admin = mockDatabase.users.find(u => u.email === 'admin1@example.com')!;
 
-    const result = await userService.deleteUser(userToDelete, admin);
-    
-    expect(result.userId).toBe('emp1');
-    expect(mockGet).toHaveBeenCalled();
-    expect(mockDelete).toHaveBeenCalledWith({
-      TableName: 'test-users-table',
-      Key: { userId: 'emp1' },
-      ReturnValues: 'ALL_OLD'
-    });
-    expect(mockAdminDeleteUser).toHaveBeenCalledWith({
-      UserPoolId: 'test-pool-id',
-      Username: 'emp1'
-    });
+    mockPromise
+      .mockResolvedValueOnce({ Item: user })
+      .mockResolvedValueOnce({ Attributes: user })
+      .mockResolvedValueOnce({});
+
+    const result = await userService.deleteUser(user, admin);
+    expect(result.email).toBe('emp1@example.com');
+    expect(mockDelete).toHaveBeenCalledWith({ TableName: 'test-users-table', Key: { email: 'emp1@example.com' }, ReturnValues: 'ALL_OLD' });
+    expect(mockAdminDeleteUser).toHaveBeenCalledWith({ UserPoolId: 'test-pool-id', Username: 'emp1@example.com' });
   });
 
-  it('should throw BadRequestException when user object is invalid', async () => {
-    const admin = mockDatabase.users.find(u => u.userId === 'admin1')!;
-    
-    await expect(
-      userService.deleteUser(null as any, admin)
-    ).rejects.toThrow('Valid user object is required');
-    
-    await expect(
-      userService.deleteUser({ userId: '' } as any, admin)
-    ).rejects.toThrow('Valid user object is required');
+  it('should throw BadRequestException for invalid user in deleteUser', async () => {
+    const admin = mockDatabase.users.find(u => u.email === 'admin1@example.com')!;
+    await expect(userService.deleteUser(null as any, admin)).rejects.toThrow('Valid user object is required');
+    await expect(userService.deleteUser({ email: '' } as any, admin)).rejects.toThrow('Valid user object is required');
   });
 
-  it('should throw BadRequestException when requestedBy is invalid', async () => {
-    const user = mockDatabase.users.find(u => u.userId === 'emp1')!;
-    
-    await expect(
-      userService.deleteUser(user, null as any)
-    ).rejects.toThrow('Valid requesting user is required');
+  it('should throw BadRequestException for invalid requestedBy', async () => {
+    const user = mockDatabase.users.find(u => u.email === 'emp1@example.com')!;
+    await expect(userService.deleteUser(user, null as any)).rejects.toThrow('Valid requesting user is required');
   });
 
-  it('should throw UnauthorizedException when non-admin tries to delete', async () => {
-    const userToDelete = mockDatabase.users.find(u => u.userId === 'emp2')!;
-    const employee = mockDatabase.users.find(u => u.userId === 'emp1')!;
-    
-    await expect(
-      userService.deleteUser(userToDelete, employee)
-    ).rejects.toThrow('Only administrators can delete users');
+  it('should throw UnauthorizedException when non-admin deletes user', async () => {
+    const user     = mockDatabase.users.find(u => u.email === 'emp2@example.com')!;
+    const employee = mockDatabase.users.find(u => u.email === 'emp1@example.com')!;
+    await expect(userService.deleteUser(user, employee)).rejects.toThrow('Only administrators can delete users');
   });
 
-  it('should throw BadRequestException when admin tries to delete themselves', async () => {
-    const admin = mockDatabase.users.find(u => u.userId === 'admin1')!;
-    
-    await expect(
-      userService.deleteUser(admin, admin)
-    ).rejects.toThrow('Administrators cannot delete their own account');
+  it('should throw BadRequestException when admin deletes themselves', async () => {
+    const admin = mockDatabase.users.find(u => u.email === 'admin1@example.com')!;
+    await expect(userService.deleteUser(admin, admin)).rejects.toThrow('Administrators cannot delete their own account');
   });
 
   it('should throw NotFoundException when user to delete does not exist', async () => {
-    const admin = mockDatabase.users.find(u => u.userId === 'admin1')!;
-    const fakeUser: User = { userId: 'nonexistent', email: 'fake@test.com', position: UserStatus.Employee };
-    
-    // Mock DynamoDB get - user not found
+    const admin    = mockDatabase.users.find(u => u.email === 'admin1@example.com')!;
+    const fakeUser: User = { email: 'fake@test.com', position: UserStatus.Employee, firstName: '', lastName: '' };
     mockPromise.mockResolvedValueOnce({});
-    
-    await expect(
-      userService.deleteUser(fakeUser, admin)
-    ).rejects.toThrow("User 'nonexistent' does not exist");
+    await expect(userService.deleteUser(fakeUser, admin)).rejects.toThrow("User 'fake@test.com' does not exist");
   });
 
-  it('should handle Cognito UserNotFoundException during delete', async () => {
-    const userToDelete = mockDatabase.users.find(u => u.userId === 'emp1')!;
-    const admin = mockDatabase.users.find(u => u.userId === 'admin1')!;
-    
-    // Mock DynamoDB get
-    mockPromise.mockResolvedValueOnce({ Item: userToDelete });
-    
-    // Mock DynamoDB delete succeeds
-    mockPromise.mockResolvedValueOnce({ Attributes: userToDelete });
-    
-    // Mock Cognito delete fails
-    const cognitoError = { code: 'UserNotFoundException', message: 'User not found' };
-    mockPromise.mockRejectedValueOnce(cognitoError);
-    
-    // Mock rollback (restore to DynamoDB)
-    mockPromise.mockResolvedValueOnce({});
-    
-    await expect(
-      userService.deleteUser(userToDelete, admin)
-    ).rejects.toThrow('not found in authentication system');
-    
-    // Verify rollback was attempted
-    expect(mockPut).toHaveBeenCalledWith({
-      TableName: 'test-users-table',
-      Item: userToDelete
-    });
+  it('should handle Cognito UserNotFoundException during delete and rollback', async () => {
+    const user  = mockDatabase.users.find(u => u.email === 'emp1@example.com')!;
+    const admin = mockDatabase.users.find(u => u.email === 'admin1@example.com')!;
+
+    mockPromise
+      .mockResolvedValueOnce({ Item: user })
+      .mockResolvedValueOnce({ Attributes: user })
+      .mockRejectedValueOnce({ code: 'UserNotFoundException', message: 'User not found' })
+      .mockResolvedValueOnce({});
+
+    await expect(userService.deleteUser(user, admin)).rejects.toThrow('not found in authentication system');
+    expect(mockPut).toHaveBeenCalledWith({ TableName: 'test-users-table', Item: user });
   });
 
   it('should rollback DynamoDB delete if Cognito delete fails', async () => {
-    const userToDelete = mockDatabase.users.find(u => u.userId === 'emp1')!;
-    const admin = mockDatabase.users.find(u => u.userId === 'admin1')!;
-    
-    // Mock DynamoDB get
-    mockPromise.mockResolvedValueOnce({ Item: userToDelete });
-    
-    // Mock DynamoDB delete succeeds
-    mockPromise.mockResolvedValueOnce({ Attributes: userToDelete });
-    
-    // Mock Cognito delete fails with generic error
-    const cognitoError = { code: 'InternalError', message: 'Cognito internal error' };
-    mockPromise.mockRejectedValueOnce(cognitoError);
-    
-    // Mock rollback succeeds
-    mockPromise.mockResolvedValueOnce({});
-    
-    await expect(
-      userService.deleteUser(userToDelete, admin)
-    ).rejects.toThrow('Failed to delete user from authentication system');
-    
-    // Verify rollback was attempted
-    expect(mockPut).toHaveBeenCalledWith({
-      TableName: 'test-users-table',
-      Item: userToDelete
-    });
+    const user  = mockDatabase.users.find(u => u.email === 'emp1@example.com')!;
+    const admin = mockDatabase.users.find(u => u.email === 'admin1@example.com')!;
+
+    mockPromise
+      .mockResolvedValueOnce({ Item: user })
+      .mockResolvedValueOnce({ Attributes: user })
+      .mockRejectedValueOnce({ code: 'InternalError', message: 'Cognito internal error' })
+      .mockResolvedValueOnce({});
+
+    await expect(userService.deleteUser(user, admin)).rejects.toThrow('Failed to delete user from authentication system');
+    expect(mockPut).toHaveBeenCalledWith({ TableName: 'test-users-table', Item: user });
   });
 
-  it('should handle DynamoDB delete failure', async () => {
-    const userToDelete = mockDatabase.users.find(u => u.userId === 'emp1')!;
-    const admin = mockDatabase.users.find(u => u.userId === 'admin1')!;
-    
-    // Mock DynamoDB get
-    mockPromise.mockResolvedValueOnce({ Item: userToDelete });
-    
-    // Mock DynamoDB delete fails
-    const dynamoError = { code: 'ResourceNotFoundException', message: 'Table not found' };
-    mockPromise.mockRejectedValueOnce(dynamoError);
-    
-    await expect(
-      userService.deleteUser(userToDelete, admin)
-    ).rejects.toThrow('Failed to delete user from database');
-    
-    // Cognito delete should not be called if DynamoDB fails
+  it('should handle DynamoDB delete failure without calling Cognito', async () => {
+    const user  = mockDatabase.users.find(u => u.email === 'emp1@example.com')!;
+    const admin = mockDatabase.users.find(u => u.email === 'admin1@example.com')!;
+
+    mockPromise
+      .mockResolvedValueOnce({ Item: user })
+      .mockRejectedValueOnce({ code: 'ResourceNotFoundException', message: 'Table not found' });
+
+    await expect(userService.deleteUser(user, admin)).rejects.toThrow('Failed to delete user from database');
     expect(mockAdminDeleteUser).not.toHaveBeenCalled();
   });
 });

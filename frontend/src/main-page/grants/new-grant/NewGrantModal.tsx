@@ -657,7 +657,7 @@ const NewGrantModal: React.FC<{
                       <UserDropdown
                       selectedUser={bcanPocName && bcanPocEmail ? {name: bcanPocName, email: bcanPocEmail } : null}
                       onSelect={(user) => {
-                        setBcanPocName(user.name);
+                        setBcanPocName(user.firstName + " " + user.lastName);
                         setBcanPocEmail(user.email)
                       }}
                       placeholder="Name"
