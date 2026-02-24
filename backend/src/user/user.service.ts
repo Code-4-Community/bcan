@@ -25,17 +25,17 @@ export class UserService {
   private s3 = new AWS.S3();
   private profilePicBucket : string = process.env.PROFILE_PICTURE_BUCKET!;
 
-  async uploadProfilePic(user: User, pic: Express.Multer.File): Promise<String> {
+async uploadProfilePic(user: User, pic: Express.Multer.File): Promise<String> {
   const tableName = process.env.DYNAMODB_USER_TABLE_NAME;
 
   // 1. Validate all inputs
   this.validateUploadInputs(user, pic, tableName);
 
-  // 2. Generate filename: userId-profilepic.ext
+  // 2. Generate filename: firstName-lastName-profilepic.ext
   const fileExtension = pic.originalname.split('.').pop()?.toLowerCase() || 'jpg';
-  const key = `${user.userId}-profilepic.${fileExtension}`;
+  const key = `${user.firstName}-${user.lastName}-${user.email.slice(0,3)}-profilepic.${fileExtension}`;
 
-  this.logger.log(`Uploading profile picture for user ${user.userId} with key: ${key}`);
+  this.logger.log(`Uploading profile picture for user ${user.firstName} ${user.lastName} with key: ${key}`);
 
   try {
     // 3. Upload to S3
@@ -52,8 +52,8 @@ export class UserService {
     // 4. Update user's profile picture URL in DynamoDB
     const updateParams = {
       TableName: tableName!,
-      Key: { userId: user.userId },
-      UpdateExpression: "SET profilePictureUrl = :url",
+      Key: { email: user.email },
+      UpdateExpression: "SET profilePicUrl = :url",
       ExpressionAttributeValues: {
         ":url": uploadResult.Location,
       },
@@ -63,15 +63,15 @@ export class UserService {
     const updateResult = await this.dynamoDb.update(updateParams).promise();
 
     if (!updateResult.Attributes) {
-      this.logger.error(`DynamoDB update did not return updated attributes for ${user.userId}`);
+      this.logger.error(`DynamoDB update did not return updated attributes for ${user.email}`);
       throw new InternalServerErrorException("Failed to retrieve updated user data");
     }
 
-    this.logger.log(`✅ Profile picture uploaded successfully for user ${user.userId}`);
-    return updateResult.Attributes.profilePictureUrl;
+    this.logger.log(`✅ Profile picture uploaded successfully for user ${user.email}`);
+    return updateResult.Attributes.profilePicUrl;
 
   } catch (error: any) {
-    this.logger.error(`Failed to upload profile picture for ${user.userId}:`, error);
+    this.logger.error(`Failed to upload profile picture for ${user.email}:`, error);
 
     // Handle S3 errors
     if (error.code === 'NoSuchBucket') {
@@ -108,7 +108,7 @@ private validateUploadInputs(user: User, pic: Express.Multer.File, tableName: st
     throw new InternalServerErrorException("Server configuration error");
   }
 
-  if (!user || !user.userId || user.userId.trim().length === 0) {
+  if (!user || !user.firstName || !user.lastName || !user.email) {
     this.logger.error("Invalid user object provided for upload");
     throw new BadRequestException("Valid user object is required");
   }
