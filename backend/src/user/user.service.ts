@@ -108,6 +108,11 @@ private validateUploadInputs(user: User, pic: Express.Multer.File, tableName: st
     throw new InternalServerErrorException("Server configuration error");
   }
 
+  if (!user || !user.userId || user.userId.trim().length === 0) {
+    this.logger.error("Invalid user object provided for upload");
+    throw new BadRequestException("Valid user object is required");
+  }
+
   if (!tableName) {
     this.logger.error("DynamoDB User Table Name is not defined in environment variables");
     throw new InternalServerErrorException("Server configuration error");
