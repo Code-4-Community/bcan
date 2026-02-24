@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import logo from "../images/logo.svg";
 import { useAuthContext } from "../context/auth/authContext";
 import Button from "../components/Button";
+import BrandingPanel from "../components/BrandingPanel";
 
 /**
  * Registered user landing page after signing up
@@ -9,18 +9,9 @@ import Button from "../components/Button";
 const RegisterLanding = () => {
   const {logout} = useAuthContext();
   return (
-    <div className="bg-white grid grid-cols-[35%_65%] relative w-screen h-screen m-0 p-0 overflow-hidden text-start">
-      <div className="h-full flex flex-col justify-center items-center pb-32">
-        <div className="w-full h-[70%] bg-primary-900 rounded-r-4xl flex flex-col justify-center items-center">
-          <img
-            className="w-[90%] h-[90%] object-contain p-20 ml-10"
-            src={logo}
-            alt="BCAN Logo"
-          />
-        </div>
-      </div>
-      <div className="h-full py-20 px-24 flex flex-col justify-center items-start mb-32">
-        <div className="mb-24">
+    <div className="bg-white grid grid-cols-[75%_25%] lg:grid-cols-[50%_50%] relative w-screen h-screen m-0 p-0 overflow-hidden text-start">
+      <div className="h-full  px-24 flex flex-col justify-center items-start ">
+        <div className="w-full">
           <h1 className="text-4xl pb-8 font-bold">
             Account registration successful!
           </h1>
@@ -39,6 +30,9 @@ const RegisterLanding = () => {
                     />
                   </Link>
         </div>
+      </div>
+      <div className="h-full flex flex-col justify-center items-center p-8">
+        <BrandingPanel/>
       </div>
     </div>
   );

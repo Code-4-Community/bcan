@@ -9,7 +9,7 @@ import ForgotPassword from "../login/ForgotPassword";
 import RegisterLanding from "../sign-up/RegisterLanding";
 import { getAppStore } from "../external/bcanSatchel/store";
 import RestrictedPage from "../main-page/restricted/RestrictedPage";
-import Footer from "../main-page/Footer";
+import Footer from "../Footer";
 
 /**
  * AppRoutes:
