@@ -8,8 +8,7 @@ import { observer } from "mobx-react-lite";
 import { api } from "../../api";
 
 // get current user id
-// const currUserID = sessionStorage.getItem('userId');
-// const currUserID = "bcanuser33";
+
 
 interface BellButtonProps {
   // onClick handler to open notification popup
@@ -30,7 +29,7 @@ const BellButton: React.FC<BellButtonProps> = observer(({ setOpenModal, openModa
   // function that handles when button is clicked and fetches notifications
   const handleClick = async () => {
     const response = await api(
-    `/notifications/user/${store.user?.userId}/current`,
+    `/notifications/user/${store.user?.email}/current`,
     {
     method: "GET",
     }

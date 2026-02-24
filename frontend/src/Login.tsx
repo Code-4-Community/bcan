@@ -10,8 +10,10 @@ import Button from "./components/Button";
  * Registered users can log in here
  */
 const Login = observer(() => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [failure, setFailure] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuthContext();
@@ -19,7 +21,7 @@ const Login = observer(() => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const success = await login(username, password);
+    const success = await login(email, password);
 
     if (success) {
       navigate("/main/all-grants");
@@ -29,90 +31,120 @@ const Login = observer(() => {
   };
 
   return (
-    <div className="bg-white grid grid-cols-[60%_40%] w-screen h-screen relative m-0 p-0 overflow-hidden text-start">
+    <div className="bg-white w-screen h-screen flex overflow-hidden">
       {/*/ Left side: Registration form */}
-      <div className="h-full py-20 px-24 flex flex-col justify-center items-start">
-        <div className="mb-12">
-          <h1 className="text-[32px] pb-4">Welcome back!</h1>
-          <h2 className="text-lg">
-            Enter your credentials to access your account.
-          </h2>
+      <div className="w-1/2 h-full py-20 px-24 flex flex-col justify-center">
+        <div className="mb-8">
+          <h1 className="text-[2.75rem] font-bold mb-0 text-left">Log in</h1>
         </div>
         <form onSubmit={handleSubmit} className="w-full">
           <div className="grid grid-cols-1 gap-x-6 gap-y-4">
-            <div className="">
-              <label htmlFor="username" className="block">
-                Username
+            <div className="mb-4">
+              <label htmlFor="email" className="block text-xl font-semibold mb-2 text-left">
+                Email
               </label>
-              <div className="flex items-center rounded-md pt-2">
+              <div>
                 <input
-                  id="username"
-                  type="text"
-                  name="username"
-                  value={username}
+                  id="email"
+                  type="email"
+                  name="email"
+                  value={email}
                   required
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Enter your email"
-                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-grey-400"
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email address"
+                  className="w-full rounded-xl border border-grey-600 bg-white py-3 px-4 text-base placeholder:text-grey-600 focus:outline-none focus:ring-2 focus:ring-primary-900 focus:border-transparent"
                 />
               </div>
             </div>
-            <div className="">
-              <label htmlFor="password" className="block">
+            <div className="mb-4">
+              <label htmlFor="password" className="block text-xl font-semibold mb-2 text-left">
                 Password
               </label>
-              <div className="flex items-center rounded-md pt-2">
+              <div className="relative">
                 <input
                   id="password"
-                  type="password"
+                  type={showPassword ? "text": "password"}
                   name="password"
                   value={password}
                   required
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="block min-w-0 rounded-md grow bg-white py-1.5 pr-3 pl-4 text-base placeholder:text-gray-500 border border-grey-400"
+                  className="w-full rounded-xl border border-grey-600 bg-white py-3 px-4 pr-12 text-base placeholder:text-grey-600 focus:outline-none focus:ring-2 focus:ring-primary-900 focus:border-transparent"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-black hover:text-black transition colors"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <svg className="w-5 h" fill="none" stroke="currentColor" viewBox=" 0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  )}
+                </button>
               </div>
             </div>
           </div>
-          <div className="h-12 items-center">
-            {failure ? (
-              <div className="text-red mt-4 bg-red-light h-full rounded-md text-center flex items-center justify-center p-2">
+
+          {/* Remember Me & Forgot Password */}
+          <div className="flex items-center justify-between mb-6">
+            <label className="flex items-center cursor pointer">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="w-4 h-4 rounded border-grey-400 text-primary-900 focus:ring-primary-900 focus:ring-2 cursor-pointer"
+              />
+              <span className="ml-2 text-base">Remember Me</span>
+            </label>
+            <button
+              type="button"
+              onClick={() => navigate("/forgot-password")}
+              className="text-base text-black hover:text-primary-900 transition-colors"
+            >
+              Forgot Password?
+            </button>
+          </div>
+
+          {/* Error Message */}
+          <div className="">
+            {failure && (
+              <div className="mb-6 bg-red-lighter text-red rounded-xl py-3 px-4 text-center">
                 Your password is incorrect or this account doesn't exist.
               </div>
-            ) : (
-              <div className="h-fit p-4 mt-4">{"    "}</div>
             )}
           </div>
           <Button
-            text="Login"
+            text="Log in"
             type="submit"
             onClick={() => {}}
             className="w-full block grow bg-primary-900 text-white mt-8 text-base placeholder:text-gray-500"
           />
-          <div className="flex items-center justify-between gap-4 mt-8">
-            <hr className="border-grey-600 w-[45%]" />
-            <div className="text-grey-600">or</div>
-            <hr className="border-grey-600 w-[45%]" />
-          </div>
-          <div className="flex items-center mt-8 justify-center">
+
+          <div className="mt-8 text-center font-semibold text-base">
             Don't have an account?{" "}
             <button
               type="button"
               onClick={() => navigate("/register")}
-              className="inline ml-2 text-secondary-500 text-left hover:underline border-none"
+              className="text-secondary-500 hover:underline font-semibold"
             >
-              Sign up
+              Sign up here
             </button>
           </div>
         </form>
       </div>
 
       {/*/ Right side: logo */}
-      <div className="h-full flex flex-col justify-center items-center">
-        <div className="w-full h-full bg-primary-800 rounded-l-4xl flex flex-col justify-center items-center">
+      <div className="w-1/2 h-full bg-white flex items-center justify-center p-8">
+        <div className="w-full h-full bg-primary-900 rounded-[1.2rem] flex items-center justify-center">
           <img
-            className="w-[60%] h-[60%] object-contain p-10 mb-40"
+            className="w-1/2 h-1/2 object-contain"
             src={logo}
             alt="BCAN Logo"
           />

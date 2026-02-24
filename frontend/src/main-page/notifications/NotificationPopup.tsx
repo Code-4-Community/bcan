@@ -33,7 +33,7 @@ const NotificationPopup: React.FC<NotificationPopupProps> = observer(({
 
 
         const fetchResponse = await api(
-            `/notifications/user/${store.user?.userId}/current`,
+            `/notifications/user/${store.user?.email}/current`,
             {
                 method: "GET",
             }

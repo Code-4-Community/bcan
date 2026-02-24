@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Delete, Body, Param, UseGuards, Req } from "@nestjs/common";
+import { Controller, Get, Delete, Body, Param, UseGuards, Req, Post } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { User } from "../../../middle-layer/types/User";
 import { UserStatus } from "../../../middle-layer/types/UserStatus";
@@ -101,7 +101,7 @@ export class UserController {
   /**
    * Change a user's role (make sure guard is on this route)
    */
-  @Patch("change-role")
+  @Post("change-role")
   @ApiResponse({
     status : 200,
     description : "User role changed successfully"
@@ -150,9 +150,9 @@ export class UserController {
   /**
    * Delete a user
    */
-  @Delete("delete-user/:userId")
+  @Delete("delete-user/:email")
   @ApiParam({
-    name: 'userId',
+    name: 'email',
     description: 'ID of the user to delete',
     required: true,
     type: String
@@ -184,25 +184,25 @@ export class UserController {
   @UseGuards(VerifyAdminRoleGuard)
   @ApiBearerAuth()
   async deleteUser(
-    @Param('userId') userId: string,
+    @Param('email') email: string,
     @Req() req: any
   ): Promise<User> {
     // Get the requesting admin from the authenticated session (attached by guard)
     const requestedBy: User = req.user;
     
     // Fetch the user to delete from the database
-    const userToDelete: User = await this.userService.getUserById(userId);
+    const userToDelete: User = await this.userService.getUserByEmail(email);
     
     return await this.userService.deleteUser(userToDelete, requestedBy);
   }
 
   /**
-   * Get user by ID
+   * Get user by email
    */
-  @Get(":id")
+  @Get(":email")
   @ApiParam({
-    name: 'id',
-    description: 'User ID to retrieve',
+    name: 'email',
+    description: 'User email to retrieve',
     required: true,
     type: String
   })
@@ -228,7 +228,7 @@ export class UserController {
   })
   @UseGuards(VerifyAdminOrEmployeeRoleGuard)
   @ApiBearerAuth()
-  async getUserById(@Param('id') userId: string): Promise<User> {
-    return await this.userService.getUserById(userId);
+  async getUserById(@Param('email') email: string): Promise<User> {
+    return await this.userService.getUserByEmail(email);
   }
 }

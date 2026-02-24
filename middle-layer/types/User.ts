@@ -6,7 +6,9 @@
 
 import { UserStatus } from "./UserStatus";
 export interface User {
-    userId: string,
     position: UserStatus,
     email: string,
+    firstName: string,
+    lastName: string,
+    profilePicUrl?: string | null
 }
