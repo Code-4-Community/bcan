@@ -3,6 +3,11 @@ import { UserStatus } from '../../../../middle-layer/types/UserStatus';
 import { User } from '../../types/User';
 
 export class ChangeRoleBody {
-  user!: User
+  user!: User;
   groupName!: UserStatus;
+}
+
+export class UploadProfilePicBody{
+  user! : User ;
+  file! : Express.Multer.File;
 }
