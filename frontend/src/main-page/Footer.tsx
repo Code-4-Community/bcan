@@ -1,12 +1,11 @@
 import React from "react";
-import "../styles/Footer.css";
 import { Group, Text, Link } from "@chakra-ui/react";
 import { FooterText } from "../translations/general";
 
 const Footer: React.FC = () => {
   return (
-    <div className="footer">
-      <Group className="text-block">
+    <div className="footer flex flex-col items-center justify-center py-10 px-4 text-base text-grey-700">
+      <Group className="flex flex-col p-2">
         <Text>
           {FooterText.C4C_Motto}
           <Link className="font-medium" variant="underline" href={FooterText.C4C_Link}>
@@ -17,7 +16,7 @@ const Footer: React.FC = () => {
             {FooterText.Org}
           </Link>
         </Text>
-        <Text className="northeastern-uni-caption">{FooterText.NEU}</Text>
+        <Text className="text-sm text-grey-600">{FooterText.NEU}</Text>
       </Group>
     </div>
   );

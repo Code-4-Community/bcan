@@ -1,11 +1,8 @@
-// import GrantList from "./grant-list/GrantList.tsx";
-
 import AddGrantButton from "./new-grant/AddGrant.tsx";
 import GrantSearch from "./filter-bar/GrantSearch.tsx";
 import NewGrantModal from "./new-grant/NewGrantModal.tsx";
 import { useEffect, useState } from "react";
 import { Grant } from "../../../../middle-layer/types/Grant.ts";
-// import FilterBar from "./filter-bar/FilterBar.tsx";
 import GrantItem from "./grant-view/GrantView.tsx";
 import { useAuthContext } from "../../context/auth/authContext";
 import {
@@ -24,6 +21,7 @@ import { Navigate } from "react-router-dom";
 import BellButton from "../navbar/Bell.tsx";
 import GrantCard from "./grant-list/GrantCard.tsx";
 import { api } from "../../api.ts";
+import Button from "../../components/Button.tsx";
 
 // still needed potentially?
 interface GrantPageProps {
@@ -115,14 +113,12 @@ function GrantPage({}: GrantPageProps) {
           <BellButton setOpenModal={setOpenModal} openModal={openModal} />
         </div>
         <GrantSearch />
-        <div className="flex w-full justify-between p-4 gap-4">
-          <span className="text-lg font-semibold">
-            FILTERS GO HERE
-          </span>
+        <div className="flex w-full justify-between py-2 gap-4">
+            <Button text="Filters Coming Soon" onClick={() => {}} className="border-2 border-grey-500 bg-white" />
           <AddGrantButton onClick={() => setShowNewGrantModal(true)} />
         </div>
 
-        <div className="flex flex-row w-full gap-4 justify-between">
+        <div className="flex flex-row w-full gap-2 justify-between mt-4">
           <div className="flex flex-col w-[33%] h-[150vh] overflow-y-scroll pr-2">
             {grants.map((grant) => (
               <GrantCard

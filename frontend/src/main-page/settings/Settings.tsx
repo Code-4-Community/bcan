@@ -1,4 +1,4 @@
-import Button from "./components/Button";
+import Button from "../../components/Button";
 import InfoCard from "./components/InfoCard";
 import logo from "../../images/logo.svg";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
@@ -60,10 +60,10 @@ export default function Settings() {
         ]}
       />
 
-      <div className="flex gap-40 items-center mt-12">
+      <div className="flex gap-24 items-center mt-12">
         <div>
           <h2 className="text-2xl font-bold mb-1 flex justify-start">Change Password</h2>
-          <p className="text-gray-500">
+          <p className="text-gray-500 text-start">
             Re-enter your current password in order to change your password.
           </p>
         </div>
