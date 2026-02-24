@@ -121,12 +121,11 @@ const Login = observer(() => {
             )}
           </div>
           <Button
-            text="Login"
+            text="Log in"
             type="submit"
-            className="w-full bg-primary-900 hover:bg-primary-800 text-white rounded-full py-3 px-4 text-base font-medium transition-colors"
-          >
-            Log In
-          </button>
+            onClick={() => {}}
+            className="w-full block grow bg-primary-900 text-white mt-8 text-base placeholder:text-gray-500"
+          />
 
           <div className="mt-8 text-center font-semibold text-base">
             Don't have an account?{" "}
