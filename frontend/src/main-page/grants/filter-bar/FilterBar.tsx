@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+//import { Link } from "react-router-dom";
 import {
   Status,
   stringToStatus,
@@ -8,8 +8,8 @@ import {
   updateFilter,
 } from "../../../external/bcanSatchel/actions.ts";
 import { observer } from "mobx-react-lite";
-import CalendarDropdown from "./CalendarDropdown.tsx";
-import { FaChevronRight } from "react-icons/fa";
+//import CalendarDropdown from "./CalendarDropdown.tsx";
+//import { FaChevronRight } from "react-icons/fa";
 import StatusDropdown from "./StatusDropdown";
 
 interface FilterBarProps {
