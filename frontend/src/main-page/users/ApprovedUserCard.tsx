@@ -11,7 +11,7 @@ import { User } from "../../../../middle-layer/types/User";
 import { toJS } from "mobx";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { setActiveUsers } from "../../external/bcanSatchel/actions";
-
+// Did not change this to using the email/first name last name due to user page redesign so someone will be changing all of this anyway
 interface ApprovedUserCardProps {
   userId: string;
   email: string;
@@ -29,7 +29,7 @@ const ApprovedUserCard = ({
 
   const changeUserGroup = async () => {
     console.log(
-      `Changing user ${userId} to ${
+      `Changing user ${email} to ${
         position === UserStatus.Admin ? "employee" : "admin"
       }...`
     );
@@ -40,7 +40,6 @@ const ApprovedUserCard = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user: {
-            userId,
             email,
             position,
           } as User,
@@ -64,7 +63,7 @@ const ApprovedUserCard = ({
           }`
         );
         const updatedUser = await response.json();
-        setActiveUsers([...store.activeUsers.filter(u => u.userId !== userId), updatedUser as User]);
+        setActiveUsers([...store.activeUsers.filter(u => u.email !== email), updatedUser as User]);
 
         setIsChangeGroupModalOpen(false);
       } else {
@@ -83,7 +82,6 @@ const ApprovedUserCard = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user: {
-            userId,
             email,
             position,
           } as User,
@@ -92,9 +90,9 @@ const ApprovedUserCard = ({
       });
 
       if (response.ok) {
-        console.log(`User ${userId} has been deleted successfully`);
-        alert(`User ${userId} has been deleted successfully`);
-        setActiveUsers(store.activeUsers.filter(u => u.userId !== userId));
+        console.log(`User ${email} has been deleted successfully`);
+        alert(`User ${email} has been deleted successfully`);
+        setActiveUsers(store.activeUsers.filter(u => u.email !== email));
 
       } else {
         const errorBody = await response.json();
@@ -164,7 +162,7 @@ const ApprovedUserCard = ({
               </Button>
               <Button
                 px={4}
-                className="text-sm focus:outline-none block w-full bg-red-lightest border-red text-red"
+                className="text-sm focus:outline-none block w-full bg-red-light border-red text-red"
                 onClick={() => setIsDeleteUserModalOpen(true)}
               >
                 Delete user{"  "}

@@ -8,13 +8,12 @@ import { observer } from "mobx-react-lite";
 import { api } from "../../api";
 
 // get current user id
-// const currUserID = sessionStorage.getItem('userId');
-// const currUserID = "bcanuser33";
+
 
 interface BellButtonProps {
   // onClick handler to open notification popup
-  setOpenModal: (modal: string | null) => void;
-  openModal: string | null;
+  setOpenModal: (open: boolean) => void;
+  openModal: boolean;
 }
 
 const BellButton: React.FC<BellButtonProps> = observer(({ setOpenModal, openModal }) => {
@@ -30,7 +29,7 @@ const BellButton: React.FC<BellButtonProps> = observer(({ setOpenModal, openModa
   // function that handles when button is clicked and fetches notifications
   const handleClick = async () => {
     const response = await api(
-    `/notifications/user/${store.user?.userId}/current`,
+    `/notifications/user/${store.user?.email}/current`,
     {
     method: "GET",
     }
@@ -38,21 +37,21 @@ const BellButton: React.FC<BellButtonProps> = observer(({ setOpenModal, openModa
     console.log(response);
     const currNotifications = await response.json();
     setNotificationsAction(currNotifications);
-    setOpenModal(openModal === "bell" ? null : "bell");
+    setOpenModal(!openModal);
     return notifications;
   };
 
   return (
     <div className="bell-container">
       <div
-        className="bell-wrapper inline-block relative p-2 hover:bg-primary-700 rounded-md"
+        className="bell-wrapper inline-block relative p-2 rounded-md"
       >
         <button
-          className={`bell-button ${openModal === "bell" ? "hovered" : ""} bg-none border-none relative`}
+          className={`bell-button ${openModal ? "hovered" : ""} bg-none border-none relative`}
           onClick={handleClick}
         >
           <FontAwesomeIcon
-            icon={faBell} className="text-black"
+            icon={faBell} className="text-black hover:text-secondary"
           />
           {notifications.length > 0 && (
           <span className="absolute top-0 -right-[0.10rem] w-3 h-3 rounded-full bg-red border-2 border-white"
@@ -63,7 +62,7 @@ const BellButton: React.FC<BellButtonProps> = observer(({ setOpenModal, openModa
         
       </div>
 
-      {(openModal === "bell" ? (
+      {(openModal ? (
         <NotificationPopup
           setOpenModal={setOpenModal}
         />

@@ -47,23 +47,20 @@ input[type="checkbox"]:checked::before {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  background-color: var(--color-tan);
+  background-color: var(--color-grey-150);
   width: 100%;
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-bottom: 1em;
 }
 
 .chart-container {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
-  padding: 24px;
+  padding: 1.2rem;
   background-color: white;
-  border-radius: 1.2rem;
-  border: 0.1rem solid black;
+  border-radius: 0.8rem;
 }
 
 .tooltip {
@@ -83,6 +80,22 @@ input[type="checkbox"]:checked::before {
   border: 1px solid lightgray;
 }
 
+.dashboard-button {
+  color: black;
+  /* Shape and layout */
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.8rem;
+  align-items: center;
+  cursor: pointer;
+  height: 1.75rem;
+  font-size: var(--font-size-base);
+  transition: opacity 0.2s ease-in-out;
+}
+
+.dashboard-button:hover {
+  opacity: 0.8;
+}
+
 #reactSchedulerOutsideWrapper {
   overflow: hidden;
 }
@@ -100,4 +113,8 @@ input[type="checkbox"]:checked::before {
 
 #reactSchedulerOutsideWrapper svg {
   fill: darkslategray;
+}
+
+#reactSchedulerOutsideWrapper input:focus {
+  outline: 0px none;
 }

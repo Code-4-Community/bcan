@@ -9,6 +9,7 @@ import { toJS } from "mobx";
 import { moveUserToActive, removeUser } from "./UserActions";
 import { useState } from "react";
 
+// Did not change this to using the email/first name last name due to user page redesign so someone will be changing all of this anyway
 
 const store = getAppStore();
 
@@ -35,7 +36,6 @@ const PendingUserCard = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user: {
-            userId,
             email,
             position
           } as User,
@@ -66,7 +66,6 @@ const PendingUserCard = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user: {
-            userId,
             email: email,
             position,
           } as User,
@@ -103,7 +102,7 @@ const PendingUserCard = ({
           <FontAwesomeIcon icon={faCheck} className="text-black" />
         </button>
         <button 
-        className="bg-red-lighter w-8 h-8 focus:outline-none rounded"
+        className="bg-red-light w-8 h-8 focus:outline-none rounded"
           onClick={rejectUser}
           disabled={isLoading}>
           <FontAwesomeIcon icon={faX} className="text-black"/>

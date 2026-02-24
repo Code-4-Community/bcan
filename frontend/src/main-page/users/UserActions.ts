@@ -37,7 +37,6 @@ export const fetchInactiveUsers = async (): Promise<User[]> => {
   }
 }
 
-
 export const fetchUsers = async () => {
   console.log("Fetching users...");
       const active = await fetchActiveUsers();
@@ -54,9 +53,9 @@ export const fetchUsers = async () => {
 
 export const moveUserToActive = (user: User) => {
   setActiveUsers([...getAppStore().activeUsers, user]);
-  setInactiveUsers(getAppStore().inactiveUsers.filter(u => u.userId !== user.userId));
+  setInactiveUsers(getAppStore().inactiveUsers.filter(u => u.email !== user.email));
 }
 
 export const removeUser = (user: User) => {
-  setInactiveUsers(getAppStore().inactiveUsers.filter(u => u.userId !== user.userId));
+  setInactiveUsers(getAppStore().inactiveUsers.filter(u => u.email !== user.email));
 }

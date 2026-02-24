@@ -16,7 +16,7 @@ function RestrictedPage() {
         </p>
         <Link to="/login">
           <button
-            className="py-2 px-4 rounded w-48 font-semibold grant-button text-black bg-primary-700"
+            className="py-2 px-4 rounded w-48 font-semibold text-black bg-primary-700"
             onClick={() => {
               logout()
             }}

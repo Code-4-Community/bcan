@@ -13,24 +13,21 @@ import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
 // ─── Mock function declarations ───────────────────────────────────────────────
 const mockPromise = vi.fn();
 
-// DynamoDB
-const mockScan   = vi.fn(() => ({ promise: mockPromise }));
-const mockGet    = vi.fn(() => ({ promise: mockPromise }));
-const mockUpdate = vi.fn(() => ({ promise: mockPromise }));
-const mockPut    = vi.fn(() => ({ promise: mockPromise }));
-const mockDelete = vi.fn(() => ({ promise: mockPromise }));
+const mockAdminCreateUser = vi.fn();
+const mockAdminSetUserPassword = vi.fn();
+const mockInitiateAuth = vi.fn();
+const mockGetUser = vi.fn();
+const mockRespondToAuthChallenge = vi.fn();
+const mockAdminAddUserToGroup = vi.fn();
+const mockAdminDeleteUser = vi.fn();
+const mockCognitoPromise = vi.fn();
 
-// Cognito
-const mockAdminAddUserToGroup      = vi.fn(() => ({ promise: mockPromise }));
-const mockAdminRemoveUserFromGroup = vi.fn(() => ({ promise: mockPromise }));
-const mockAdminDeleteUser          = vi.fn(() => ({ promise: mockPromise }));
-const mockAdminCreateUser          = vi.fn(() => ({ promise: mockPromise }));
-const mockAdminSetUserPassword     = vi.fn(() => ({ promise: mockPromise }));
-const mockInitiateAuth             = vi.fn(() => ({ promise: mockPromise }));
-const mockGetUser                  = vi.fn(() => ({ promise: mockPromise }));
-const mockRespondToAuthChallenge   = vi.fn(() => ({ promise: mockPromise }));
+const mockDynamoGet = vi.fn();
+const mockDynamoPut = vi.fn();
+const mockDynamoUpdate = vi.fn();
+const mockDynamoScan = vi.fn();
+const mockDynamoPromise = vi.fn();
 
-// ─── AWS SDK mock ─────────────────────────────────────────────────────────────
 vi.mock('aws-sdk', () => {
   const cognitoFactory = vi.fn(function () {
     return {
@@ -72,215 +69,332 @@ describe('AuthService', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
 
-    mockScan.mockReturnValue({ promise: mockPromise });
-    mockGet.mockReturnValue({ promise: mockPromise });
-    mockUpdate.mockReturnValue({ promise: mockPromise });
-    mockPut.mockReturnValue({ promise: mockPromise });
-    mockDelete.mockReturnValue({ promise: mockPromise });
+    mockAdminCreateUser.mockReturnValue({ promise: mockCognitoPromise });
+    mockAdminSetUserPassword.mockReturnValue({ promise: mockCognitoPromise });
+    mockInitiateAuth.mockReturnValue({ promise: mockCognitoPromise });
+    mockGetUser.mockReturnValue({ promise: mockCognitoPromise });
+    mockRespondToAuthChallenge.mockReturnValue({ promise: mockCognitoPromise });
+    mockAdminAddUserToGroup.mockReturnValue({ promise: mockCognitoPromise });
+    mockAdminDeleteUser.mockReturnValue({ promise: mockCognitoPromise });
 
-    mockAdminAddUserToGroup.mockReturnValue({ promise: mockPromise });
-    mockAdminRemoveUserFromGroup.mockReturnValue({ promise: mockPromise });
-    mockAdminDeleteUser.mockReturnValue({ promise: mockPromise });
-    mockAdminCreateUser.mockReturnValue({ promise: mockPromise });
-    mockAdminSetUserPassword.mockReturnValue({ promise: mockPromise });
-    mockInitiateAuth.mockReturnValue({ promise: mockPromise });
-    mockGetUser.mockReturnValue({ promise: mockPromise });
-    mockRespondToAuthChallenge.mockReturnValue({ promise: mockPromise });
-
-    mockPromise.mockResolvedValue({});
+    mockDynamoGet.mockReturnValue({ promise: mockDynamoPromise });
+    mockDynamoPut.mockReturnValue({ promise: mockDynamoPromise });
+    mockDynamoUpdate.mockReturnValue({ promise: mockDynamoPromise });
+    mockDynamoScan.mockReturnValue({ promise: mockDynamoPromise });
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [AuthService],
     }).compile();
 
-    authService = module.get<AuthService>(AuthService);
+    service = module.get<AuthService>(AuthService);
+
+    mockCognitoPromise.mockResolvedValue({});
+    mockDynamoPromise.mockResolvedValue({});
   });
 
-  // ── register ────────────────────────────────────────────────────────────────
+  describe("register", () => {
+    it("should successfully register a user", async () => {
+      // adminCreateUser returns a user with sub attribute
+      mockCognitoPromise.mockResolvedValueOnce({
+        User: {
+          Attributes: [{ Name: "sub", Value: "test-sub-123" }],
+        },
+      });
+      // adminSetUserPassword
+      mockCognitoPromise.mockResolvedValueOnce({});
+      // adminAddUserToGroup
+      mockCognitoPromise.mockResolvedValueOnce({});
+      // DynamoDB put
+      mockDynamoPromise.mockResolvedValueOnce({});
 
-  describe('register', () => {
-    it('should successfully register a new user', async () => {
-      // Email check - not found
-      mockPromise
-        .mockResolvedValueOnce({ Items: [] })           // email scan
-        .mockResolvedValueOnce({})                      // username get (not found)
-        .mockResolvedValueOnce({})                      // adminCreateUser
-        .mockResolvedValueOnce({})                      // adminSetUserPassword
-        .mockResolvedValueOnce({})                      // adminAddUserToGroup (Inactive)
-        .mockResolvedValueOnce({});                     // DynamoDB put
+      // register now takes (email, password, firstName, lastName)
+      await service.register("c4c@example.com", "Pass123!", "John", "Doe");
 
-      await expect(
-        authService.register('newuser', 'Password123!', 'new@example.com')
-      ).resolves.toBeUndefined();
+      expect(mockAdminCreateUser).toHaveBeenCalledWith({
+        UserPoolId: "test-user-pool-id",
+        Username: "c4c@example.com",
+        UserAttributes: [
+          { Name: "email", Value: "c4c@example.com" },
+          { Name: "email_verified", Value: "true" },
+        ],
+        MessageAction: "SUPPRESS",
+      });
 
-      expect(mockAdminCreateUser).toHaveBeenCalledWith(
-        expect.objectContaining({ Username: 'newuser', UserPoolId: 'test-pool-id' })
-      );
-      expect(mockAdminSetUserPassword).toHaveBeenCalledWith(
-        expect.objectContaining({ Username: 'newuser', Password: 'Password123!', Permanent: true })
-      );
-      expect(mockAdminAddUserToGroup).toHaveBeenCalledWith(
-        expect.objectContaining({ GroupName: 'Inactive', Username: 'newuser' })
-      );
-      expect(mockPut).toHaveBeenCalledWith(
+      expect(mockAdminSetUserPassword).toHaveBeenCalledWith({
+        UserPoolId: "test-user-pool-id",
+        Username: "c4c@example.com",
+        Password: "Pass123!",
+        Permanent: true,
+      });
+
+      expect(mockAdminAddUserToGroup).toHaveBeenCalledWith({
+        GroupName: "Inactive",
+        UserPoolId: "test-user-pool-id",
+        Username: "c4c@example.com",
+      });
+
+      expect(mockDynamoPut).toHaveBeenCalledWith(
         expect.objectContaining({
-          TableName: 'test-users-table',
-          Item: expect.objectContaining({ userId: 'newuser', position: UserStatus.Inactive }),
+          TableName: "test-users-table",
+          Item: expect.objectContaining({
+            email: "c4c@example.com",
+            position: "Inactive",
+            firstName: "John",
+            lastName: "Doe",
+          }),
         })
       );
     });
 
-    it('should throw BadRequestException when username is empty', async () => {
-      await expect(authService.register('', 'Password123!', 'test@test.com')).rejects.toThrow('Username is required');
-      await expect(authService.register('   ', 'Password123!', 'test@test.com')).rejects.toThrow('Username is required');
+    it("should deny someone from making an account when email is already in use", async () => {
+      mockCognitoPromise.mockRejectedValueOnce({
+        code: "UsernameExistsException",
+        message: "User already exists",
+      });
+
+      await expect(
+        service.register("existing@example.com", "Pass123!", "John", "Doe")
+      ).rejects.toThrow("An account with this email already exists");
+    });
+  });
+
+  describe("login", () => {
+    it("should successfully login existing user", async () => {
+      const mockInitiateAuthFn = () => ({
+        promise: () =>
+          Promise.resolve({
+            AuthenticationResult: {
+              IdToken: "id-token",
+              AccessToken: "access-token",
+              RefreshToken: "refresh-token",
+            },
+          }),
+      });
+
+      const mockGetUserFn = () => ({
+        promise: () =>
+          Promise.resolve({
+            UserAttributes: [
+              { Name: "email", Value: "c4c@example.com" },
+              { Name: "sub", Value: "test-sub-123" },
+            ],
+          }),
+      });
+
+      // DynamoDB get returns existing user keyed by email
+      const mockGetFn = () => ({
+        promise: () =>
+          Promise.resolve({
+            Item: {
+              email: "c4c@example.com",
+              position: "Inactive",
+              firstName: "John",
+              lastName: "Doe",
+            },
+          }),
+      });
+
+      (service["cognito"] as any).initiateAuth = mockInitiateAuthFn;
+      (service["cognito"] as any).getUser = mockGetUserFn;
+      (service["dynamoDb"] as any).get = mockGetFn;
+
+      const result = await service.login("c4c@example.com", "Pass123!");
+
+      expect(result.access_token).toBe("access-token");
+      expect(result.user).toEqual({
+        email: "c4c@example.com",
+        position: "Inactive",
+        firstName: "John",
+        lastName: "Doe",
+      });
+      expect(result.message).toBe("Login Successful!");
     });
 
-    it('should throw BadRequestException when password is too short', async () => {
-      await expect(authService.register('user', 'short', 'test@test.com')).rejects.toThrow('Password must be at least 8 characters long');
+    it("should handle NEW_PASSWORD_REQUIRED challenge", async () => {
+      const mockInitiateAuthFn = () => ({
+        promise: () =>
+          Promise.resolve({
+            ChallengeName: "NEW_PASSWORD_REQUIRED",
+            Session: "session-123",
+            ChallengeParameters: {
+              requiredAttributes: '["email"]',
+            },
+          }),
+      });
+
+      (service["cognito"] as any).initiateAuth = mockInitiateAuthFn;
+
+      const result = await service.login("c4c@example.com", "newPassword");
+
+      expect(result.challenge).toBe("NEW_PASSWORD_REQUIRED");
+      expect(result.session).toBe("session-123");
+      expect(result.requiredAttributes).toEqual(["email"]);
+      // username is no longer returned in challenge response
+      expect(result.access_token).toBeUndefined();
+      expect(result.user).toEqual({});
     });
 
-    it('should throw BadRequestException when email is invalid', async () => {
-      await expect(authService.register('user', 'Password123!', 'not-an-email')).rejects.toThrow('Valid email address is required');
-      await expect(authService.register('user', 'Password123!', '')).rejects.toThrow('Valid email address is required');
+    it("should create new DynamoDB user if not exists", async () => {
+      const mockInitiateAuthFn = () => ({
+        promise: () =>
+          Promise.resolve({
+            AuthenticationResult: {
+              IdToken: "id-token",
+              AccessToken: "access-token",
+              RefreshToken: "refresh-token",
+            },
+          }),
+      });
+
+      const mockGetUserFn = () => ({
+        promise: () =>
+          Promise.resolve({
+            UserAttributes: [
+              { Name: "email", Value: "c4c@gmail.com" },
+              { Name: "sub", Value: "test-sub-456" },
+            ],
+          }),
+      });
+
+      // DynamoDB get returns nothing (user doesn't exist yet)
+      const mockGetFn = () => ({
+        promise: () => Promise.resolve({}),
+      });
+
+      const mockPutFn = () => ({
+        promise: () => Promise.resolve({}),
+      });
+
+      (service["cognito"] as any).initiateAuth = mockInitiateAuthFn;
+      (service["cognito"] as any).getUser = mockGetUserFn;
+      (service["dynamoDb"] as any).get = mockGetFn;
+      (service["dynamoDb"] as any).put = mockPutFn;
+
+      const result = await service.login("c4c@gmail.com", "Pass123!");
+
+      expect(result.access_token).toBe("access-token");
+      expect(result.user).toEqual({
+        email: "c4c@gmail.com",
+        position: "Inactive",
+        firstName: "",
+        lastName: "",
+      });
+      expect(result.message).toBe("Login Successful!");
     });
 
-    it('should throw InternalServerErrorException when COGNITO_USER_POOL_ID is missing', async () => {
-      const original = process.env.COGNITO_USER_POOL_ID;
-      delete process.env.COGNITO_USER_POOL_ID;
+    it("should handle NotAuthorizedException", async () => {
+      const mockInitiateAuthFn = () => ({
+        promise: () =>
+          Promise.reject({
+            code: "NotAuthorizedException",
+            message: "Incorrect username or password",
+          }),
+      });
 
-      const module = await Test.createTestingModule({ providers: [AuthService] }).compile();
-      const svc = module.get<AuthService>(AuthService);
-
-      await expect(svc.register('user', 'Password123!', 'test@test.com')).rejects.toThrow('Server configuration error');
-      process.env.COGNITO_USER_POOL_ID = original;
+      (service["cognito"] as any).initiateAuth = mockInitiateAuthFn;
+      await expect(service.login("c4c@example.com", "wrongpassword")).rejects.toThrow(
+        UnauthorizedException
+      );
     });
 
-    it('should throw InternalServerErrorException when DYNAMODB_USER_TABLE_NAME is missing', async () => {
-      const original = process.env.DYNAMODB_USER_TABLE_NAME;
-      delete process.env.DYNAMODB_USER_TABLE_NAME;
+    it("should handle missing client credentials", async () => {
+      delete process.env.COGNITO_CLIENT_ID;
+      delete process.env.COGNITO_CLIENT_SECRET;
 
-      const module = await Test.createTestingModule({ providers: [AuthService] }).compile();
-      const svc = module.get<AuthService>(AuthService);
+      await expect(service.login("c4c@example.com", "Pass123!")).rejects.toThrow(
+        "Cognito Client ID or Secret is not defined."
+      );
 
       await expect(svc.register('user', 'Password123!', 'test@test.com')).rejects.toThrow('Server configuration error');
       process.env.DYNAMODB_USER_TABLE_NAME = original;
     });
 
-    it('should throw ConflictException when email already exists', async () => {
-      mockPromise.mockResolvedValueOnce({
-        Items: [{ userId: 'existing', email: 'existing@test.com' }],
+    it("should handle missing tokens in response", async () => {
+      mockCognitoPromise.mockResolvedValueOnce({
+        AuthenticationResult: {},
       });
 
-      await expect(
-        authService.register('newuser', 'Password123!', 'existing@test.com')
-      ).rejects.toThrow('An account with this email already exists');
-    });
-
-    it('should throw ConflictException when username already exists', async () => {
-      mockPromise
-        .mockResolvedValueOnce({ Items: [] })                                       // email scan
-        .mockResolvedValueOnce({ Item: { userId: 'taken', email: 'x@x.com' } });   // username get
-
-      await expect(
-        authService.register('taken', 'Password123!', 'new@test.com')
-      ).rejects.toThrow('This username is already taken');
-    });
-
-    it('should throw ConflictException when Cognito UsernameExistsException', async () => {
-      mockPromise
-        .mockResolvedValueOnce({ Items: [] })
-        .mockResolvedValueOnce({})
-        .mockRejectedValueOnce({ code: 'UsernameExistsException', message: 'User exists' });
-
-      await expect(
-        authService.register('existing', 'Password123!', 'new@test.com')
-      ).rejects.toThrow('Username already exists in authentication system');
-    });
-
-    it('should throw BadRequestException for Cognito InvalidPasswordException on create', async () => {
-      mockPromise
-        .mockResolvedValueOnce({ Items: [] })
-        .mockResolvedValueOnce({})
-        .mockRejectedValueOnce({ code: 'InvalidPasswordException', message: 'Bad password' });
-
-      await expect(
-        authService.register('user', 'Password123!', 'test@test.com')
-      ).rejects.toThrow('Password does not meet security requirements');
-    });
-
-    it('should throw BadRequestException for Cognito InvalidParameterException on create', async () => {
-      mockPromise
-        .mockResolvedValueOnce({ Items: [] })
-        .mockResolvedValueOnce({})
-        .mockRejectedValueOnce({ code: 'InvalidParameterException', message: 'Bad param' });
-
-      await expect(
-        authService.register('user', 'Password123!', 'test@test.com')
-      ).rejects.toThrow('Invalid registration parameters');
-    });
-
-    it('should rollback Cognito user if adminSetUserPassword fails', async () => {
-      mockPromise
-        .mockResolvedValueOnce({ Items: [] })
-        .mockResolvedValueOnce({})
-        .mockResolvedValueOnce({})   // adminCreateUser succeeds
-        .mockRejectedValueOnce({ code: 'InvalidPasswordException', message: 'Bad' }) // set password fails
-        .mockResolvedValueOnce({});  // rollback delete
-
-      await expect(
-        authService.register('user', 'Password123!', 'test@test.com')
-      ).rejects.toThrow();
-
-      expect(mockAdminDeleteUser).toHaveBeenCalledWith(
-        expect.objectContaining({ Username: 'user', UserPoolId: 'test-pool-id' })
+      await expect(service.login("c4c@example.com", "Pass123!")).rejects.toThrow(
+        "Authentication failed: Missing IdToken or AccessToken"
       );
     });
 
-    it('should rollback Cognito user if adminAddUserToGroup fails', async () => {
-      mockPromise
-        .mockResolvedValueOnce({ Items: [] })
-        .mockResolvedValueOnce({})
-        .mockResolvedValueOnce({})   // adminCreateUser
-        .mockResolvedValueOnce({})   // adminSetUserPassword
-        .mockRejectedValueOnce({ code: 'ResourceNotFoundException', message: 'Group not found' }) // add to group fails
-        .mockResolvedValueOnce({});  // rollback delete
+    it("should handle generic Cognito errors", async () => {
+      const mockInitiateAuthFn = () => ({
+        promise: () =>
+          Promise.reject({
+            code: "SomeAwsError",
+            message: "AWS error occurred",
+          }),
+      });
 
-      await expect(
-        authService.register('user', 'Password123!', 'test@test.com')
-      ).rejects.toThrow("User group 'Inactive' does not exist in the system");
-
-      expect(mockAdminDeleteUser).toHaveBeenCalled();
-    });
-
-    it('should rollback Cognito user if DynamoDB put fails', async () => {
-      mockPromise
-        .mockResolvedValueOnce({ Items: [] })
-        .mockResolvedValueOnce({})
-        .mockResolvedValueOnce({})   // adminCreateUser
-        .mockResolvedValueOnce({})   // adminSetUserPassword
-        .mockResolvedValueOnce({})   // adminAddUserToGroup
-        .mockRejectedValueOnce({ code: 'InternalError', message: 'DB error' }) // put fails
-        .mockResolvedValueOnce({});  // rollback delete
-
-      await expect(
-        authService.register('user', 'Password123!', 'test@test.com')
-      ).rejects.toThrow('Failed to save user data to database');
-
-      expect(mockAdminDeleteUser).toHaveBeenCalled();
+      (service["cognito"] as any).initiateAuth = mockInitiateAuthFn;
+      await expect(service.login("c4c@example.com", "Pass123!")).rejects.toThrow(
+        InternalServerErrorException
+      );
     });
   });
 
-  // ── login ────────────────────────────────────────────────────────────────────
+  describe("setNewPassword", () => {
+    it("should successfully set new password", async () => {
+      const mockRespondFn = () => ({
+        promise: () =>
+          Promise.resolve({
+            AuthenticationResult: {
+              IdToken: "new-id-token",
+            },
+          }),
+      });
 
-  describe('login', () => {
-    const mockUser: User = { userId: 'emp1', email: 'emp1@example.com', position: UserStatus.Employee };
+      (service["cognito"] as any).respondToAuthChallenge = mockRespondFn;
 
-    it('should successfully login and return access token and user', async () => {
-      mockPromise
-        .mockResolvedValueOnce({
-          AuthenticationResult: {
-            IdToken: 'mock-id-token',
-            AccessToken: 'mock-access-token',
+      // setNewPassword no longer takes a separate username — just (newPassword, session, email)
+      const result = await service.setNewPassword(
+        "NewPass123!",
+        "session123",
+        "c4c@example.com"
+      );
+
+      expect(result.access_token).toBe("new-id-token");
+    });
+
+    it("should handle failed password setting", async () => {
+      mockCognitoPromise.mockResolvedValueOnce({
+        AuthenticationResult: {},
+      });
+
+      await expect(
+        service.setNewPassword("NewPass123!", "s123", "c4c@example.com")
+      ).rejects.toThrow("Failed to set new password");
+    });
+
+    it("should handle Cognito errors", async () => {
+      const mockRespondFn = () => ({
+        promise: () => Promise.reject(new Error("Cognito Error")),
+      });
+
+      (service["cognito"] as any).respondToAuthChallenge = mockRespondFn;
+
+      await expect(
+        service.setNewPassword("NewPass123!", "s123", "c4c@example.com")
+      ).rejects.toThrow("Cognito Error");
+    });
+  });
+
+  describe("updateProfile", () => {
+    it("should successfully update user profile", async () => {
+      mockDynamoPromise.mockResolvedValueOnce({});
+
+      // updateProfile now takes (email, position_or_role) — no username
+      await service.updateProfile("c4c@example.com", "Software Developer");
+
+      expect(mockDynamoUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          Key: { email: "c4c@example.com" },
+          UpdateExpression: "SET email = :email, position_or_role = :position_or_role",
+          ExpressionAttributeValues: {
+            ":email": "c4c@example.com",
+            ":position_or_role": "Software Developer",
           },
         })
         .mockResolvedValueOnce({
@@ -297,78 +411,58 @@ describe('AuthService', () => {
       expect(mockInitiateAuth).toHaveBeenCalled();
     });
 
-    it('should return NEW_PASSWORD_REQUIRED challenge', async () => {
-      mockPromise.mockResolvedValueOnce({
-        ChallengeName: 'NEW_PASSWORD_REQUIRED',
-        Session: 'mock-session',
-        ChallengeParameters: { requiredAttributes: '[]' },
+    it("should handle DynamoDB update errors", async () => {
+      const mockUpdateFn = vi.fn().mockReturnValue({
+        promise: vi.fn().mockRejectedValue(new Error("DB error")),
       });
 
-      const result = await authService.login('emp1', 'Password123!');
+      (service['dynamoDb'] as any).update = mockUpdateFn;
 
-      expect(result.challenge).toBe('NEW_PASSWORD_REQUIRED');
-      expect(result.session).toBe('mock-session');
-    });
-
-    it('should create user in DynamoDB if not found after login', async () => {
-      mockPromise
-        .mockResolvedValueOnce({
-          AuthenticationResult: { IdToken: 'id-token', AccessToken: 'access-token' },
-        })
-        .mockResolvedValueOnce({
-          Username: 'newuser',
-          UserAttributes: [{ Name: 'email', Value: 'new@test.com' }],
-        })
-        .mockResolvedValueOnce({})   // DynamoDB get - user not found
-        .mockResolvedValueOnce({});  // DynamoDB put - create new user
-
-      const result = await authService.login('newuser', 'Password123!');
-
-      expect(mockPut).toHaveBeenCalledWith(
-        expect.objectContaining({
-          TableName: 'test-users-table',
-          Item: expect.objectContaining({ userId: 'newuser', position: UserStatus.Inactive }),
-        })
-      );
-      expect(result.user.position).toBe(UserStatus.Inactive);
-    });
-
-    it('should throw BadRequestException when username is empty', async () => {
-      await expect(authService.login('', 'password')).rejects.toThrow('Username is required');
-      await expect(authService.login('   ', 'password')).rejects.toThrow('Username is required');
-    });
-
-    it('should throw BadRequestException when password is empty', async () => {
-      await expect(authService.login('user', '')).rejects.toThrow('Password is required');
-    });
-
-    it('should throw UnauthorizedException for NotAuthorizedException', async () => {
-      mockPromise.mockRejectedValueOnce({ code: 'NotAuthorizedException', message: 'Bad credentials' });
-      await expect(authService.login('user', 'wrongpass')).rejects.toThrow('Incorrect username or password.');
-    });
-
-    it('should throw InternalServerErrorException for other Cognito errors', async () => {
-      mockPromise.mockRejectedValueOnce({ code: 'InternalError', message: 'Something broke' });
-      await expect(authService.login('user', 'Password123!')).rejects.toThrow('An error occurred during login.');
+      await expect(
+        service.updateProfile("c4c@example.com", "Active")
+      ).rejects.toThrow("DB error");
     });
   });
 
-  // ── setNewPassword ───────────────────────────────────────────────────────────
-
-  describe('setNewPassword', () => {
-    it('should successfully set a new password', async () => {
-      mockPromise.mockResolvedValueOnce({
-        AuthenticationResult: { IdToken: 'new-id-token' },
+  describe("validateSession", () => {
+    it("should successfully validate a session", async () => {
+      // Cognito getUser returns email in attributes
+      mockCognitoPromise.mockResolvedValueOnce({
+        Username: "c4c@example.com",
+        UserAttributes: [{ Name: "email", Value: "c4c@example.com" }],
       });
 
-      const result = await authService.setNewPassword('NewPass123!', 'mock-session', 'emp1');
-      expect(result.access_token).toBe('new-id-token');
-      expect(mockRespondToAuthChallenge).toHaveBeenCalled();
+      // DynamoDB get returns user keyed by email
+      mockDynamoPromise.mockResolvedValueOnce({
+        Item: { email: "c4c@example.com", position: "Active", firstName: "John", lastName: "Doe" },
+      });
+
+      const result = await service.validateSession("valid-token");
+
+      expect(result).toEqual({
+        email: "c4c@example.com",
+        position: "Active",
+        firstName: "John",
+        lastName: "Doe",
+      });
     });
 
-    it('should include email in challenge response when provided', async () => {
-      mockPromise.mockResolvedValueOnce({
-        AuthenticationResult: { IdToken: 'new-id-token' },
+    it("should reject missing access token", async () => {
+      // Empty string still calls Cognito which then throws, caught as UnauthorizedException
+      mockCognitoPromise.mockRejectedValueOnce({
+        code: "NotAuthorizedException",
+        message: "Invalid token",
+      });
+
+      await expect(
+        service.validateSession("")
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it("should handle NotAuthorizedException", async () => {
+      mockCognitoPromise.mockRejectedValueOnce({
+        code: "NotAuthorizedException",
+        message: "Invalid token",
       });
 
       await authService.setNewPassword('NewPass123!', 'mock-session', 'emp1', 'emp1@test.com');

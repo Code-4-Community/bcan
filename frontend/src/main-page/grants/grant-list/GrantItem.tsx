@@ -3,13 +3,12 @@ import "../styles/GrantItem.css";
 import StatusIndicator from "./StatusIndicator";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { Grant } from "../../../../../middle-layer/types/Grant";
-import { DoesBcanQualifyText } from "../../../translations/general";
-import RingButton, { ButtonColorOption } from "../../../custom/RingButton";
+// import { DoesBcanQualifyText } from "../../../translations/general";
 import { api } from "../../../api";
 import { MdOutlinePerson2 } from "react-icons/md";
 import Attachment from "../../../../../middle-layer/types/Attachment";
 import NewGrantModal from "../new-grant/NewGrantModal";
-import { CostBenefitAnalysis } from "../grant-details/CostBenefitAnalysis";
+import { CostBenefitAnalysis } from "../grant-view/CostBenefitAnalysis";
 import ActionConfirmation from "../../../custom/ActionConfirmation";
 import { observer } from "mobx-react-lite";
 import { fetchGrants } from "../filter-bar/processGrantData";
@@ -177,7 +176,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
               : "No date"}
           </li>
           <li className="amount">{formatCurrency(curGrant.amount)}</li>
-          <li className="does-bcan-qualify px-8 w-full" >
+          {/* <li className="does-bcan-qualify px-8 w-full" >
             {curGrant.does_bcan_qualify ? (
               <RingButton
                 text={DoesBcanQualifyText.Yes}
@@ -189,7 +188,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                 color={ButtonColorOption.GRAY}
               />
             )}
-          </li>
+          </li> */}
           <li className="flex justify-center items-center text-center">
             <StatusIndicator curStatus={curGrant.status} />
           </li>
@@ -367,7 +366,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                         >
                           <MdOutlinePerson2 className="w-1/5 h-full p-1" />
                           <div
-                            className="w-4/5 border-l border-black rounded-r-md bg-tan"
+                            className="w-4/5 border-l border-black rounded-r-md bg-grey-150"
                           >
                             <h2
                               className="truncate px-2 text-left font-bold h-8 w-full text-gray-700 rounded flex items-center"
@@ -405,7 +404,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                         >
                           <MdOutlinePerson2 className="w-1/5 h-full p-1" />
                           <div
-                            className="w-4/5 border-l border-black bg-tan rounded-r-md"
+                            className="w-4/5 border-l border-black bg-grey-150 rounded-r-md"
                           >
                             <h2
                               className="truncate px-2 text-left font-bold h-8 w-full text-gray-700 rounded-md flex items-center"
@@ -468,7 +467,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                               curGrant.status === "Active"
                                 ? "bg-green"
                                 : curGrant.status === "Potential"
-                                ? "bg-orange"
+                                ? "bg-blue-dark"
                                 : "bg-grey-400"
                             }`}
                           >
@@ -517,7 +516,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                                   {attachment.url && (
                                     <div
                                       key={index}
-                                      className="items-center truncate overflow-x-scroll overflow-hidden text-left justify-center w-full rounded-md p-2 mb-2 bg-tan h-[42px] border border-black text-black"
+                                      className="items-center truncate overflow-x-scroll overflow-hidden text-left justify-center w-full rounded-md p-2 mb-2 bg-grey-150 h-[42px] border border-black text-black"
                                     >
                                       <a
                                         href={attachment.url}
@@ -565,7 +564,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                 Description
               </label>
               <div
-                className="h-64 bg-tan flex w-full rounded-md p-5 overflow-auto border border-black text-black"
+                className="h-64 bg-grey-150 flex w-full rounded-md p-5 overflow-auto border border-black text-black"
               >
                 {curGrant.description}
                 </div>
@@ -576,7 +575,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
                 <div className="flex justify-between items-center w-full mt-6">
                   <>
                     <button
-                      className="py-2 px-4 rounded-md hover:bg-red-600 transition-colors bg-red-light text-white border border-red-dark"
+                      className="py-2 px-4 rounded-md hover:bg-red-600 transition-colors bg-red text-white border border-black"
                       onClick={() => setShowDeleteModal(true)}
                     >
                       Delete
