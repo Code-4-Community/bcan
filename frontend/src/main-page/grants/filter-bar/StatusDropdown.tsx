@@ -36,7 +36,7 @@ const StatusDropdown: React.FC = observer(() => {
       </button>
 
       {isOpen && (
-        <div className="absolute top-12 left-0 bg-white border border-primary-900 rounded-md p-4 z-50 shadow-lg min-w-[400px]">
+        <div className="absolute top-12 left-0 bg-white border border-primary-900 rounded-md p-4 z-50 shadow-lg min-w-[25rem]">
 
           <div className="grid grid-cols-3 gap-2">
             {statuses.map((status) => (

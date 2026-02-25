@@ -11,6 +11,8 @@ import { observer } from "mobx-react-lite";
 //import CalendarDropdown from "./CalendarDropdown.tsx";
 //import { FaChevronRight } from "react-icons/fa";
 import StatusDropdown from "./StatusDropdown";
+import Button from "../../../components/Button";
+import { faSort } from "@fortawesome/free-solid-svg-icons";
 
 interface FilterBarProps {
   name: string;
@@ -44,6 +46,8 @@ const FilterBar: React.FC = observer(() => {
     }
   }
 
+  const sortButtons = ["Alphabetical", "Due Date", "Grant Amount"];
+
   return (
   <div className="flex items-center gap-2 flex-wrap">
     <button className="flex items-center gap-2 border-2 border-grey-400 rounded-full px-5 py-2 bg-white text-grey-900 text-base whitespace-nowrap shadow-xl">
@@ -52,15 +56,16 @@ const FilterBar: React.FC = observer(() => {
     <button className="flex items-center gap-2 border border-grey-400 rounded-full px-5 py-2 bg-white text-grey-900 text-base whitespace-nowrap">
       BCAN Eligible
     </button>
-    <button className="flex items-center gap-2 border border-grey-400 rounded-full px-5 py-2 bg-white text-grey-900 text-base whitespace-nowrap">
-      ⇅ Alphabetical
-    </button>
-    <button className="flex items-center gap-2 border border-grey-400 rounded-full px-5 py-2 bg-white text-grey-900 text-base whitespace-nowrap">
-      ⇅ Due Date
-    </button>
-    <button className="flex items-center gap-2 border border-grey-400 rounded-full px-5 py-2 bg-white text-grey-900 text-base whitespace-nowrap">
-      ⇅ Grant Amount
-    </button>
+    {sortButtons.map((name) => (
+      <Button
+        key={name}
+        text={name}
+        onClick={() => {}}
+        logo={faSort}
+        logoPosition="left"
+        className="border-grey-400 bg-white text-grey-900 text-base whitespace-nowrap"
+      />
+    ))}
     <StatusDropdown />
   </div>
   );
