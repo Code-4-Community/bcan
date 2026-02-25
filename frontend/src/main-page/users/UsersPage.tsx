@@ -17,7 +17,7 @@ const UsersPage = observer(() => {
   const [showAll, setShowAll] = useState(true);
 
   const { activeUsers, inactiveUsers } = ProcessUserData();
-  const ITEMS_PER_PAGE = 8;
+  //const ITEMS_PER_PAGE = 8;
 
   const { user } = useAuthContext();
 
@@ -25,14 +25,15 @@ const UsersPage = observer(() => {
 
   const filteredUsers = showAll ? activeUsers : inactiveUsers;
 
-  const numUsers = filteredUsers.length;
+  // const numUsers = filteredUsers.length;
   // const pageStartIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const pageStartIndex = 1; // Temporarily disable pagination by always starting at index 0
-  const pageEndIndex =
-    pageStartIndex + ITEMS_PER_PAGE > numUsers
-      ? numUsers
-      : pageStartIndex + ITEMS_PER_PAGE;
-  const currentPageUsers = filteredUsers.slice(pageStartIndex, pageEndIndex);
+  // const pageStartIndex = 1; // Temporarily disable pagination by always starting at index 0
+  // const pageEndIndex =
+  //   pageStartIndex + ITEMS_PER_PAGE > numUsers
+  //     ? numUsers
+  //     : pageStartIndex + ITEMS_PER_PAGE;
+  // const currentPageUsers = filteredUsers.slice(pageStartIndex, pageEndIndex);
+  const currentPageUsers = filteredUsers; // Temporarily disable pagination by showing all users
   return user ? (
     user?.position !== UserStatus.Inactive ? (
       <div className="grant-page w-full items-end">
