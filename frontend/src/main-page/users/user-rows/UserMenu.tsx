@@ -1,14 +1,14 @@
 import { Menu } from "@chakra-ui/react";
-import { UserStatus } from "../../../../middle-layer/types/UserStatus";
+import { UserStatus } from "../../../../../middle-layer/types/UserStatus";
 import { faUserPen, faTrash } from "@fortawesome/free-solid-svg-icons";
-import ActionConfirmation from "../../custom/ActionConfirmation";
+import ActionConfirmation from "../../../custom/ActionConfirmation";
 import { useState } from "react";
-import { api } from "../../api";
-import { User } from "../../../../middle-layer/types/User";
+import { api } from "../../../api";
+import { User } from "../../../../../middle-layer/types/User";
 import { toJS } from "mobx";
-import { getAppStore } from "../../external/bcanSatchel/store";
-import { setActiveUsers } from "../../external/bcanSatchel/actions";
-import Button from "../../components/Button";
+import { getAppStore } from "../../../external/bcanSatchel/store";
+import { setActiveUsers } from "../../../external/bcanSatchel/actions";
+import Button from "../../../components/Button";
 import { FaEllipsis } from "react-icons/fa6";
 
 interface UserMenuProps {

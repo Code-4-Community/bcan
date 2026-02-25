@@ -8,10 +8,10 @@ import { Navigate } from "react-router-dom";
 import Button from "../../components/Button.tsx";
 import UserSearch from "./UserSearch.tsx";
 import { ProcessUserData } from "./processUserData.ts";
-import UserRow from "./UserRow.tsx";
-import UserMenu from "./UserMenu.tsx";
-import UserRowHeader from "./UserRowHeader.tsx";
-import UserApprove from "./UserApprove.tsx";
+import UserRow from "./user-rows/UserRow.tsx";
+import UserMenu from "./user-rows/UserMenu.tsx";
+import UserRowHeader from "./user-rows/UserRowHeader.tsx";
+import UserApprove from "./user-rows/UserApprove.tsx";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 
 const UsersPage = observer(() => {

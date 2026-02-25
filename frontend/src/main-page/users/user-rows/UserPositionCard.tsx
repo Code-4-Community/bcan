@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { UserStatus } from "../../../../middle-layer/types/UserStatus";
+import { UserStatus } from "../../../../../middle-layer/types/UserStatus";
 
 interface UserPositionCardProps {
   position: UserStatus;

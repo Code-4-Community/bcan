@@ -1,10 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faX } from "@fortawesome/free-solid-svg-icons";
-import { api } from "../../api";
-import { getAppStore } from "../../external/bcanSatchel/store";
-import { User } from "../../../../middle-layer/types/User";
+import { api } from "../../../api";
+import { getAppStore } from "../../../external/bcanSatchel/store";
+import { User } from "../../../../../middle-layer/types/User";
 import { toJS } from "mobx";
-import { moveUserToActive, removeUser } from "./UserActions";
+import { moveUserToActive, removeUser } from "../UserActions";
 import { useState } from "react";
 
 // Did not change this to using the email/first name last name due to user page redesign so someone will be changing all of this anyway

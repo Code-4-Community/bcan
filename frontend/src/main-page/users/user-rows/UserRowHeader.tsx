@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { User } from "../../../../middle-layer/types/User";
-import { updateUserSort } from "../../external/bcanSatchel/actions";
+import { User } from "../../../../../middle-layer/types/User";
+import { updateUserSort } from "../../../external/bcanSatchel/actions";
 import UserRowHeaderButton from "./UserRowHeaderButton";
 
 // Did not change this to using the email/first name last name due to user page redesign so someone will be changing all of this anyway
