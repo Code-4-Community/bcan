@@ -62,7 +62,6 @@ const UserMenu = ({ user }: UserMenuProps) => {
                       : "admin") +
                     "  "
                   }
-                  alignment="left"
                   logo={faUserPen}
                   logoPosition="left"
                   onClick={() => setIsChangeGroupModalOpen(true)}
@@ -74,7 +73,6 @@ const UserMenu = ({ user }: UserMenuProps) => {
                   text={"Delete user  "}
                   logo={faTrash}
                   logoPosition="left"
-                  alignment="left"
                   disabled={isChangeGroupModalOpen || isDeleteUserModalOpen}
                   onClick={() => setIsDeleteUserModalOpen(true)}
                   className="text-sm focus:outline-none block w-full hover:border-red active:bg-red text-red"

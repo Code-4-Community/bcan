@@ -9,20 +9,18 @@ type ButtonProps = {
     logoPosition?: 'left' | 'right';
     disabled?: boolean;
     type?: "button" | "submit" | "reset";
-    alignment?: "left" | "center" | "right";
 }
 
 
 // Button component where you can pass in text, onClick handler, optional className
 // for styling, and an optional logo with its position.
 //Styling is default, but can be overridden by passing in a className prop
-export default function Button({ text, onClick, className, logo, logoPosition, disabled, type, alignment }: ButtonProps) {
+export default function Button({ text, onClick, className, logo, logoPosition, disabled, type }: ButtonProps) {
   return (
     <button onClick={onClick} disabled={disabled || false} type={type || "button"}
     className={`
         px-4 py-2 rounded-3xl font-medium text-black border-2 active:bg-primary-900 active:text-white
-        flex items-center
-        ${alignment === "left" ? "justify-start" : alignment === "right" ? "justify-end" : "justify-center"}
+        flex items-center justify-center 
         ${className}
       `}
     >
