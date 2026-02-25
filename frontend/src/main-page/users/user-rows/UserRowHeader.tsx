@@ -28,8 +28,8 @@ const UserRowHeader = () => {
     <div className="grid grid-cols-2 md:grid-cols-[30%_35%_25%_10%] cols border-b-2 border-grey-150 py-3 px-8 items-center">
       <UserRowHeaderButton
         header="Name"
-        sort={labels.header == "lastName" ? labels.sort : "none"}
-        onClick={() => buttonHandler("lastName")}
+        sort={labels.header == "firstName" ? labels.sort : "none"}
+        onClick={() => buttonHandler("firstName")}
       />
       <UserRowHeaderButton
         header="Email"
