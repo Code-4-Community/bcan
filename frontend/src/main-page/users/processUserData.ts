@@ -21,48 +21,53 @@ const searchFilter = (searchQuery: string) => (user: User) => {
 const filterUsers = (users: User[], predicates: ((user: User) => boolean)[]) =>
   users.filter((user) => predicates.every((fn) => fn(user)));
 
-const sortUsers = (users: User[], header: keyof User, sort: "asc" | "desc" | "none") =>
+const sortUsers = (
+  users: User[],
+  header: keyof User,
+  sort: "asc" | "desc" | "none",
+) =>
   [...users].sort((a: User, b: User) => {
-      const direction = sort === "asc" ? -1 : 1;
+    const direction = sort === "asc" ? -1 : 1;
 
-      const aValue = a[header];
-      const bValue = b[header];
+    const aValue = a[header];
+    const bValue = b[header];
 
-      if (aValue == null) return -1 * direction;
-      if (bValue == null) return 1 * direction;
+    if (aValue == null) return -1 * direction;
+    if (bValue == null) return 1 * direction;
 
-      if (aValue > bValue) return 1 * direction;
-      if (aValue < bValue) return -1 * direction;
+    if (aValue > bValue) return 1 * direction;
+    if (aValue < bValue) return -1 * direction;
 
-      return 0;
-    })
+    return 0;
+  });
 
-
-// contains callbacks for sorting and filtering grants
-// stores state for list of grants/filter
+// contains callbacks for sorting and filtering users
+// stores state for list of users/filter
 export const ProcessUserData = () => {
   const { activeUsers, inactiveUsers, userQuery, userSort } = getAppStore();
 
-  // fetch grants on mount if empty
+  // fetch users on mount if empty
   useEffect(() => {
     if (activeUsers.length === 0) fetchActiveUsers();
     if (inactiveUsers.length === 0) fetchInactiveUsers();
   }, [activeUsers.length, inactiveUsers.length]);
 
-  // compute filtered grants dynamically — no useState needed
+  // compute filtered users dynamically — no useState needed
   const activeFiltered = filterUsers(activeUsers, [searchFilter(userQuery)]);
 
   const inactiveFiltered = filterUsers(inactiveUsers, [
     searchFilter(userQuery),
   ]);
 
-  const sortedActive = userSort && userSort.sort !== "none"
-  ? sortUsers(activeFiltered, userSort.header, userSort.sort)
-  : activeFiltered;
+  const sortedActive =
+    userSort && userSort.sort !== "none"
+      ? sortUsers(activeFiltered, userSort.header, userSort.sort)
+      : activeFiltered;
 
-  const sortedInactive = userSort && userSort.sort !== "none"
-  ? sortUsers(inactiveFiltered, userSort.header, userSort.sort)
-  : inactiveFiltered;
+  const sortedInactive =
+    userSort && userSort.sort !== "none"
+      ? sortUsers(inactiveFiltered, userSort.header, userSort.sort)
+      : inactiveFiltered;
 
   return { activeUsers: sortedActive, inactiveUsers: sortedInactive };
 };

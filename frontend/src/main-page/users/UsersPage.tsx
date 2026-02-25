@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ButtonGroup, IconButton, Pagination } from "@chakra-ui/react";
+//import { ButtonGroup, IconButton, Pagination } from "@chakra-ui/react";
 
 import { useAuthContext } from "../../context/auth/authContext";
 import { observer } from "mobx-react-lite";
@@ -12,7 +12,6 @@ import UserRow from "./user-rows/UserRow.tsx";
 import UserMenu from "./user-rows/UserMenu.tsx";
 import UserRowHeader from "./user-rows/UserRowHeader.tsx";
 import UserApprove from "./user-rows/UserApprove.tsx";
-import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 
 const UsersPage = observer(() => {
   const [showAll, setShowAll] = useState(true);
@@ -74,6 +73,7 @@ const UsersPage = observer(() => {
             ))}
           </div>
         </div>
+        {/* Commenting out pagination for now to check if needed */}
         {/* <Pagination.Root
           className="pt-4 mt-auto pb-4"
           count={numUsers}

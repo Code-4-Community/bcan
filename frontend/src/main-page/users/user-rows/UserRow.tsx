@@ -2,7 +2,6 @@ import { User } from "../../../../../middle-layer/types/User";
 import UserPositionCard from "./UserPositionCard";
 import logo from "../../../images/logo.svg";
 
-// Did not change this to using the email/first name last name due to user page redesign so someone will be changing all of this anyway
 interface UserRowProps {
   user: User;
   action: React.ReactNode;
