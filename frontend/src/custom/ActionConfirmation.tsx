@@ -1,3 +1,4 @@
+import Button from "../components/Button";
 import { IoIosWarning } from "react-icons/io";
 
 {/* The popup that appears on delete */}
@@ -63,21 +64,11 @@ import { IoIosWarning } from "react-icons/io";
 
           {/* Buttons */}
           <div className="flex w-full justify-between ">
-            <button
-              className="rounded-lg hover:bg-gray-200 border-2 border-black bg-red-light transition-colors w-32 h-12"
-              onClick={onCloseDelete}
-            >
-              No, cancel
-            </button>
-            <button
-              className="rounded-lg text-black border-2 border-black hover:bg-red-700 transition-colors w-32 h-12"
-              onClick={() => {
+            <Button text="No, cancel" onClick={onCloseDelete} className=" text-red border-red hover:border-red hover:bg-red-light active:bg-red" />
+            <Button text="Yes, confirm" onClick={() => {
                 onConfirmDelete();
                 onCloseDelete();
-              }}
-            >
-              Yes, confirm
-            </button>
+              }} className="border-grey-500" />
           </div>
 
           </div>
