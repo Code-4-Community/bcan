@@ -1,4 +1,4 @@
-import Button from "../../components/Button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSort,
   faSortUp,
@@ -14,17 +14,27 @@ interface UserRowHeaderButtonProps {
 }
 
 const UserRowHeaderButton = (props: UserRowHeaderButtonProps) => {
-
-
   return (
-    <Button
-        text={props.header}
-        logo={(props.sort == "asc" ? faSortUp : props.sort == "desc" ? faSortDown : faSort)}
-        logoPosition="right"
-        className="px-0 hover:border-white col-span-1 active:bg-white hover:text-grey-500 text-grey-600"
-        alignment="left"
-        onClick={props.onClick}
-      />
+    <button
+      className="font-medium flex items-centerpx-0 hover:border-white col-span-1 justify-start hover:text-grey-500 text-grey-600"
+      onClick={props.onClick}
+    >
+      <button />
+      <span className="mr-2">
+        <FontAwesomeIcon
+          icon={
+            props.sort == "asc"
+              ? faSortUp
+              : props.sort == "desc"
+                ? faSortDown
+                : faSort
+          }
+          className="text-lg w-4 h-4"
+        />
+      </span>
+
+      {props.header}
+    </button>
   );
 };
 

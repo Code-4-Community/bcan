@@ -78,16 +78,16 @@ const UserApprove = ({ user }: UserApproveProps) => {
   };
 
   return (
-    <div className="flex w-[140px] gap-3">
+    <div className="flex gap-3 w-full">
       <button
-        className="bg-green-light w-8 h-8 focus:outline-none rounded-sm hover:border-green-dark"
+        className="bg-green-light flex-none w-8 h-8 focus:outline-none rounded-sm hover:border-green-dark"
         onClick={approveUser}
         disabled={isLoading}
       >
         <FontAwesomeIcon icon={faCheck} className="text-green" />
       </button>
       <button
-        className="bg-red-light w-8 h-8 focus:outline-none rounded-sm hover:border-red-dark"
+        className="bg-red-light flex-none w-8 h-8 focus:outline-none rounded-sm hover:border-red-dark"
         onClick={rejectUser}
         disabled={isLoading}
       >

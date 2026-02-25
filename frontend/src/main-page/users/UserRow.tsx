@@ -11,7 +11,7 @@ const UserRow = ({ user, action }: UserRowProps) => {
   return (
     <div
       key={user.email}
-      className="grid grid-cols-2 md:grid-cols-[30%_35%_25%_10%] cols border-b-2 border-grey-150 py-4 px-8 items-center"
+      className="grid grid-cols-2 md:grid-cols-[30%_35%_25%_10%] cols gap-2 md:gap-0 text-sm lg:text-base border-b-2 border-grey-150 py-4 px-8 items-center"
     >
       <div className="col-span-1 flex items-center font-medium">
         <img

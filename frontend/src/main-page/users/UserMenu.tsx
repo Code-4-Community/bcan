@@ -1,6 +1,6 @@
 import { Menu } from "@chakra-ui/react";
 import { UserStatus } from "../../../../middle-layer/types/UserStatus";
-import { faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faUserPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import ActionConfirmation from "../../custom/ActionConfirmation";
 import { useState } from "react";
 import { api } from "../../api";
@@ -148,7 +148,7 @@ const UserMenu = ({ user }: UserMenuProps) => {
                     "  "
                   }
                   alignment="left"
-                  logo={faPencil}
+                  logo={faUserPen}
                   logoPosition="left"
                   onClick={() => setIsChangeGroupModalOpen(true)}
                   className="text-sm focus:outline-none block w-full hover:border-grey-800 active:bg-grey-800 text-grey-800"
