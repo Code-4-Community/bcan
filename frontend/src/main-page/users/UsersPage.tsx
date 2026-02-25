@@ -21,12 +21,13 @@ const UsersPage = observer(() => {
 
   const { user } = useAuthContext();
 
-  const [currentPage, setCurrentPage] = useState(1);
+  //const [currentPage, setCurrentPage] = useState(1);
 
   const filteredUsers = showAll ? activeUsers : inactiveUsers;
 
   const numUsers = filteredUsers.length;
-  const pageStartIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  // const pageStartIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const pageStartIndex = 1; // Temporarily disable pagination by always starting at index 0
   const pageEndIndex =
     pageStartIndex + ITEMS_PER_PAGE > numUsers
       ? numUsers
