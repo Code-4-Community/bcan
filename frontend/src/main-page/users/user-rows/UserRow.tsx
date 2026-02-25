@@ -14,7 +14,7 @@ const UserRow = ({ user, action }: UserRowProps) => {
     >
       <div className="col-span-1 flex items-center font-medium">
         <img
-          src={logo}
+          src={user.profilePicUrl || logo}
           alt="Profile"
           className="max-w-12 mr-4 rounded-full hidden lg:block"
         />

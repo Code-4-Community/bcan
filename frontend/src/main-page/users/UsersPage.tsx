@@ -38,7 +38,7 @@ const UsersPage = observer(() => {
         <UserSearch />
         <div className="flex w-full py-2 gap-2">
           <Button
-            text="All Users"
+            text="Active Users"
             onClick={() => setShowAll(true)}
             className={`border-2 ${showAll ? "text-white bg-primary-900" : "bg-white border-grey-500 text-black"}`}
           />
