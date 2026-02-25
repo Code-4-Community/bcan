@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import ApprovedUserCard from "./ApprovedUserCard";
-import PendingUserCard from "./PendingUserCard";
+import ApprovedUserCard from "./UserMenu";
+import PendingUserCard from "./UserApprove";
 import { User } from "../../../../middle-layer/types/User";
 import { Pagination, ButtonGroup, IconButton } from "@chakra-ui/react";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi";

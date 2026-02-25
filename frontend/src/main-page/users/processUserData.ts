@@ -53,10 +53,27 @@ const searchFilter = (searchQuery: string) => (user: User) => {
 const filterUsers = (users: User[], predicates: ((user: User) => boolean)[]) =>
   users.filter((user) => predicates.every((fn) => fn(user)));
 
+const sortUsers = (users: User[], header: keyof User, sort: "asc" | "desc" | "none") =>
+  [...users].sort((a: User, b: User) => {
+      const direction = sort === "asc" ? -1 : 1;
+
+      const aValue = a[header];
+      const bValue = b[header];
+
+      if (aValue == null) return -1 * direction;
+      if (bValue == null) return 1 * direction;
+
+      if (aValue > bValue) return 1 * direction;
+      if (aValue < bValue) return -1 * direction;
+
+      return 0;
+    })
+
+
 // contains callbacks for sorting and filtering grants
 // stores state for list of grants/filter
 export const ProcessUserData = () => {
-  const { activeUsers, inactiveUsers, userQuery } = getAppStore();
+  const { activeUsers, inactiveUsers, userQuery, userSort } = getAppStore();
 
   // fetch grants on mount if empty
   useEffect(() => {
@@ -71,5 +88,13 @@ export const ProcessUserData = () => {
     searchFilter(userQuery),
   ]);
 
-  return { activeUsers: activeFiltered, inactiveUsers: inactiveFiltered };
+  const sortedActive = userSort && userSort.sort !== "none"
+  ? sortUsers(activeFiltered, userSort.header, userSort.sort)
+  : activeFiltered;
+
+  const sortedInactive = userSort && userSort.sort !== "none"
+  ? sortUsers(inactiveFiltered, userSort.header, userSort.sort)
+  : inactiveFiltered;
+
+  return { activeUsers: sortedActive, inactiveUsers: sortedInactive };
 };

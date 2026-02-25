@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { ButtonGroup, IconButton, Pagination } from "@chakra-ui/react";
+
 import { useAuthContext } from "../../context/auth/authContext";
 import { observer } from "mobx-react-lite";
 import { UserStatus } from "../../../../middle-layer/types/UserStatus.ts";
@@ -6,6 +8,11 @@ import { Navigate } from "react-router-dom";
 import Button from "../../components/Button.tsx";
 import UserSearch from "./UserSearch.tsx";
 import { ProcessUserData } from "./processUserData.ts";
+import UserRow from "./UserRow.tsx";
+import UserMenu from "./UserMenu.tsx";
+import UserRowHeader from "./UserRowHeader.tsx";
+import UserApprove from "./UserApprove.tsx";
+import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 
 const UsersPage = observer(() => {
   const [showAll, setShowAll] = useState(true);
@@ -19,7 +26,6 @@ const UsersPage = observer(() => {
 
   const filteredUsers = showAll ? activeUsers : inactiveUsers;
 
-  const numInactiveUsers = inactiveUsers.length;
   const numUsers = filteredUsers.length;
   const pageStartIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const pageEndIndex =
@@ -27,7 +33,6 @@ const UsersPage = observer(() => {
       ? numUsers
       : pageStartIndex + ITEMS_PER_PAGE;
   const currentPageUsers = filteredUsers.slice(pageStartIndex, pageEndIndex);
-
   return user ? (
     user?.position !== UserStatus.Inactive ? (
       <div className="grant-page w-full items-end">
@@ -38,26 +43,81 @@ const UsersPage = observer(() => {
             onClick={() => setShowAll(true)}
             className={`border-2 ${showAll ? "text-white bg-primary-900" : "bg-white border-grey-500 text-black"}`}
           />
-          <div>
-          <Button
-            text="Pending Users"
-            onClick={() => setShowAll(false)}
-            className={`relative border-2  ${!showAll ? " text-white bg-primary-900" : "bg-white border-grey-500 text-black"}`}
-          />
-          {inactiveUsers.length > 0 && (
-          <span className="absolute top-24 left-[31.8rem] w-3 h-3 rounded-full bg-red border-2 border-white"
-          />
-        )}
+          <div className="relative">
+            <Button
+              text="Pending Users"
+              onClick={() => setShowAll(false)}
+              className={`border-2  ${!showAll ? " text-white bg-primary-900" : "bg-white border-grey-500 text-black"}`}
+            />
+            {inactiveUsers.length > 0 && (
+              <span className="absolute top-[0.25rem] right-0 w-3 h-3 rounded-full bg-red border-2 border-white" />
+            )}
           </div>
         </div>
 
-        <div className="flex flex-row w-full gap-2 justify-between mt-4">
-          <div className="flex flex-col w-full overflow-y-scroll pr-2">
+        <div className="flex flex-row w-full gap-2 justify-between mt-4 bg-white rounded-md">
+          <div className="flex flex-col w-full overflow-y-scroll text-start">
+            <UserRowHeader />
             {currentPageUsers.map((user) => (
-              <div>{user.email}</div>
+              <div key={user.email}>
+                <UserRow
+                  user={user}
+                  action={
+                    showAll ? (
+                      <UserMenu user={user} />
+                    ) : (
+                      <UserApprove user={user} />
+                    )
+                  }
+                />
+              </div>
             ))}
           </div>
         </div>
+        {/* <Pagination.Root
+          className="pt-4 mt-auto pb-4"
+          count={numUsers}
+          pageSize={ITEMS_PER_PAGE}
+          page={currentPage}
+          onPageChange={(e) => {
+            setCurrentPage(e.page);
+          }}
+        >
+          <ButtonGroup variant="ghost" size="md">
+            <Pagination.PrevTrigger asChild>
+              <IconButton>
+                <HiChevronLeft />
+              </IconButton>
+            </Pagination.PrevTrigger>
+            <Pagination.Context>
+              {({ pages }) =>
+                pages.map((page, index) =>
+                  page.type === "page" ? (
+                    <IconButton
+                      key={index}
+                      className={
+                        currentPage === page.value
+                          ? "text-secondary-500 underline"
+                          : "ghost"
+                      }
+                      onClick={() => setCurrentPage(page.value)}
+                      aria-label={`Go to page ${page.value}`}
+                    >
+                      {page.value}
+                    </IconButton>
+                  ) : (
+                    "..."
+                  ),
+                )
+              }
+            </Pagination.Context>
+            <Pagination.NextTrigger asChild>
+              <IconButton>
+                <HiChevronRight />
+              </IconButton>
+            </Pagination.NextTrigger>
+          </ButtonGroup>
+        </Pagination.Root> */}
       </div>
     ) : (
       <Navigate to="restricted" replace />

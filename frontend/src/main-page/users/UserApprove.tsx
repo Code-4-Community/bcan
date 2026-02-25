@@ -1,8 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import UserPositionCard from "./UserPositionCard";
 import { faCheck, faX } from "@fortawesome/free-solid-svg-icons";
-import { api } from "../../api"
-import { UserStatus } from "../../../../middle-layer/types/UserStatus";
+import { api } from "../../api";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { User } from "../../../../middle-layer/types/User";
 import { toJS } from "mobx";
@@ -13,19 +11,11 @@ import { useState } from "react";
 
 const store = getAppStore();
 
-interface PendingUserCardProps {
-  userId: string;
-  email: string;
-  position: UserStatus;
+interface UserApproveProps {
+  user: User;
 }
 
-
-const PendingUserCard = ({
-  userId,
-  email,
-  position,
-}: PendingUserCardProps) => {
-
+const UserApprove = ({ user }: UserApproveProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const approveUser = async () => {
@@ -36,17 +26,17 @@ const PendingUserCard = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user: {
-            email,
-            position
+            email: user.email,
+            position: user.position,
           } as User,
           groupName: "Employee",
           requestedBy: toJS(store.user) as User,
         }),
       });
       if (response.ok) {
-        alert(`User ${userId} has been approved successfully`);
+        alert(`User ${user.email} has been approved successfully`);
         const body = await response.json();
-        moveUserToActive(body as User)
+        moveUserToActive(body as User);
       } else {
         alert("Failed to approve user");
       }
@@ -66,16 +56,16 @@ const PendingUserCard = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user: {
-            email: email,
-            position,
+            email: user.email,
+            position: user.position,
           } as User,
           requestedBy: toJS(store.user) as User,
         }),
       });
       if (response.ok) {
-        alert(`User ${name} has been deleted successfully`);
+        alert(`User ${user.email} has been deleted successfully`);
         const body = await response.json();
-        removeUser(body)
+        removeUser(body);
       } else {
         alert("Failed to reject user");
       }
@@ -88,28 +78,23 @@ const PendingUserCard = ({
   };
 
   return (
-    <div className="bg-white text-lg border rounded-md m-6 p-6 flex justify-around items-center">
-      <p className="font-semibold w-[140px] text-left">{userId}</p>
-      <p className="w-[140px] text-left">{email}</p>
-      <div className="w-[140px]">
-        <UserPositionCard position={position} />
-      </div>
-      <div className="flex w-[140px] gap-3">
-        <button 
-          className="bg-green-light w-8 h-8 focus:outline-none rounded"
-          onClick={approveUser}
-          disabled={isLoading}>
-          <FontAwesomeIcon icon={faCheck} className="text-black" />
-        </button>
-        <button 
-        className="bg-red-light w-8 h-8 focus:outline-none rounded"
-          onClick={rejectUser}
-          disabled={isLoading}>
-          <FontAwesomeIcon icon={faX} className="text-black"/>
-        </button>
-      </div>
+    <div className="flex w-[140px] gap-3">
+      <button
+        className="bg-green-light w-8 h-8 focus:outline-none rounded-sm hover:border-green-dark"
+        onClick={approveUser}
+        disabled={isLoading}
+      >
+        <FontAwesomeIcon icon={faCheck} className="text-green" />
+      </button>
+      <button
+        className="bg-red-light w-8 h-8 focus:outline-none rounded-sm hover:border-red-dark"
+        onClick={rejectUser}
+        disabled={isLoading}
+      >
+        <FontAwesomeIcon icon={faX} className="text-red" />
+      </button>
     </div>
   );
 };
 
-export default PendingUserCard;
+export default UserApprove;

@@ -65,6 +65,11 @@ export const updateSort = action(
   (sort: {header: keyof Grant, asc: boolean}) => ({ sort, })
 );
 
+export const updateUserSort = action(
+  "updateUserSort",
+  (sort: {header: keyof User, sort: "asc" | "desc" | "none"}) => ({ sort, })
+); 
+
 /**
  * Append a new grant to the current list of grants.
  */

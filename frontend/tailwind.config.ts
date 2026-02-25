@@ -90,6 +90,8 @@ export default {
       },
       borderWidth: {
         DEFAULT: "2px",
+        2: "2px",
+        1: "1px",
         0: "0",
       },
       borderRadius: {
