@@ -101,7 +101,7 @@ export default function SignUpForm({
             placeholder="Re-enter your password"
             value={values.passwordRe}
             onChange={(e) => onChange("passwordRe", e.target.value)}
-            error={errorItem === "password"}
+            error={errorItem === "password" || passwordsMatch === false}
           />
         </div>
 
