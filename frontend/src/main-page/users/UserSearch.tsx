@@ -1,7 +1,6 @@
 import { IoMdSearch } from "react-icons/io";
 import { useState } from "react";
 import Fuse from "fuse.js";
-import { Input } from "@chakra-ui/react";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { updateUserQuery } from "../../external/bcanSatchel/actions";
 import { User } from "../../../../middle-layer/types/User";
@@ -31,7 +30,7 @@ function UserSearch() {
   };
 
   return (
-    <div className="w-full relative ">
+    <div className="w-full relative">
       {/* Absolutely-positioned icon */}
       <IoMdSearch
         style={{
@@ -44,10 +43,9 @@ function UserSearch() {
           marginLeft: "2px",
         }}
       />
-      <Input
+      <input
         placeholder="Search for a user..."
-        variant="subtle"
-        className="px-4 py-2 rounded-3xl font-medium text-black border-2 flex items-center justify-center border-grey-500"
+        className="w-full px-4 py-2 rounded-3xl font-medium text-black border-2 flex items-center justify-center border-grey-500"
         onChange={handleInputChange}
         value={userInput}
         style={{ paddingLeft: "2rem" }} // make room for the icon
