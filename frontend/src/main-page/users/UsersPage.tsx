@@ -71,6 +71,11 @@ const UsersPage = observer(() => {
                 />
               </div>
             ))}
+            {currentPageUsers.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-10 gap-4">
+                <p className="text-lg text-gray-500">No users to display</p>
+              </div>
+            )}
           </div>
         </div>
         {/* Commenting out pagination for now to check if needed */}
