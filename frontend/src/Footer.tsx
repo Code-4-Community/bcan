@@ -1,6 +1,6 @@
 import React from "react";
 import { Group, Text, Link } from "@chakra-ui/react";
-import { FooterText } from "../translations/general";
+import { FooterText } from "./translations/general";
 
 const Footer: React.FC = () => {
   return (

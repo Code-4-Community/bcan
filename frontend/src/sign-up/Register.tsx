@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
-import { useAuthContext } from "./context/auth/authContext";
-import { SignUpForm, BrandingPanel } from "./sign-up";
-import "./styles/index.css";
+import { useAuthContext } from "../context/auth/authContext";
+import { SignUpForm, BrandingPanel } from ".";
 
 const PASSWORD_REGEX =
   /^(?=.*[!@#$%^&*])(?=.*\d)(?=.*[A-Z])(?=.*[a-z]).{8,}$/;
@@ -82,7 +81,7 @@ const Register = observer(() => {
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-white">
-      <div className="flex w-[58%] flex-col justify-center px-16 py-14">
+      <div className="flex w-3/4 lg:w-1/2 flex-col justify-center px-12 lg:px-20 py-14">
         <SignUpForm
           values={values}
           onChange={updateField}
@@ -99,7 +98,7 @@ const Register = observer(() => {
           passwordsMatch={values.password === values.passwordRe}
         />
       </div>
-      <div className="w-[42%]">
+      <div className="w-1/4 lg:w-1/2  p-8">
         <BrandingPanel />
       </div>
     </div>
