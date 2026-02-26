@@ -31,9 +31,9 @@ const NavBar: React.FC = observer(() => {
   };
   
   return (
-    <aside className="left-0 top-0 h-screen w-52 lg:w-56 bg-white flex flex-col">
+    <aside className="left-0 top-0 h-screen w-48 lg:w-56 bg-white flex flex-col">
       {/* Logo at top */}
-      <div className="p-6 flex items-center justify-center mr-4">
+      <div className="p-6 flex items-center justify-center mr-2">
         <img className="w-12 h-12" src={NavBarBranding.logo} alt={`${NavBarBranding.name} Logo`} />
         <span className="ml-3 text-xl font-semibold">{NavBarBranding.name}</span>
       </div>
@@ -77,7 +77,7 @@ const NavBar: React.FC = observer(() => {
             className="flex items-center gap-3 w-[85%] pl-8 pr-4 py-3 rounded-r-full transition-colors hover:bg-grey-500 hover:text-white text-left border-none font-medium"
           >
             <FontAwesomeIcon icon={faRightFromBracket} className="w-5 h-5" />
-            <span className="text-md">Sign Out</span>
+            <span className="text-sm lg:text-base">Sign Out</span>
           </button>
         </div>
       </div>
