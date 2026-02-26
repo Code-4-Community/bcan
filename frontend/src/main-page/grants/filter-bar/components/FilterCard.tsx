@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Button from "../../../settings/components/Button";
 
 type SortDirection = "increasing" | "decreasing";
