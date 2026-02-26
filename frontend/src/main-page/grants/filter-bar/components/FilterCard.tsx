@@ -1,5 +1,6 @@
 import { useState } from "react";
-import Button from "../../../settings/components/Button";
+import Button from "../../../../components/Button.tsx";
+import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 
 type SortDirection = "increasing" | "decreasing";
 
@@ -40,11 +41,13 @@ export default function FilterCard({
 				<Button
 					text="Clear all"
 					onClick={handleClearAll}
-					className="bg-opacity-0 border-0 hover:border-0 focus:outline-none focus:ring-0 focus:border-0 text-xs font-semibold text-secondary-400 px-0 py-0"
+					className="text-xs font-semibold text-secondary-400 border-0 hover:text-secondary-400 hover:bg-opacity-0 hover:border hover:border-white"
 				/>
 			</div>
 			<div className="flex gap-2">
 				<Button
+					logo={faAngleUp}
+					logoPosition="left"
 					text="Increasing"
 					onClick={() => {
 						setDirection("increasing");
@@ -58,6 +61,8 @@ export default function FilterCard({
 				/>
 				<span className="text-sm font-semibold pt-2"> or </span>
 				<Button
+					logo={faAngleDown}
+					logoPosition="left"
 					text="Decreasing"
 					onClick={() => {
 						setDirection("decreasing");
