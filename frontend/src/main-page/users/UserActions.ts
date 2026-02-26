@@ -37,7 +37,7 @@ export const fetchInactiveUsers = async (): Promise<User[]> => {
     const inactiveUsers = await response.json();
     return inactiveUsers as User[];
   } catch (error) {
-    console.error("Error fetching active users:", error);
+    console.error("Error fetching inactive users:", error);
     return []; // Return empty array on error
   }
 };
