@@ -97,18 +97,21 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
     @Req() req: any
   ): Promise<{ message: string }> {
-    // Try to invalidate Cognito session if access token is available
-    try {
-      const authHeader = req.headers['authorization'] || req.headers['Authorization'];
-      if (authHeader) {
-        const token = authHeader.startsWith('Bearer ') 
-          ? authHeader.substring(7) 
-          : authHeader;
-        await this.authService.logout(token);
-      }
-    } catch (error) {
-      // Log error but continue - we'll clear cookies anyway
-      console.error('Error invalidating Cognito session:', error);
+    const cookieToken = req.cookies?.access_token;  
+    let token: string | undefined = cookieToken;  
+
+    if (!token) {  
+      const authHeader = req.headers['authorization'] || req.headers['Authorization'];  
+      if (authHeader && typeof authHeader === 'string') {  
+        token = authHeader.startsWith('Bearer ')  
+          ? authHeader.substring(7)  
+          : authHeader;  
+      }  
+    }  
+
+    // Logout user in Cognito
+    if (token) {  
+      await this.authService.logout(token);
     }
 
     // Clear all cookies

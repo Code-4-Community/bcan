@@ -31,8 +31,7 @@ export const useAuthContext = () => {
 
 export const AuthProvider = observer(({ children }: { children: ReactNode }) => {
   const store = getAppStore();
-  const logoutTimerRef = useRef<NodeJS.Timeout | null>(null);
-  
+  const logoutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Auto-logout timeout duration (in milliseconds)
   // 8 hours = 8 * 60 * 60 * 1000
   const SESSION_TIMEOUT = 8 * 60 * 60 * 1000;
