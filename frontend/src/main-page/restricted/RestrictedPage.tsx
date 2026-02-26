@@ -1,35 +1,33 @@
 import { Link } from "react-router-dom";
-import logo from "../../images/logo.svg";
 import { useAuthContext } from "../../context/auth/authContext";
+import Button from "../../components/Button";
+import BrandingPanel from "../../components/BrandingPanel";
 
 function RestrictedPage() {
-  const {logout} = useAuthContext();
+  const { logout } = useAuthContext();
   return (
-    <div className="flex justify-center gap-20 items-center h-[70vh] text-left">
-      <div>
-        <h1 className="text-7xl font-bold mb-5">So Sorry!</h1>
-        <p className="text-3xl font-bold mb-3">
-          You don't have access to this page.
-        </p>
-        <p className="text-xl mb-9">
-          Contact the admin if you think there's a mistake.
-        </p>
-        <Link to="/login">
-          <button
-            className="py-2 px-4 rounded w-48 font-semibold text-black bg-primary-700"
-            onClick={() => {
-              logout()
-            }}
-          >
-            Back to Login
-          </button>
-        </Link>
+    <div className="bg-white grid grid-cols-[75%_25%] lg:grid-cols-[50%_50%] relative w-screen h-screen m-0 p-0 overflow-hidden text-start">
+      <div className="h-full  px-24 flex flex-col justify-center items-start ">
+        <div className="w-full">
+          <h1 className="text-4xl pb-8 font-bold">So Sorry!</h1>
+          <h2 className="text-lg">
+            You don't have access to this page. Contact the admin if you think
+            there's a mistake.
+          </h2>
+          <Link to="/login">
+            <Button
+              text="Back to Login"
+              className="py-2 my-8 px-4 bg-primary-900 text-white border-2"
+              onClick={() => {
+                logout();
+              }}
+            />
+          </Link>
+        </div>
       </div>
-      <img
-        className="w-[400px] h-[400px] object-contain"
-        src={logo}
-        alt="BCAN logo"
-      />
+      <div className="h-full flex flex-col justify-center items-center p-8">
+        <BrandingPanel />
+      </div>
     </div>
   );
 }

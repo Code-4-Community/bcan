@@ -1,3 +1,4 @@
+import { getAppStore } from "../../../external/bcanSatchel/store";
 import POC from "../../../../../middle-layer/types/POC";
 import logo from "../../../images/logo.svg";
 
@@ -6,11 +7,21 @@ type ContactCardProps = {
   type?: "BCAN" | "Granter";
 };
 
+const store = getAppStore()
+const activeUsers = store.activeUsers || [];
+
 export default function ContactCard({ contact, type }: ContactCardProps) {
+
+const contactPhoto =
+  type === "BCAN"
+    ? activeUsers.find((user) => user.email === contact?.POC_email)
+        ?.profilePicUrl
+    : logo;
+
   return (
     <div className="flex flex-row gap-4 w-full justify-items-start rounded border-2 p-3 h-full border-grey-500">
       <img
-        src={logo}
+        src={contactPhoto || logo}
         alt="Profile"
         className="max-w-14 rounded-full hidden lg:block"
       />
