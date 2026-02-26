@@ -20,6 +20,7 @@ const mockAdminDeleteUser          = vi.fn(() => ({ promise: mockCognitoPromise 
 const mockInitiateAuth             = vi.fn(() => ({ promise: mockCognitoPromise }));
 const mockGetUser                  = vi.fn(() => ({ promise: mockCognitoPromise }));
 const mockRespondToAuthChallenge   = vi.fn(() => ({ promise: mockCognitoPromise }));
+const mockGlobalSignOut            = vi.fn(() => ({ promise: mockCognitoPromise }));
 
 // ─── DynamoDB mocks ───────────────────────────────────────────────────────────
 const mockDynamoPromise = vi.fn();
@@ -41,6 +42,7 @@ vi.mock('aws-sdk', () => {
       initiateAuth:             mockInitiateAuth,
       getUser:                  mockGetUser,
       respondToAuthChallenge:   mockRespondToAuthChallenge,
+      globalSignOut:            mockGlobalSignOut,
     };
   });
 
@@ -86,6 +88,7 @@ describe('AuthService', () => {
     mockInitiateAuth.mockReturnValue({ promise: mockCognitoPromise });
     mockGetUser.mockReturnValue({ promise: mockCognitoPromise });
     mockRespondToAuthChallenge.mockReturnValue({ promise: mockCognitoPromise });
+    mockGlobalSignOut.mockReturnValue({ promise: mockCognitoPromise });
 
     mockDynamoGet.mockReturnValue({ promise: mockDynamoPromise });
     mockDynamoPut.mockReturnValue({ promise: mockDynamoPromise });
@@ -472,6 +475,34 @@ describe('AuthService', () => {
     it('should throw UnauthorizedException for any other error', async () => {
       mockCognitoPromise.mockRejectedValueOnce(new Error('Unknown error'));
       await expect(service.validateSession('bad-token')).rejects.toThrow('Failed to validate session');
+    });
+  });
+
+  describe('logout', () => {
+    it('should successfully sign out user from Cognito', async () => {
+      mockCognitoPromise.mockResolvedValueOnce({});
+      
+      await expect(service.logout('valid-access-token')).resolves.toBeUndefined();
+      
+      expect(mockGlobalSignOut).toHaveBeenCalledWith({
+        AccessToken: 'valid-access-token',
+      });
+    });
+    
+    it('should not throw error when Cognito sign out fails', async () => {
+      mockCognitoPromise.mockRejectedValueOnce(new Error('Cognito error'));
+      
+      await expect(service.logout('some-token')).resolves.toBeUndefined();
+      expect(mockGlobalSignOut).toHaveBeenCalled();
+    });
+    
+    it('should not throw error when token is already expired', async () => {
+      mockCognitoPromise.mockRejectedValueOnce({ 
+        code: 'NotAuthorizedException', 
+        message: 'Token expired' 
+      });
+      
+      await expect(service.logout('expired-token')).resolves.toBeUndefined();
     });
   });
 });
