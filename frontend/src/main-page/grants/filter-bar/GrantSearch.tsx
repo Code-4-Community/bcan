@@ -30,7 +30,7 @@ function GrantSearch() {
   };
 
   return (
-    <SearchBar handleInputChange={handleInputChange} userInput={userInput}/>
+    <SearchBar handleInputChange={handleInputChange} userInput={userInput} text="grant"/>
   );
 }
 

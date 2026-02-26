@@ -3,11 +3,13 @@ import { IoMdSearch } from "react-icons/io";
 type SearchBarProps = {
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   userInput: string;
+  text: string;
 };
 
 export default function SearchBar({
   handleInputChange,
   userInput,
+  text,
 }: SearchBarProps) {
   return (
     <div className="w-full relative">
@@ -24,7 +26,7 @@ export default function SearchBar({
         }}
       />
       <input
-        placeholder="Search for a user..."
+        placeholder={`Search for a ${text}...`}
         className="w-full px-4 py-2 rounded-3xl font-medium text-black border-2 flex items-center justify-center border-grey-500"
         onChange={handleInputChange}
         value={userInput}
