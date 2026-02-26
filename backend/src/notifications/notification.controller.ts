@@ -78,7 +78,7 @@ export class NotificationController {
   }
 
   /**
-   * gets the current notifications for user based on the user id 
+   * gets the current notifications for user based on the email
    */
   @ApiResponse({
     status: 200,
@@ -96,11 +96,11 @@ export class NotificationController {
     status: 500,
     description: "Internal Server Error"
   })
-  @Get('/user/:userId/current')
+  @Get('/user/:email/current')
   @UseGuards(VerifyUserGuard)
   @ApiBearerAuth()
-  async findCurrentByUser(@Param('userId') userId: string) {
-    return await this.notificationService.getCurrentNotificationsByUserId(userId);
+  async findCurrentByUser(@Param('email') email: string) {
+    return await this.notificationService.getCurrentNotificationsByEmail(email);
   }
 
   /**
@@ -122,12 +122,11 @@ export class NotificationController {
     status: 500,
     description: "Internal Server Error"
   })
-  @Get('/user/:userId')
+  @Get('/user/:email')
   @UseGuards(VerifyUserGuard)
   @ApiBearerAuth()
-  async findByUser(@Param('userId') userId: string) {
-    console.log("HERE")
-    return await this.notificationService.getNotificationByUserId(userId);
+  async findByUser(@Param('email') email: string) {
+    return await this.notificationService.getNotificationByUserEmail(email);
   }
 
   /**

@@ -1,24 +1,23 @@
 export class RegisterBody {
-  username!: string;
   password!: string;
   email!: string;
+  firstName!: string;
+  lastName!: string;
 }
 
 export class LoginBody {
-  username!: string;
+  email!: string;
   password!: string;
 }
 
 export class SetPasswordBody {
   newPassword!: string;
   session!: string;
-  username!: string;
-  email?: string;
+  email!: string;
   
 }
 
 export class UpdateProfileBody {
-  username!: string;
   email!: string;
   position_or_role!: string;
 }

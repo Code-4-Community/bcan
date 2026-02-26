@@ -22,7 +22,126 @@ export class UserService {
   private readonly logger = new Logger(UserService.name);
   private dynamoDb = new AWS.DynamoDB.DocumentClient();
   private ses = new AWS.SES({ region: process.env.AWS_REGION });
+  private s3 = new AWS.S3();
+  private profilePicBucket : string = process.env.PROFILE_PICTURE_BUCKET!;
 
+async uploadProfilePic(user: User, pic: Express.Multer.File): Promise<String> {
+  const tableName = process.env.DYNAMODB_USER_TABLE_NAME;
+
+  // 1. Validate all inputs
+  this.validateUploadInputs(user, pic, tableName);
+
+  // 2. Generate filename: firstName-lastName-profilepic.ext
+  const fileExtension = pic.originalname.split('.').pop()?.toLowerCase() || 'jpg';
+  const key = `${user.firstName}-${user.lastName}-${user.email.slice(0,3)}-profilepic.${fileExtension}`;
+
+  this.logger.log(`Uploading profile picture for user ${user.firstName} ${user.lastName} with key: ${key}`);
+
+  try {
+    // 3. Upload to S3
+    const uploadParams: AWS.S3.PutObjectRequest = {
+      Bucket: this.profilePicBucket,
+      Key: key,
+      Body: pic.buffer,
+      ContentType: pic.mimetype,
+    };
+
+    const uploadResult = await this.s3.upload(uploadParams).promise();
+    this.logger.log(`✓ Profile picture uploaded to S3: ${uploadResult.Location}`);
+
+    // 4. Update user's profile picture URL in DynamoDB
+    const updateParams = {
+      TableName: tableName!,
+      Key: { email: user.email },
+      UpdateExpression: "SET profilePicUrl = :url",
+      ExpressionAttributeValues: {
+        ":url": uploadResult.Location,
+      },
+      ReturnValues: "ALL_NEW" as const,
+    };
+
+    const updateResult = await this.dynamoDb.update(updateParams).promise();
+
+    if (!updateResult.Attributes) {
+      this.logger.error(`DynamoDB update did not return updated attributes for ${user.email}`);
+      throw new InternalServerErrorException("Failed to retrieve updated user data");
+    }
+
+    this.logger.log(`✅ Profile picture uploaded successfully for user ${user.email}`);
+    return updateResult.Attributes.profilePicUrl;
+
+  } catch (error: any) {
+    this.logger.error(`Failed to upload profile picture for ${user.email}:`, error);
+
+    // Handle S3 errors
+    if (error.code === 'NoSuchBucket') {
+      this.logger.error(`S3 bucket does not exist: ${this.profilePicBucket}`);
+      throw new InternalServerErrorException('Storage bucket not found');
+    } else if (error.code === 'AccessDenied') {
+      this.logger.error('Access denied to S3 bucket');
+      throw new InternalServerErrorException('Insufficient permissions to upload file');
+    }
+
+    // Handle DynamoDB errors
+    if (error.code === 'ResourceNotFoundException') {
+      this.logger.error('DynamoDB table does not exist');
+      throw new InternalServerErrorException('Database table not found');
+    } else if (error.code === 'ValidationException') {
+      this.logger.error(`Invalid DynamoDB update parameters`);
+      throw new BadRequestException(`Invalid update parameters`);
+    }
+
+    if (error instanceof HttpException) {
+      throw error;
+    }
+
+    this.logger.error(`Failed to upload profile pic error: ${error}`)
+    throw new InternalServerErrorException('Failed to upload profile picture');
+  }
+}
+
+// Validation helper method for profile picture uploads
+private validateUploadInputs(user: User, pic: Express.Multer.File, tableName: string | undefined): void {
+  // Validate environment variables
+  if (!this.profilePicBucket) {
+    this.logger.error("Profile Picture Bucket is not defined in environment variables");
+    throw new InternalServerErrorException("Server configuration error");
+  }
+
+  if (!user || !user.firstName || !user.lastName || !user.email) {
+    this.logger.error("Invalid user object provided for upload");
+    throw new BadRequestException("Valid user object is required");
+  }
+
+  if (!tableName) {
+    this.logger.error("DynamoDB User Table Name is not defined in environment variables");
+    throw new InternalServerErrorException("Server configuration error");
+  }
+
+  // Validate file exists
+  if (!pic || !pic.buffer) {
+    this.logger.error("Invalid file provided for upload");
+    throw new BadRequestException("Valid image file is required");
+  }
+
+  // Validate file type
+  const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+  if (!allowedMimeTypes.includes(pic.mimetype)) {
+    this.logger.error(`Invalid file type: ${pic.mimetype}`);
+    throw new BadRequestException(
+      `Invalid file type. Allowed types: ${allowedMimeTypes.join(', ')}`
+    );
+  }
+
+  // Validate file size (5MB max)
+  const maxSizeInBytes = 5 * 1024 * 1024;
+  if (pic.size > maxSizeInBytes) {
+    this.logger.error(`File too large: ${pic.size} bytes`);
+    throw new BadRequestException(
+      `File too large. Maximum size: ${maxSizeInBytes / (1024 * 1024)}MB`
+    );
+  }
+}
   // purpose statement: deletes user from database; only admin can delete users
   // use case: employee is no longer with BCAN
  async deleteUser(user: User, requestedBy: User): Promise<User> {
@@ -41,29 +160,29 @@ export class UserService {
   }
 
   // 2. Validate input
-  if (!user || !user.userId) {
+  if (!user || !user.email) {
     this.logger.error("Invalid user object provided for deletion");
     throw new BadRequestException("Valid user object is required");
   }
 
-  if (!requestedBy || !requestedBy.userId) {
+  if (!requestedBy || !requestedBy.email) {
     this.logger.error("Invalid requesting user object provided for deletion");
     throw new BadRequestException("Valid requesting user is required");
   }
 
-  const username = user.userId; // now access userID after validating
+  const email = user.email; // now access userEmail after validating
 
   // 3. Authorization check
   if (requestedBy.position !== UserStatus.Admin) {
     this.logger.warn(
-      `Unauthorized deletion attempt: ${requestedBy.userId} tried to delete ${username}`
+      `Unauthorized deletion attempt: ${requestedBy.email} tried to delete ${email}`
     );
     throw new UnauthorizedException("Only administrators can delete users");
   }
 
   // 4. Prevent self-deletion
-  if (requestedBy.userId === username) {
-    this.logger.warn(`Administrator ${requestedBy.userId} attempted to delete their own account`);
+  if (requestedBy.email === email) {
+    this.logger.warn(`Administrator ${requestedBy.email} attempted to delete their own account`);
     throw new BadRequestException("Administrators cannot delete their own account");
   }
 
@@ -72,14 +191,14 @@ export class UserService {
   try {
     const params = {
       TableName: tableName,
-      Key: { userId: username },
+      Key: { email: email },
     };
 
     const result = await this.dynamoDb.get(params).promise();
 
     if (!result.Item) {
-      this.logger.warn(`User ${username} not found in database`);
-      throw new NotFoundException(`User '${username}' does not exist`);
+      this.logger.warn(`User ${email} not found in database`);
+      throw new NotFoundException(`User '${email}' does not exist`);
     }
 
     userToDelete = result.Item as User;
@@ -87,7 +206,7 @@ export class UserService {
     if (error instanceof HttpException) {
       throw error;
     }
-    this.logger.error(`Error checking user existence: ${username}`, error);
+    this.logger.error(`Error checking user existence: ${email}`, error);
     throw new InternalServerErrorException("Failed to verify user existence");
   }
 
@@ -96,23 +215,23 @@ export class UserService {
   try {
     const deleteParams = {
       TableName: tableName,
-      Key: { userId: username },
+      Key: { email: email },
       ReturnValues: "ALL_OLD" as const,
     };
 
     const deleteResult = await this.dynamoDb.delete(deleteParams).promise();
 
     if (!deleteResult.Attributes) {
-      this.logger.error(`DynamoDB delete did not return deleted attributes for ${username}`);
+      this.logger.error(`DynamoDB delete did not return deleted attributes for ${email}`);
       throw new InternalServerErrorException(
         "Failed to delete user from database"
       );
     }
 
     dynamoDeleted = true;
-    this.logger.log(`✓ User ${username} deleted from DynamoDB`);
+    this.logger.log(`✓ User ${email} deleted from DynamoDB`);
   } catch (error: any) {
-    this.logger.error(`Failed to delete ${username} from DynamoDB:`, error);
+    this.logger.error(`Failed to delete ${email} from DynamoDB:`, error);
 
     if (error instanceof HttpException) {
       throw error;
@@ -128,21 +247,21 @@ export class UserService {
     await this.cognito
       .adminDeleteUser({
         UserPoolId: userPoolId,
-        Username: username,
+        Username: email,
       })
       .promise();
 
-    this.logger.log(`✓ User ${username} deleted from Cognito`);
+    this.logger.log(`✓ User ${email} deleted from Cognito`);
   } catch (cognitoError: any) {
     this.logger.error(
-      `Failed to delete ${username} from Cognito:`,
+      `Failed to delete ${email} from Cognito:`,
       cognitoError
     );
 
     // Rollback: Restore user in DynamoDB
     if (dynamoDeleted) {
       this.logger.warn(
-        `Attempting rollback: restoring ${username} to DynamoDB...`
+        `Attempting rollback: restoring ${email} to DynamoDB...`
       );
 
       try {
@@ -153,23 +272,23 @@ export class UserService {
           })
           .promise();
 
-        this.logger.log(`✓ Rollback successful: User ${username} restored`);
+        this.logger.log(`✓ Rollback successful: User ${email} restored`);
       } catch (rollbackError) {
         this.logger.error(
-          `Rollback failed: Could not restore ${username}`,
+          `Rollback failed: Could not restore ${email}`,
           rollbackError
         );
         this.logger.error(
-          `CRITICAL: User ${username} deleted from DynamoDB but not from Cognito - manual sync required`
+          `CRITICAL: User ${email} deleted from DynamoDB but not from Cognito - manual sync required`
         );
       }
     }
 
     // Handle specific Cognito errors
     if (cognitoError.code === "UserNotFoundException") {
-      this.logger.error(`User not found in Cognito: ${username}`);
+      this.logger.error(`User not found in Cognito: ${email}`);
       throw new NotFoundException(
-        `User '${username}' not found in authentication system`
+        `User '${email}' not found in authentication system`
       );
     } else if (cognitoError.code === "InvalidParameterException") {
       this.logger.error(`Invalid Cognito parameters`);
@@ -188,7 +307,7 @@ export class UserService {
   }
 
   this.logger.log(
-    `✅ User ${username} deleted successfully by ${requestedBy.userId}`
+    `✅ User ${email} deleted successfully by ${requestedBy.email}`
   );
 
   return userToDelete;
@@ -254,12 +373,12 @@ async addUserToGroup(
     }
 
     // 2. Validate input FIRST before accessing any properties
-    if (!user || !user.userId) {
+    if (!user || !user.email) {
       this.logger.error("Invalid user object provided for role change");
       throw new BadRequestException("Valid user object is required");
     }
 
-    if (!requestedBy || !requestedBy.userId) {
+    if (!requestedBy || !requestedBy.email) {
       this.logger.error("Invalid requesting user object provided for role change");
       throw new BadRequestException("Valid requesting user is required");
     }
@@ -270,7 +389,7 @@ async addUserToGroup(
     }
 
     // Now safe to access user properties
-    const username = user.userId;
+    const email = user.email;
     const previousGroup = user.position; // Store the old group for rollback
 
     // Validate group name is a valid UserStatus
@@ -285,7 +404,7 @@ async addUserToGroup(
     // 3. Authorization check
     if (requestedBy.position !== UserStatus.Admin) {
       this.logger.warn(
-        `Unauthorized access attempt: ${requestedBy.userId} tried to add ${username} to ${groupName}`
+        `Unauthorized access attempt: ${requestedBy.email} tried to add ${email} to ${groupName}`
       );
       throw new UnauthorizedException(
         "Only administrators can modify user groups"
@@ -296,31 +415,31 @@ async addUserToGroup(
     try {
       const userCheckParams = {
         TableName: tableName,
-        Key: { userId: username },
+        Key: { email: email },
       };
 
       const existingUser = await this.dynamoDb.get(userCheckParams).promise();
 
       if (!existingUser.Item) {
-        this.logger.warn(`User ${username} not found in database`);
-        throw new NotFoundException(`User '${username}' does not exist`);
+        this.logger.warn(`User ${email} not found in database`);
+        throw new NotFoundException(`User '${email}' does not exist`);
       }
 
       // 5. Check if user is already in the requested group
       const currentUser = existingUser.Item as User;
       if (currentUser.position === groupName) {
-        this.logger.log(`User ${username} is already in group ${groupName}`);
+        this.logger.log(`User ${email} is already in group ${groupName}`);
         return currentUser; // No change needed
       }
 
       // 6. Prevent self-demotion for admins
       if (
-        requestedBy.userId === username &&
+        requestedBy.email === email &&
         requestedBy.position === UserStatus.Admin &&
         groupName !== UserStatus.Admin
       ) {
         this.logger.warn(
-          `Administrator ${requestedBy.userId} attempted to demote themselves`
+          `Administrator ${requestedBy.email} attempted to demote themselves`
         );
         throw new BadRequestException(
           "Administrators cannot demote themselves"
@@ -331,7 +450,7 @@ async addUserToGroup(
       if (error instanceof HttpException) {
         throw error;
       }
-      this.logger.error(`Error checking user existence: ${username}`, error);
+      this.logger.error(`Error checking user existence: ${email}`, error);
       
       // Handle specific AWS DynamoDB errors
       if (error.code === 'ResourceNotFoundException') {
@@ -353,17 +472,17 @@ async addUserToGroup(
             .adminRemoveUserFromGroup({
               GroupName: previousGroup as string,
               UserPoolId: userPoolId,
-              Username: username,
+              Username: email,
             })
             .promise();
 
           this.logger.log(
-            `✓ User ${username} removed from Cognito group ${previousGroup}`
+            `✓ User ${email} removed from Cognito group ${previousGroup}`
           );
         } catch (removeError: any) {
           // Log but don't fail if user wasn't in the old group
           this.logger.warn(
-            `Could not remove ${username} from old group ${previousGroup}: ${removeError.message}`
+            `Could not remove ${email} from old group ${previousGroup}: ${removeError.message}`
           );
         }
       }
@@ -373,11 +492,11 @@ async addUserToGroup(
         .adminAddUserToGroup({
           GroupName: groupName as string,
           UserPoolId: userPoolId,
-          Username: username,
+          Username: email,
         })
         .promise();
 
-      this.logger.log(`✓ User ${username} added to Cognito group ${groupName}`);
+      this.logger.log(`✓ User ${email} added to Cognito group ${groupName}`);
 
       // Send verification email if moving from Inactive to employee group
       if (
@@ -391,27 +510,27 @@ async addUserToGroup(
           );
         } catch (emailError) {
           this.logger.error(
-            `Failed to send verification email to ${username}:`,
+            `Failed to send verification email to ${email}:`,
             emailError
           );
         }
       }
       else {
         this.logger.log(
-          `No verification email sent to ${username}. Previous group: ${previousGroup}, New group: ${groupName}`
+          `No verification email sent to ${email}. Previous group: ${previousGroup}, New group: ${groupName}`
         );
       }
     } catch (cognitoError: any) {
       this.logger.error(
-        `Failed to add ${username} to Cognito group ${groupName}:`,
+        `Failed to add ${email} to Cognito group ${groupName}:`,
         cognitoError
       );
 
       // Handle specific Cognito errors
       if (cognitoError.code === "UserNotFoundException") {
-        this.logger.error(`User not found in Cognito: ${username}`);
+        this.logger.error(`User not found in Cognito: ${email}`);
         throw new NotFoundException(
-          `User '${username}' not found in authentication system`
+          `User '${email}' not found in authentication system`
         );
       } else if (cognitoError.code === "ResourceNotFoundException") {
         this.logger.error(`Group not found in Cognito: ${groupName}`);
@@ -446,7 +565,7 @@ async addUserToGroup(
       // 9. Update user's position in DynamoDB
       const params = {
         TableName: tableName,
-        Key: { userId: username },
+        Key: { email: email },
         UpdateExpression: "SET #position = :position",
         ExpressionAttributeNames: {
           "#position": "position", // Add this to handle reserved keyword
@@ -461,7 +580,7 @@ async addUserToGroup(
 
       if (!result.Attributes) {
         this.logger.error(
-          `DynamoDB update did not return updated attributes for ${username}`
+          `DynamoDB update did not return updated attributes for ${email}`
         );
         throw new InternalServerErrorException(
           "Failed to retrieve updated user data"
@@ -469,19 +588,19 @@ async addUserToGroup(
       }
 
       this.logger.log(
-        `✅ User ${username} successfully moved from ${previousGroup} to ${groupName} by ${requestedBy.userId}`
+        `✅ User ${email} successfully moved from ${previousGroup} to ${groupName} by ${requestedBy.firstName} ${requestedBy.lastName}`
       );
 
       return result.Attributes as User;
     } catch (dynamoError: any) {
       this.logger.error(
-        `Failed to update ${username} in DynamoDB:`,
+        `Failed to update ${email} in DynamoDB:`,
         dynamoError
       );
 
       // Attempt rollback: revert Cognito group change
       this.logger.warn(
-        `Attempting rollback: reverting Cognito group for ${username} back to ${previousGroup}...`
+        `Attempting rollback: reverting Cognito group for ${email} back to ${previousGroup}...`
       );
 
       try {
@@ -490,7 +609,7 @@ async addUserToGroup(
           .adminRemoveUserFromGroup({
             GroupName: groupName as string,
             UserPoolId: userPoolId,
-            Username: username,
+            Username: email,
           })
           .promise();
 
@@ -500,28 +619,28 @@ async addUserToGroup(
             .adminAddUserToGroup({
               GroupName: previousGroup as string,
               UserPoolId: userPoolId,
-              Username: username,
+              Username: email,
             })
             .promise();
 
           this.logger.log(
-            `✓ Rollback successful: User ${username} restored to group ${previousGroup}`
+            `✓ Rollback successful: User ${email} restored to group ${previousGroup}`
           );
         }
       } catch (rollbackError: any) {
         this.logger.error(
-          `Rollback failed: Could not restore ${username} to group ${previousGroup}`,
+          `Rollback failed: Could not restore ${email} to group ${previousGroup}`,
           rollbackError
         );
         this.logger.error(
-          `CRITICAL: User ${username} group updated in Cognito to ${groupName} but not in DynamoDB - manual sync required`
+          `CRITICAL: User ${email} group updated in Cognito to ${groupName} but not in DynamoDB - manual sync required`
         );
       }
 
       // Handle specific DynamoDB errors
       if (dynamoError.code === "ConditionalCheckFailedException") {
         this.logger.error(
-          `Conditional check failed while updating user ${username} in DynamoDB`
+          `Conditional check failed while updating user ${email} in DynamoDB`
         );
         throw new ConflictException(
           "User data was modified by another process"
@@ -543,34 +662,34 @@ async addUserToGroup(
     }
   }
 
-  // purpose statement: retrieves user by their userId
+  // purpose statement: retrieves user by their email
   // use case: not actually sure right now, maybe is there is an option for admin to click on a specific user to see details?
-  async getUserById(userId: string): Promise<User> {
+  async getUserByEmail(email: string): Promise<User> {
 
     // Validate input
-    if (!userId || typeof userId !== 'string' || userId.trim() === '') {
-      this.logger.error(`Invalid userId provided: ${userId}`);
-      throw new BadRequestException("Valid user ID is required");
+    if (!email || typeof email !== 'string' || email.trim() === '') {
+      this.logger.error(`Invalid user email provided: ${email}`);
+      throw new BadRequestException("Valid user email is required");
     }
 
     const params = {
       TableName: process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE",
       Key: {
-        userId,
+        email: email,
       },
     };
 
     try {
-      this.logger.log(`Fetching user ${userId} from DynamoDB...`);
+      this.logger.log(`Fetching user ${email} from DynamoDB...`);
       const data = await this.dynamoDb.get(params).promise();
       
       // Check if user exists
       if (!data.Item) {
-        this.logger.warn(`User ${userId} not found in database`);
-        throw new NotFoundException(`User '${userId}' does not exist`);
+        this.logger.warn(`User ${email} not found in database`);
+        throw new NotFoundException(`User '${email}' does not exist`);
       }
 
-      this.logger.log(`✅ Successfully retrieved user ${userId}`);
+      this.logger.log(`✅ Successfully retrieved user ${email}`);
       return data.Item as User;
     } catch (error: any) {
       // Re-throw known exceptions
@@ -578,7 +697,7 @@ async addUserToGroup(
         throw error;
       }
 
-      this.logger.error(`Failed to retrieve user ${userId} from DynamoDB:`, error);
+      this.logger.error(`Failed to retrieve user ${email} from DynamoDB:`, error);
       
       // Handle specific AWS errors
       if (error.code === 'ResourceNotFoundException') {
@@ -614,10 +733,10 @@ async addUserToGroup(
       const result = await this.dynamoDb.scan(params).promise();
       
       const users: User[] = (result.Items || []).map((item) => ({
-        userId: item.userId, // Assign name to userId
         position: item.position as UserStatus,
         email: item.email,
-        name: item.userId, // Keep name as name
+        firstName: item.firstName,
+        lastName: item.lastName
       }));
 
       this.logger.log(`✅ Successfully retrieved ${users.length} inactive users`);
@@ -669,10 +788,10 @@ async getAllActiveUsers(): Promise<User[]> {
         throw new NotFoundException("No active users found.");
       }
       const users: User[] = (result.Items || []).map((item) => ({
-        userId: item.userId, // Assign name to userId
         position: item.position as UserStatus,
         email: item.email,
-        name: item.userId, // Keep name as name
+        firstName: item.firstName,
+        lastName: item.lastName
       }));
       
       this.logger.debug(`Fetched ${users.length} active users.`);
