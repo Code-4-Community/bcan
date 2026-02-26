@@ -6,6 +6,8 @@ import {
 } from "../../../../../middle-layer/types/Status.ts";
 import { updateFilter } from "../../../external/bcanSatchel/actions.ts";
 import { observer } from "mobx-react-lite";
+import Button from "../../../components/Button";
+import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 
 const StatusDropdown: React.FC = observer(() => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,15 +30,16 @@ const StatusDropdown: React.FC = observer(() => {
 
   return (
     <div className="relative">
-      <button
-        className="flex items-center gap-2 border border-grey-400 rounded-full px-5 py-2 bg-white text-grey-900 text-base whitespace-nowrap"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        Status {isOpen ? "∧" : "∨"}
-      </button>
+    <Button
+      text="Status"
+      onClick={() => setIsOpen(!isOpen)}
+      logo={isOpen ? faChevronUp : faChevronDown}
+      logoPosition="right"
+      className="border-grey-400 bg-white text-grey-900 text-base whitespace-nowrap"
+    />
 
       {isOpen && (
-        <div className="absolute top-12 left-0 bg-white border border-primary-900 rounded-md p-4 z-50 shadow-lg min-w-[25rem]">
+        <div className="absolute top-12 left-0 bg-white border border-primary-900 rounded-md p-4 z-50 shadow-lg min-w-[25rem] overflow-x-auto">
 
           <div className="grid grid-cols-3 gap-2">
             {statuses.map((status) => (

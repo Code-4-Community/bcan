@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-//import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Status,
   stringToStatus,
@@ -32,7 +32,7 @@ const linkList: FilterBarProps[] = [
 /**
  * SortBar provides the sorting options for grants in the side bar
  */
-const FilterBar: React.FC = observer(() => {
+ const FilterBar: React.FC = observer(() => {
   const [selected, setSelected] = useState("All Grants");
   function categoryClicked(
     e: React.MouseEvent,
@@ -50,12 +50,16 @@ const FilterBar: React.FC = observer(() => {
 
   return (
   <div className="flex items-center gap-2 flex-wrap">
-    <button className="flex items-center gap-2 border-2 border-grey-400 rounded-full px-5 py-2 bg-white text-grey-900 text-base whitespace-nowrap shadow-xl">
-      My Grants
-    </button>
-    <button className="flex items-center gap-2 border border-grey-400 rounded-full px-5 py-2 bg-white text-grey-900 text-base whitespace-nowrap">
-      BCAN Eligible
-    </button>
+    <Button
+      text="My Grants"
+      onClick={() => {}}
+      className="border-grey-400 bg-white text-grey-900 text-base whitespace-nowrap shadow-xl"
+    />
+    <Button
+      text="BCAN Eligible"
+      onClick={() => {}}
+      className="border-grey-400 bg-white text-grey-900 text-base border-2 whitespace-nowrap"
+    />
     {sortButtons.map((name) => (
       <Button
         key={name}
