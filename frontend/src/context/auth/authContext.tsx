@@ -1,4 +1,4 @@
-import { useContext, createContext, ReactNode } from 'react';
+import { useContext, createContext, ReactNode, useEffect, useRef } from 'react';
 import { getAppStore } from '../../external/bcanSatchel/store';
 import { setAuthState, logoutUser } from '../../external/bcanSatchel/actions';
 import { observer } from 'mobx-react-lite';
@@ -31,6 +31,10 @@ export const useAuthContext = () => {
 
 export const AuthProvider = observer(({ children }: { children: ReactNode }) => {
   const store = getAppStore();
+  const logoutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Auto-logout timeout duration (in milliseconds)
+  // 8 hours = 8 * 60 * 60 * 1000
+  const SESSION_TIMEOUT = 8 * 60 * 60 * 1000;
 
   /** Attempt to log in the user */
   const login = async (email: string, password: string): Promise<boolean> => {
@@ -100,7 +104,36 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
   const logout = () => {
     api('/auth/logout', { method: 'POST' });
     logoutUser();
+    // Clear the logout timer when user manually logs out
+    if (logoutTimerRef.current) {
+      clearTimeout(logoutTimerRef.current);
+      logoutTimerRef.current = null;
+    }
   };
+
+  /** Start the auto-logout timer (8 hours from now) */
+  useEffect(() => {
+    if (!store.isAuthenticated) {
+      // Clear timer if user is not authenticated
+      if (logoutTimerRef.current) {
+        clearTimeout(logoutTimerRef.current);
+        logoutTimerRef.current = null;
+      }
+      return;
+    }
+
+    // Start the 8-hour timer when user logs in
+    logoutTimerRef.current = setTimeout(() => {
+      logout();
+    }, SESSION_TIMEOUT);
+
+    // Cleanup: clear timer on unmount or logout
+    return () => {
+      if (logoutTimerRef.current) {
+        clearTimeout(logoutTimerRef.current);
+      }
+    };
+  }, [store.isAuthenticated]);
 
   /** Restore user session on refresh */
   // useEffect(() => {

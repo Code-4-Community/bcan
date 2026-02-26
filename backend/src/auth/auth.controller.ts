@@ -82,6 +82,47 @@ export class AuthController {
   }
   
   /**
+   * Logs out a user by clearing authentication cookies
+   */
+  @Post('logout')
+  @ApiResponse({
+    status: 200,
+    description: "User logged out successfully"
+  })
+  @ApiResponse({
+    status: 500,
+    description: "Internal Server Error"
+  })
+  async logout(
+    @Res({ passthrough: true }) response: Response,
+    @Req() req: any
+  ): Promise<{ message: string }> {
+    const cookieToken = req.cookies?.access_token;  
+    let token: string | undefined = cookieToken;  
+
+    if (!token) {  
+      const authHeader = req.headers['authorization'] || req.headers['Authorization'];  
+      if (authHeader && typeof authHeader === 'string') {  
+        token = authHeader.startsWith('Bearer ')  
+          ? authHeader.substring(7)  
+          : authHeader;  
+      }  
+    }  
+
+    // Logout user in Cognito
+    if (token) {  
+      await this.authService.logout(token);
+    }
+
+    // Clear all cookies
+    response.clearCookie('access_token', { path: '/' });
+    response.clearCookie('refresh_token', { path: '/auth/refresh' });
+    response.clearCookie('id_token', { path: '/' });
+    
+    return { message: 'Logged out successfully' };
+  }
+
+  /**
    * Logs in a user
    */
   @Post('login')

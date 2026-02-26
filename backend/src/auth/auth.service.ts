@@ -291,6 +291,23 @@ export class AuthService {
     return emailRegex.test(email);
   }
 
+  // purpose statement: logs out a user by invalidating their Cognito session
+  async logout(accessToken: string): Promise<void> {
+    try {
+      await this.cognito
+        .globalSignOut({
+          AccessToken: accessToken,
+        })
+        .promise();
+
+      this.logger.log('User signed out successfully from Cognito');
+    } catch (error) {
+      this.logger.error('Error during Cognito sign out:', error);
+      // Don't throw error since we still clear cookies in controller
+      // This handles cases where token is already expired
+    }
+  }
+
   // purpose statement: logs in an user via cognito and retrieves user data from dynamodb
   // use case: employee is trying to access the app, needs to have an account already
 
