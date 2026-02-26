@@ -51,7 +51,7 @@ const NotificationPopup: React.FC<NotificationPopupProps> = observer(({
 
 
     return createPortal(
-        <div className="notification-popup border-2 border-grey-600 rounded shadow-xl" role="dialog" aria-label="Notifications">
+        <div className="notification-popup border-1 border-grey-500 rounded shadow-lg" role="dialog" aria-label="Notifications">
             <div className="popup-header">
                 <h3>Alerts</h3>
                 <button className="close-button" onClick={() => setOpenModal(false)} aria-label="Close notifications">
