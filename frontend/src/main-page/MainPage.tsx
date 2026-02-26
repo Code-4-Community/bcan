@@ -5,7 +5,7 @@ import NavBar from "./navbar/NavBar";
 import RestrictedPage from "./restricted/RestrictedPage";
 import CashFlowPage from "./cash-flow/CashFlowPage";
 import Settings from "./settings/Settings";
-import Footer from "../main-page/Footer";
+import Footer from "../Footer";
 import UsersPage from "./users/UsersPage";
 
 function MainPage() {
