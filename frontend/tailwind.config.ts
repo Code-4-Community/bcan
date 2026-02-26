@@ -98,6 +98,7 @@ export default {
         sm: "0.5rem",
         md: "0.75rem",
         DEFAULT: "0.75rem",
+        lg: "1rem",
         "4xl": "2rem",
       },
     },
