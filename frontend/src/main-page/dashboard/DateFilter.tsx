@@ -65,7 +65,7 @@ const DateFilter: React.FC = observer(() => {
         className="bg-white border-grey-500 inline-flex items-center justify-between text-sm lg:text-base"
       />
       <div
-        className={`z-[100] absolute  top-10 w-64 lg:w-80 bg-white ${showDropdown ? "" : "hidden"} rounded-md border-2 border-gray-200 shadow-lg`}
+        className={`z-[100] absolute  top-10 w-64 lg:w-80 bg-white ${showDropdown ? "" : "hidden"} rounded-md border-2 border-grey-500 shadow-lg`}
       >
         <button
           className="close-button absolute top-3 right-4 text-lg"
@@ -100,8 +100,8 @@ const DateFilter: React.FC = observer(() => {
             </li>
           ))}
         </ul>
-        <hr className="border-t mx-4 border-gray-200" />
-        <button className="p-2" onClick={() => handleReset()}>
+        <hr className="border-t mx-4 border-grey-400" />
+        <button className="p-2 border-0 hover:text-grey-600" onClick={() => handleReset()}>
           Reset
         </button>
       </div>

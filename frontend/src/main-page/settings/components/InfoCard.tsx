@@ -13,7 +13,7 @@ type InfoCardProps = {
 
 export default function InfoCard({ title, fields, action }: InfoCardProps) {
   return (
-    <div className="w-full max-w-3xl rounded-lg bg-white p-6 shadow-sm flex flex-col">
+    <div className="w-full max-w-3xl rounded-md bg-white p-6 shadow-sm flex flex-col">
       {(title || action) && (
         <div className="mb-4 flex items-center justify-between">
           {title && (

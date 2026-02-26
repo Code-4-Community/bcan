@@ -65,6 +65,11 @@ export const updateSort = action(
   (sort: {header: keyof Grant, asc: boolean}) => ({ sort, })
 );
 
+export const updateUserSort = action(
+  "updateUserSort",
+  (sort: {header: keyof User, sort: "asc" | "desc" | "none"}) => ({ sort, })
+); 
+
 /**
  * Append a new grant to the current list of grants.
  */
@@ -73,6 +78,11 @@ export const appendGrant = action("appendGrant", (grant: Grant) => ({ grant }));
 export const updateSearchQuery = action(
   "updateSearchQuery",
   (searchQuery: string) => ({ searchQuery })
+);
+
+export const updateUserQuery = action(
+  "updateUserQuery",
+  (userQuery: string) => ({ userQuery })
 );
 
 export const setNotifications = action(

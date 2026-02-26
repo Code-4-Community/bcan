@@ -9,7 +9,9 @@ import {
   updateSearchQuery,
   updateYearFilter,
   setNotifications,
-  updateSort
+  updateSort,
+  updateUserQuery,
+  updateUserSort,
 } from './actions';
 import { getAppStore, persistToSessionStorage } from './store';
 import { setActiveUsers, setInactiveUsers } from './actions';
@@ -117,3 +119,14 @@ mutator(updateSort, (actionMessage) => {
   const store = getAppStore();
   store.sort = actionMessage.sort;
 })
+
+mutator(updateUserQuery, (actionMessage) => {
+  const store = getAppStore();
+  store.userQuery = actionMessage.userQuery;
+  console.log('Updated userQuery:', store.userQuery);
+})
+
+mutator(updateUserSort, (actionMessage) => {
+  const store = getAppStore();
+  store.userSort = actionMessage.sort;
+}) 
