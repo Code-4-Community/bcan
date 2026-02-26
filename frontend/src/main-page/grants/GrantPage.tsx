@@ -3,6 +3,7 @@ import GrantSearch from "./filter-bar/GrantSearch.tsx";
 import NewGrantModal from "./new-grant/NewGrantModal.tsx";
 import { useEffect, useState } from "react";
 import { Grant } from "../../../../middle-layer/types/Grant.ts";
+import FilterBar from "./filter-bar/FilterBar.tsx";
 import GrantItem from "./grant-view/GrantView.tsx";
 import { useAuthContext } from "../../context/auth/authContext";
 import {
@@ -21,7 +22,7 @@ import { Navigate } from "react-router-dom";
 import BellButton from "../navbar/Bell.tsx";
 import GrantCard from "./grant-list/GrantCard.tsx";
 import { api } from "../../api.ts";
-import Button from "../../components/Button.tsx";
+//import Button from "../../components/Button.tsx";
 
 // still needed potentially?
 interface GrantPageProps {
@@ -114,7 +115,9 @@ function GrantPage({}: GrantPageProps) {
         </div>
         <GrantSearch />
         <div className="flex w-full justify-between py-2 gap-4">
-            <Button text="Filters Coming Soon" onClick={() => {}} className="border-2 border-grey-500 bg-white" />
+          <span className="text-lg font-semibold">
+            <FilterBar />
+          </span>
           <AddGrantButton onClick={() => setShowNewGrantModal(true)} />
         </div>
 
