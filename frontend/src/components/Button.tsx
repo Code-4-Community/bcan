@@ -22,8 +22,8 @@ export default function Button({ text, onClick, className, logo, logoPosition, d
         px-4 py-2 rounded-3xl font-medium text-black border-2 active:bg-primary-900 active:text-white
         flex items-center justify-center transition-opacity
         ${className} ${disabled
-          ? "cursor-not-allowed bg-primary-700 opacity-70"
-          : "bg-primary-900 hover:opacity-95"}
+          ? "cursor-not-allowed opacity-50"
+          : "hover:opacity-90"}
       `}
     >
       {logo && logoPosition === 'left' &&

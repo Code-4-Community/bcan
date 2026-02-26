@@ -16,6 +16,6 @@ export default function SignUpButton({ disabled }: SignUpButtonProps) {
                 type="submit"
                 disabled={disabled}
                 onClick={() => {}}
-                className={`mt-6 w-full text-base font-bold text-white`}/>
+                className={`mt-6 w-full bg-primary-900 text-base font-bold text-white`}/>
   );
 }

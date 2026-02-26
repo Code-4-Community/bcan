@@ -36,7 +36,7 @@ const ForgotPassword = () => {
             </div>
 
             {/* Send Email Button */}
-            <Button text="Send email" className="w-full text-white" disabled={!email} type="submit" onClick={() => navigate("/login")} />
+            <Button text="Send email" className="w-full bg-primary-900 text-white" disabled={!email} type="submit" onClick={() => navigate("/login")} />
 
             {/* Back to Login Link */}
             <div className="mt-8 text-center text-base">
