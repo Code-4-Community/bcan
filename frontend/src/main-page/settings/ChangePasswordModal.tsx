@@ -1,10 +1,11 @@
 import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import {
   PasswordField,
   PasswordRequirements,
   isPasswordValid,
 } from "../../sign-up";
-
 
 export type ChangePasswordFormValues = {
   currentPassword: string;
@@ -14,29 +15,9 @@ export type ChangePasswordFormValues = {
 type ChangePasswordModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  
   onSubmit?: (values: ChangePasswordFormValues) => void;
   error?: string | null;
 };
-
-function CloseIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-      aria-hidden
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M6 18L18 6M6 6l12 12"
-      />
-    </svg>
-  );
-}
 
 export default function ChangePasswordModal({
   isOpen,
@@ -52,6 +33,8 @@ export default function ChangePasswordModal({
 
   const newPasswordValid = isPasswordValid(newPassword);
   const passwordsMatch = newPassword !== "" && newPassword === reEnterPassword;
+  const passwordsDontMatch =
+    reEnterPassword !== "" && newPassword !== reEnterPassword;
   const allFilled =
     currentPassword.trim() !== "" &&
     newPassword !== "" &&
@@ -96,7 +79,7 @@ export default function ChangePasswordModal({
             className="rounded p-1 text-grey-600 hover:bg-grey-200 hover:text-grey-800"
             aria-label="Close"
           >
-            <CloseIcon className="h-6 w-6" />
+            <FontAwesomeIcon icon={faXmark} className="h-6 w-6" />
           </button>
         </div>
 
@@ -127,13 +110,14 @@ export default function ChangePasswordModal({
             placeholder="Re-enter your password"
             value={reEnterPassword}
             onChange={(e) => setReEnterPassword(e.target.value)}
+            error={!!error || passwordsDontMatch}
           />
 
           <PasswordRequirements password={newPassword} />
 
-          {error && (
-            <div className="rounded-md bg-red-lightest p-3 text-sm text-red-dark">
-              {error}
+          {(error || passwordsDontMatch) && (
+            <div className="rounded-2xl bg-[#FFEEEE] px-4 py-3 text-sm font-bold text-[#CC0000]">
+              {error ?? "Your passwords do not match."}
             </div>
           )}
 
