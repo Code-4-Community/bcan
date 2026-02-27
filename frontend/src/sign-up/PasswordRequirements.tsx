@@ -21,6 +21,11 @@ export const PASSWORD_REQUIREMENTS: PasswordRequirement[] = [
   { id: "lower", label: "1 Lowercase", check: (p) => /[a-z]/.test(p) },
 ];
 
+/** Returns true if the password meets all requirements (same logic as sign-up). */
+export function isPasswordValid(password: string): boolean {
+  return PASSWORD_REQUIREMENTS.every((r) => r.check(password));
+}
+
 type PasswordRequirementsProps = {
   password: string;
 };
