@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Button from "../../../components/Button.tsx";
 import { faCheckSquare, faSquareXmark, faPlus } from "@fortawesome/free-solid-svg-icons";
 
