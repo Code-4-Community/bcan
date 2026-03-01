@@ -648,4 +648,74 @@ export class AuthService {
       throw new UnauthorizedException("Failed to validate session");
     }
   }
+
+  // purpose statement: uses a valid refresh token to get a new access & id token
+  // use case: a logged in user's access token has expired and needs to be refreshed
+  // without re-athenticating
+  async refreshTokens(refreshToken: string, email: string): Promise<{
+  accessToken: string;
+  idToken: string;
+}> {
+  const clientId = process.env.COGNITO_CLIENT_ID;
+  const clientSecret = process.env.COGNITO_CLIENT_SECRET;
+
+  if (!clientId || !clientSecret) {
+    this.logger.error('Cognito Client ID or Secret is not defined.');
+    throw new InternalServerErrorException('Server configuration error');
+  }
+
+  if (!refreshToken) {
+    this.logger.error('Token refresh failed: no refresh token provided');
+    throw new UnauthorizedException('No refresh token provided');
+  }
+
+  if (!email) {
+    this.logger.error('Token refresh failed: could not determine user identity');
+    throw new UnauthorizedException('Could not determine user identity');
+  }
+
+  this.logger.log(`Starting token refresh for user: ${email}`);
+
+  const hatch = this.computeHatch(email, clientId, clientSecret);
+
+  const params = {
+    AuthFlow: 'REFRESH_TOKEN_AUTH',
+    ClientId: clientId,
+    AuthParameters: {
+      REFRESH_TOKEN: refreshToken,
+      SECRET_HASH: hatch,
+    },
+  };
+
+  try {
+    const response = await this.cognito.initiateAuth(params).promise();
+
+    this.logger.debug(`Cognito refresh response: ${JSON.stringify(response, null, 2)}`);
+
+    if (
+      !response.AuthenticationResult?.AccessToken ||
+      !response.AuthenticationResult?.IdToken
+    ) {
+      this.logger.error('Token refresh failed: Cognito response missing AccessToken or IdToken');
+      throw new InternalServerErrorException('Failed to refresh tokens');
+    }
+
+    this.logger.log(`Tokens refreshed successfully for user: ${email}`);
+
+    return {
+      accessToken: response.AuthenticationResult.AccessToken,
+      idToken: response.AuthenticationResult.IdToken,
+    };
+  } catch (error: unknown) {
+    const cognitoError = error as AwsCognitoError;
+
+    if (cognitoError.code === 'NotAuthorizedException') {
+      this.logger.error(`Token refresh failed for ${email}: refresh token is expired or invalid`);
+      throw new UnauthorizedException('Refresh token is expired or invalid');
+    }
+
+    this.logger.error(`Token refresh for ${email}`, (error as Error).stack);
+    throw new InternalServerErrorException('Failed to refresh tokens');
+  }
+}
 }

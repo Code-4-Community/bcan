@@ -154,6 +154,66 @@ export class AuthController {
   }
 
   /**
+   * Refreshes the access token and id token using the refresh token
+   */
+  @Post('refresh')
+  @ApiResponse({
+    status: 200,
+    description: "Tokens refreshed successfully"
+  })
+  @ApiResponse({
+    status: 401,
+    description: "Refresh token missing or expired"
+  })
+  @ApiResponse({
+    status: 500,
+    description: "Internal Server Error"
+  })
+  async refresh(
+    @Req() req: any,
+    @Res({ passthrough: true}) response: Response,
+  ): Promise<{ message: string}> {
+
+    const refreshToken = req.cookies?.refresh_token;
+
+    const idToken = req.cookies?.id_token;
+
+    if (!refreshToken || !idToken ) {
+      throw new UnauthorizedException('Missing required token cookies');
+    }
+
+    const idTokenPayload = JSON.parse(
+      Buffer.from(idToken.split('.')[1], 'base64').toString('utf8')
+    );
+
+    const email = idTokenPayload.email;
+
+    if (!email) {
+      throw new UnauthorizedException('Could not extract user identity from token');
+    }
+
+    const { accessToken, idToken: newIdToken } = await this.authService.refreshTokens(refreshToken, email);
+
+    response.cookie('access_token', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 3600000, // 1 hour
+      path: '/',
+    });
+
+    response.cookie('id_token', newIdToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 3600000, // 1 hour
+      path: '/',
+    });
+
+    return { message: 'Tokens refreshed successfully' };
+  }
+
+  /**
    * 
    * Set new password
    */
