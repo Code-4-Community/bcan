@@ -125,6 +125,8 @@ export class AuthController {
     });
   }
 
+  response.clearCookie('refresh_token', { path: '/auth/refresh' });
+
   if (result.refreshToken) {
     console.log("refresh token set")
     response.cookie('refresh_token', result.refreshToken, {
@@ -187,12 +189,13 @@ export class AuthController {
     );
 
     const email = idTokenPayload.email;
+    const cognitoUsername = idTokenPayload['cognito:username'];
 
-    if (!email) {
+    if (!email || !cognitoUsername) {
       throw new UnauthorizedException('Could not extract user identity from token');
     }
 
-    const { accessToken, idToken: newIdToken } = await this.authService.refreshTokens(refreshToken, email);
+    const { accessToken, idToken: newIdToken } = await this.authService.refreshTokens(refreshToken, cognitoUsername);
 
     response.cookie('access_token', accessToken, {
       httpOnly: true,

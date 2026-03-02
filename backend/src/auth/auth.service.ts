@@ -652,7 +652,7 @@ export class AuthService {
   // purpose statement: uses a valid refresh token to get a new access & id token
   // use case: a logged in user's access token has expired and needs to be refreshed
   // without re-athenticating
-  async refreshTokens(refreshToken: string, email: string): Promise<{
+  async refreshTokens(refreshToken: string, cognitoUsername: string): Promise<{
   accessToken: string;
   idToken: string;
 }> {
@@ -669,14 +669,14 @@ export class AuthService {
     throw new UnauthorizedException('No refresh token provided');
   }
 
-  if (!email) {
+  if (!cognitoUsername) {
     this.logger.error('Token refresh failed: could not determine user identity');
     throw new UnauthorizedException('Could not determine user identity');
   }
 
-  this.logger.log(`Starting token refresh for user: ${email}`);
+  this.logger.log(`Starting token refresh for user: ${cognitoUsername}`);
 
-  const hatch = this.computeHatch(email, clientId, clientSecret);
+  const hatch = this.computeHatch(cognitoUsername, clientId, clientSecret);
 
   const params = {
     AuthFlow: 'REFRESH_TOKEN_AUTH',
@@ -700,7 +700,7 @@ export class AuthService {
       throw new InternalServerErrorException('Failed to refresh tokens');
     }
 
-    this.logger.log(`Tokens refreshed successfully for user: ${email}`);
+    this.logger.log(`Tokens refreshed successfully for user: ${cognitoUsername}`);
 
     return {
       accessToken: response.AuthenticationResult.AccessToken,
@@ -710,11 +710,11 @@ export class AuthService {
     const cognitoError = error as AwsCognitoError;
 
     if (cognitoError.code === 'NotAuthorizedException') {
-      this.logger.error(`Token refresh failed for ${email}: refresh token is expired or invalid`);
+      this.logger.error(`Token refresh failed for ${cognitoUsername}: refresh token is expired or invalid`);
       throw new UnauthorizedException('Refresh token is expired or invalid');
     }
 
-    this.logger.error(`Token refresh for ${email}`, (error as Error).stack);
+    this.logger.error(`Token refresh for ${cognitoUsername}`, (error as Error).stack);
     throw new InternalServerErrorException('Failed to refresh tokens');
   }
 }
