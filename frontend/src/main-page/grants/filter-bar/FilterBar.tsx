@@ -8,8 +8,11 @@ import {
   updateFilter,
 } from "../../../external/bcanSatchel/actions.ts";
 import { observer } from "mobx-react-lite";
-import CalendarDropdown from "./CalendarDropdown.tsx";
-import { FaChevronRight } from "react-icons/fa";
+//import CalendarDropdown from "./CalendarDropdown.tsx";
+//import { FaChevronRight } from "react-icons/fa";
+import StatusDropdown from "./StatusDropdown";
+import Button from "../../../components/Button";
+import { faSort } from "@fortawesome/free-solid-svg-icons";
 
 interface FilterBarProps {
   name: string;
@@ -29,7 +32,7 @@ const linkList: FilterBarProps[] = [
 /**
  * SortBar provides the sorting options for grants in the side bar
  */
-const FilterBar: React.FC = observer(() => {
+ const FilterBar: React.FC = observer(() => {
   const [selected, setSelected] = useState("All Grants");
   function categoryClicked(
     e: React.MouseEvent,
@@ -43,41 +46,32 @@ const FilterBar: React.FC = observer(() => {
     }
   }
 
+  const sortButtons = ["Alphabetical", "Due Date", "Grant Amount"];
+
   return (
-    <div className="sortbar flex flex-col gap-4 bg-grey-100 p-6 rounded-[1.2rem] border-[0.1rem] border-black">
-      <div>
-        <div className="flex pb-2">{"Filter by Date"}</div>
-        <CalendarDropdown />
-      </div>
-      <div>
-        <div className="flex pb-2">{"Filter by Status"}</div>
-        <ul className="flex flex-col gap-2">
-          {linkList.map((item, index) => (
-            <li key={index}>
-              <Link
-                onClick={(e) => categoryClicked(e, item.name, item.linkTo)}
-                to={item.linkTo ? item.linkTo : "#"}
-              >
-                <div
-                  className={`border hover:bg-primary-800 ${
-                    selected === item.name ? "bg-primary-900" : "bg-white"
-                  }`}
-                >
-                  <div
-                    className={`flex w-full justify-between items-center ${
-                    selected === item.name ? "text-white" : "text-black"
-                    }`}
-                  >
-                    {item.name}
-                    <FaChevronRight />
-                  </div>
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+  <div className="flex items-center gap-2 flex-wrap">
+    <Button
+      text="My Grants"
+      onClick={() => {}}
+      className="border-grey-400 bg-white text-grey-900 text-base whitespace-nowrap shadow-xl"
+    />
+    <Button
+      text="BCAN Eligible"
+      onClick={() => {}}
+      className="border-grey-400 bg-white text-grey-900 text-base border-2 whitespace-nowrap"
+    />
+    {sortButtons.map((name) => (
+      <Button
+        key={name}
+        text={name}
+        onClick={() => {}}
+        logo={faSort}
+        logoPosition="left"
+        className="border-grey-400 bg-white text-grey-900 text-base whitespace-nowrap"
+      />
+    ))}
+    <StatusDropdown />
+  </div>
   );
 });
 
