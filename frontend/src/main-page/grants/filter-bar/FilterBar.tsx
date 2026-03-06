@@ -53,12 +53,12 @@ const linkList: FilterBarProps[] = [
     <Button
       text="My Grants"
       onClick={() => {}}
-      className="border-grey-400 bg-white text-grey-900 text-base whitespace-nowrap shadow-xl"
+      className="border-grey-500 border-b-4 bg-white text-grey-600 text-base whitespace-nowrap shadow-xl"
     />
     <Button
       text="BCAN Eligible"
       onClick={() => {}}
-      className="border-grey-400 bg-white text-grey-900 text-base border-2 whitespace-nowrap"
+      className="border-grey-500 bg-white text-grey-600 text-base border-2 whitespace-nowrap"
     />
     {sortButtons.map((name) => (
       <Button
@@ -67,7 +67,7 @@ const linkList: FilterBarProps[] = [
         onClick={() => {}}
         logo={faSort}
         logoPosition="left"
-        className="border-grey-400 bg-white text-grey-900 text-base whitespace-nowrap"
+        className="border-grey-500 bg-white text-grey-600 text-base whitespace-nowrap"
       />
     ))}
     <StatusDropdown />
