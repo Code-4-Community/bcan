@@ -8,7 +8,7 @@ export default function LoginPrompt() {
   const navigate = useNavigate();
 
   return (
-    <p className="mt-6 text-center text-sm text-grey-600">
+    <p className="mt-6 text-center font-medium">
       Already have an account?{" "}
       <button
         type="button"

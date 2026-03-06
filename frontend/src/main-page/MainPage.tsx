@@ -6,7 +6,7 @@ import Users from "./users/Users";
 import RestrictedPage from "./restricted/RestrictedPage";
 import CashFlowPage from "./cash-flow/CashFlowPage";
 import Settings from "./settings/Settings";
-import Footer from "./Footer";
+import Footer from "../Footer";
 
 function MainPage() {
   return (

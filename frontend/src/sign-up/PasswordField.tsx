@@ -77,8 +77,8 @@ export default function PasswordField({
         <input
           id={id}
           type={visible ? "text" : "password"}
-          className={`block w-full rounded-md border-2 bg-white py-2.5 pl-4 pr-10 text-base placeholder:text-grey-500 ${
-            error ? "border-red" : "border-grey-500"
+          className={`block w-full rounded-md border-2 py-2.5 pl-4 pr-10 text-base placeholder:text-grey-500 ${
+            error ? "border-red bg-red-lightest" : "border-grey-500 bg-white "
           }`}
           {...inputProps}
         />

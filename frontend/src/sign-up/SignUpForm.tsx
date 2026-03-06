@@ -45,7 +45,7 @@ export default function SignUpForm({
 
   return (
     <div className="flex w-full flex-col text-left">
-      <h1 className="mb-8 text-3xl font-bold text-black">Sign Up</h1>
+      <h1 className="text-3xl lg:text-4xl font-bold mb-6 flex justify-start">Sign Up</h1>
 
       <form onSubmit={onSubmit} className="flex w-full flex-col text-left">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-x-6">
@@ -69,11 +69,10 @@ export default function SignUpForm({
           />
         </div>
 
-        <div className="mt-6">
+        <div className="mt-4">
           <InputField
             id="email"
             label="Email"
-            type="email"
             required
             placeholder="Enter your email address"
             value={values.email}
@@ -82,7 +81,7 @@ export default function SignUpForm({
           />
         </div>
 
-        <div className="mt-6">
+        <div className="mt-4">
           <PasswordField
             id="password"
             label="Password"
@@ -94,7 +93,7 @@ export default function SignUpForm({
           />
         </div>
 
-        <div className="mt-6">
+        <div className="mt-4">
           <PasswordField
             id="passwordRe"
             label="Re-enter Password"
@@ -102,14 +101,14 @@ export default function SignUpForm({
             placeholder="Re-enter your password"
             value={values.passwordRe}
             onChange={(e) => onChange("passwordRe", e.target.value)}
-            error={errorItem === "password"}
+            error={errorItem === "password" || passwordsMatch === false}
           />
         </div>
 
-        <PasswordRequirements password={values.password} />
+        {!hasError && (<PasswordRequirements password={values.password} />)}
 
         {hasError && error?.message && (
-          <div className="mt-4 rounded-md bg-red-lightest p-3 text-sm text-red-dark">
+          <div className="bg-red-light text-red rounded-xl py-3 px-4 text-center mt-9">
             {error.message}
           </div>
         )}

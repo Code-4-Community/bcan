@@ -107,6 +107,7 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({
         <Button
           text="Calculate"
           onClick={calculateCostBenefit}
+          disabled={!hourlyRate || !timePerReport}
           className="border-2 ml-auto bg-primary-900 text-white"
         />
       </div>
