@@ -565,46 +565,299 @@ export class AuthService {
     }
   }
 
-  // purpose statement: updates user profile info in dynamodb
-  // use case: employee is updating their profile information
-  async updateProfile(email: string, position_or_role: string) {
-    // Validate input parameters for username, email, and position_or_role
-
-    if (!email || email.trim().length === 0 || !this.isValidEmail(email)) {
-      this.logger.error("Update Profile failed: Email is required");
-      throw new BadRequestException("Email is required");
+  // purpose statement: changes the password for a logged-in user in Cognito
+  // use case: employee updates their password from the settings page
+  async changePassword(
+    accessToken: string,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<void> {
+    if (!accessToken || accessToken.trim().length === 0) {
+      this.logger.error("Change Password failed: Access token is required");
+      throw new BadRequestException("Access token is required");
     }
 
-    if (!position_or_role || position_or_role.trim().length === 0) {
-      this.logger.error("Update Profile failed: Position or role is required");
-      throw new BadRequestException("Position or role is required");
+    if (!currentPassword || currentPassword.length === 0) {
+      this.logger.error("Change Password failed: Current password is required");
+      throw new BadRequestException("Current password is required");
     }
-    this.logger.log(`Updating profile for user ${email}`);
-    const tableName = process.env.DYNAMODB_USER_TABLE_NAME || "TABLE_FAILURE";
 
-    const params = {
-      TableName: tableName,
-      Key: { email: email },
-      // Update both fields in one go:
-      UpdateExpression:
-        "SET email = :email, position_or_role = :position_or_role",
-      ExpressionAttributeValues: {
-        ":email": email,
-        ":position_or_role": position_or_role,
-      },
-      // Optional: return the newly updated item if you want to use it
-      // ReturnValues: 'ALL_NEW',
-    };
+    if (!newPassword || newPassword.length < 8) {
+      this.logger.error(
+        "Change Password failed: New password must be at least 8 characters long",
+      );
+      throw new BadRequestException(
+        "New password must be at least 8 characters long",
+      );
+    }
 
     try {
-      await this.dynamoDb.update(params).promise();
-      this.logger.log(`User ${email} updated user profile.`);
-    } catch (error: unknown) {
+      await this.cognito
+        .changePassword({
+          AccessToken: accessToken,
+          PreviousPassword: currentPassword,
+          ProposedPassword: newPassword,
+        })
+        .promise();
+
+      this.logger.log("Password changed successfully for current user");
+    } catch (error: any) {
+      this.logger.error("Error changing password in Cognito:", error);
+
+      if (error.code === "NotAuthorizedException") {
+        throw new UnauthorizedException("Current password is incorrect");
+      }
+
+      if (error.code === "InvalidPasswordException") {
+        throw new BadRequestException(
+          "New password does not meet security requirements",
+        );
+      }
+
+      throw new InternalServerErrorException("Failed to change password");
+    }
+  }
+
+  // purpose statement: updates user's email in Cognito and email/firstName/lastName in DynamoDB
+  // use case: employee is updating their profile information
+  async updateProfile(
+    accessToken: string,
+    newEmail: string,
+    firstName: string,
+    lastName: string,
+  ) {
+    if (!accessToken || accessToken.trim().length === 0) {
+      this.logger.error("Update Profile failed: Access token is required");
+      throw new BadRequestException("Access token is required");
+    }
+
+    if (
+      !newEmail ||
+      newEmail.trim().length === 0 ||
+      !this.isValidEmail(newEmail)
+    ) {
+      this.logger.error("Update Profile failed: Valid email is required");
+      throw new BadRequestException("Valid email is required");
+    }
+
+    if (!firstName || firstName.trim().length === 0) {
+      this.logger.error("Update Profile failed: First name is required");
+      throw new BadRequestException("First name is required");
+    }
+
+    if (!lastName || lastName.trim().length === 0) {
+      this.logger.error("Update Profile failed: Last name is required");
+      throw new BadRequestException("Last name is required");
+    }
+
+    const userPoolId = process.env.COGNITO_USER_POOL_ID;
+    const tableName = process.env.DYNAMODB_USER_TABLE_NAME;
+
+    if (!userPoolId) {
+      this.logger.error(
+        "Cognito User Pool ID is not defined in environment variables.",
+      );
+      throw new InternalServerErrorException("Server configuration error");
+    }
+
+    if (!tableName) {
+      this.logger.error(
+        "DynamoDB User Table Name is not defined in environment variables.",
+      );
+      throw new InternalServerErrorException("Server configuration error");
+    }
+
+    try {
+      const getUserResponse = await this.cognito
+        .getUser({ AccessToken: accessToken })
+        .promise();
+
+      let currentEmail: string | undefined;
+      for (const attribute of getUserResponse.UserAttributes) {
+        if (attribute.Name === "email") {
+          currentEmail = attribute.Value;
+          break;
+        }
+      }
+
+      if (!currentEmail) {
+        this.logger.error(
+          "Failed to extract current email from Cognito user attributes",
+        );
+        throw new InternalServerErrorException(
+          "Failed to retrieve current email from authentication system",
+        );
+      }
+
+      this.logger.log(
+        `Updating profile for user. Current email: ${currentEmail}, New email: ${newEmail}`,
+      );
+
+      const existingUserResult = await this.dynamoDb
+        .get({
+          TableName: tableName,
+          Key: { email: currentEmail },
+        })
+        .promise();
+
+      if (!existingUserResult.Item) {
+        this.logger.error(
+          `User not found in DynamoDB for email: ${currentEmail}`,
+        );
+        throw new BadRequestException("User not found in database");
+      }
+
+      const existingUser = existingUserResult.Item as User;
+
+      const normalizedCurrentEmail = currentEmail.toLowerCase();
+      const normalizedNewEmail = newEmail.toLowerCase();
+
+      if (normalizedNewEmail !== normalizedCurrentEmail) {
+        try {
+          await this.cognito
+            .updateUserAttributes({
+              AccessToken: accessToken,
+              UserAttributes: [
+                { Name: "email", Value: newEmail },
+                { Name: "email_verified", Value: "true" },
+              ],
+            })
+            .promise();
+
+          this.logger.log(
+            `✓ Cognito email updated from ${currentEmail} to ${newEmail}`,
+          );
+        } catch (cognitoError: any) {
+          this.logger.error(
+            `Failed to update Cognito email from ${currentEmail} to ${newEmail}:`,
+            cognitoError,
+          );
+
+          if (cognitoError.code === "UsernameExistsException") {
+            throw new ConflictException(
+              "An account with this email already exists",
+            );
+          } else if (cognitoError.code === "InvalidParameterException") {
+            throw new BadRequestException(
+              `Invalid email: ${cognitoError.message}`,
+            );
+          }
+
+          throw new InternalServerErrorException(
+            "Failed to update email in authentication system",
+          );
+        }
+      }
+
+      const updatedUser: User = {
+        ...existingUser,
+        email: newEmail,
+        firstName,
+        lastName,
+      };
+
+      try {
+        if (normalizedNewEmail === normalizedCurrentEmail) {
+          await this.dynamoDb
+            .update({
+              TableName: tableName,
+              Key: { email: currentEmail },
+              UpdateExpression:
+                "SET firstName = :firstName, lastName = :lastName",
+              ExpressionAttributeValues: {
+                ":firstName": firstName,
+                ":lastName": lastName,
+              },
+              ReturnValues: "NONE",
+            })
+            .promise();
+        } else {
+          await this.dynamoDb
+            .transactWrite({
+              TransactItems: [
+                {
+                  Put: {
+                    TableName: tableName,
+                    Item: updatedUser,
+                    ConditionExpression: "attribute_not_exists(email)",
+                  },
+                },
+                {
+                  Delete: {
+                    TableName: tableName,
+                    Key: { email: currentEmail },
+                    ConditionExpression: "attribute_exists(email)",
+                  },
+                },
+              ],
+            })
+            .promise();
+        }
+
+        this.logger.log(
+          `User profile updated in DynamoDB for email ${newEmail}`,
+        );
+      } catch (dynamoError: any) {
+        this.logger.error(
+          `Failed to update user profile in DynamoDB for ${currentEmail} -> ${newEmail}:`,
+          dynamoError,
+        );
+        
+        if (normalizedNewEmail !== normalizedCurrentEmail) {
+          try {
+            await this.cognito
+              .updateUserAttributes({
+                AccessToken: accessToken,
+                UserAttributes: [
+                  { Name: "email", Value: currentEmail },
+                  { Name: "email_verified", Value: "true" },
+                ],
+              })
+              .promise();
+
+            this.logger.log(
+              `✓ Rollback successful: Cognito email reverted to ${currentEmail}`,
+            );
+          } catch (rollbackError) {
+            this.logger.error(
+              `Rollback failed: Could not revert Cognito email back to ${currentEmail}`,
+              rollbackError,
+            );
+            this.logger.error(
+              `CRITICAL: Email updated in Cognito to ${newEmail} but DynamoDB update failed - manual sync required`,
+            );
+          }
+        }
+
+        if (dynamoError.code === "ConditionalCheckFailedException") {
+          throw new ConflictException(
+            "User data was modified by another process or new email already exists",
+          );
+        } else if (dynamoError.code === "ResourceNotFoundException") {
+          this.logger.error("DynamoDB table does not exist");
+          throw new InternalServerErrorException("Database table not found");
+        } else if (dynamoError.code === "ValidationException") {
+          this.logger.error("Invalid DynamoDB update parameters");
+          throw new BadRequestException("Invalid update parameters");
+        }
+
+        throw new InternalServerErrorException(
+          "Failed to update user data in database",
+        );
+      }
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
       if (error instanceof Error) {
         this.logger.error("Updating the profile failed", error.stack);
-        throw new Error(error.message || "Updating the profile failed");
+        throw new InternalServerErrorException(
+          error.message || "Updating the profile failed",
+        );
       }
-      throw new Error("An unknown error occurred");
+
+      throw new InternalServerErrorException("Updating the profile failed");
     }
   }
 

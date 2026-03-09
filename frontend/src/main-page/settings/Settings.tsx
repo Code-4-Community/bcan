@@ -1,25 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "../../components/Button";
 import InfoCard from "./components/InfoCard";
 import logo from "../../images/logo.svg";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import ChangePasswordModal from "./ChangePasswordModal";
+import { api } from "../../api";
+import { getAppStore } from "../../external/bcanSatchel/store";
+import { updateUserProfile } from "../../external/bcanSatchel/actions";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const initialPersonalInfo = {
-  firstName: "John",
-  lastName: "Doe",
-  email: "john.doe@gmail.com",
-};
-
 export default function Settings() {
-  const [personalInfo, setPersonalInfo] = useState(initialPersonalInfo);
+  const store = getAppStore();
+
+  const [personalInfo, setPersonalInfo] = useState({
+    firstName: store.user?.firstName ?? "",
+    lastName: store.user?.lastName ?? "",
+    email: store.user?.email ?? "",
+  });
   const [isEditingPersonalInfo, setIsEditingPersonalInfo] = useState(false);
-  const [editForm, setEditForm] = useState(initialPersonalInfo);
+  const [editForm, setEditForm] = useState(personalInfo);
   const [personalInfoError, setPersonalInfoError] = useState<string | null>(null);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const [changePasswordError, setChangePasswordError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (store.user) {
+      const updated = {
+        firstName: store.user.firstName,
+        lastName: store.user.lastName,
+        email: store.user.email,
+      };
+      setPersonalInfo(updated);
+      if (!isEditingPersonalInfo) {
+        setEditForm(updated);
+      }
+    }
+  }, [store.user, isEditingPersonalInfo]);
 
   const handleStartEdit = () => {
     setEditForm(personalInfo);
@@ -33,15 +50,46 @@ export default function Settings() {
     setIsEditingPersonalInfo(false);
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (!EMAIL_REGEX.test(editForm.email)) {
       setPersonalInfoError("Email is not valid.");
       return;
     }
 
-    setPersonalInfo(editForm);
-    setIsEditingPersonalInfo(false);
-    setPersonalInfoError(null);
+    try {
+      const response = await api("/auth/update-profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: editForm.email,
+          firstName: editForm.firstName,
+          lastName: editForm.lastName,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        const message =
+          (errorBody && (errorBody.message as string)) ||
+          "Failed to update profile. Please try again.";
+        setPersonalInfoError(message);
+        return;
+      }
+
+      setPersonalInfo(editForm);
+      updateUserProfile({
+        ...store.user!,
+        firstName: editForm.firstName,
+        lastName: editForm.lastName,
+        email: editForm.email,
+      });
+
+      setIsEditingPersonalInfo(false);
+      setPersonalInfoError(null);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      setPersonalInfoError("An unexpected error occurred. Please try again.");
+    }
   };
 
   return (
@@ -179,9 +227,36 @@ export default function Settings() {
         isOpen={isChangePasswordModalOpen}
         onClose={() => setIsChangePasswordModalOpen(false)}
         error={changePasswordError}
-        onSubmit={(values) => {
-          // Backend: call API with values.currentPassword and values.newPassword
-          void values;
+        onSubmit={async (values) => {
+          setChangePasswordError(null);
+          try {
+            const response = await api("/auth/change-password", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                currentPassword: values.currentPassword,
+                newPassword: values.newPassword,
+              }),
+            });
+
+            if (!response.ok) {
+              const errorBody = await response.json().catch(() => ({}));
+              const rawMessage =
+                (errorBody && (errorBody.message as string | string[])) || null;
+              const message = Array.isArray(rawMessage)
+                ? rawMessage[0]
+                : rawMessage || "Failed to change password. Please try again.";
+              setChangePasswordError(message);
+              return;
+            }
+
+            setIsChangePasswordModalOpen(false);
+          } catch (error) {
+            console.error("Error changing password:", error);
+            setChangePasswordError(
+              "An unexpected error occurred. Please try again.",
+            );
+          }
         }}
       />
     </div>

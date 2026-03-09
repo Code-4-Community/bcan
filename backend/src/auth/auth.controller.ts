@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { User } from '../types/User';
 import { Response } from 'express';
 import { VerifyUserGuard } from "../guards/auth.guard";
-import { LoginBody, RegisterBody, SetPasswordBody, UpdateProfileBody } from './types/auth.types';
+import { LoginBody, RegisterBody, SetPasswordBody, UpdateProfileBody, ChangePasswordBody } from './types/auth.types';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
 @Controller('auth')
@@ -289,6 +289,56 @@ export class AuthController {
   }
 
   /**
+   * Change password for a logged-in user
+   */
+  @Post('change-password')
+  @UseGuards(VerifyUserGuard)
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 200,
+    description: "Password changed successfully"
+  })
+  @ApiResponse({
+    status: 400,
+    description: "{Error encountered}"
+  })
+  @ApiResponse({
+    status: 401,
+    description: "Invalid credentials"
+  })
+  @ApiResponse({
+    status: 500,
+    description: "Internal server error"
+  })
+  async changePassword(
+    @Req() req: any,
+    @Body() body: ChangePasswordBody
+  ): Promise<{ message: string }> {
+    let accessToken: string | undefined = req.cookies?.access_token;
+
+    if (!accessToken) {
+      const authHeader =
+        req.headers["authorization"] || req.headers["Authorization"];
+      if (authHeader && typeof authHeader === "string") {
+        accessToken = authHeader.startsWith("Bearer ")
+          ? authHeader.substring(7)
+          : authHeader;
+      }
+    }
+
+    if (!accessToken) {
+      throw new UnauthorizedException("Missing access token");
+    }
+
+    await this.authService.changePassword(
+      accessToken,
+      body.currentPassword,
+      body.newPassword,
+    );
+    return { message: "Password has been changed successfully" };
+  }
+
+  /**
    * Update user profile for email, and position_or_role
    */
   @Post('update-profile')
@@ -312,10 +362,32 @@ export class AuthController {
   })
 
     async updateProfile(
+      @Req() req: any,
       @Body() body: UpdateProfileBody
     ): Promise<{ message: string }> {
-      await this.authService.updateProfile(body.email, body.position_or_role);
-      return { message: 'Profile has been updated' };
+      let accessToken: string | undefined = req.cookies?.access_token;
+
+      if (!accessToken) {
+        const authHeader =
+          req.headers["authorization"] || req.headers["Authorization"];
+        if (authHeader && typeof authHeader === "string") {
+          accessToken = authHeader.startsWith("Bearer ")
+            ? authHeader.substring(7)
+            : authHeader;
+        }
+      }
+
+      if (!accessToken) {
+        throw new UnauthorizedException("Missing access token");
+      }
+
+      await this.authService.updateProfile(
+        accessToken,
+        body.email,
+        body.firstName,
+        body.lastName,
+      );
+      return { message: "Profile has been updated" };
     }
 
     
