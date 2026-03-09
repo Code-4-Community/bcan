@@ -90,12 +90,15 @@ export default {
       },
       borderWidth: {
         DEFAULT: "2px",
+        2: "2px",
+        1: "1px",
         0: "0",
       },
       borderRadius: {
         sm: "0.5rem",
         md: "0.75rem",
         DEFAULT: "0.75rem",
+        lg: "1rem",
         "4xl": "2rem",
       },
     },

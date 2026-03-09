@@ -16,9 +16,6 @@ import {
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { ProcessGrantData } from "./filter-bar/processGrantData.ts";
-import { UserStatus } from "../../../../middle-layer/types/UserStatus.ts";
-import { Navigate } from "react-router-dom";
-import BellButton from "../navbar/Bell.tsx";
 import GrantCard from "./grant-list/GrantCard.tsx";
 import { api } from "../../api.ts";
 import Button from "../../components/Button.tsx";
@@ -31,7 +28,7 @@ interface GrantPageProps {
 function GrantPage({}: GrantPageProps) {
   const [showNewGrantModal, setShowNewGrantModal] = useState(false);
   const [wasGrantSubmitted, setWasGrantSubmitted] = useState(false);
-  
+
   // Use ProcessGrantData reactively to get filtered grants
   const { grants } = ProcessGrantData();
   const [curGrant, setCurGrant] = useState<Grant | null>(null);
@@ -43,53 +40,51 @@ function GrantPage({}: GrantPageProps) {
     }
   }, [grants]);
 
-   // If the NewGrantModal has been closed and a new grant submitted (or existing grant edited),
-   // refetch the grants list and update the current grant to reflect any changes
-   // SHOULD BE CHANGED TO ALSO ACCOMODATE DELETIONS (CURRENTLY ONLY UPDATES IF GRANT WAS CREATED/EDITED, NOT DELETED)
-    useEffect(() => {
-      if (!wasGrantSubmitted || !curGrant) return;
+  // If the NewGrantModal has been closed and a new grant submitted (or existing grant edited),
+  // refetch the grants list and update the current grant to reflect any changes
+  // SHOULD BE CHANGED TO ALSO ACCOMODATE DELETIONS (CURRENTLY ONLY UPDATES IF GRANT WAS CREATED/EDITED, NOT DELETED)
+  useEffect(() => {
+    if (!wasGrantSubmitted || !curGrant) return;
 
-      const updateGrant = async () => {
-        try {
-          const response = await api(`/grant/${curGrant.grantId}`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
+    const updateGrant = async () => {
+      try {
+        const response = await api(`/grant/${curGrant.grantId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
-          if (response.ok) {
-            const updatedGrant = await response.json();
-            setCurGrant(updatedGrant);
-            console.log("✅ Grant refreshed:", updatedGrant);
-          } else {
-            console.error("❌ Failed to fetch updated grant");
-          }
-        } catch (err) {
-          console.error("Error fetching updated grant:", err);
+        if (response.ok) {
+          const updatedGrant = await response.json();
+          setCurGrant(updatedGrant);
+          console.log("✅ Grant refreshed:", updatedGrant);
+        } else {
+          console.error("❌ Failed to fetch updated grant");
         }
-      };
+      } catch (err) {
+        console.error("Error fetching updated grant:", err);
+      }
+    };
 
-      const updateGrants = async () => {
-        try {
-          const response = await api("/grant");
-          if (!response.ok) {
-            throw new Error(`HTTP Error, Status: ${response.status}`);
-          }
-          const updatedGrants: Grant[] = await response.json();
-          fetchAllGrants(updatedGrants);
-          console.log("✅ Grants list refreshed");
-        } catch (error) {
-          console.error("Error fetching grants:", error);
+    const updateGrants = async () => {
+      try {
+        const response = await api("/grant");
+        if (!response.ok) {
+          throw new Error(`HTTP Error, Status: ${response.status}`);
         }
-      };
+        const updatedGrants: Grant[] = await response.json();
+        fetchAllGrants(updatedGrants);
+        console.log("✅ Grants list refreshed");
+      } catch (error) {
+        console.error("Error fetching grants:", error);
+      }
+    };
 
-      updateGrants();
-      updateGrant();
-      setWasGrantSubmitted(false);
-    }, [wasGrantSubmitted]);
-  
-  const [openModal, setOpenModal] = useState(false);
+    updateGrants();
+    updateGrant();
+    setWasGrantSubmitted(false);
+  }, [wasGrantSubmitted]);
 
   const { user } = useAuthContext(); //gets current logged in user
   const userObj = toJS(user);
@@ -106,41 +101,41 @@ function GrantPage({}: GrantPageProps) {
     updateSearchQuery("");
   }, []);
 
-  return user ? (
-    user?.position !== UserStatus.Inactive ? (
-      <div className="grant-page w-full items-end">
-        <div className="bell-container flex justify-end w-full">
-          <BellButton setOpenModal={setOpenModal} openModal={openModal} />
-        </div>
-        <GrantSearch />
-        <div className="flex w-full justify-between py-2 gap-4">
-            <Button text="Filters Coming Soon" onClick={() => {}} className="border-2 border-grey-500 bg-white" />
-          <AddGrantButton onClick={() => setShowNewGrantModal(true)} />
-        </div>
+  return (
+    <div className="grant-page w-full items-end">
+      <GrantSearch />
+      <div className="flex w-full justify-between py-2 gap-4">
+        <Button
+          text="Filters Coming Soon"
+          onClick={() => {}}
+          className="border-2 border-grey-500 bg-white"
+        />
+        <AddGrantButton onClick={() => setShowNewGrantModal(true)} />
+      </div>
 
-        <div className="flex flex-row w-full gap-2 justify-between mt-4">
-          <div className="flex flex-col w-[33%] h-[150vh] overflow-y-scroll pr-2">
-            {grants.map((grant) => (
-              <GrantCard
-                key={grant.grantId}
-                grant={grant}
-                isSelected={curGrant?.grantId === grant.grantId}
-                onClick={() => setCurGrant(grant)}
-              />
-            ))}
-          </div>
-          <div className="w-[65%]">
-            {curGrant ? (
-              <GrantItem grant={curGrant} />
-            ) : (
-              <div className="flex items-center justify-center h-full text-gray-500">
-                No grants found.
-              </div>
-            )}
-          </div>
+      <div className="flex flex-row w-full gap-2 justify-between mt-4">
+        <div className="flex flex-col w-[33%] h-[150vh] overflow-y-scroll pr-2">
+          {grants.map((grant) => (
+            <GrantCard
+              key={grant.grantId}
+              grant={grant}
+              isSelected={curGrant?.grantId === grant.grantId}
+              onClick={() => setCurGrant(grant)}
+            />
+          ))}
         </div>
+        <div className="w-[65%]">
+          {curGrant ? (
+            <GrantItem grant={curGrant} />
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-500">
+              No grants found.
+            </div>
+          )}
+        </div>
+      </div>
 
-        {/* <div className="grid grid-cols-5 gap-8 px-4">
+      {/* <div className="grid grid-cols-5 gap-8 px-4">
           <div className="col-span-1">
             <FilterBar />
           </div>
@@ -156,24 +151,19 @@ function GrantPage({}: GrantPageProps) {
             </div>
           </div>
         </div>  */}
-        <div className="hidden-features">
-          {showNewGrantModal && (
-            <NewGrantModal
-              grantToEdit={null}
-              onClose={async () => {
-                setShowNewGrantModal(false);
-                setWasGrantSubmitted(true);
-              }}
-              isOpen={showNewGrantModal}
-            />
-          )}
-        </div>
+      <div className="hidden-features">
+        {showNewGrantModal && (
+          <NewGrantModal
+            grantToEdit={null}
+            onClose={async () => {
+              setShowNewGrantModal(false);
+              setWasGrantSubmitted(true);
+            }}
+            isOpen={showNewGrantModal}
+          />
+        )}
       </div>
-    ) : (
-      <Navigate to="restricted" replace />
-    )
-  ) : (
-    <Navigate to="/login" replace />
+    </div>
   );
 }
 
