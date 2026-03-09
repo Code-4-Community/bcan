@@ -5,6 +5,8 @@ import logo from "../../images/logo.svg";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import ChangePasswordModal from "./ChangePasswordModal";
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const initialPersonalInfo = {
   firstName: "John",
   lastName: "Doe",
@@ -15,22 +17,31 @@ export default function Settings() {
   const [personalInfo, setPersonalInfo] = useState(initialPersonalInfo);
   const [isEditingPersonalInfo, setIsEditingPersonalInfo] = useState(false);
   const [editForm, setEditForm] = useState(initialPersonalInfo);
+  const [personalInfoError, setPersonalInfoError] = useState<string | null>(null);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const [changePasswordError, setChangePasswordError] = useState<string | null>(null);
 
   const handleStartEdit = () => {
     setEditForm(personalInfo);
+    setPersonalInfoError(null);
     setIsEditingPersonalInfo(true);
   };
 
   const handleCancelEdit = () => {
     setEditForm(personalInfo);
+    setPersonalInfoError(null);
     setIsEditingPersonalInfo(false);
   };
 
   const handleSaveEdit = () => {
+    if (!EMAIL_REGEX.test(editForm.email)) {
+      setPersonalInfoError("Email is not valid.");
+      return;
+    }
+
     setPersonalInfo(editForm);
     setIsEditingPersonalInfo(false);
+    setPersonalInfoError(null);
   };
 
   return (
@@ -67,55 +78,10 @@ export default function Settings() {
         </div>
       </div>
 
-      {isEditingPersonalInfo ? (
-        <div className="w-full max-w-3xl rounded-lg bg-white p-6 shadow-sm flex flex-col">
-          <h2 className="text-xl font-bold mb-4 flex justify-start">Personal Information</h2>
-          <div className="grid grid-cols-2 gap-6 text-left mb-6">
-            <div>
-              <label className="block text-sm text-gray-500 mb-1">First Name</label>
-              <input
-                type="text"
-                value={editForm.firstName}
-                onChange={(e) => setEditForm((f) => ({ ...f, firstName: e.target.value }))}
-                className="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-gray-900"
-              />
-            </div>
-            <div>
-              <label className="block text-sm text-gray-500 mb-1">Last Name</label>
-              <input
-                type="text"
-                value={editForm.lastName}
-                onChange={(e) => setEditForm((f) => ({ ...f, lastName: e.target.value }))}
-                className="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-gray-900"
-              />
-            </div>
-            <div className="col-span-2">
-              <label className="block text-sm text-gray-500 mb-1">Email Address</label>
-              <input
-                type="email"
-                value={editForm.email}
-                onChange={(e) => setEditForm((f) => ({ ...f, email: e.target.value }))}
-                className="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-gray-900"
-              />
-            </div>
-          </div>
-          <div className="flex justify-end gap-3">
-            <Button
-              text="Cancel"
-              onClick={handleCancelEdit}
-              className="bg-white text-gray-600 border-2 border-grey-500"
-            />
-            <Button
-              text="Save"
-              onClick={handleSaveEdit}
-              className="bg-primary-900 text-white"
-            />
-          </div>
-        </div>
-      ) : (
-        <InfoCard
-          title="Personal Information"
-          action={
+      <InfoCard
+        title="Personal Information"
+        action={
+          !isEditingPersonalInfo && (
             <Button
               text="Edit"
               onClick={handleStartEdit}
@@ -123,14 +89,73 @@ export default function Settings() {
               logo={faPenToSquare}
               logoPosition="right"
             />
-          }
-          fields={[
-            { label: "First Name", value: personalInfo.firstName },
-            { label: "Last Name", value: personalInfo.lastName },
-            { label: "Email Address", value: personalInfo.email },
-          ]}
-        />
-      )}
+          )
+        }
+        fields={[
+          { label: "First Name", value: personalInfo.firstName },
+          { label: "Last Name", value: personalInfo.lastName },
+          { label: "Email Address", value: personalInfo.email },
+        ]}
+        isEditing={isEditingPersonalInfo}
+        editContent={
+          <>
+            <div className="grid grid-cols-2 gap-6 text-left mb-6">
+              <div>
+                <label className="block text-sm text-gray-500 mb-1">First Name</label>
+                <input
+                  type="text"
+                  value={editForm.firstName}
+                  onChange={(e) =>
+                    setEditForm((f) => ({ ...f, firstName: e.target.value }))
+                  }
+                  className="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-gray-900"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-500 mb-1">Last Name</label>
+                <input
+                  type="text"
+                  value={editForm.lastName}
+                  onChange={(e) =>
+                    setEditForm((f) => ({ ...f, lastName: e.target.value }))
+                  }
+                  className="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-gray-900"
+                />
+              </div>
+              <div className="col-span-2">
+                <label className="block text-sm text-gray-500 mb-1">Email Address</label>
+                <input
+                  type="email"
+                  value={editForm.email}
+                  onChange={(e) =>
+                    setEditForm((f) => ({ ...f, email: e.target.value }))
+                  }
+                  className={`w-full px-3 py-2 rounded-md border bg-white text-gray-900 ${
+                    personalInfoError ? "border-[#CC0000]" : "border-gray-300"
+                  }`}
+                />
+              </div>
+            </div>
+            {personalInfoError && (
+              <div className="mb-4 rounded-2xl bg-[#FFEEEE] px-4 py-3 text-sm font-bold text-[#CC0000]">
+                {personalInfoError}
+              </div>
+            )}
+            <div className="flex justify-end gap-3">
+              <Button
+                text="Cancel"
+                onClick={handleCancelEdit}
+                className="bg-white text-gray-600 border-2 border-grey-500"
+              />
+              <Button
+                text="Save"
+                onClick={handleSaveEdit}
+                className="bg-primary-900 text-white"
+              />
+            </div>
+          </>
+        }
+      />
 
       <div className="flex gap-24 items-center mt-12">
         <div>
