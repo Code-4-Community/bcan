@@ -1,25 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { observer } from "mobx-react-lite";
 import Button from "../../components/Button";
 import InfoCard from "./components/InfoCard";
+import Avatar from "../../components/Avatar";
 import logo from "../../images/logo.svg";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import ChangePasswordModal from "./ChangePasswordModal";
+import ProfilePictureModal from "./ProfilePictureModal";
+import { getAppStore } from "../../external/bcanSatchel/store";
+import { ALLOWED_PROFILE_PIC_EXTENSIONS, MAX_PROFILE_PIC_SIZE_MB } from "./profilePictureConstants";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const initialPersonalInfo = {
-  firstName: "John",
-  lastName: "Doe",
-  email: "john.doe@gmail.com",
-};
+function Settings() {
+  const user = getAppStore().user;
+  const personalInfoFromUser = user
+    ? { firstName: user.firstName, lastName: user.lastName, email: user.email }
+    : { firstName: "", lastName: "", email: "" };
 
-export default function Settings() {
-  const [personalInfo, setPersonalInfo] = useState(initialPersonalInfo);
+  const [personalInfo, setPersonalInfo] = useState(personalInfoFromUser);
   const [isEditingPersonalInfo, setIsEditingPersonalInfo] = useState(false);
-  const [editForm, setEditForm] = useState(initialPersonalInfo);
+  const [editForm, setEditForm] = useState(personalInfoFromUser);
   const [personalInfoError, setPersonalInfoError] = useState<string | null>(null);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const [changePasswordError, setChangePasswordError] = useState<string | null>(null);
+  const [isProfilePictureModalOpen, setIsProfilePictureModalOpen] = useState(false);
+  const [profilePictureMessage, setProfilePictureMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      const next = { firstName: user.firstName, lastName: user.lastName, email: user.email };
+      setPersonalInfo((prev) => (prev.email === user.email ? prev : next));
+      setEditForm((prev) => (prev.email === user.email ? prev : next));
+    }
+  }, [user]);
 
   const handleStartEdit = () => {
     setEditForm(personalInfo);
@@ -50,33 +64,55 @@ export default function Settings() {
 
       <div className="mb-12">
         <div className="flex items-center gap-6">
-          <img
-            src={logo}
+          <Avatar
+            src={user?.profilePicUrl}
             alt="Profile"
             className="w-24 h-24 rounded-full object-cover"
+            fallbackSrc={logo}
           />
 
           <div className="flex flex-col gap-2">
             <h2 className="text-2xl font-bold mb-1 flex justify-start">Profile Picture</h2>
+            {profilePictureMessage && (
+              <div
+                className={`rounded-2xl px-4 py-3 text-sm font-bold ${
+                  profilePictureMessage.type === "success"
+                    ? "bg-green-light text-green-dark"
+                    : "bg-[#FFEEEE] text-[#CC0000]"
+                }`}
+              >
+                {profilePictureMessage.text}
+              </div>
+            )}
             <div className="flex gap-3">
               <Button
                 text="Upload Image"
-                onClick={() => alert("add upload functionality")}
+                onClick={() => {
+                  setProfilePictureMessage(null);
+                  setIsProfilePictureModalOpen(true);
+                }}
                 className="bg-primary-900 text-white"
               />
               <Button
                 text="Remove"
-                onClick={() => alert("remove image")}
+                onClick={() => alert("Remove profile picture is not yet available.")}
                 className="bg-white text-black border-2 border-grey-500"
               />
             </div>
 
             <p className="text-sm text-gray-500">
-              We support PNGs, JPEGs, and PDFs under 10 MB
+              {ALLOWED_PROFILE_PIC_EXTENSIONS.join(", ")} up to {MAX_PROFILE_PIC_SIZE_MB} MB
             </p>
           </div>
         </div>
       </div>
+
+      <ProfilePictureModal
+        isOpen={isProfilePictureModalOpen}
+        onClose={() => setIsProfilePictureModalOpen(false)}
+        onSuccess={() => setProfilePictureMessage({ type: "success", text: "Profile picture updated." })}
+        onError={(msg) => setProfilePictureMessage({ type: "error", text: msg })}
+      />
 
       <InfoCard
         title="Personal Information"
@@ -180,10 +216,11 @@ export default function Settings() {
         onClose={() => setIsChangePasswordModalOpen(false)}
         error={changePasswordError}
         onSubmit={(values) => {
-          // Backend: call API with values.currentPassword and values.newPassword
           void values;
         }}
       />
     </div>
   );
 }
+
+export default observer(Settings);
