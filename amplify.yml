@@ -1,4 +1,4 @@
-version: 1
+aversion: 1
 applications:
   - appRoot: frontend             # ← path to App
     frontend:
