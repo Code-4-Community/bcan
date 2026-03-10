@@ -31,7 +31,7 @@ export default function ProfilePictureModal({
 }: ProfilePictureModalProps) {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
+  const [zoom, setZoom] = useState(1.6);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -46,7 +46,7 @@ export default function ProfilePictureModal({
   const handleClose = () => {
     setImageSrc(null);
     setCrop({ x: 0, y: 0 });
-    setZoom(1);
+    setZoom(1.6);
     setCroppedAreaPixels(null);
     setUploadError(null);
     setValidationError(null);
@@ -193,16 +193,16 @@ export default function ProfilePictureModal({
           </div>
         ) : (
           <>
-            <div className="relative w-full h-80 rounded-full overflow-hidden bg-grey-200 [&_.reactEasyCrop_Container]:rounded-full">
+            <div className="relative w-80 h-80 mx-auto overflow-hidden bg-grey-200">
               <Cropper
                 image={imageSrc}
                 crop={crop}
                 zoom={zoom}
                 aspect={1}
+                cropShape="round"
                 onCropChange={setCrop}
                 onZoomChange={setZoom}
                 onCropComplete={onCropComplete}
-                style={{ containerStyle: { borderRadius: "9999px" } }}
               />
             </div>
 
