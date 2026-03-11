@@ -13,13 +13,7 @@ const StatusDropdown: React.FC = observer(() => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<Status | null>(null);
 
-  const statuses = [
-    Status.Active,
-    Status.Pending,
-    Status.Potential,
-    Status.Rejected,
-    Status.Inactive,
-  ];
+  const statuses = Object.values(Status);
 
   function handleSelect(status: Status) {
     const newSelected = selected === status ? null : status;
