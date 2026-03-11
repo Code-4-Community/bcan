@@ -1,5 +1,7 @@
+import Attachment from "../../../../../middle-layer/types/Attachment.ts";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { api } from "../../../api.ts";
+import { GrantFormState } from "../filter-bar/EditGrant.tsx";
 import { fetchGrants } from "../filter-bar/processGrantData.ts";
 
 // save a new grant
@@ -24,7 +26,10 @@ export const createNewGrant = async (newGrant: Grant) => {
     console.log(newGrant.attachments);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Server error. Please try again."
+      error:
+        error instanceof Error
+          ? error.message
+          : "Server error. Please try again.",
     };
   }
 };
@@ -48,7 +53,48 @@ export const saveGrantEdits = async (updatedGrant: Grant) => {
     console.error("Error updating grant:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Server error. Please try again."
+      error:
+        error instanceof Error
+          ? error.message
+          : "Server error. Please try again.",
     };
   }
 };
+
+type Action =
+  | { type: "SET_FIELD"; field: keyof GrantFormState; value: any }
+  | { type: "ADD_REPORT_DATE" }
+  | { type: "REMOVE_REPORT_DATE"; index: number }
+  | { type: "ADD_ATTACHMENT"; attachment: Attachment }
+  | { type: "REMOVE_ATTACHMENT"; index: number };
+
+export function reducer(state: GrantFormState, action: Action): GrantFormState {
+  switch (action.type) {
+    case "SET_FIELD":
+      return { ...state, [action.field]: action.value };
+
+    case "ADD_REPORT_DATE":
+      return { ...state, reportDates: [...state.reportDates, ""] };
+
+    case "REMOVE_REPORT_DATE":
+      return {
+        ...state,
+        reportDates: state.reportDates.filter((_, i) => i !== action.index),
+      };
+
+    case "ADD_ATTACHMENT":
+      return {
+        ...state,
+        attachments: [...state.attachments, action.attachment],
+      };
+
+    case "REMOVE_ATTACHMENT":
+      return {
+        ...state,
+        attachments: state.attachments.filter((_, i) => i !== action.index),
+      };
+
+    default:
+      return state;
+  }
+}

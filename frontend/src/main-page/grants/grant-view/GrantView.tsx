@@ -12,12 +12,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ContactCard from "./ContactCard";
 import GrantFieldCol from "./GrantFieldCol";
 import { CostBenefitAnalysis } from "./CostBenefitAnalysis";
+import EditGrant from "../filter-bar/EditGrant";
 
 interface GrantItemProps {
   grant: Grant;
 }
 
 const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
+
+  const [showEditGrant, setShowEditGrant] = useState(false);
+  
   
   useEffect(() => {
   }, [grant]);
@@ -69,6 +73,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
   }
 
   return (
+    <div>
     <div className="w-full bg-white rounded-md flex flex-col gap-6 p-6">
       {/* Top header part */}
       <div className="flex justify-between">
@@ -81,7 +86,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
         <div className="flex flex-col gap-2 items-end">
           <Button
             text="Edit"
-            onClick={() => alert("edit grant info")}
+            onClick={() => setShowEditGrant(true)}
             className="bg-white text-black border-2 border-grey-500"
             logo={faPenToSquare}
             logoPosition="right"
@@ -256,6 +261,18 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
           ]}
         />
     </div>
+    </div>
+    <div>
+    {showEditGrant && (
+            <EditGrant
+              grantToEdit={grant}
+              onClose={async () => {
+                setShowEditGrant(false);
+              }}
+              isOpen={showEditGrant}
+            />
+          )}
+          </div>
     </div>
   );
 });
