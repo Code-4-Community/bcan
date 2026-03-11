@@ -493,75 +493,94 @@ export class AuthService {
   }
 
   // purpose statement: sets a new password for an user in cognito
-  // use case: employee changing password after forgetting password
-  async setNewPassword(
+  // use case: authenticated user changing password in settings
+  async changePassword(
+    currentPassword: string,
     newPassword: string,
-    session: string,
-    email: string,
-  ): Promise<{ access_token: string }> {
-    const clientId = process.env.COGNITO_CLIENT_ID;
-    const clientSecret = process.env.COGNITO_CLIENT_SECRET;
-
-    if (!clientId || !clientSecret) {
-      this.logger.error("Cognito Client ID or Secret is not defined.");
-      throw new Error("Cognito Client ID or Secret is not defined.");
+    accessToken: string,
+  ): Promise<void> {
+    if (!currentPassword || currentPassword.trim().length === 0) {
+      this.logger.error("Password is required for change password");
+      throw new BadRequestException("Current password is required");
     }
 
-    // Validate input parameters for newPassword, session, and username
     if (!newPassword || newPassword.length === 0) {
-      this.logger.error("Set New Password failed: New password is required");
+      this.logger.error("Change password failed: new password is required");
       throw new BadRequestException("New password is required");
     }
 
-    if (!session || session.length === 0) {
-      this.logger.error("Set New Password failed: Session is required");
-      throw new BadRequestException("Session is required");
+    if (!accessToken || accessToken.trim().length === 0) {
+      this.logger.error("Change password failed: access token is missing");
+      throw new UnauthorizedException("Missing access token");
     }
 
-   
-
-    const hatch = this.computeHatch(email, clientId, clientSecret);
-
-    const challengeResponses: any = {
-      USERNAME: email,
-      NEW_PASSWORD: newPassword,
-      SECRET_HASH: hatch,
-    };
-
-    if (email) {
-      this.logger.log("Including email in challenge responses");
-      challengeResponses.email = email;
+    if (newPassword === currentPassword) {
+      this.logger.error(
+        "Change password failed: new password cannot match current password",
+      );
+      throw new BadRequestException(
+        "New password must be different from current password",
+      );
     }
 
-    const params = {
-      ChallengeName: "NEW_PASSWORD_REQUIRED",
-      ClientId: clientId,
-      ChallengeResponses: challengeResponses,
-      Session: session,
-    };
+    const passwordRequirementPattern =
+      /^(?=.*[!@#$%^&*])(?=.*\d)(?=.*[A-Z])(?=.*[a-z]).{8,}$/;
+
+    if (!passwordRequirementPattern.test(newPassword)) {
+      this.logger.error(
+        "Change password failed: new password does not meet requirements",
+      );
+      throw new BadRequestException(
+        "Password must have at least one special character (!@#$%^&*), one digit, one uppercase, one lowercase, and be at least 8 characters long.",
+      );
+    }
+
+    this.logger.log("Attempting Cognito password change");
 
     try {
-      const response = await this.cognito
-        .respondToAuthChallenge(params)
+      await this.cognito
+        .changePassword({
+          AccessToken: accessToken,
+          PreviousPassword: currentPassword,
+          ProposedPassword: newPassword,
+        })
         .promise();
-      this.logger.log("Responded to auth challenge for new password");
 
-      if (
-        !response.AuthenticationResult ||
-        !response.AuthenticationResult.IdToken
-      ) {
-        throw new Error("Failed to set new password");
-      }
-
-      const token = response.AuthenticationResult.IdToken;
-      this.logger.log(`New password set successfully for user ${email}`);
-      return { access_token: token };
+      this.logger.log("Password changed successfully");
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        this.logger.error("Setting new password failed", error.stack);
-        throw new Error(error.message || "Setting new password failed");
+      const cognitoError = error as { code?: string; message?: string; stack?: string };
+
+      switch (cognitoError.code) {
+        case "NotAuthorizedException":
+          this.logger.error("Change password failed: incorrect current password");
+          throw new UnauthorizedException("Current password is incorrect.");
+        case "InvalidPasswordException":
+        case "InvalidParameterException":
+        case "PasswordHistoryPolicyViolationException":
+          this.logger.error(
+            "Change password failed: new password does not meet requirements",
+          );
+          throw new BadRequestException(
+            "New password does not meet requirements.",
+          );
+        case "LimitExceededException":
+        case "TooManyRequestsException":
+          this.logger.error(
+            "Change password failed: too many attempts. Please try again later.",
+          );
+          throw new HttpException(
+            "Too many attempts. Please try again later.",
+            HttpStatus.TOO_MANY_REQUESTS,
+          );
+        default:
+          this.logger.error(
+            `Unexpected change password error: ${cognitoError.message || "Unknown error"}`,
+            cognitoError.stack,
+          );
+          throw new InternalServerErrorException(
+            "Failed to change password.",
+          );
       }
-      throw new Error("An unknown error occurred");
     }
   }
 

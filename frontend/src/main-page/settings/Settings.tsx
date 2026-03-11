@@ -3,7 +3,10 @@ import Button from "../../components/Button";
 import InfoCard from "./components/InfoCard";
 import logo from "../../images/logo.svg";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
-import ChangePasswordModal from "./ChangePasswordModal";
+import ChangePasswordModal, {
+  type ChangePasswordFormValues,
+} from "./ChangePasswordModal";
+import { api } from "../../api";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -20,6 +23,46 @@ export default function Settings() {
   const [personalInfoError, setPersonalInfoError] = useState<string | null>(null);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const [changePasswordError, setChangePasswordError] = useState<string | null>(null);
+
+  const handleChangePassword = async (
+    values: ChangePasswordFormValues,
+  ): Promise<boolean> => {
+    setChangePasswordError(null);
+
+    try {
+      const response = await api("/auth/change-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (response.ok) {
+        setChangePasswordError(null);
+        setIsChangePasswordModalOpen(false);
+        return true;
+      }
+
+      if (response.status === 401) {
+        setChangePasswordError("Current password is incorrect.");
+      } else if (response.status === 400) {
+        setChangePasswordError("New password does not meet requirements.");
+      } else {
+        setChangePasswordError(
+          "Password cannot be changed at this time. Please try again.",
+        );
+      }
+
+      return false;
+    } catch (error) {
+      console.error("Change password failed:", error);
+      setChangePasswordError(
+        "Password cannot be changed at this time. Please try again.",
+      );
+      return false;
+    }
+  };
 
   const handleStartEdit = () => {
     setEditForm(personalInfo);
@@ -177,12 +220,12 @@ export default function Settings() {
 
       <ChangePasswordModal
         isOpen={isChangePasswordModalOpen}
-        onClose={() => setIsChangePasswordModalOpen(false)}
-        error={changePasswordError}
-        onSubmit={(values) => {
-          // Backend: call API with values.currentPassword and values.newPassword
-          void values;
+        onClose={() => {
+          setIsChangePasswordModalOpen(false);
+          setChangePasswordError(null);
         }}
+        error={changePasswordError}
+        onSubmit={handleChangePassword}
       />
     </div>
   );

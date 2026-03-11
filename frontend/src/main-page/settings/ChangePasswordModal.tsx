@@ -15,7 +15,7 @@ export type ChangePasswordFormValues = {
 type ChangePasswordModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit?: (values: ChangePasswordFormValues) => void;
+  onSubmit?: (values: ChangePasswordFormValues) => Promise<boolean> | boolean;
   error?: string | null;
 };
 
@@ -49,13 +49,16 @@ export default function ChangePasswordModal({
     onClose();
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!canSave) return;
-    onSubmit?.({
+    const success = await onSubmit?.({
       currentPassword: currentPassword.trim(),
       newPassword,
     });
-    handleClose();
+
+    if (success !== false) {
+      handleClose();
+    }
   };
 
   return (

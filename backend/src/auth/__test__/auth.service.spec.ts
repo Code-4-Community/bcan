@@ -20,6 +20,7 @@ const mockAdminDeleteUser          = vi.fn(() => ({ promise: mockCognitoPromise 
 const mockInitiateAuth             = vi.fn(() => ({ promise: mockCognitoPromise }));
 const mockGetUser                  = vi.fn(() => ({ promise: mockCognitoPromise }));
 const mockRespondToAuthChallenge   = vi.fn(() => ({ promise: mockCognitoPromise }));
+const mockChangePassword           = vi.fn(() => ({ promise: mockCognitoPromise }));
 const mockGlobalSignOut            = vi.fn(() => ({ promise: mockCognitoPromise }));
 
 // ─── DynamoDB mocks ───────────────────────────────────────────────────────────
@@ -42,6 +43,7 @@ vi.mock('aws-sdk', () => {
       initiateAuth:             mockInitiateAuth,
       getUser:                  mockGetUser,
       respondToAuthChallenge:   mockRespondToAuthChallenge,
+      changePassword:           mockChangePassword,
       globalSignOut:            mockGlobalSignOut,
     };
   });
@@ -88,6 +90,7 @@ describe('AuthService', () => {
     mockInitiateAuth.mockReturnValue({ promise: mockCognitoPromise });
     mockGetUser.mockReturnValue({ promise: mockCognitoPromise });
     mockRespondToAuthChallenge.mockReturnValue({ promise: mockCognitoPromise });
+    mockChangePassword.mockReturnValue({ promise: mockCognitoPromise });
     mockGlobalSignOut.mockReturnValue({ promise: mockCognitoPromise });
 
     mockDynamoGet.mockReturnValue({ promise: mockDynamoPromise });
@@ -356,49 +359,93 @@ describe('AuthService', () => {
     });
   });
 
-  // ── setNewPassword ───────────────────────────────────────────────────────────
+  // ── changePassword ───────────────────────────────────────────────────────────
 
-  describe('setNewPassword', () => {
-    it('should successfully set a new password', async () => {
-      mockCognitoPromise.mockResolvedValueOnce({
-        AuthenticationResult: { IdToken: 'new-id-token' },
+  describe('changePassword', () => {
+    it('should successfully change password', async () => {
+      mockCognitoPromise.mockResolvedValueOnce({});
+
+      await expect(
+        service.changePassword('Current123!', 'NewPass123!', 'access-token')
+      ).resolves.toBeUndefined();
+
+      expect(mockChangePassword).toHaveBeenCalledWith({
+        AccessToken: 'access-token',
+        PreviousPassword: 'Current123!',
+        ProposedPassword: 'NewPass123!',
       });
-
-      const result = await service.setNewPassword('NewPass123!', 'session123', 'c4c@example.com');
-      expect(result.access_token).toBe('new-id-token');
-      expect(mockRespondToAuthChallenge).toHaveBeenCalled();
     });
 
-    it('should include email in challenge responses', async () => {
-      mockCognitoPromise.mockResolvedValueOnce({
-        AuthenticationResult: { IdToken: 'new-id-token' },
-      });
-
-      await service.setNewPassword('NewPass123!', 'session123', 'c4c@example.com');
-
-      expect(mockRespondToAuthChallenge).toHaveBeenCalledWith(
-        expect.objectContaining({
-          ChallengeResponses: expect.objectContaining({ email: 'c4c@example.com' }),
-        })
-      );
+    it('should throw BadRequestException when currentPassword is empty', async () => {
+      await expect(
+        service.changePassword('', 'NewPass123!', 'access-token')
+      ).rejects.toThrow('Current password is required');
     });
 
     it('should throw BadRequestException when newPassword is empty', async () => {
-      await expect(service.setNewPassword('', 'session', 'c4c@example.com')).rejects.toThrow('New password is required');
+      await expect(
+        service.changePassword('Current123!', '', 'access-token')
+      ).rejects.toThrow('New password is required');
     });
 
-    it('should throw BadRequestException when session is empty', async () => {
-      await expect(service.setNewPassword('NewPass123!', '', 'c4c@example.com')).rejects.toThrow('Session is required');
+    it('should throw UnauthorizedException when access token is empty', async () => {
+      await expect(
+        service.changePassword('Current123!', 'NewPass123!', '')
+      ).rejects.toThrow('Missing access token');
     });
 
-    it('should throw when AuthenticationResult is missing from response', async () => {
-      mockCognitoPromise.mockResolvedValueOnce({});
-      await expect(service.setNewPassword('NewPass123!', 'session', 'c4c@example.com')).rejects.toThrow('Failed to set new password');
+    it('should throw BadRequestException when password format is invalid', async () => {
+      await expect(
+        service.changePassword('Current123!', 'short', 'access-token')
+      ).rejects.toThrow('Password must have at least one special character');
     });
 
-    it('should throw when respondToAuthChallenge fails', async () => {
-      mockCognitoPromise.mockRejectedValueOnce(new Error('Challenge failed'));
-      await expect(service.setNewPassword('NewPass123!', 'session', 'c4c@example.com')).rejects.toThrow('Challenge failed');
+    it('should throw UnauthorizedException for incorrect current password', async () => {
+      mockCognitoPromise.mockRejectedValueOnce({
+        code: 'NotAuthorizedException',
+        message: 'Incorrect username or password',
+      });
+
+      await expect(
+        service.changePassword('Wrong123!', 'NewPass123!', 'access-token')
+      ).rejects.toThrow('Current password is incorrect.');
+    });
+
+    it('should throw BadRequestException for invalid new password from Cognito', async () => {
+      mockCognitoPromise.mockRejectedValueOnce({
+        code: 'InvalidPasswordException',
+        message: 'New password does not meet requirements.',
+      });
+
+      await expect(
+        service.changePassword('Current123!', 'NewPass123!', 'access-token')
+      ).rejects.toThrow('New password does not meet requirements.');
+    });
+
+    it('should throw HttpException 429 when Cognito is rate limiting', async () => {
+      mockCognitoPromise.mockRejectedValueOnce({
+        code: 'TooManyRequestsException',
+        message: 'Rate exceeded',
+      });
+
+      try {
+        await service.changePassword('Current123!', 'NewPass123!', 'access-token');
+        throw new Error('Expected to throw');
+      } catch (error: any) {
+        expect(error.getStatus()).toBe(429);
+        expect(error.message).toBe('Too many attempts. Please try again later.');
+      }
+    });
+
+    it('should throw InternalServerErrorException for unknown errors', async () => {
+      mockCognitoPromise.mockRejectedValueOnce({
+        code: 'SomeAwsError',
+        message: 'Unexpected AWS error',
+      });
+
+      await expect(
+        service.changePassword('Current123!', 'NewPass123!', 'access-token')
+      ).rejects.toThrow('Failed to change password.');
     });
   });
 

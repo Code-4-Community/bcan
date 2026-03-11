@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { User } from '../types/User';
 import { Response } from 'express';
 import { VerifyUserGuard } from "../guards/auth.guard";
-import { LoginBody, RegisterBody, SetPasswordBody, UpdateProfileBody } from './types/auth.types';
+import { ChangePasswordBody, LoginBody, RegisterBody,UpdateProfileBody } from './types/auth.types';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
 @Controller('auth')
@@ -258,15 +258,14 @@ export class AuthController {
   }
 
   /**
-   * 
-   * Set new password
+   * Change new password
    */
-  @Post('set-password')
+  @Post('change-password')
   @UseGuards(VerifyUserGuard)
   @ApiBearerAuth()
   @ApiResponse({
     status: 200,
-    description: "Password set successfully"
+    description: "Password changed successfully"
   })
   @ApiResponse({
     status: 400,
@@ -281,11 +280,18 @@ export class AuthController {
     description: "Internal server error"
   })
 
-  async setNewPassword(
-    @Body() body: SetPasswordBody
+  async changePassword(
+    @Req() req: any,
+    @Body() body: ChangePasswordBody,
   ): Promise<{ message: string }> {
-    await this.authService.setNewPassword(body.newPassword, body.session, body.email);
-    return { message: 'Password has been set successfully' };
+    const accessToken = req.cookies?.access_token;
+
+    await this.authService.changePassword(
+      body.currentPassword,
+      body.newPassword,
+      accessToken,
+    );
+    return { message: 'Password has been changed' };
   }
 
   /**

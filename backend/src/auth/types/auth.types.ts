@@ -17,6 +17,11 @@ export class SetPasswordBody {
   
 }
 
+export class ChangePasswordBody {
+  currentPassword!: string;
+  newPassword!: string;
+}
+
 export class UpdateProfileBody {
   email!: string;
   position_or_role!: string;
