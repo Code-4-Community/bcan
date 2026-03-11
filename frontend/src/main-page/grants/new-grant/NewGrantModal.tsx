@@ -10,7 +10,7 @@ import { Status } from "../../../../../middle-layer/types/Status";
 import {
   createNewGrant,
   saveGrantEdits,
-} from "../new-grant/processGrantDataEditSave";
+} from "../edit-grant/processGrantDataEditSave";
 import { fetchGrants } from "../filter-bar/processGrantData";
 import { observer } from "mobx-react-lite";
 import  UserDropdown  from "./UserDropdown";

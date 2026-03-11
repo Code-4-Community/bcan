@@ -19,7 +19,7 @@ const contactPhoto =
     : logo;
 
   return (
-    <div className="flex flex-row gap-4 w-full justify-items-start rounded border-2 p-3 h-full border-grey-500">
+    <div className="flex flex-row gap-4 w-full text-left justify-items-start rounded border-2 p-3 h-full border-grey-500">
       <img
         src={contactPhoto || logo}
         alt="Profile"

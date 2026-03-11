@@ -6,7 +6,7 @@ type ButtonProps = {
     onClick: () => void;
     className?: string;
     logo?: IconProp;
-    logoPosition?: 'left' | 'right';
+    logoPosition?: 'left' | 'right' | 'center';
     disabled?: boolean;
     type?: "button" | "submit" | "reset";
 }
@@ -34,6 +34,10 @@ export default function Button({ text, onClick, className, logo, logoPosition, d
       {logo && logoPosition === 'right' &&
       <span className="ml-2">
         <FontAwesomeIcon icon={logo} className="text-lg w-4 h-4" />
+      </span>}
+      {logo && logoPosition === 'center' &&
+      <span className="">
+        <FontAwesomeIcon icon={logo} className="text-3xl" />
       </span>}
     </button>
   );

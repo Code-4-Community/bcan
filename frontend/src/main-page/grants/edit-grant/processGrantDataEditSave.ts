@@ -1,7 +1,7 @@
 import Attachment from "../../../../../middle-layer/types/Attachment.ts";
-import { Grant } from "../../../../../middle-layer/types/Grant";
+import { Grant } from "../../../../../middle-layer/types/Grant.ts";
 import { api } from "../../../api.ts";
-import { GrantFormState } from "../filter-bar/EditGrant.tsx";
+import { GrantFormState } from "./EditGrant.tsx";
 import { fetchGrants } from "../filter-bar/processGrantData.ts";
 
 // save a new grant
@@ -61,7 +61,7 @@ export const saveGrantEdits = async (updatedGrant: Grant) => {
   }
 };
 
-type Action =
+export type Action =
   | { type: "SET_FIELD"; field: keyof GrantFormState; value: any }
   | { type: "ADD_REPORT_DATE" }
   | { type: "REMOVE_REPORT_DATE"; index: number }

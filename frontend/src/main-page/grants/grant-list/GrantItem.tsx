@@ -190,7 +190,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(
             )}
           </li> */}
           <li className="flex justify-center items-center text-center">
-            <StatusIndicator curStatus={curGrant.status} />
+            <StatusIndicator curStatus={curGrant.status} onClick={()=>{}} />
           </li>
         </div>
 

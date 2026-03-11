@@ -8,17 +8,22 @@ import {
 
 interface StatusIndicatorProps {
   curStatus: Status;
+  onClick?: () => void; 
+  active?: boolean;
 }
 
-const StatusIndicator: React.FC<StatusIndicatorProps> = ({ curStatus }) => {
+const StatusIndicator: React.FC<StatusIndicatorProps> = ({ curStatus, onClick, active }) => {
   const lightColor = getColorStatus(curStatus.toString(), "light");
   const darkColor = getColorStatus(curStatus.toString(), "dark");
   const labelText = curStatus; // curStatus from the json is stored as a string, so can directly use
 
   return (
     <div
-      className="inline-flex w-fit flex-none items-center rounded-full px-3 py-1"
-      style={{ color: darkColor, backgroundColor: lightColor }}
+      className="inline-flex w-fit flex-none items-center rounded-full px-3 py-1 border-grey-300 border-2 text-gray-700 hover:border-primary-900"
+      style={active !== false ? { color: darkColor, backgroundColor: lightColor, borderColor: lightColor } : {}}
+      onClick={onClick}
+
+     // text-gray-700 px-3 py-1 text-sm border-2 ${status === btn.id ? "bg-primary-800 border-primary-800" : "border-grey-300
     >
       <span className="text-md">{labelText}</span>
     </div>

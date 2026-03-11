@@ -16,7 +16,7 @@ import { observer } from "mobx-react-lite";
 import { ProcessGrantData } from "./filter-bar/processGrantData.ts";
 import GrantCard from "./grant-list/GrantCard.tsx";
 import Button from "../../components/Button.tsx";
-import EditGrant from "./filter-bar/EditGrant.tsx";
+import EditGrant from "./edit-grant/EditGrant.tsx";
 
 // still needed potentially?
 interface GrantPageProps {
@@ -80,7 +80,7 @@ useEffect(() => {
           {curGrant ? (
             <GrantItem grant={curGrant} />
           ) : (
-            <div className="flex items-center justify-center h-full text-gray-500">
+            <div className="flex h-full justify-center mt-24 text-gray-500 text-2xl">
               No grants found.
             </div>
           )}
@@ -93,7 +93,6 @@ useEffect(() => {
             onClose={async () => {
               setShowEditGrant(false);
             }}
-            isOpen={showEditGrant}
           />
         )}
       </div>
