@@ -127,10 +127,6 @@ textarea {
 button:hover {
   border-color:  var(--color-primary-900);
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
 
 @media (prefers-color-scheme: light) {
   :root {
@@ -151,6 +147,17 @@ input {
 }
 
 input:focus {
+  border-color: var(--color-primary-900);
+  outline: transparent;
+}
+
+
+textarea:focus {
+  border-color: var(--color-primary-900);
+  outline: transparent;
+}
+
+button:focus {
   border-color: var(--color-primary-900);
   outline: transparent;
 }
