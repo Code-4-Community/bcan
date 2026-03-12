@@ -13,7 +13,7 @@ export default function EditGrantContacts({ form }: EditGrantProps) {
       <label className="flex text-gray-700 sm:text-sm lg:text-base mb-1">
         Contacts
       </label>
-      <div className="grid grid-cols-3 gap-2 h-28 w-full">
+      <div className="grid grid-cols-3 gap-2 h-24 w-full">
         {!(form.bcanPocEmail && form.grantProviderPocEmail) && (
           <Button
             text=""

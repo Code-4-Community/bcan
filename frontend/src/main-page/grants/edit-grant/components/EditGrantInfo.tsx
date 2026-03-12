@@ -20,7 +20,7 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
           Description
         </label>
         <textarea
-          className="h-48 block w-full text-gray-700 border bg-white border-grey-300 rounded placeholder:text-gray-700 p-2"
+          className="h-32 block w-full text-gray-700 border bg-white border-grey-300 rounded placeholder:text-gray-700 p-2"
           placeholder="Enter grant description..."
           value={form.description}
           onChange={(e) =>

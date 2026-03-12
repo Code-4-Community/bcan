@@ -21,7 +21,7 @@ export default function EditGrantHeader({ form, dispatch }: EditGrantProps) {
     <div className="w-full">
       <div className="w-full pr-4">
         <input
-          className="block w-full  lg:w-[80%] text-gray-700 text-2xl border-2 bg-white border-grey-300 rounded placeholder:text-gray-700 p-3 font-bold resize-none"
+          className="block w-full  lg:w-[80%] text-gray-700 text-2xl border-2 bg-white border-grey-300 rounded placeholder:text-gray-700 px-3 py-2 font-bold resize-none"
           placeholder="Enter grant name..."
           value={form.organization}
           onKeyDown={(e) => {
