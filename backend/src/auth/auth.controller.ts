@@ -82,6 +82,47 @@ export class AuthController {
   }
   
   /**
+   * Logs out a user by clearing authentication cookies
+   */
+  @Post('logout')
+  @ApiResponse({
+    status: 200,
+    description: "User logged out successfully"
+  })
+  @ApiResponse({
+    status: 500,
+    description: "Internal Server Error"
+  })
+  async logout(
+    @Res({ passthrough: true }) response: Response,
+    @Req() req: any
+  ): Promise<{ message: string }> {
+    const cookieToken = req.cookies?.access_token;  
+    let token: string | undefined = cookieToken;  
+
+    if (!token) {  
+      const authHeader = req.headers['authorization'] || req.headers['Authorization'];  
+      if (authHeader && typeof authHeader === 'string') {  
+        token = authHeader.startsWith('Bearer ')  
+          ? authHeader.substring(7)  
+          : authHeader;  
+      }  
+    }  
+
+    // Logout user in Cognito
+    if (token) {  
+      await this.authService.logout(token);
+    }
+
+    // Clear all cookies
+    response.clearCookie('access_token', { path: '/' });
+    response.clearCookie('refresh_token', { path: '/auth/refresh' });
+    response.clearCookie('id_token', { path: '/' });
+    
+    return { message: 'Logged out successfully' };
+  }
+
+  /**
    * Logs in a user
    */
   @Post('login')
@@ -125,6 +166,8 @@ export class AuthController {
     });
   }
 
+  response.clearCookie('refresh_token', { path: '/auth/refresh' });
+
   if (result.refreshToken) {
     console.log("refresh token set")
     response.cookie('refresh_token', result.refreshToken, {
@@ -151,6 +194,67 @@ export class AuthController {
   delete result.access_token;
   delete result.refreshToken;
     return result
+  }
+
+  /**
+   * Refreshes the access token and id token using the refresh token
+   */
+  @Post('refresh')
+  @ApiResponse({
+    status: 200,
+    description: "Tokens refreshed successfully"
+  })
+  @ApiResponse({
+    status: 401,
+    description: "Refresh token missing or expired"
+  })
+  @ApiResponse({
+    status: 500,
+    description: "Internal Server Error"
+  })
+  async refresh(
+    @Req() req: any,
+    @Res({ passthrough: true}) response: Response,
+  ): Promise<{ message: string}> {
+
+    const refreshToken = req.cookies?.refresh_token;
+
+    const idToken = req.cookies?.id_token;
+
+    if (!refreshToken || !idToken ) {
+      throw new UnauthorizedException('Missing required token cookies');
+    }
+
+    const idTokenPayload = JSON.parse(
+      Buffer.from(idToken.split('.')[1], 'base64').toString('utf8')
+    );
+
+    const email = idTokenPayload.email;
+    const cognitoUsername = idTokenPayload['cognito:username'];
+
+    if (!email || !cognitoUsername) {
+      throw new UnauthorizedException('Could not extract user identity from token');
+    }
+
+    const { accessToken, idToken: newIdToken } = await this.authService.refreshTokens(refreshToken, cognitoUsername);
+
+    response.cookie('access_token', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 3600000, // 1 hour
+      path: '/',
+    });
+
+    response.cookie('id_token', newIdToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 3600000, // 1 hour
+      path: '/',
+    });
+
+    return { message: 'Tokens refreshed successfully' };
   }
 
   /**

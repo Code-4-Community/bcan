@@ -77,7 +77,7 @@ const DonutMoneyApplied = observer(({ grants }: { grants: Grant[] }) => {
               },
             )}M`}
           </div>
-          <div className={`gap-1 flex flex-col absolute ${width > 250 ? "mt-12" : "mt-2"}`}>
+          <div className={`gap-1 flex break-all flex-col absolute ${width > 250 ? "mt-12" : "mt-2"}`}>
             <LabelItem
               name="Received"
               percent={sumReceived / total}

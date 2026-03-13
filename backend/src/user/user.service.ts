@@ -732,12 +732,7 @@ async addUserToGroup(
       this.logger.log('Executing DynamoDB scan with filter for Inactive users...');
       const result = await this.dynamoDb.scan(params).promise();
       
-      const users: User[] = (result.Items || []).map((item) => ({
-        position: item.position as UserStatus,
-        email: item.email,
-        firstName: item.firstName,
-        lastName: item.lastName
-      }));
+      const users: User[] = (result.Items || []).map((item) => item as User);
 
       this.logger.log(`✅ Successfully retrieved ${users.length} inactive users`);
       return users;
@@ -787,12 +782,7 @@ async getAllActiveUsers(): Promise<User[]> {
         this.logger.error("DynamoDB scan result:", result);
         throw new NotFoundException("No active users found.");
       }
-      const users: User[] = (result.Items || []).map((item) => ({
-        position: item.position as UserStatus,
-        email: item.email,
-        firstName: item.firstName,
-        lastName: item.lastName
-      }));
+      const users: User[] = (result.Items || []).map((item) => item as User);
       
       this.logger.debug(`Fetched ${users.length} active users.`);
 

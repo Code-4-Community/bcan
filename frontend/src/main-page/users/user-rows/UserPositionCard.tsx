@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { UserStatus } from "../../../../middle-layer/types/UserStatus";
+import { UserStatus } from "../../../../../middle-layer/types/UserStatus";
 
 interface UserPositionCardProps {
   position: UserStatus;
@@ -14,13 +14,13 @@ const UserPositionCard = ({ position }: UserPositionCardProps) => {
         return "bg-yellow-light border-yellow-dark text-yellow-dark";
       case UserStatus.Inactive:
       default:
-        return "bg-grey-400 border-gray text-gray";
+        return "bg-grey-400 border-grey text-grey-700";
     }
   }, [position]);
 
   return (
-    <div className={`py-1 px-6 rounded-md border ${cardStyles}`}>
-      <p className="text-base">{position}</p>
+    <div className={`inline-flex w-fit flex-none items-center rounded-full px-3 py-1 ${cardStyles}`}>
+      <p className="text-medium">{position}</p>
     </div>
   );
 };

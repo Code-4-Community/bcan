@@ -23,7 +23,7 @@ const NavTab: React.FC<NavTabProps> = ({ name, linkTo, icon }) => {
       }`}
     >
       <FontAwesomeIcon icon={icon} className="w-5 h-5" />
-      <span className="text-md">{name}</span>
+      <span className="text-sm lg:text-base">{name}</span>
     </Link>
   );
 };

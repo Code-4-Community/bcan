@@ -9,11 +9,19 @@ type InfoCardProps = {
   title?: string;
   fields: InfoField[];
   action?: ReactNode;
+  isEditing?: boolean;
+  editContent?: ReactNode;
 };
 
-export default function InfoCard({ title, fields, action }: InfoCardProps) {
+export default function InfoCard({
+  title,
+  fields,
+  action,
+  isEditing,
+  editContent,
+}: InfoCardProps) {
   return (
-    <div className="w-full max-w-3xl rounded-lg bg-white p-6 shadow-sm flex flex-col">
+    <div className="w-full max-w-3xl rounded-md bg-white p-6 shadow-sm flex flex-col">
       {(title || action) && (
         <div className="mb-4 flex items-center justify-between">
           {title && (
@@ -25,16 +33,20 @@ export default function InfoCard({ title, fields, action }: InfoCardProps) {
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-6 text-left">
-        {fields.map((field) => (
-          <div key={field.label}>
-            <p className="text-sm text-gray-500">{field.label}</p>
-            <p className="text-base font-medium text-gray-900">
-              {field.value}
-            </p>
-          </div>
-        ))}
-      </div>
+      {isEditing && editContent ? (
+        editContent
+      ) : (
+        <div className="grid grid-cols-2 gap-6 text-left">
+          {fields.map((field) => (
+            <div key={field.label}>
+              <p className="text-sm text-gray-500">{field.label}</p>
+              <p className="text-base font-medium text-gray-900">
+                {field.value}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

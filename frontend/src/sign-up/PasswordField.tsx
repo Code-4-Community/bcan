@@ -90,9 +90,9 @@ export default function PasswordField({
           tabIndex={-1}
         >
           {visible ? (
-            <EyeSlashIcon className="h-5 w-5" />
-          ) : (
             <EyeIcon className="h-5 w-5" />
+          ) : (
+            <EyeSlashIcon className="h-5 w-5" />
           )}
         </button>
       </div>
