@@ -19,17 +19,11 @@ import { observer } from "mobx-react-lite";
 import { ProcessGrantData } from "./filter-bar/processGrantData.ts";
 import { UserStatus } from "../../../../middle-layer/types/UserStatus.ts";
 import { Navigate } from "react-router-dom";
-import BellButton from "../navbar/Bell.tsx";
 import GrantCard from "./grant-list/GrantCard.tsx";
 import { api } from "../../api.ts";
 //import Button from "../../components/Button.tsx";
 
-// still needed potentially?
-interface GrantPageProps {
-  showOnlyMyGrants?: boolean; //if true, filters grants by user email
-}
-
-function GrantPage({}: GrantPageProps) {
+function GrantPage() {
   const [showNewGrantModal, setShowNewGrantModal] = useState(false);
   const [wasGrantSubmitted, setWasGrantSubmitted] = useState(false);
   
@@ -110,9 +104,6 @@ function GrantPage({}: GrantPageProps) {
   return user ? (
     user?.position !== UserStatus.Inactive ? (
       <div className="grant-page w-full items-end">
-        <div className="bell-container flex justify-end w-full">
-          <BellButton setOpenModal={setOpenModal} openModal={openModal} />
-        </div>
         <GrantSearch />
         <div className="flex w-full justify-between py-2 gap-4">
           <span className="text-lg font-semibold">
@@ -173,7 +164,7 @@ function GrantPage({}: GrantPageProps) {
         </div>
       </div>
     ) : (
-      <Navigate to="restricted" replace />
+      <Navigate to="/restricted" replace />
     )
   ) : (
     <Navigate to="/login" replace />

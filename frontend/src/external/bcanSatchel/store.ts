@@ -90,7 +90,6 @@ export function persistToSessionStorage() {
       accessToken: state.accessToken,
       activeUsers: state.activeUsers ? state.activeUsers.map(u => JSON.parse(JSON.stringify(u))) : [],
       inactiveUsers: state.inactiveUsers ? state.inactiveUsers.map(u => JSON.parse(JSON.stringify(u))) : [],
-      emailFilter: state.emailFilter,
     };
     console.log('Data to save:', dataToSave);
     sessionStorage.setItem('bcanAppStore', JSON.stringify(dataToSave));

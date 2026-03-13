@@ -18,15 +18,17 @@ const StatusDropdown: React.FC<StatusDropdownProps> = observer(({ selected, onSe
     <div className="absolute left-0 top-full mt-2 bg-white border border-primary-900 rounded-md p-4 z-50 shadow-lg min-w-[25rem] overflow-x-auto">
       <div className="grid grid-cols-3 gap-2">
         {statuses.map((status) => (
-          <div
+          <label
             key={status}
+            htmlFor={`status-filter-${String(status)}`}
             className="flex items-center gap-2 cursor-pointer"
-            onClick={() => onSelect(status)}
           >
             <input
+              id={`status-filter-${String(status)}`}
               type="checkbox"
               checked={selected === status}
               onChange={() => onSelect(status)}
+              aria-label={`Filter by ${String(status)} status`}
               className="cursor-pointer w-4 h-4 flex-shrink-0"
             />
             <span
@@ -38,7 +40,7 @@ const StatusDropdown: React.FC<StatusDropdownProps> = observer(({ selected, onSe
             >
               {status}
             </span>
-          </div>
+          </label>
         ))}
       </div>
     </div>
