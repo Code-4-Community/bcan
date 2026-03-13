@@ -3,6 +3,7 @@ import {
   updateAmountRange,
   updateEligibleOnly,
   updateEndDateFilter,
+  updateFilter,
   updateSort,
   updateStartDateFilter,
   updateUserEmailFilter,
@@ -11,10 +12,10 @@ import { observer } from "mobx-react-lite";
 import { getAppStore } from "../../../external/bcanSatchel/store.ts";
 import StatusDropdown from "./StatusDropdown";
 import Button from "../../../components/Button";
-import { faSort } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faChevronUp, faSort } from "@fortawesome/free-solid-svg-icons";
 import FilterCard from "./components/FilterCard";
 import { Grant } from "../../../../../middle-layer/types/Grant.ts";
-import { set } from "mobx";
+import { Status } from "../../../../../middle-layer/types/Status.ts";
 
 /**
  * FilterBar provides filtering and sorting controls for grants.
@@ -33,16 +34,19 @@ const FilterBar: React.FC = observer(() => {
   const [showDueDateCard, setShowDueDateCard] = useState(false);
   const [showAmountCard, setShowAmountCard] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<Status | null>(null);
   const dueDateDropdownRef = useRef<HTMLDivElement | null>(null);
   const amountDropdownRef = useRef<HTMLDivElement | null>(null);
+  const statusDropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       const target = event.target as Node;
       const clickedDueDate = dueDateDropdownRef.current?.contains(target);
       const clickedAmount = amountDropdownRef.current?.contains(target);
+      const clickedStatus = statusDropdownRef.current?.contains(target);
 
-      if (!clickedDueDate && !clickedAmount) {
+      if (!clickedDueDate && !clickedAmount && !clickedStatus) {
         setShowDueDateCard(false);
         setShowAmountCard(false);
         setShowStatusDropdown(false);
@@ -75,6 +79,12 @@ const FilterBar: React.FC = observer(() => {
   // Toggle "eligible only" filter in store.
   const handleEligibleClick = () => {
     updateEligibleOnly(!eligibleOnly);
+  };
+
+  const handleStatusSelect = (status: Status) => {
+    const newSelected = selectedStatus === status ? null : status;
+    setSelectedStatus(newSelected);
+    updateFilter(newSelected);
   };
 
   const cycleSort = (header: keyof Grant) => {
@@ -250,11 +260,24 @@ const FilterBar: React.FC = observer(() => {
             </div>
           )}
         </div>
-        <StatusDropdown 
-          isOpen = {showStatusDropdown}
-          setIsOpen = {setShowStatusDropdown}
-          activeClass = {activeButtonClass}
-          inactiveClass = {inactiveButtonClass}/>
+        <div ref={statusDropdownRef} className="relative">
+          <Button
+            text="Status"
+            onClick={() => {
+              setShowDueDateCard(false);
+              setShowAmountCard(false);
+              setShowStatusDropdown(!showStatusDropdown);
+            }}
+            logo={showStatusDropdown ? faChevronUp : faChevronDown}
+            logoPosition="right"
+            className={`bg-white text-base whitespace-nowrap ${
+              showStatusDropdown || selectedStatus ? activeButtonClass : inactiveButtonClass
+            }`}
+          />
+          {showStatusDropdown && (
+            <StatusDropdown selected={selectedStatus} onSelect={handleStatusSelect} />
+          )}
+        </div>
       </div>
     </div>
   );
