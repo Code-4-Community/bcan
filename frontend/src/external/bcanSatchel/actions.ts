@@ -65,6 +65,11 @@ export const updateSort = action(
   (sort: {header: keyof Grant, asc: boolean} | null) => ({ sort, })
 );
 
+export const updateUserSort = action(
+  "updateUserSort",
+  (sort: {header: keyof User, sort: "asc" | "desc" | "none"}) => ({ sort, })
+); 
+
 /**
  * Append a new grant to the current list of grants.
  */
@@ -75,11 +80,18 @@ export const updateSearchQuery = action(
   (searchQuery: string) => ({ searchQuery })
 );
 
+export const updateUserQuery = action(
+  "updateUserQuery",
+  (userQuery: string) => ({ userQuery })
+);
+
+// for seeing "my grants" only
 export const updateUserEmailFilter = action(
   "updateUserEmailFilter",
   (userEmailFilter: boolean) => ({ userEmailFilter })
 );
 
+// for seeing eligible grants only
 export const updateEligibleOnly = action(
   "updateEligibleOnly",
   (eligibleOnly: boolean) => ({ eligibleOnly })
