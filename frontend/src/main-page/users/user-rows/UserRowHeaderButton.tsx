@@ -16,7 +16,7 @@ interface UserRowHeaderButtonProps {
 const UserRowHeaderButton = (props: UserRowHeaderButtonProps) => {
   return (
     <button
-      className="font-medium flex items-centerpx-0 hover:border-white col-span-1 justify-start hover:text-grey-500 text-grey-600"
+      className="font-medium flex w-fit items-center px-0 hover:border-white col-span-1 justify-start hover:text-grey-500 text-grey-600"
       onClick={props.onClick}
     >
       <button />

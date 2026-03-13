@@ -20,11 +20,13 @@ const contactPhoto =
 
   return (
     <div className="flex flex-row gap-4 w-full text-left justify-items-start rounded border-2 p-3 h-full border-grey-500">
+      <div className="lg:flex h-full items-center hidden">
       <img
         src={contactPhoto || logo}
         alt="Profile"
-        className="max-w-14 rounded-full hidden lg:block"
+        className="w-14 h-14 object-cover rounded-full"
       />
+      </div>
       <div className="flex flex-col align-middle justify-center">
         <p className="text-black text-md font-semibold ">
           {contact?.POC_name || "N/A"}

@@ -4,7 +4,7 @@ import Button from '../../../components/Button.tsx';
 const AddGrantButton = ({ onClick } : any) => {
 
   return (
-    <Button text= "+ Add" className="bg-white rounded-full border-2 border-grey-500 border-solid" onClick={onClick} />
+    <Button text= "+ Add" className="bg-primary-900 text-white rounded-full border-2 border-solid" onClick={onClick} />
   );
 };
 

@@ -16,7 +16,7 @@ const UserRow = ({ user, action }: UserRowProps) => {
         <img
           src={user.profilePicUrl || logo}
           alt="Profile"
-          className="max-w-12 mr-4 rounded-full hidden lg:block"
+          className="w-12 h-12 object-cover mr-4 rounded-full hidden lg:block"
         />
         {user.firstName}&nbsp;{user.lastName}
       </div>

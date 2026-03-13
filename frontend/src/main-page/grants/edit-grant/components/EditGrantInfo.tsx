@@ -152,14 +152,21 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
           </div>
 
           {/* Report Deadlines */}
-          <div>
-            <label className="flex text-gray-700 sm:text-sm lg:text-base mb-1 ">
+          <div className="">
+            <label className="flex text-gray-700 sm:text-sm lg:text-base mb-1">
               Report Deadlines
             </label>
+            <div className="flex flex-col gap-2">
             <input
               type="date"
               className="appearance-none block w-full h-[36px] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4 "
             />
+            {form.reportDates.map((date) => <input
+              type="date"
+              value={date}
+              className="appearance-none block w-full h-[36px] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4 "
+            />)}
+            </div>
           </div>
         </div>
         <div className="flex flex-col w-full gap-6 items-start text-left col-span-1">
