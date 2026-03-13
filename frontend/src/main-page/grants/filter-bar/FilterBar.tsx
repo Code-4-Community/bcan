@@ -142,8 +142,8 @@ const FilterBar: React.FC = observer(() => {
     }
   };
 
-  const dueDateActive = showDueDateCard || sort?.header === "application_deadline";
-  const amountActive = showAmountCard || sort?.header === "amount";
+  const dueDateActive = showDueDateCard || sort?.header === "application_deadline" || startDateFilter || endDateFilter;
+  const amountActive = showAmountCard || sort?.header === "amount" || amountMinFilter !== null || amountMaxFilter !== null;
   const activeButtonClass =
     "border-2 shadow-xl text-primary-900 border-primary-900 active:!border-primary-900 active:!text-primary-900 focus:!border-primary-900 focus:!text-primary-900 focus:outline-none focus-visible:outline-none";
   const inactiveButtonClass =
