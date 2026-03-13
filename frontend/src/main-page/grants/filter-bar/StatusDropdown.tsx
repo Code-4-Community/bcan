@@ -13,13 +13,7 @@ const StatusDropdown: React.FC = observer(() => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<Status | null>(null);
 
-  const statuses = [
-    Status.Active,
-    Status.Pending,
-    Status.Potential,
-    Status.Rejected,
-    Status.Inactive,
-  ];
+  const statuses = Object.values(Status);
 
   function handleSelect(status: Status) {
     const newSelected = selected === status ? null : status;
@@ -35,7 +29,7 @@ const StatusDropdown: React.FC = observer(() => {
       onClick={() => setIsOpen(!isOpen)}
       logo={isOpen ? faChevronUp : faChevronDown}
       logoPosition="right"
-      className="border-grey-400 bg-white text-grey-900 text-base whitespace-nowrap"
+      className="border-grey-500 bg-white text-grey-600 text-base whitespace-nowrap"
     />
 
       {isOpen && (

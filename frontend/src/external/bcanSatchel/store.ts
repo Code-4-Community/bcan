@@ -15,6 +15,10 @@ export interface AppState {
   endDateFilter: Date | null;
   searchQuery: string;
   yearFilter:number[] | [];
+  emailFilter: boolean;
+  eligibleOnly: boolean;
+  amountMinFilter: number | null;
+  amountMaxFilter: number | null;
   activeUsers: User[] | [];
   inactiveUsers: User[] | [];
   sort: {header: keyof Grant, asc: boolean} | null;
@@ -32,6 +36,10 @@ const initialState: AppState = {
   endDateFilter: null,
   searchQuery: '',
   yearFilter: [],
+  emailFilter: false,
+  eligibleOnly: false,
+  amountMinFilter: null,
+  amountMaxFilter: null,
   activeUsers: [],
   inactiveUsers: [],
   notifications: [],
@@ -78,6 +86,7 @@ export function persistToSessionStorage() {
       accessToken: state.accessToken,
       activeUsers: state.activeUsers ? state.activeUsers.map(u => JSON.parse(JSON.stringify(u))) : [],
       inactiveUsers: state.inactiveUsers ? state.inactiveUsers.map(u => JSON.parse(JSON.stringify(u))) : [],
+      emailFilter: state.emailFilter,
     };
     console.log('Data to save:', dataToSave);
     sessionStorage.setItem('bcanAppStore', JSON.stringify(dataToSave));

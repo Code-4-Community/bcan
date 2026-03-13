@@ -1,4 +1,5 @@
 import { Grant } from "../../../../../middle-layer/types/Grant.ts";
+import { User } from "../../../../../middle-layer/types/User.ts";
 
 // filters grants by looping thru all filters
 export const filterGrants = (
@@ -40,4 +41,33 @@ export const yearFilterer = (years: number[] | null) => (grant: Grant) => {
     if (!years || years.length == 0) return true;
     const grantYear = new Date(grant.application_deadline).getFullYear();
     return years.includes(grantYear);
+}
+
+export const eligibleFilter = (eligibleOnly: boolean) => (grant: Grant) => {
+  if (eligibleOnly) {
+    return grant.does_bcan_qualify;
+  }
+  return true;
+};
+
+export const amountRangeFilter =
+  (minAmount: number | null, maxAmount: number | null) => (grant: Grant) => {
+    if (minAmount !== null && grant.amount < minAmount) return false;
+    if (maxAmount !== null && grant.amount > maxAmount) return false;
+    return true;
+  };
+
+/**
+ * Returns a predicate that determines whether the grant's BCAN POC email
+ * matches the given user email filter.
+ *
+ * @param userEmail - The email address to filter by (current user's email)
+ * @param user - The current user object
+ * @returns A predicate function that takes a Grant and returns a boolean
+ */
+export const userEmailFilter = (userEmail: boolean, user: User | null) => (grant: Grant) => {
+  if (!userEmail || !user) return true;
+  
+  const grantPocEmail = grant.bcan_poc?.POC_email?.toLowerCase();
+  return grantPocEmail === user.email.toLowerCase();
 }

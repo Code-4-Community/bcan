@@ -2,35 +2,39 @@ import { useState } from "react";
 import Button from "../../../../components/Button.tsx";
 import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
 
-type SortDirection = "increasing" | "decreasing";
+type SortDirection = "increasing" | "decreasing" | null;
 
 interface FilterCardProps {
 	directionFirst?: boolean;
+	rangeType: "date" | "number";
+	rangeLabel: string;
 	initialDirection?: SortDirection;
-	initialStartDate?: string;
-	initialEndDate?: string;
+	initialStartValue?: string;
+	initialEndValue?: string;
 	onClearAll?: () => void;
-	onDirectionChange?: (direction: SortDirection) => void;
-	onDateRangeChange?: (startDate: string, endDate: string) => void;
+	onDirectionChange: (direction: SortDirection) => void;
+	onRangeChange: (startValue: string, endValue: string) => void;
 }
 
 export default function FilterCard({
 	directionFirst = true, //if true, direction section is shown before date range section
-	initialDirection = "increasing", //default sort direction is increasing
-	initialStartDate = "", //default start date is empty string (no filter)
-	initialEndDate = "", //default end date is empty string (no filter)
+	rangeType, //type of range input, either "date" or "number"
+	rangeLabel, //label for the range section
+	initialDirection = null, //default sort direction is increasing
+	initialStartValue = "", //default start value is empty string (no filter)
+	initialEndValue = "", //default end value is empty string (no filter)
 	onClearAll, //optional callback for when "Clear all" is clicked
 	onDirectionChange, //optional callback for when sort direction changes
-	onDateRangeChange, //optional callback for when date range changes
+	onRangeChange, //optional callback for when range changes
 }: FilterCardProps) {
 	const [direction, setDirection] = useState<SortDirection>(initialDirection);
-	const [startDate, setStartDate] = useState(initialStartDate);
-	const [endDate, setEndDate] = useState(initialEndDate);
+	const [startValue, setStartValue] = useState(initialStartValue);
+	const [endValue, setEndValue] = useState(initialEndValue);
 
 	const handleClearAll = () => {
-		setDirection("increasing");
-		setStartDate("");
-		setEndDate("");
+		setDirection(null);
+		setStartValue("");
+		setEndValue("");
 		onClearAll?.();
 	};
 
@@ -51,7 +55,7 @@ export default function FilterCard({
 					text="Increasing"
 					onClick={() => {
 						setDirection("increasing");
-						onDirectionChange?.("increasing");
+						onDirectionChange("increasing");
 					}}
 					className={
 						direction === "increasing"
@@ -66,7 +70,7 @@ export default function FilterCard({
 					text="Decreasing"
 					onClick={() => {
 						setDirection("decreasing");
-						onDirectionChange?.("decreasing");
+						onDirectionChange("decreasing");
 					}}
 					className={
 						direction === "decreasing"
@@ -78,28 +82,29 @@ export default function FilterCard({
 		</div>
 	);
 
-    // date format: "YYYY-MM-DD"
-	const dateRangeSection = (
+	const rangeSection = (
 		<div className="flex flex-col gap-2">
-			<div className="text-sm font-semibold flex justify-start">Date Range</div>
+			<div className="text-sm font-semibold flex justify-start">{rangeLabel}</div>
 			<div className="flex gap-2">
 				<input
 					className="w-full rounded border border-grey-600 px-2 py-1 text-sm bg-white"
-					type="date"
-					value={startDate}
+					type={rangeType}
+					value={startValue}
+					placeholder={rangeType === "number" ? "Min" : undefined}
 					onChange={(e) => {
-						setStartDate(e.target.value);
-						onDateRangeChange?.(e.target.value, endDate);
+						setStartValue(e.target.value);
+						onRangeChange?.(e.target.value, endValue);
 					}}
 				/>
 				<span className="text-sm font-semibold pt-2"> to </span>
 				<input
 					className="w-full rounded border border-grey-600 px-2 py-1 text-sm bg-white"
-					type="date"
-					value={endDate}
+					type={rangeType}
+					value={endValue}
+					placeholder={rangeType === "number" ? "Max" : undefined}
 					onChange={(e) => {
-						setEndDate(e.target.value);
-						onDateRangeChange?.(startDate, e.target.value);
+						setEndValue(e.target.value);
+						onRangeChange?.(startValue, e.target.value);
 					}}
 				/>
 			</div>
@@ -107,11 +112,11 @@ export default function FilterCard({
 	);
 
 	const sections = directionFirst
-		? [directionSection, dateRangeSection]
-		: [dateRangeSection, directionSection];
+		? [directionSection, rangeSection]
+		: [rangeSection, directionSection];
 
 	return (
-		<div className="flex flex-col gap-2 rounded-[1rem] border-[0.13rem] border-primary-900 p-4">
+		<div className="flex flex-col gap-2 rounded-[1rem] border-[0.13rem] border-primary-900 p-4 bg-white">
 			{sections}
 		</div>
 	);

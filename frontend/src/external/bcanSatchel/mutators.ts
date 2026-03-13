@@ -8,6 +8,9 @@ import {
   updateStartDateFilter, updateEndDateFilter,
   updateSearchQuery,
   updateYearFilter,
+  updateUserEmailFilter,
+  updateEligibleOnly,
+  updateAmountRange,
   setNotifications,
   updateSort
 } from './actions';
@@ -96,6 +99,22 @@ mutator(updateStartDateFilter, (actionMessage) => {
 mutator(updateEndDateFilter, (actionMessage) => {
   const store = getAppStore();
   store.endDateFilter = actionMessage.endDateFilter;
+})
+
+mutator(updateUserEmailFilter, (actionMessage) => {
+  const store = getAppStore();
+  store.emailFilter = actionMessage.userEmailFilter;
+})
+
+mutator(updateEligibleOnly, (actionMessage) => {
+  const store = getAppStore();
+  store.eligibleOnly = actionMessage.eligibleOnly;
+})
+
+mutator(updateAmountRange, (actionMessage) => {
+  const store = getAppStore();
+  store.amountMinFilter = actionMessage.amountMinFilter;
+  store.amountMaxFilter = actionMessage.amountMaxFilter;
 })
 
 mutator(updateSearchQuery, (actionMessage) => {
