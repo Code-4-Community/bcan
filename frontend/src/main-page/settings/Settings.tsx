@@ -4,7 +4,7 @@ import InfoCard from "./components/InfoCard";
 import logo from "../../images/logo.svg";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import ChangePasswordModal from "./ChangePasswordModal";
-import { updateUserQuery } from "@/external/bcanSatchel/actions";
+import { updateUserQuery } from "../../external/bcanSatchel/actions";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

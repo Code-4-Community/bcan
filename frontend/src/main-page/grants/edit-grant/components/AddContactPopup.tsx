@@ -18,8 +18,13 @@ type ContactType = "BCAN" | "Granter";
 
 const AddContactPopup = observer(
   ({ setShowPopup, dispatch, form }: AddPopupProps) => {
-    const [type, setType] = useState<ContactType>(form.bcanPocEmail ? "Granter" : "BCAN");
+    const [type, setType] = useState<ContactType>(
+      form.bcanPocEmail ? "Granter" : "BCAN",
+    );
     const [selectedUser, setSelectedUser] = useState<any | null>(null);
+    const [error, setError] = useState<string | null>();
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     const { activeUsers } = ProcessUserData();
 
@@ -27,7 +32,19 @@ const AddContactPopup = observer(
       updateUserQuery("");
     }, []);
 
+    const validateUser = () => {
+      if(!selectedUser.firstName){
+        setError("firstName")}
+        if(!selectedUser.lastName){
+        setError("firstName")}
+        if(!selectedUser.email && !emailRegex.test(selectedUser.email)){
+        setError("email")}
+    }
+
     const handleAdd = () => {
+
+      validateUser();
+
       if (type === "BCAN" && selectedUser) {
         dispatch({
           type: "SET_FIELD",
@@ -42,13 +59,26 @@ const AddContactPopup = observer(
         });
       }
 
+      if (type === "Granter" && selectedUser) {
+        dispatch({
+          type: "SET_FIELD",
+          field: "grantProviderPocEmail",
+          value: selectedUser.email,
+        });
+
+        dispatch({
+          type: "SET_FIELD",
+          field: "grantProviderPocName",
+          value: `${selectedUser.firstName} ${selectedUser.lastName}`,
+        });
+      }
+
       setShowPopup();
     };
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="flex flex-col bg-white rounded-md px-8 py-6 max-w-xl mx-4 gap-3 w-full h-[40%]">
-
+        <div className="flex flex-col bg-white rounded-md px-8 py-6 max-w-xl mx-4 gap-3 w-full h-[35rem]">
           <div className="text-2xl font-bold text-start">Add Contact</div>
 
           {/* Contact Type Selector */}
@@ -76,8 +106,7 @@ const AddContactPopup = observer(
             <div className="flex flex-col mt-2 gap-2">
               <UserSearch />
 
-              <div className="flex flex-col gap-2 max-h-60 overflow-y-auto rounded justify-items-start text-start">
-
+              <div className="flex flex-col gap-2 max-h-64 overflow-y-scroll rounded justify-items-start text-start">
                 {activeUsers.map((user) => (
                   <div
                     key={user.email}
@@ -93,15 +122,13 @@ const AddContactPopup = observer(
                       {user.firstName} {user.lastName}
                     </div>
 
-                    <div className="text-xs text-gray-500">
-                      {user.email}
-                    </div>
+                    <div className="text-xs text-gray-500">{user.email}</div>
                   </div>
                 ))}
               </div>
 
               {selectedUser && (
-                <div className="text-sm text-gray-600 mt-2">
+                <div className="text-sm text-gray-600 mt-4">
                   Selected: {selectedUser.firstName} {selectedUser.lastName}
                 </div>
               )}
@@ -110,14 +137,15 @@ const AddContactPopup = observer(
 
           {/* GRANTER FORM */}
           {type === "Granter" && (
-            <div className="flex flex-col gap-2">
-
+            <div className="flex flex-col gap-2 mt-2">
               <div className="flex gap-2">
                 <InputField
                   id="firstName"
                   label="First Name"
                   placeholder="Enter first name..."
                   required
+                  error={error === "firstName"}
+                  onChange={(e)=>{setSelectedUser({...selectedUser, firstName: e.target.value})}}
                 />
 
                 <InputField
@@ -125,6 +153,8 @@ const AddContactPopup = observer(
                   label="Last Name"
                   placeholder="Enter last name..."
                   required
+                  error={error === "lastName"}
+                  onChange={(e)=>{setSelectedUser({...selectedUser, lastName: e.target.value})}}
                 />
               </div>
 
@@ -134,6 +164,8 @@ const AddContactPopup = observer(
                 type="email"
                 placeholder="Enter email address..."
                 required
+                error={error === "email"}
+                onChange={(e)=>{setSelectedUser({...selectedUser, email: e.target.value})}}
               />
             </div>
           )}
@@ -149,14 +181,14 @@ const AddContactPopup = observer(
             <Button
               text="Add"
               onClick={handleAdd}
+              disabled={!(selectedUser && selectedUser.firstName && selectedUser.lastName && selectedUser.email) || !(!error)}
               className="text-white bg-primary-900 text-sm"
             />
           </div>
-
         </div>
       </div>
     );
-  }
+  },
 );
 
 export default AddContactPopup;
