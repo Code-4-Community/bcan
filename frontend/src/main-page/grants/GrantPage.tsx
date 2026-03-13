@@ -84,8 +84,6 @@ function GrantPage() {
       setWasGrantSubmitted(false);
     }, [wasGrantSubmitted]);
   
-  const [openModal, setOpenModal] = useState(false);
-
   const { user } = useAuthContext(); //gets current logged in user
   const userObj = toJS(user);
 
