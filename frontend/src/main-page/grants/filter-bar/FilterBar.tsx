@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   updateAmountRange,
   updateEligibleOnly,
@@ -31,6 +31,29 @@ const FilterBar: React.FC = observer(() => {
 
   const [showDueDateCard, setShowDueDateCard] = useState(false);
   const [showAmountCard, setShowAmountCard] = useState(false);
+  const dueDateDropdownRef = useRef<HTMLDivElement | null>(null);
+  const amountDropdownRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node;
+      const clickedDueDate = dueDateDropdownRef.current?.contains(target);
+      const clickedAmount = amountDropdownRef.current?.contains(target);
+
+      if (!clickedDueDate && !clickedAmount) {
+        setShowDueDateCard(false);
+        setShowAmountCard(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, []);
 
   const toInputDate = (value: Date | null) => {
     if (!value) return "";
@@ -132,7 +155,7 @@ const FilterBar: React.FC = observer(() => {
         <Button
           text="My Grants"
           onClick={handleMyGrantsClick}
-          className={`bg-white text-base whitespace-nowrap ${
+          className={`bg-white text-base whitespace-nowrap border-b-4 ${
             emailFilter ? activeButtonClass : inactiveButtonClass
           }`}
         />
@@ -154,7 +177,7 @@ const FilterBar: React.FC = observer(() => {
               : inactiveButtonClass
           }`}
         />
-        <div className="relative">
+        <div ref={dueDateDropdownRef} className="relative">
           <Button
             text="Due Date"
             onClick={() => {
@@ -188,7 +211,7 @@ const FilterBar: React.FC = observer(() => {
             </div>
           )}
         </div>
-        <div className="relative">
+        <div ref={amountDropdownRef} className="relative">
           <Button
             text="Grant Amount"
             onClick={() => {
