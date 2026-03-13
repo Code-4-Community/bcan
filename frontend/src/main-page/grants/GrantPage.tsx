@@ -1,4 +1,3 @@
-import AddGrantButton from "./new-grant/AddGrant.tsx";
 import GrantSearch from "./filter-bar/GrantSearch.tsx";
 import { useEffect, useState } from "react";
 import { Grant } from "../../../../middle-layer/types/Grant.ts";
@@ -17,6 +16,7 @@ import { ProcessGrantData } from "./filter-bar/processGrantData.ts";
 import GrantCard from "./grant-list/GrantCard.tsx";
 import Button from "../../components/Button.tsx";
 import EditGrant from "./edit-grant/EditGrant.tsx";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 // still needed potentially?
 interface GrantPageProps {
@@ -31,12 +31,12 @@ function GrantPage({}: GrantPageProps) {
   const [curGrant, setCurGrant] = useState<Grant | null>(null);
 
   // Set the first grant when grants are loaded (only on initial mount)
-useEffect(() => {
-  if (!grants.length) return;
+  useEffect(() => {
+    if (!grants.length) return;
 
-  const updated = grants.find(g => g.grantId === curGrant?.grantId);
-  setCurGrant(updated ?? grants[0]);
-}, [grants]);
+    const updated = grants.find((g) => g.grantId === curGrant?.grantId);
+    setCurGrant(updated ?? grants[0]);
+  }, [grants]);
 
   const { user } = useAuthContext(); //gets current logged in user
   const userObj = toJS(user);
@@ -62,7 +62,13 @@ useEffect(() => {
           onClick={() => {}}
           className="border-2 border-grey-500 bg-white"
         />
-        <AddGrantButton onClick={() => setShowEditGrant(true)} />
+        <Button
+          text="Add"
+          logo={faPlus}
+          logoPosition="left"
+          className="bg-primary-900 text-white rounded-full border-2 border-solid"
+          onClick={() => setShowEditGrant(true)}
+        />
       </div>
 
       <div className="flex flex-row w-full gap-2 justify-between mt-4">

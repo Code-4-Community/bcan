@@ -18,7 +18,7 @@ export default function EditGrantContacts({ form }: EditGrantProps) {
           <Button
             text=""
             logoPosition="center"
-            className="rounded-md border-grey-400 text-primary-900"
+            className="rounded-md border-grey-400 text-primary-900 text-2xl"
             logo={faPlusCircle}
             onClick={() => alert("add contact")}
           />

@@ -7,25 +7,24 @@ type ContactCardProps = {
   type?: "BCAN" | "Granter";
 };
 
-const store = getAppStore()
+const store = getAppStore();
 const activeUsers = store.activeUsers || [];
 
 export default function ContactCard({ contact, type }: ContactCardProps) {
-
-const contactPhoto =
-  type === "BCAN"
-    ? activeUsers.find((user) => user.email === contact?.POC_email)
-        ?.profilePicUrl
-    : logo;
+  const contactPhoto =
+    type === "BCAN"
+      ? activeUsers.find((user) => user.email === contact?.POC_email)
+          ?.profilePicUrl
+      : logo;
 
   return (
     <div className="flex flex-row gap-4 w-full text-left justify-items-start rounded border-2 p-3 h-full border-grey-500">
-      <div className="lg:flex h-full items-center hidden">
-      <img
-        src={contactPhoto || logo}
-        alt="Profile"
-        className="w-14 h-14 object-cover rounded-full"
-      />
+      <div className="lg:block h-full items-center hidden">
+        <img
+          src={contactPhoto || logo}
+          alt="Profile"
+          className="w-14 h-14 object-cover rounded-full aspect-square"
+        />
       </div>
       <div className="flex flex-col align-middle justify-center">
         <p className="text-black text-md font-semibold ">

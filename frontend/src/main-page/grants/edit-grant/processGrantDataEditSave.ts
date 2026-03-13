@@ -64,6 +64,7 @@ export const saveGrantEdits = async (updatedGrant: Grant) => {
 export type Action =
   | { type: "SET_FIELD"; field: keyof GrantFormState; value: any }
   | { type: "ADD_REPORT_DATE" }
+  | { type: "UPDATE_REPORT_DATE"; index: number; value: any }
   | { type: "REMOVE_REPORT_DATE"; index: number }
   | { type: "ADD_ATTACHMENT"; attachment: Attachment }
   | { type: "REMOVE_ATTACHMENT"; index: number };
@@ -75,6 +76,19 @@ export function reducer(state: GrantFormState, action: Action): GrantFormState {
 
     case "ADD_REPORT_DATE":
       return { ...state, reportDates: [...state.reportDates, ""] };
+
+    case "UPDATE_REPORT_DATE":
+      return {
+        ...state,
+        reportDates: state.reportDates.map((_, i) => {
+          if (i === action.index) {
+            // Return a new object with the updated properties using spread syntax
+            return action.value;
+          }
+          // Return the original item for all other elements
+          return i;
+        }),
+      };
 
     case "REMOVE_REPORT_DATE":
       return {

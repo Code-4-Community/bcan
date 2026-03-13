@@ -28,16 +28,16 @@ export default function Button({ text, onClick, className, logo, logoPosition, d
     >
       {logo && logoPosition === 'left' &&
       <span className="mr-2">
-        <FontAwesomeIcon icon={logo} className="text-lg w-4 h-4" />
+        <FontAwesomeIcon icon={logo} className="" />
       </span>}
       {text}
       {logo && logoPosition === 'right' &&
       <span className="ml-2">
-        <FontAwesomeIcon icon={logo} className="text-lg w-4 h-4" />
+        <FontAwesomeIcon icon={logo} className="" />
       </span>}
       {logo && logoPosition === 'center' &&
       <span className="">
-        <FontAwesomeIcon icon={logo} className="text-3xl" />
+        <FontAwesomeIcon icon={logo} className="" />
       </span>}
     </button>
   );

@@ -22,12 +22,12 @@ export interface GrantFormState {
   applicationDate: TDateISO | "";
   grantStartDate: TDateISO | "";
   reportDates: (TDateISO | "")[];
-  timeline: number;
-  estimatedCompletionTime: number;
+  timeline: number | null;
+  estimatedCompletionTime: number | null;
   doesBcanQualify: "yes" | "no" | "";
   isRestricted: "restricted" | "unrestricted" | "";
   status: Status;
-  amount: number;
+  amount: number | null;
   description: string;
   attachments: Attachment[];
   bcanPocName: string;
@@ -49,8 +49,8 @@ const EditGrant: React.FC<{
     applicationDate: grantToEdit?.application_deadline ?? "",
     grantStartDate: grantToEdit?.grant_start_date ?? "",
     reportDates: grantToEdit?.report_deadlines ?? [],
-    timeline: grantToEdit?.timeline ?? 0,
-    estimatedCompletionTime: grantToEdit?.estimated_completion_time ?? 0,
+    timeline: grantToEdit?.timeline ?? null,
+    estimatedCompletionTime: grantToEdit?.estimated_completion_time ?? null,
     doesBcanQualify: grantToEdit
       ? grantToEdit.does_bcan_qualify
         ? "yes"
@@ -62,7 +62,7 @@ const EditGrant: React.FC<{
         : "unrestricted"
       : "",
     status: grantToEdit?.status ?? Status.Inactive,
-    amount: grantToEdit?.amount ?? 0,
+    amount: grantToEdit?.amount ?? null,
     description: grantToEdit?.description ?? "",
     attachments: grantToEdit?.attachments ?? [],
     bcanPocName: grantToEdit?.bcan_poc?.POC_name ?? "",
@@ -73,11 +73,16 @@ const EditGrant: React.FC<{
 
   const validateInputs = (): string | null => {
     if (!form.organization.trim()) return "Organization Name is required";
+    if (!form.status) return "Status is required";
+    if (form.amount && form.amount <= 0) return "Amount must be greater than 0";
     if (!form.dueDate) return "Due Date is required";
     if (!form.grantStartDate) return "Grant Start Date is required";
-    if (form.amount <= 0) return "Amount must be greater than 0";
-    if (!form.status) return "Status is required";
+    if (form.estimatedCompletionTime && form.estimatedCompletionTime <= 0) return "Estimated completion time must be greater than 0";
+    if (!form.doesBcanQualify) return "BCAN eligibility is required";
+    if(!form.reportDates.every((date) => date !== "")) return "Report deadlines must have a value";
+    if (form.timeline && form.timeline <= 0) return "Timeline must be greater than 0";
     if (!form.bcanPocEmail) return "BCAN contact email required";
+    if(!form.attachments.every((attachment) => attachment.url !== "")) return "Attachments must have a value";
     return null;
   };
 
@@ -85,13 +90,13 @@ const EditGrant: React.FC<{
     grantId: grantToEdit?.grantId ?? 0,
     organization: form.organization,
     does_bcan_qualify: form.doesBcanQualify === "yes",
-    amount: form.amount,
+    amount: form.amount ?? 0,
     grant_start_date: form.grantStartDate as TDateISO,
     application_deadline: form.applicationDate as TDateISO,
     status: form.status as Status,
     report_deadlines: form.reportDates as TDateISO[],
-    timeline: form.timeline,
-    estimated_completion_time: form.estimatedCompletionTime,
+    timeline: form.timeline ?? 0,
+    estimated_completion_time: form.estimatedCompletionTime ?? 0,
     description: form.description,
     attachments: form.attachments,
     isRestricted: form.isRestricted === "restricted",

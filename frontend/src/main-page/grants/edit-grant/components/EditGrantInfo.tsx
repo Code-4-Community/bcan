@@ -4,8 +4,10 @@ import { TDateISO } from "../../../../../../backend/src/utils/date";
 import { Action } from "../processGrantDataEditSave";
 import {
   faCheckSquare,
+  faPlus,
   faSquareXmark,
 } from "@fortawesome/free-solid-svg-icons";
+import EditGrantDeleteItem from "./EditGrantDeleteItem";
 
 type EditGrantProps = {
   form: GrantFormState;
@@ -157,15 +159,39 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
               Report Deadlines
             </label>
             <div className="flex flex-col gap-2">
-            <input
-              type="date"
-              className="appearance-none block w-full h-[36px] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4 "
-            />
-            {form.reportDates.map((date) => <input
-              type="date"
-              value={date}
-              className="appearance-none block w-full h-[36px] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4 "
-            />)}
+              {form.reportDates.map((date, index) => (
+                <EditGrantDeleteItem
+                  item={
+                    <input
+                      type="date"
+                      value={date}
+                      key={index}
+                      onChange={(e) =>
+                        dispatch({
+                          type: "UPDATE_REPORT_DATE",
+                          index: index,
+                          value: e.target.value as TDateISO,
+                        })
+                      }
+                      className="appearance-none block w-full h-[36px] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4 "
+                    />
+                  }
+                  onDelete={() =>
+                    dispatch({ type: "REMOVE_REPORT_DATE", index: index })
+                  }
+                />
+              ))}
+              <Button
+                      logo={faPlus}
+                      logoPosition="left"
+                      text="Add"
+                      className="text-white bg-primary-900 text-xs w-fit"
+                      onClick={() =>
+                        dispatch({
+                          type: "ADD_REPORT_DATE",
+                        })
+                      }
+                    />
             </div>
           </div>
         </div>

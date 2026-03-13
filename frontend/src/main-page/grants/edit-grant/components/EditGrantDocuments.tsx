@@ -13,7 +13,7 @@ export default function EditGrantDocuments({}: EditGrantProps) {
         logo={faPlus}
         logoPosition="left"
         text="Add"
-        className="text-white bg-primary-900"
+        className="text-white bg-primary-900 text-xs"
         onClick={() => alert("Add document clicked")}
       />
     </div>
