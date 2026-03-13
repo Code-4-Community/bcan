@@ -48,7 +48,7 @@ export default function FilterCard({
 					className="text-xs font-semibold text-secondary-400 border-0 hover:text-secondary-400 hover:bg-opacity-0 hover:border hover:border-white"
 				/>
 			</div>
-			<div className="flex gap-2">
+			<div className="flex gap-2 flex-wrap">
 				<Button
 					logo={faAngleUp}
 					logoPosition="left"
@@ -85,9 +85,9 @@ export default function FilterCard({
 	const rangeSection = (
 		<div className="flex flex-col gap-2">
 			<div className="text-sm font-semibold flex justify-start">{rangeLabel}</div>
-			<div className="flex gap-2">
+			<div className="flex gap-2 flex-wrap">
 				<input
-					className="w-full rounded border border-grey-600 px-2 py-1 text-sm bg-white"
+					className="w-32 rounded border border-grey-600 px-2 py-1 text-sm bg-white"
 					type={rangeType}
 					value={startValue}
 					placeholder={rangeType === "number" ? "Min" : undefined}
@@ -98,7 +98,7 @@ export default function FilterCard({
 				/>
 				<span className="text-sm font-semibold pt-2"> to </span>
 				<input
-					className="w-full rounded border border-grey-600 px-2 py-1 text-sm bg-white"
+					className="w-32 rounded border border-grey-600 px-2 py-1 text-sm bg-white"
 					type={rangeType}
 					value={endValue}
 					placeholder={rangeType === "number" ? "Max" : undefined}

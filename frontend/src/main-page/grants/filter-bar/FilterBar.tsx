@@ -205,7 +205,7 @@ const FilterBar: React.FC = observer(() => {
             }`}
           />
           {showDueDateCard && (
-            <div className="absolute left-0 top-full mt-2 z-50 w-[28rem] max-w-[90vw]">
+            <div className="absolute left-0 top-full mt-2 z-50 w-[28vw]">
               <FilterCard
                 rangeType="date"
                 rangeLabel="Date Range"
@@ -240,7 +240,7 @@ const FilterBar: React.FC = observer(() => {
             }`}
           />
           {showAmountCard && (
-            <div className="absolute left-0 top-full mt-2 z-50 w-[28rem] max-w-[90vw]">
+            <div className="absolute left-0 top-full mt-2 z-50 w-[28vw]">
               <FilterCard
                 rangeType="number"
                 rangeLabel="Grant Range"
