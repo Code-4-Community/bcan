@@ -53,6 +53,8 @@ function GrantPage({}: GrantPageProps) {
     updateSearchQuery("");
   }, []);
 
+  
+
   return (
     <div className="grant-page w-full items-end">
       <GrantSearch />

@@ -19,11 +19,11 @@ export default function ContactCard({ contact, type }: ContactCardProps) {
 
   return (
     <div className="flex flex-row gap-4 w-full text-left justify-items-start rounded border-2 p-3 h-full border-grey-500">
-      <div className="lg:block h-full items-center hidden">
+      <div className="lg:flex h-full items-center hidden aspect-square">
         <img
           src={contactPhoto || logo}
           alt="Profile"
-          className="w-14 h-14 object-cover rounded-full aspect-square"
+          className="w-14 h-14 object-cover rounded-full aspect-square block"
         />
       </div>
       <div className="flex flex-col align-middle justify-center">
@@ -43,7 +43,7 @@ export default function ContactCard({ contact, type }: ContactCardProps) {
       </div>
       <div className="place-items-end justify-end ml-auto flex items-start">
         <div
-          className={`w-fit h-fit p-2 text-xs rounded-full text-white ${type === "BCAN" ? "bg-primary-900" : "bg-secondary-500"}`}
+          className={`w-fit h-fit py-2 px-3 text-xs rounded-full text-white ${type === "BCAN" ? "bg-primary-900" : "bg-secondary-500"}`}
         >
           {type}
         </div>

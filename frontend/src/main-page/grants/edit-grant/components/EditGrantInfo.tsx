@@ -46,7 +46,7 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
               type="number"
               min={0}
               className="appearance-none block w-full h-[36px] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
-              value={form.amount}
+              value={form.amount || undefined}
               onChange={(e) =>
                 dispatch({
                   type: "SET_FIELD",
@@ -196,26 +196,6 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
           </div>
         </div>
         <div className="flex flex-col w-full gap-6 items-start text-left col-span-1">
-          {/* Estimated Completion Time */}
-          <div className="">
-            <label className="flex text-gray-700 sm:text-sm lg:text-base mb-1 whitespace-nowrap">
-              Estimated Completion Time (hours)
-            </label>
-            <input
-              type="number"
-              min="0"
-              className="appearance-none block w-full h-[36px] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
-              value={form.estimatedCompletionTime}
-              onChange={(e) =>
-                dispatch({
-                  type: "SET_FIELD",
-                  field: "estimatedCompletionTime",
-                  value: e.target.value,
-                })
-              }
-            />
-          </div>
-
           {/* Timeline */}
           <div className="">
             <label className="flex text-gray-700 sm:text-sm lg:text-base mb-1 ">
@@ -225,11 +205,30 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
               type="number"
               min="0"
               className="appearance-none block w-full h-[36px] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
-              value={form.timeline}
+              value={form.timeline || undefined}
               onChange={(e) =>
                 dispatch({
                   type: "SET_FIELD",
                   field: "timeline",
+                  value: e.target.value,
+                })
+              }
+            />
+          </div>
+          {/* Estimated Completion Time */}
+          <div className="">
+            <label className="flex text-gray-700 sm:text-sm lg:text-base mb-1 whitespace-nowrap">
+              Estimated Completion Time (hours)
+            </label>
+            <input
+              type="number"
+              min="0"
+              className="appearance-none block h-[36px] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
+              value={form.estimatedCompletionTime || undefined}
+              onChange={(e) =>
+                dispatch({
+                  type: "SET_FIELD",
+                  field: "estimatedCompletionTime",
                   value: e.target.value,
                 })
               }

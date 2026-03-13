@@ -74,15 +74,16 @@ const EditGrant: React.FC<{
   const validateInputs = (): string | null => {
     if (!form.organization.trim()) return "Organization Name is required";
     if (!form.status) return "Status is required";
-    if (form.amount && form.amount <= 0) return "Amount must be greater than 0";
+    if (!form.amount || form.amount <= 0) return "Amount must be greater than 0";
     if (!form.dueDate) return "Due Date is required";
     if (!form.grantStartDate) return "Grant Start Date is required";
-    if (form.estimatedCompletionTime && form.estimatedCompletionTime <= 0) return "Estimated completion time must be greater than 0";
+    if (!form.estimatedCompletionTime || form.estimatedCompletionTime <= 0) return "Estimated completion time must be greater than 0";
     if (!form.doesBcanQualify) return "BCAN eligibility is required";
-    if(!form.reportDates.every((date) => date !== "")) return "Report deadlines must have a value";
-    if (form.timeline && form.timeline <= 0) return "Timeline must be greater than 0";
-    if (!form.bcanPocEmail) return "BCAN contact email required";
-    if(!form.attachments.every((attachment) => attachment.url !== "")) return "Attachments must have a value";
+    if(form.reportDates.length == 0 || !form.reportDates.every((date) => date !== "")) return "Report deadlines must have a value";
+    if (!form.timeline || form.timeline <= 0) return "Timeline must be greater than 0";
+    if (!form.bcanPocEmail) return "BCAN contact required";
+    if (!form.grantProviderPocEmail) return "Grant provider contact required";
+    if(form.attachments.length == 0 || !form.attachments.every((attachment) => attachment.url !== "")) return "Attachments must have a value";
     return null;
   };
 
@@ -173,7 +174,7 @@ const EditGrant: React.FC<{
           {/* Contacts and Documents Section */}
           <div className="flex flex-col gap-4 items-start w-full">
             {/* Contacts */}
-            <EditGrantContacts form={form} />
+            <EditGrantContacts form={form} dispatch={dispatch} />
             {/* Documents */}
             <EditGrantDocuments />
           </div>
