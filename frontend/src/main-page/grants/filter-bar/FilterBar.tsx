@@ -14,6 +14,7 @@ import Button from "../../../components/Button";
 import { faSort } from "@fortawesome/free-solid-svg-icons";
 import FilterCard from "./components/FilterCard";
 import { Grant } from "../../../../../middle-layer/types/Grant.ts";
+import { set } from "mobx";
 
 /**
  * FilterBar provides filtering and sorting controls for grants.
@@ -31,6 +32,7 @@ const FilterBar: React.FC = observer(() => {
 
   const [showDueDateCard, setShowDueDateCard] = useState(false);
   const [showAmountCard, setShowAmountCard] = useState(false);
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const dueDateDropdownRef = useRef<HTMLDivElement | null>(null);
   const amountDropdownRef = useRef<HTMLDivElement | null>(null);
 
@@ -43,6 +45,7 @@ const FilterBar: React.FC = observer(() => {
       if (!clickedDueDate && !clickedAmount) {
         setShowDueDateCard(false);
         setShowAmountCard(false);
+        setShowStatusDropdown(false);
       }
     };
 
@@ -145,7 +148,7 @@ const FilterBar: React.FC = observer(() => {
   const dueDateActive = showDueDateCard || sort?.header === "application_deadline" || startDateFilter || endDateFilter;
   const amountActive = showAmountCard || sort?.header === "amount" || amountMinFilter !== null || amountMaxFilter !== null;
   const activeButtonClass =
-    "border-2 shadow-xl text-primary-900 border-primary-900 active:!border-primary-900 active:!text-primary-900 focus:!border-primary-900 focus:!text-primary-900 focus:outline-none focus-visible:outline-none";
+    "border-2 border-primary-900 text-primary-900 active:!border-primary-900 active:!text-primary-900 focus:!border-primary-900 focus:!text-primary-900 focus:outline-none focus-visible:outline-none";
   const inactiveButtonClass =
     "border-2 border-grey-500 text-grey-600 active:!border-grey-500 active:!text-grey-600 focus:!border-grey-500 focus:!text-grey-600 focus:outline-none focus-visible:outline-none";
 
@@ -183,6 +186,7 @@ const FilterBar: React.FC = observer(() => {
             onClick={() => {
               setShowAmountCard(false);
               setShowDueDateCard(!showDueDateCard);
+              setShowStatusDropdown(false);
             }}
             logo={faSort}
             logoPosition="left"
@@ -217,6 +221,7 @@ const FilterBar: React.FC = observer(() => {
             onClick={() => {
               setShowDueDateCard(false);
               setShowAmountCard(!showAmountCard);
+              setShowStatusDropdown(false);
             }}
             logo={faSort}
             logoPosition="left"
@@ -245,7 +250,11 @@ const FilterBar: React.FC = observer(() => {
             </div>
           )}
         </div>
-        <StatusDropdown />
+        <StatusDropdown 
+          isOpen = {showStatusDropdown}
+          setIsOpen = {setShowStatusDropdown}
+          activeClass = {activeButtonClass}
+          inactiveClass = {inactiveButtonClass}/>
       </div>
     </div>
   );

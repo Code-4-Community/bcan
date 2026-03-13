@@ -9,8 +9,14 @@ import { observer } from "mobx-react-lite";
 import Button from "../../../components/Button";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 
-const StatusDropdown: React.FC = observer(() => {
-  const [isOpen, setIsOpen] = useState(false);
+interface StatusDropdownProps {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+  activeClass?: string; // Optional class for active state styling
+  inactiveClass?: string; // Optional class for inactive state styling
+}
+
+const StatusDropdown: React.FC<StatusDropdownProps> = observer(({ isOpen, setIsOpen, activeClass, inactiveClass }) => {
   const [selected, setSelected] = useState<Status | null>(null);
 
   const statuses = Object.values(Status);
@@ -29,7 +35,7 @@ const StatusDropdown: React.FC = observer(() => {
       onClick={() => setIsOpen(!isOpen)}
       logo={isOpen ? faChevronUp : faChevronDown}
       logoPosition="right"
-      className="border-grey-500 bg-white text-grey-600 text-base whitespace-nowrap"
+      className={`${isOpen ? activeClass : inactiveClass} bg-white text-base whitespace-nowrap`}
     />
 
       {isOpen && (
