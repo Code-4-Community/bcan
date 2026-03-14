@@ -115,8 +115,8 @@ export default function FilterCard({
 		value: string;
 		onChange: (value: Date | null) => void;
 		onClear: () => void;
-		minDate?: Date | null;
-		maxDate?: Date | null;
+		minDate: Date;
+		maxDate: Date;
 	}
 
 	const DateInput = ({field, placeholder, value, onChange, onClear, minDate, maxDate,}: DateInputProps) => (
@@ -213,7 +213,7 @@ export default function FilterCard({
 						value={startValue}
 						onChange={handleStartDateChange}
 						onClear={clearStartDate}
-						maxDate={stringToDate(endValue)}
+						maxDate={stringToDate(endValue) ?? undefined}
 					/>
 					<span className="text-sm font-semibold pt-2"> to </span>
 					<DateInput
@@ -222,7 +222,7 @@ export default function FilterCard({
 						value={endValue}
 						onChange={handleEndDateChange}
 						onClear={clearEndDate}
-						minDate={stringToDate(startValue)}
+						minDate={stringToDate(startValue) ?? undefined}
 					/>
 				</div>
 			) : (
