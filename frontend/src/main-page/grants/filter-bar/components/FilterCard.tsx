@@ -115,11 +115,20 @@ export default function FilterCard({
 		value: string;
 		onChange: (value: Date | null) => void;
 		onClear: () => void;
-		minDate: Date | undefined;
-		maxDate: Date | undefined;
+		minDate?: Date | undefined;
+		maxDate?: Date | undefined;
 	}
 
-	const DateInput = ({field, placeholder, value, onChange, onClear, minDate, maxDate,}: DateInputProps) => (
+	const DateInput = ({field, placeholder, value, onChange, onClear, minDate, maxDate,}: DateInputProps) => {
+		const [visibleMonth, setVisibleMonth] = useState<Date>(stringToDate(value) ?? new Date());
+
+		useEffect(() => {
+			if (openDateInput === field) {
+				setVisibleMonth(stringToDate(value) ?? new Date());
+			}
+		}, [field, value]);
+
+		return (
 		<div className="relative">
 			<input
 				className="w-40 rounded border border-grey-600 px-2 py-1 pr-8 text-sm bg-white cursor-pointer"
@@ -141,6 +150,12 @@ export default function FilterCard({
 							onChange={onChange}
 							minDate={minDate}
 							maxDate={maxDate}
+							onMonthChange={(date) => setVisibleMonth(date)}
+							dayClassName={(date) =>
+								date.getMonth() !== visibleMonth.getMonth() || date.getFullYear() !== visibleMonth.getFullYear()
+									? "invisible pointer-events-none"
+									: undefined
+							}
 							inline
 						/>
 						<div className="flex justify-end px-2 pb-1">
@@ -156,7 +171,8 @@ export default function FilterCard({
 				</div>
 			)}
 		</div>
-	);
+		);
+	};
 
 	const directionSection = (
 		<div className="flex flex-col gap-2">
