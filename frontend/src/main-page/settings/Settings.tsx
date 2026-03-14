@@ -10,14 +10,13 @@ import { ALLOWED_PROFILE_PIC_EXTENSIONS, MAX_PROFILE_PIC_SIZE_MB } from "./profi
 import { removeProfilePic } from "../../external/bcanSatchel/actions";
 import {api} from "../../api"
 import ChangePasswordModal, { ChangePasswordFormValues } from "./ChangePasswordModal";
-import { api } from "../../api";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { setActiveUsers, updateUserProfile } from "../../external/bcanSatchel/actions";
 import { User } from "../../../../middle-layer/types/User";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export default function Settings() {
+function Settings() {
   const store = getAppStore();
   const user = store.user;
   const [personalInfo, setPersonalInfo] = useState({
