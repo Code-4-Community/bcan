@@ -3,7 +3,7 @@ import Button from "../../components/Button";
 import InfoCard from "./components/InfoCard";
 import logo from "../../images/logo.svg";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
-import ChangePasswordModal from "./ChangePasswordModal";
+import ChangePasswordModal, { ChangePasswordFormValues } from "./ChangePasswordModal";
 import { api } from "../../api";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { setActiveUsers, updateUserProfile } from "../../external/bcanSatchel/actions";
@@ -86,12 +86,7 @@ export default function Settings() {
               ...store.activeUsers.filter((u) => u.email !== store.user!.email),
               updatedUser as User,
             ]);
-      updateUserProfile({
-        ...store.user!,
-        firstName: editForm.firstName,
-        lastName: editForm.lastName,
-        email: editForm.email,
-      });
+      updateUserProfile(updatedUser);
       setPersonalInfo(editForm);
 
       setIsEditingPersonalInfo(false);
@@ -102,8 +97,12 @@ export default function Settings() {
     }
   };
 
-  const changePasswordHandler = async (values) =>  {
+  const changePasswordHandler = async (values : ChangePasswordFormValues) =>  {
           setChangePasswordError(null);
+          if(values.currentPassword === values.newPassword){
+            setChangePasswordError("Current and new password are the same")
+            return;
+          }
           try {
             const response = await api("/auth/change-password", {
               method: "POST",
