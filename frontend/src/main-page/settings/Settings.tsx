@@ -5,23 +5,28 @@ import InfoCard from "./components/InfoCard";
 import Avatar from "../../components/Avatar";
 import logo from "../../images/logo.svg";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
-import ChangePasswordModal from "./ChangePasswordModal";
 import ProfilePictureModal from "./ProfilePictureModal";
-import { getAppStore } from "../../external/bcanSatchel/store";
 import { ALLOWED_PROFILE_PIC_EXTENSIONS, MAX_PROFILE_PIC_SIZE_MB } from "./profilePictureConstants";
 import { removeProfilePic } from "../../external/bcanSatchel/actions";
 import {api} from "../../api"
+import ChangePasswordModal, { ChangePasswordFormValues } from "./ChangePasswordModal";
+import { api } from "../../api";
+import { getAppStore } from "../../external/bcanSatchel/store";
+import { setActiveUsers, updateUserProfile } from "../../external/bcanSatchel/actions";
+import { User } from "../../../../middle-layer/types/User";
+
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function Settings() {
-  const user = getAppStore().user;
-  const personalInfoFromUser = user
-    ? { firstName: user.firstName, lastName: user.lastName, email: user.email }
-    : { firstName: "", lastName: "", email: "" };
-
-  const [personalInfo, setPersonalInfo] = useState(personalInfoFromUser);
+export default function Settings() {
+  const store = getAppStore();
+  const user = store.user;
+  const [personalInfo, setPersonalInfo] = useState({
+    firstName: store.user?.firstName ?? "",
+    lastName: store.user?.lastName ?? "",
+    email: store.user?.email ?? "",
+  });
   const [isEditingPersonalInfo, setIsEditingPersonalInfo] = useState(false);
-  const [editForm, setEditForm] = useState(personalInfoFromUser);
+  const [editForm, setEditForm] = useState(personalInfo);
   const [personalInfoError, setPersonalInfoError] = useState<string | null>(null);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const [changePasswordError, setChangePasswordError] = useState<string | null>(null);
@@ -36,6 +41,20 @@ function Settings() {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (store.user) {
+      const updated = {
+        firstName: store.user.firstName,
+        lastName: store.user.lastName,
+        email: store.user.email,
+      };
+      setPersonalInfo(updated);
+      if (!isEditingPersonalInfo) {
+        setEditForm(updated);
+      }
+    }
+  }, [store.user, isEditingPersonalInfo]);
+
   const handleStartEdit = () => {
     setEditForm(personalInfo);
     setPersonalInfoError(null);
@@ -48,15 +67,50 @@ function Settings() {
     setIsEditingPersonalInfo(false);
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (!EMAIL_REGEX.test(editForm.email)) {
       setPersonalInfoError("Email is not valid.");
       return;
     }
 
-    setPersonalInfo(editForm);
-    setIsEditingPersonalInfo(false);
-    setPersonalInfoError(null);
+    try {
+      const response = await api("/auth/update-profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: editForm.email,
+          firstName: editForm.firstName,
+          lastName: editForm.lastName,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        const message =
+          (errorBody && (errorBody.message as string)) ||
+          "Failed to update profile. Please try again.";
+        setPersonalInfoError(message);
+        return;
+      }
+      const updatedUser = {
+        ...store.user!,
+        firstName: editForm.firstName,
+        lastName: editForm.lastName,
+        email: editForm.email,
+      }
+      setActiveUsers([
+              ...store.activeUsers.filter((u) => u.email !== store.user!.email),
+              updatedUser as User,
+            ]);
+      updateUserProfile(updatedUser);
+      setPersonalInfo(editForm);
+
+      setIsEditingPersonalInfo(false);
+      setPersonalInfoError(null);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      setPersonalInfoError("An unexpected error occurred. Please try again.");
+    }
   };
 
   const handleRemoveProfilePic = async () => {
@@ -78,6 +132,41 @@ function Settings() {
     }
     removeProfilePic()
   }
+  const changePasswordHandler = async (values : ChangePasswordFormValues) =>  {
+          setChangePasswordError(null);
+          if(values.currentPassword === values.newPassword){
+            setChangePasswordError("Current and new password are the same")
+            return;
+          }
+          try {
+            const response = await api("/auth/change-password", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                currentPassword: values.currentPassword,
+                newPassword: values.newPassword,
+              }),
+            });
+
+            if (!response.ok) {
+              const errorBody = await response.json().catch(() => ({}));
+              const rawMessage =
+                (errorBody && (errorBody.message as string | string[])) || null;
+              const message = Array.isArray(rawMessage)
+                ? rawMessage[0]
+                : rawMessage || "Failed to change password. Please try again.";
+              setChangePasswordError(message);
+              return;
+            }
+
+            setIsChangePasswordModalOpen(false);
+          } catch (error) {
+            console.error("Error changing password:", error);
+            setChangePasswordError(
+              "An unexpected error occurred. Please try again.",
+            );
+          }
+        }
 
   return (
     <div className="max-w-5xl ">
@@ -236,9 +325,7 @@ function Settings() {
         isOpen={isChangePasswordModalOpen}
         onClose={() => setIsChangePasswordModalOpen(false)}
         error={changePasswordError}
-        onSubmit={(values) => {
-          void values;
-        }}
+        onSubmit={async (values) => changePasswordHandler(values)}
       />
     </div>
   );
