@@ -31,12 +31,11 @@ function GrantPage() {
   const { grants } = ProcessGrantData();
   const [curGrant, setCurGrant] = useState<Grant | null>(null);
 
-  // Set the first grant when grants are loaded (only on initial mount)
+  // When the first grant in the list changes (sort/filter/initial load), show it
+  const firstGrantId = grants[0]?.grantId ?? null;
   useEffect(() => {
-    if (grants.length > 0 && curGrant === null) {
-      setCurGrant(grants[0]);
-    }
-  }, [grants]);
+    setCurGrant(grants.length > 0 ? grants[0] : null);
+  }, [firstGrantId]);
 
    // If the NewGrantModal has been closed and a new grant submitted (or existing grant edited),
    // refetch the grants list and update the current grant to reflect any changes
