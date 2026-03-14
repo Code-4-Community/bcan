@@ -6,7 +6,8 @@ import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import ChangePasswordModal from "./ChangePasswordModal";
 import { api } from "../../api";
 import { getAppStore } from "../../external/bcanSatchel/store";
-import { updateUserProfile } from "../../external/bcanSatchel/actions";
+import { setActiveUsers, updateUserProfile } from "../../external/bcanSatchel/actions";
+import { User } from "../../../../middle-layer/types/User";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -75,14 +76,23 @@ export default function Settings() {
         setPersonalInfoError(message);
         return;
       }
-
-      setPersonalInfo(editForm);
+      const updatedUser = {
+        ...store.user!,
+        firstName: editForm.firstName,
+        lastName: editForm.lastName,
+        email: editForm.email,
+      }
+      setActiveUsers([
+              ...store.activeUsers.filter((u) => u.email !== store.user!.email),
+              updatedUser as User,
+            ]);
       updateUserProfile({
         ...store.user!,
         firstName: editForm.firstName,
         lastName: editForm.lastName,
         email: editForm.email,
       });
+      setPersonalInfo(editForm);
 
       setIsEditingPersonalInfo(false);
       setPersonalInfoError(null);
@@ -91,6 +101,38 @@ export default function Settings() {
       setPersonalInfoError("An unexpected error occurred. Please try again.");
     }
   };
+
+  const changePasswordHandler = async (values) =>  {
+          setChangePasswordError(null);
+          try {
+            const response = await api("/auth/change-password", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                currentPassword: values.currentPassword,
+                newPassword: values.newPassword,
+              }),
+            });
+
+            if (!response.ok) {
+              const errorBody = await response.json().catch(() => ({}));
+              const rawMessage =
+                (errorBody && (errorBody.message as string | string[])) || null;
+              const message = Array.isArray(rawMessage)
+                ? rawMessage[0]
+                : rawMessage || "Failed to change password. Please try again.";
+              setChangePasswordError(message);
+              return;
+            }
+
+            setIsChangePasswordModalOpen(false);
+          } catch (error) {
+            console.error("Error changing password:", error);
+            setChangePasswordError(
+              "An unexpected error occurred. Please try again.",
+            );
+          }
+        }
 
   return (
     <div className="max-w-5xl ">
@@ -227,37 +269,7 @@ export default function Settings() {
         isOpen={isChangePasswordModalOpen}
         onClose={() => setIsChangePasswordModalOpen(false)}
         error={changePasswordError}
-        onSubmit={async (values) => {
-          setChangePasswordError(null);
-          try {
-            const response = await api("/auth/change-password", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                currentPassword: values.currentPassword,
-                newPassword: values.newPassword,
-              }),
-            });
-
-            if (!response.ok) {
-              const errorBody = await response.json().catch(() => ({}));
-              const rawMessage =
-                (errorBody && (errorBody.message as string | string[])) || null;
-              const message = Array.isArray(rawMessage)
-                ? rawMessage[0]
-                : rawMessage || "Failed to change password. Please try again.";
-              setChangePasswordError(message);
-              return;
-            }
-
-            setIsChangePasswordModalOpen(false);
-          } catch (error) {
-            console.error("Error changing password:", error);
-            setChangePasswordError(
-              "An unexpected error occurred. Please try again.",
-            );
-          }
-        }}
+        onSubmit={async (values) => changePasswordHandler(values)}
       />
     </div>
   );
