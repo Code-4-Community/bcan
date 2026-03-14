@@ -12,7 +12,7 @@ import { observer } from "mobx-react-lite";
 import { getAppStore } from "../../../external/bcanSatchel/store.ts";
 import StatusDropdown from "./StatusDropdown";
 import Button from "../../../components/Button";
-import { faAngleDown, faAngleUp, faChevronDown, faChevronUp, faSort, faSortUp, faSortDown } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faChevronUp, faSort, faSortUp, faSortDown } from "@fortawesome/free-solid-svg-icons";
 import FilterCard from "./components/FilterCard";
 import { Grant } from "../../../../../middle-layer/types/Grant.ts";
 import { Status } from "../../../../../middle-layer/types/Status.ts";
