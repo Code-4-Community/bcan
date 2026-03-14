@@ -35,6 +35,10 @@ export const updateUserProfile = action("updateUserProfile", (user: User) => ({
  * Completely log out the user (clear tokens, user data, etc.).
  */
 export const logoutUser = action("logoutUser");
+/**
+ * Removes profile pic from the store and active users
+ */
+export const removeProfilePic = action("removeProfilePic");
 
 /**
  * Moves along the all grants that are fetched from back end to mutator.

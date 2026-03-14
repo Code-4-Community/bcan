@@ -68,7 +68,7 @@ async uploadProfilePic(user: User, pic: Express.Multer.File): Promise<String> {
     }
 
     this.logger.log(`✅ Profile picture uploaded successfully for user ${user.email}`);
-    return updateResult.Attributes.profilePicUrl;
+    return updateResult.Attributes.profilePicUrl + `?t=${Date.now()}`;
 
   } catch (error: any) {
     this.logger.error(`Failed to upload profile picture for ${user.email}:`, error);
@@ -850,9 +850,122 @@ async getAllActiveUsers(): Promise<User[]> {
       }
   }
 
+    async removeProfilePicture(email: string): Promise<string> {
+    const tableName = process.env.DYNAMODB_USER_TABLE_NAME;
+    let s3Key;
+
+    if (!email || email.trim().length === 0) {
+      this.logger.error("Remove Profile Picture failed: Email is required");
+      throw new BadRequestException("Email is required");
+    }
+
+    if (!tableName) {
+      this.logger.error("DynamoDB User Table Name is not defined in environment variables.");
+      throw new InternalServerErrorException("Server configuration error");
+    }
+
+    try {
+      // 1. Get the user from DynamoDB to find the current profile picture URL
+      const existingUserResult = await this.dynamoDb
+        .get({
+          TableName: tableName,
+          Key: { email },
+        })
+        .promise();
+
+      if (!existingUserResult.Item) {
+        this.logger.error(`User not found in DynamoDB for email: ${email}`);
+        throw new BadRequestException("User not found in database");
+      }
+
+      const existingUser = existingUserResult.Item as User;
+
+      if (!existingUser.profilePicUrl) {
+        this.logger.log(`User ${email} has no profile picture to remove`);
+        throw new BadRequestException("User does not have a profile picture");
+      }
+
+      // 2. Extract S3 key from the stored URL
+      // e.g. https://bucket.s3.amazonaws.com/John-Doe-abc-profilepic.jpg → John-Doe-abc-profilepic.jpg
+      s3Key = decodeURIComponent(
+        new URL(existingUser.profilePicUrl).pathname.slice(1)
+      );
+
+      this.logger.log(`Removing profile picture for ${email}, S3 key: ${s3Key}`);
+
+      // 3. Delete from S3
+      await this.s3
+        .deleteObject({
+          Bucket: this.profilePicBucket,
+          Key: s3Key,
+        })
+        .promise();
+
+      this.logger.log(`✓ Profile picture deleted from S3 for ${email}`);
+
+      // 4. Remove the profilePicUrl from DynamoDB
+      const updateResult = await this.dynamoDb
+        .update({
+          TableName: tableName,
+          Key: { email },
+          UpdateExpression: "REMOVE profilePicUrl",
+          ReturnValues: "ALL_NEW",
+        })
+        .promise();
+
+      if (!updateResult.Attributes) {
+        this.logger.error(`DynamoDB update did not return updated attributes for ${email}`);
+        throw new InternalServerErrorException("Failed to retrieve updated user data");
+      }
+
+      this.logger.log(`✅ Profile picture removed successfully for user ${email}`);
+      return "Profile picture removed successfully";
+    } catch (error: any) {
+      this.logger.error(`Failed to remove profile picture for ${email}:`, error);
+
+      // Handle S3 errors
+      if (error.code === "NoSuchBucket") {
+        this.logger.error(`S3 bucket does not exist: ${this.profilePicBucket}`);
+        throw new InternalServerErrorException("Storage bucket not found");
+      } else if (error.code === "AccessDenied") {
+        this.logger.error("Access denied to S3 bucket");
+        throw new InternalServerErrorException("Insufficient permissions to delete file");
+      } else if (error.code === "NoSuchKey") {
+        // S3 file already gone — still clean up DynamoDB to stay in sync
+        this.logger.warn(`S3 object not found for key: ${s3Key ?? "unknown"}, cleaning up DynamoDB`);
+        await this.dynamoDb
+          .update({
+            TableName: tableName,
+            Key: { email },
+            UpdateExpression: "REMOVE profilePicUrl",
+            ReturnValues: "NONE",
+          })
+          .promise();
+        return "Profile picture removed successfully";
+      }
+
+      // Handle DynamoDB errors
+      if (error.code === "ResourceNotFoundException") {
+        this.logger.error("DynamoDB table does not exist");
+        throw new InternalServerErrorException("Database table not found");
+      } else if (error.code === "ValidationException") {
+        this.logger.error("Invalid DynamoDB update parameters");
+        throw new BadRequestException("Invalid update parameters");
+      }
+
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      this.logger.error(`Failed to remove profile pic error: ${error}`);
+      throw new InternalServerErrorException("Failed to remove profile picture");
+    }
+  }
+
   // Helper method for email validation
   private isValidEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   }
+
 }

@@ -1,19 +1,24 @@
 import { useState, useEffect } from "react";
+import { observer } from "mobx-react-lite";
 import Button from "../../components/Button";
 import InfoCard from "./components/InfoCard";
+import Avatar from "../../components/Avatar";
 import logo from "../../images/logo.svg";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import ProfilePictureModal from "./ProfilePictureModal";
+import { ALLOWED_PROFILE_PIC_EXTENSIONS, MAX_PROFILE_PIC_SIZE_MB } from "./profilePictureConstants";
+import { removeProfilePic } from "../../external/bcanSatchel/actions";
+import {api} from "../../api"
 import ChangePasswordModal, { ChangePasswordFormValues } from "./ChangePasswordModal";
-import { api } from "../../api";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { setActiveUsers, updateUserProfile } from "../../external/bcanSatchel/actions";
 import { User } from "../../../../middle-layer/types/User";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export default function Settings() {
+function Settings() {
   const store = getAppStore();
-
+  const user = store.user;
   const [personalInfo, setPersonalInfo] = useState({
     firstName: store.user?.firstName ?? "",
     lastName: store.user?.lastName ?? "",
@@ -24,6 +29,16 @@ export default function Settings() {
   const [personalInfoError, setPersonalInfoError] = useState<string | null>(null);
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const [changePasswordError, setChangePasswordError] = useState<string | null>(null);
+  const [isProfilePictureModalOpen, setIsProfilePictureModalOpen] = useState(false);
+  const [profilePictureMessage, setProfilePictureMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      const next = { firstName: user.firstName, lastName: user.lastName, email: user.email };
+      setPersonalInfo((prev) => (prev.email === user.email ? prev : next));
+      setEditForm((prev) => (prev.email === user.email ? prev : next));
+    }
+  }, [user]);
 
   useEffect(() => {
     if (store.user) {
@@ -97,6 +112,25 @@ export default function Settings() {
     }
   };
 
+  const handleRemoveProfilePic = async () => {
+    const store = getAppStore()
+    if(!store.user!.profilePicUrl){
+      return;
+    }
+    const email = store.user?.email
+
+    const response = await api('/user/remove-pfp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email})
+          });
+
+    if(!response.ok){
+      // TODO: Put a real design here
+     alert("There was an error removing the profile picture")
+    }
+    removeProfilePic()
+  }
   const changePasswordHandler = async (values : ChangePasswordFormValues) =>  {
           setChangePasswordError(null);
           if(values.currentPassword === values.newPassword){
@@ -139,33 +173,55 @@ export default function Settings() {
 
       <div className="mb-12">
         <div className="flex items-center gap-6">
-          <img
-            src={logo}
+          <Avatar
+            src={user?.profilePicUrl}
             alt="Profile"
             className="w-24 h-24 rounded-full object-cover"
+            fallbackSrc={logo}
           />
 
           <div className="flex flex-col gap-2">
             <h2 className="text-2xl font-bold mb-1 flex justify-start">Profile Picture</h2>
+            {profilePictureMessage && (
+              <div
+                className={`rounded-2xl px-4 py-3 text-sm font-bold ${
+                  profilePictureMessage.type === "success"
+                    ? "bg-green-light text-green-dark"
+                    : "bg-[#FFEEEE] text-[#CC0000]"
+                }`}
+              >
+                {profilePictureMessage.text}
+              </div>
+            )}
             <div className="flex gap-3">
               <Button
                 text="Upload Image"
-                onClick={() => alert("add upload functionality")}
+                onClick={() => {
+                  setProfilePictureMessage(null);
+                  setIsProfilePictureModalOpen(true);
+                }}
                 className="bg-primary-900 text-white"
               />
               <Button
                 text="Remove"
-                onClick={() => alert("remove image")}
+                onClick={() => handleRemoveProfilePic()}
                 className="bg-white text-black border-2 border-grey-500"
               />
             </div>
 
             <p className="text-sm text-gray-500">
-              We support PNGs, JPEGs, and PDFs under 10 MB
+              {ALLOWED_PROFILE_PIC_EXTENSIONS.join(", ")} up to {MAX_PROFILE_PIC_SIZE_MB} MB
             </p>
           </div>
         </div>
       </div>
+
+      <ProfilePictureModal
+        isOpen={isProfilePictureModalOpen}
+        onClose={() => setIsProfilePictureModalOpen(false)}
+        onSuccess={() => setProfilePictureMessage({ type: "success", text: "Profile picture updated." })}
+        onError={(msg) => setProfilePictureMessage({ type: "error", text: msg })}
+      />
 
       <InfoCard
         title="Personal Information"
@@ -273,3 +329,5 @@ export default function Settings() {
     </div>
   );
 }
+
+export default observer(Settings);

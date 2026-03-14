@@ -1,5 +1,6 @@
 import { User } from "../../../../../middle-layer/types/User";
 import UserPositionCard from "./UserPositionCard";
+import Avatar from "../../../components/Avatar";
 import logo from "../../../images/logo.svg";
 
 interface UserRowProps {
@@ -13,10 +14,11 @@ const UserRow = ({ user, action }: UserRowProps) => {
       className="grid grid-cols-2 md:grid-cols-[30%_35%_25%_10%] cols gap-2 md:gap-0 text-sm lg:text-base border-b-2 border-grey-150 py-4 px-8 items-center"
     >
       <div className="col-span-1 flex items-center font-medium">
-        <img
-          src={user.profilePicUrl || logo}
+        <Avatar
+          src={user.profilePicUrl}
           alt="Profile"
-          className="max-w-12 mr-4 rounded-full hidden lg:block"
+          className="max-w-12 mr-4 rounded-full object-cover hidden lg:block"
+          fallbackSrc={logo}
         />
         {user.firstName}&nbsp;{user.lastName}
       </div>
