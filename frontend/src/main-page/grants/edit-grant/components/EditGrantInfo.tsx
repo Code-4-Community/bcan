@@ -45,7 +45,7 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
             <input
               type="number"
               min={0}
-              className="appearance-none block w-full h-[36px] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
+              className="appearance-none block w-full h-[2.25rem] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
               value={form.amount || undefined}
               onChange={(e) =>
                 dispatch({
@@ -102,7 +102,7 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
             </label>
             <input
               type="date"
-              className="appearance-none block w-full h-[36px] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
+              className="appearance-none block w-full h-[2.25rem] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
               value={form.dueDate}
               onChange={(e) =>
                 dispatch({
@@ -120,7 +120,7 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
             </label>
             <input
               type="date"
-              className="appearance-none block w-full h-[36px] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
+              className="appearance-none block w-full h-[2.25rem] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
               value={form.applicationDate}
               onChange={(e) =>
                 dispatch({
@@ -141,7 +141,7 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
             </label>
             <input
               type="date"
-              className="appearance-none block w-full h-[36px] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
+              className="appearance-none block w-full h-[2.25rem] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
               value={form.grantStartDate}
               onChange={(e) =>
                 dispatch({
@@ -159,6 +159,7 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
               Report Deadlines
             </label>
             <div className="flex flex-col gap-2">
+              <div className="ml-2 flex flex-col gap-2">
               {form.reportDates.map((date, index) => (
                 <EditGrantDeleteItem
                   item={
@@ -173,7 +174,7 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
                           value: e.target.value as TDateISO,
                         })
                       }
-                      className="appearance-none block w-full h-[36px] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4 "
+                      className="appearance-none block w-full h-[2.25rem] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4 "
                     />
                   }
                   onDelete={() =>
@@ -181,6 +182,7 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
                   }
                 />
               ))}
+              </div>
               <Button
                       logo={faPlus}
                       logoPosition="left"
@@ -204,7 +206,7 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
             <input
               type="number"
               min="0"
-              className="appearance-none block w-full h-[36px] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
+              className="appearance-none block w-full h-[2.25rem] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
               value={form.timeline || undefined}
               onChange={(e) =>
                 dispatch({
@@ -223,7 +225,7 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
             <input
               type="number"
               min="0"
-              className="appearance-none block h-[36px] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
+              className="appearance-none block h-[2.25rem] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
               value={form.estimatedCompletionTime || undefined}
               onChange={(e) =>
                 dispatch({

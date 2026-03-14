@@ -38,7 +38,7 @@ const EditGrantContacts = ({ dispatch, form }: EditGrantProps) => {
         Contacts
       </label>
 
-      <div className="grid grid-cols-3 gap-4 h-24 w-full">
+      <div className="grid grid-cols-3 gap-4 h-24 w-full ml-2">
         {form.bcanPocEmail !== "" && (
           <EditGrantDeleteItem
             position="top"

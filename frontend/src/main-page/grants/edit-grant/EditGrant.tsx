@@ -10,11 +10,11 @@ import {
   reducer,
   saveGrantEdits,
 } from "./processGrantDataEditSave.ts";
-import EditGrantDocuments from "./components/EditGrantDocuments.tsx";
 import EditGrantContacts from "./components/EditGrantContacts.tsx";
 import ErrorPopup from "./components/ErrorPopup.tsx";
 import EditGrantInfo from "./components/EditGrantInfo.tsx";
 import EditGrantHeader from "./components/EditGrantHeader.tsx";
+import { EditGrantDocuments } from "./components/EditGrantDocuments.tsx";
 
 export interface GrantFormState {
   organization: string;
@@ -176,7 +176,7 @@ const EditGrant: React.FC<{
             {/* Contacts */}
             <EditGrantContacts form={form} dispatch={dispatch} />
             {/* Documents */}
-            <EditGrantDocuments />
+            <EditGrantDocuments form={form} dispatch={dispatch} />
           </div>
         </div>
       </div>

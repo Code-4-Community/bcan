@@ -7,6 +7,7 @@ import { updateUserQuery } from "../../../../external/bcanSatchel/actions";
 import UserSearch from "../../../../main-page/users/UserSearch";
 import { ProcessUserData } from "../../../../main-page/users/processUserData";
 import { observer } from "mobx-react-lite";
+import logo from "../../../../images/logo.svg";
 
 type AddPopupProps = {
   setShowPopup: () => void;
@@ -22,7 +23,7 @@ const AddContactPopup = observer(
       form.bcanPocEmail ? "Granter" : "BCAN",
     );
     const [selectedUser, setSelectedUser] = useState<any | null>(null);
-    const [error, setError] = useState<string | null>();
+    const [error, setError] = useState<string | null>(null);
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -33,43 +34,52 @@ const AddContactPopup = observer(
     }, []);
 
     const validateUser = () => {
-      if(!selectedUser.firstName){
-        setError("firstName")}
-        if(!selectedUser.lastName){
-        setError("firstName")}
-        if(!selectedUser.email && !emailRegex.test(selectedUser.email)){
-        setError("email")}
-    }
+      if (!selectedUser) {
+        setError("No user selected");
+        return false;
+      }
+
+      if (!selectedUser.firstName) {
+        setError("firstName");
+        return false;
+      }
+
+      if (!selectedUser.lastName) {
+        setError("lastName");
+        return false;
+      }
+
+      if (!emailRegex.test(selectedUser.email)) {
+        setError("email");
+        return false;
+      }
+
+      setError(null);
+      return true;
+    };
 
     const handleAdd = () => {
+      if (!validateUser() || !selectedUser) return;
 
-      validateUser();
+      const name = `${selectedUser.firstName} ${selectedUser.lastName}`;
 
-      if (type === "BCAN" && selectedUser) {
+      if (type === "BCAN") {
         dispatch({
           type: "SET_FIELD",
           field: "bcanPocEmail",
           value: selectedUser.email,
         });
-
-        dispatch({
-          type: "SET_FIELD",
-          field: "bcanPocName",
-          value: `${selectedUser.firstName} ${selectedUser.lastName}`,
-        });
-      }
-
-      if (type === "Granter" && selectedUser) {
+        dispatch({ type: "SET_FIELD", field: "bcanPocName", value: name });
+      } else {
         dispatch({
           type: "SET_FIELD",
           field: "grantProviderPocEmail",
           value: selectedUser.email,
         });
-
         dispatch({
           type: "SET_FIELD",
           field: "grantProviderPocName",
-          value: `${selectedUser.firstName} ${selectedUser.lastName}`,
+          value: name,
         });
       }
 
@@ -86,7 +96,11 @@ const AddContactPopup = observer(
             {(["BCAN", "Granter"] as ContactType[]).map((t) => (
               <button
                 key={t}
-                onClick={() => setType(t)}
+                onClick={() => {
+                  setType(t);
+                  setSelectedUser(null);
+                  setError(null);
+                }}
                 className={`py-2 px-3 text-xs rounded-full border
                   ${
                     type === t
@@ -118,11 +132,20 @@ const AddContactPopup = observer(
                           : "hover:bg-grey-100"
                       }`}
                   >
+                    <div className="flex flex-row">
+                    <img
+                      src={user.profilePicUrl || logo}
+                      alt="Profile"
+                      className="w-10 h-10 object-cover ml-2 mr-4 rounded-full aspect-square block"
+                    />
+                    <div>
                     <div className="font-medium">
                       {user.firstName} {user.lastName}
                     </div>
 
                     <div className="text-xs text-gray-500">{user.email}</div>
+                  </div>
+                  </div>
                   </div>
                 ))}
               </div>
@@ -145,7 +168,12 @@ const AddContactPopup = observer(
                   placeholder="Enter first name..."
                   required
                   error={error === "firstName"}
-                  onChange={(e)=>{setSelectedUser({...selectedUser, firstName: e.target.value})}}
+                  onChange={(e) => {
+                    setSelectedUser({
+                      ...selectedUser,
+                      firstName: e.target.value,
+                    });
+                  }}
                 />
 
                 <InputField
@@ -154,7 +182,12 @@ const AddContactPopup = observer(
                   placeholder="Enter last name..."
                   required
                   error={error === "lastName"}
-                  onChange={(e)=>{setSelectedUser({...selectedUser, lastName: e.target.value})}}
+                  onChange={(e) => {
+                    setSelectedUser({
+                      ...selectedUser,
+                      lastName: e.target.value,
+                    });
+                  }}
                 />
               </div>
 
@@ -165,7 +198,9 @@ const AddContactPopup = observer(
                 placeholder="Enter email address..."
                 required
                 error={error === "email"}
-                onChange={(e)=>{setSelectedUser({...selectedUser, email: e.target.value})}}
+                onChange={(e) => {
+                  setSelectedUser({ ...selectedUser, email: e.target.value });
+                }}
               />
             </div>
           )}
@@ -181,7 +216,14 @@ const AddContactPopup = observer(
             <Button
               text="Add"
               onClick={handleAdd}
-              disabled={!(selectedUser && selectedUser.firstName && selectedUser.lastName && selectedUser.email) || !(!error)}
+              disabled={
+                !(
+                  selectedUser &&
+                  selectedUser.firstName &&
+                  selectedUser.lastName &&
+                  selectedUser.email
+                )
+              }
               className="text-white bg-primary-900 text-sm"
             />
           </div>
