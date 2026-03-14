@@ -9,16 +9,19 @@ import {
   createNewGrant,
   reducer,
   saveGrantEdits,
+  deleteGrant
 } from "./processGrantDataEditSave.ts";
 import EditGrantContacts from "./components/EditGrantContacts.tsx";
 import ErrorPopup from "./components/ErrorPopup.tsx";
 import EditGrantInfo from "./components/EditGrantInfo.tsx";
 import EditGrantHeader from "./components/EditGrantHeader.tsx";
 import { EditGrantDocuments } from "./components/EditGrantDocuments.tsx";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import ActionConfirmation from "../../../custom/ActionConfirmation.tsx";
 
 export interface GrantFormState {
   organization: string;
-  dueDate: TDateISO | "";
+  // dueDate: TDateISO | "";
   applicationDate: TDateISO | "";
   grantStartDate: TDateISO | "";
   reportDates: (TDateISO | "")[];
@@ -42,10 +45,11 @@ const EditGrant: React.FC<{
 }> = observer(({ grantToEdit, onClose }) => {
   // State to track if form was submitted successfully
   const [saving, setSaving] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const [form, dispatch] = useReducer(reducer, {
     organization: grantToEdit?.organization ?? "",
-    dueDate: grantToEdit?.application_deadline ?? "",
+    // dueDate: grantToEdit?.application_deadline ?? "",
     applicationDate: grantToEdit?.application_deadline ?? "",
     grantStartDate: grantToEdit?.grant_start_date ?? "",
     reportDates: grantToEdit?.report_deadlines ?? [],
@@ -74,16 +78,16 @@ const EditGrant: React.FC<{
   const validateInputs = (): string | null => {
     if (!form.organization.trim()) return "Organization Name is required";
     if (!form.status) return "Status is required";
-    if (!form.amount || form.amount <= 0) return "Amount must be greater than 0";
-    if (!form.dueDate) return "Due Date is required";
+    if (form.amount == null || form.amount <= 0) return "Amount must be greater than 0";
+    // if (!form.dueDate) return "Due Date is required";
     if (!form.grantStartDate) return "Grant Start Date is required";
     if (!form.estimatedCompletionTime || form.estimatedCompletionTime <= 0) return "Estimated completion time must be greater than 0";
     if (!form.doesBcanQualify) return "BCAN eligibility is required";
-    if(form.reportDates.length == 0 || !form.reportDates.every((date) => date !== "")) return "Report deadlines must have a value";
+    if(form.reportDates.length > 0 && !form.reportDates.every((date) => date !== "")) return "Report deadlines must have a value";
     if (!form.timeline || form.timeline <= 0) return "Timeline must be greater than 0";
     if (!form.bcanPocEmail) return "BCAN contact required";
     if (!form.grantProviderPocEmail) return "Grant provider contact required";
-    if(form.attachments.length == 0 || !form.attachments.every((attachment) => attachment.url !== "")) return "Attachments must have a value";
+    if(form.attachments.length > 0 && !form.attachments.every((attachment) => attachment.url !== "")) return "Attachments must have a value";
     return null;
   };
 
@@ -113,6 +117,12 @@ const EditGrant: React.FC<{
 
   const [_errorMessage, setErrorMessage] = useState<string>("");
   const [showErrorPopup, setShowErrorPopup] = useState(false);
+
+  const handleDelete = async () => {
+    setShowDeleteModal(false);
+    deleteGrant(grantToEdit?.grantId)
+    onClose();
+  }
 
   const handleSubmit = async () => {
     setSaving(true);
@@ -176,8 +186,24 @@ const EditGrant: React.FC<{
             {/* Contacts */}
             <EditGrantContacts form={form} dispatch={dispatch} />
             {/* Documents */}
-            <EditGrantDocuments form={form} dispatch={dispatch} />
+            <EditGrantDocuments form={form} dispatch={dispatch} />            
           </div>
+
+          {/* Divider */}
+          <hr className="border-grey-400 border-t-2 rounded-full" />
+          <Button text="Delete Grant" logo={faTrash} logoPosition="right" className="w-fit ml-auto text-red bg-red-light" onClick={() => setShowDeleteModal(true)}/>
+          <ActionConfirmation
+                      isOpen={showDeleteModal}
+                      onCloseDelete={() => setShowDeleteModal(false)}
+                      onConfirmDelete={() => {
+                        handleDelete();
+                      }}
+                      title="Delete Grant"
+                      subtitle={"Are you sure you want to delete"}
+                      boldSubtitle={form.organization}
+                      warningMessage="By deleting this grant, they won't be available in the system anymore."
+                    />
+
         </div>
       </div>
       {/* Error Popup */}

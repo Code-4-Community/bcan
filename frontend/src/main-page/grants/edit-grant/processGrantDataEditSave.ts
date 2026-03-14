@@ -61,6 +61,50 @@ export const saveGrantEdits = async (updatedGrant: Grant) => {
   }
 };
 
+export const deleteGrant = async (grantId: any) => {
+  
+        try {
+          const response = await api(`/grant/${grantId}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+  
+          console.log("Response status:", response.status);
+          console.log("Response ok:", response.ok);
+  
+          if (response.ok) {
+            console.log("✅ Grant deleted successfully");
+            // Refetch grants to update UI
+            await fetchGrants();
+          } else {
+            // Get error details
+            const errorText = await response.text();
+            console.error("❌ Error response:", errorText);
+  
+            let errorData;
+            try {
+              errorData = JSON.parse(errorText);
+              console.error("Parsed error:", errorData);
+            } catch {
+              console.error("Could not parse error response");
+            }
+          }
+        } catch (err) {
+          console.error("=== EXCEPTION CAUGHT ===");
+          console.error(
+            "Error type:",
+            err instanceof Error ? "Error" : typeof err
+          );
+          console.error(
+            "Error message:",
+            err instanceof Error ? err.message : err
+          );
+          console.error("Full error:", err);
+        }
+      };
+
 export type Action =
   | { type: "SET_FIELD"; field: keyof GrantFormState; value: any }
   | { type: "ADD_REPORT_DATE" }
@@ -80,14 +124,9 @@ export function reducer(state: GrantFormState, action: Action): GrantFormState {
     case "UPDATE_REPORT_DATE":
       return {
         ...state,
-        reportDates: state.reportDates.map((_, i) => {
-          if (i === action.index) {
-            // Return a new object with the updated properties using spread syntax
-            return action.value;
-          }
-          // Return the original item for all other elements
-          return i;
-        }),
+        reportDates: state.reportDates.map((date, i) =>
+  i === action.index ? action.value : date
+),
       };
 
     case "REMOVE_REPORT_DATE":
