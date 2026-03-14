@@ -9,7 +9,8 @@ import ChangePasswordModal from "./ChangePasswordModal";
 import ProfilePictureModal from "./ProfilePictureModal";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { ALLOWED_PROFILE_PIC_EXTENSIONS, MAX_PROFILE_PIC_SIZE_MB } from "./profilePictureConstants";
-
+import { removeProfilePic } from "../../external/bcanSatchel/actions";
+import {api} from "../../api"
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function Settings() {
@@ -58,6 +59,26 @@ function Settings() {
     setPersonalInfoError(null);
   };
 
+  const handleRemoveProfilePic = async () => {
+    const store = getAppStore()
+    if(!store.user!.profilePicUrl){
+      return;
+    }
+    const email = store.user?.email
+
+    const response = await api('/user/remove-pfp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email})
+          });
+
+    if(!response.ok){
+      // TODO: Put a real design here
+     alert("There was an error removing the profile picture")
+    }
+    removeProfilePic()
+  }
+
   return (
     <div className="max-w-5xl ">
       <h1 className="text-3xl lg:text-4xl font-bold mb-8 flex justify-start">Settings</h1>
@@ -95,7 +116,7 @@ function Settings() {
               />
               <Button
                 text="Remove"
-                onClick={() => alert("Remove profile picture is not yet available.")}
+                onClick={() => handleRemoveProfilePic()}
                 className="bg-white text-black border-2 border-grey-500"
               />
             </div>
