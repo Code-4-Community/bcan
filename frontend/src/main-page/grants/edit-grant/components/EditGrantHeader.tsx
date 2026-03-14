@@ -1,6 +1,6 @@
 import { GrantFormState } from "../EditGrant";
 import { Action } from "../processGrantDataEditSave";
-import StatusIndicator from "../../grant-list/StatusIndicator";
+import StatusIndicator from "../../grant-view/StatusIndicator";
 import { Status } from "../../../../../../middle-layer/types/Status";
 
 type EditGrantProps = {

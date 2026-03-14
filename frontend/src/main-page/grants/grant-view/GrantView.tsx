@@ -1,7 +1,7 @@
 import React, { useState, useLayoutEffect, useEffect } from "react";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { observer } from "mobx-react-lite";
-import StatusIndicator from "../../grants/grant-list/StatusIndicator";
+import StatusIndicator from "./StatusIndicator";
 import {
   faPenToSquare,
   faCheckSquare,

@@ -13,7 +13,7 @@ import {
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { ProcessGrantData } from "./filter-bar/processGrantData.ts";
-import GrantCard from "./grant-list/GrantCard.tsx";
+import GrantCard from "./grant-view/GrantCard.tsx";
 import Button from "../../components/Button.tsx";
 import EditGrant from "./edit-grant/EditGrant.tsx";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
