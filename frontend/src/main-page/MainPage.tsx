@@ -53,8 +53,8 @@ function MainPage() {
       <div>
         <NavBar />
       </div>
-      <div className="px-6 lg:px-10 py-8 pt-8 w-full h-screen overflow-y-auto">
-        <div className="min-h-screen mb-8">
+      <div className="px-6 lg:px-10 pt-8 w-full h-screen overflow-y-auto">
+        <div className="">
           <div className="bell-container flex justify-end w-full">
             <BellButton setOpenModal={setOpenModal} openModal={openModal} />
           </div>
@@ -64,6 +64,7 @@ function MainPage() {
               element={
                 <PositionGuard adminOnly={false}>
                   <Dashboard />
+                  <Footer />
                 </PositionGuard>
               }
             />
@@ -88,6 +89,7 @@ function MainPage() {
               element={
                 <PositionGuard adminOnly={true}>
                   <UsersPage />
+                  <Footer />
                 </PositionGuard>
               }
             />
@@ -97,6 +99,7 @@ function MainPage() {
               element={
                 <PositionGuard adminOnly={false}>
                   <CashFlowPage />
+                  <Footer />
                 </PositionGuard>
               }
             />
@@ -105,6 +108,7 @@ function MainPage() {
               element={
                 <PositionGuard adminOnly={false}>
                   <Settings />
+                  <Footer />
                 </PositionGuard>
               }
             />
@@ -118,7 +122,6 @@ function MainPage() {
             />
           </Routes>
         </div>
-        <Footer />
       </div>
     </div>
   );

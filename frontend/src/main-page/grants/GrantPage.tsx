@@ -56,7 +56,7 @@ function GrantPage({}: GrantPageProps) {
   
 
   return (
-    <div className="grant-page w-full items-end">
+    <div className="grant-page w-full items-end flex flex-col h-[86vh]">
       <GrantSearch />
       <div className="flex w-full justify-between py-2 gap-4">
         <Button
@@ -73,8 +73,8 @@ function GrantPage({}: GrantPageProps) {
         />
       </div>
 
-      <div className="flex flex-row w-full gap-2 justify-between mt-4">
-        <div className="flex flex-col w-[33%] h-[150vh] overflow-y-scroll pr-2">
+      <div className="flex w-full gap-2 flex-1 overflow-hidden justify-between mt-4">
+        <div className="flex flex-col w-[33%] overflow-y-auto mr-2">
           {grants.map((grant) => (
             <GrantCard
               key={grant.grantId}
@@ -84,7 +84,7 @@ function GrantPage({}: GrantPageProps) {
             />
           ))}
         </div>
-        <div className="w-[65%]">
+        <div className="flex-1 overflow-y-auto rounded-md">
           {curGrant ? (
             <GrantItem grant={curGrant} />
           ) : (

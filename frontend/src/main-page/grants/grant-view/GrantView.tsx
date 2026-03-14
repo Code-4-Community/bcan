@@ -13,6 +13,7 @@ import ContactCard from "./ContactCard";
 import GrantFieldCol from "./GrantFieldCol";
 import { CostBenefitAnalysis } from "./CostBenefitAnalysis";
 import EditGrant from "../edit-grant/EditGrant";
+import Footer from "../../../Footer";
 
 interface GrantItemProps {
   grant: Grant;
@@ -67,7 +68,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
 
   return (
     <div>
-      <div className="w-full bg-white rounded-md flex flex-col gap-6 p-6">
+      <div className="w-full bg-white rounded-md flex flex-col gap-6 p-6 h-full overflow-y-auto ">
         {/* Top header part */}
         <div className="flex justify-between">
           {/* Left side */}
@@ -256,6 +257,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
           />
         </div>
       </div>
+      <Footer/>
       <div>
         {showEditGrant && (
           <EditGrant
