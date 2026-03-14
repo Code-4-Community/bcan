@@ -154,7 +154,7 @@ export default function FilterCard({
 							dayClassName={(date) =>
 								date.getMonth() !== visibleMonth.getMonth() || date.getFullYear() !== visibleMonth.getFullYear()
 									? "invisible pointer-events-none"
-									: undefined
+									: ""
 							}
 							inline
 						/>
