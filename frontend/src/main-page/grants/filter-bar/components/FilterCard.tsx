@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "../../../../components/Button.tsx";
-import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
+import { faAngleDown, faAngleUp, faCalendarDays } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 type SortDirection = "increasing" | "decreasing" | null;
 
@@ -30,13 +33,130 @@ export default function FilterCard({
 	const [direction, setDirection] = useState<SortDirection>(initialDirection);
 	const [startValue, setStartValue] = useState(initialStartValue);
 	const [endValue, setEndValue] = useState(initialEndValue);
+	const [openDateInput, setOpenDateInput] = useState<"start" | "end" | null>(null);
+	const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+	// helper methods for converting between string and Date objects, and for displaying dates in MM-DD-YYYY format
+	const stringToDate = (value: string) => (value ? new Date(`${value}T00:00:00`) : null);
+
+	const dateToString = (value: Date | null) => {
+		if (!value) return "";
+		const year = value.getFullYear();
+		const month = `${value.getMonth() + 1}`.padStart(2, "0");
+		const day = `${value.getDate()}`.padStart(2, "0");
+		return `${year}-${month}-${day}`;
+	};
+
+	const displayDate = (value: string) => {
+		if (!value) return "";
+		const [year, month, day] = value.split("-");
+		return year && month && day ? `${month}-${day}-${year}` : "";
+	};
+
+	// Close the date picker when clicking outside of it
+	useEffect(() => {
+		if (!openDateInput) return;
+		const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+			if (!dropdownRef.current?.contains(event.target as Node)) {
+				setOpenDateInput(null);
+			}
+		};
+		document.addEventListener("mousedown", handleClickOutside);
+		document.addEventListener("touchstart", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+			document.removeEventListener("touchstart", handleClickOutside);
+		};
+	}, [openDateInput]);
 
 	const handleClearAll = () => {
 		setDirection(null);
 		setStartValue("");
 		setEndValue("");
+		setOpenDateInput(null);
 		onClearAll?.();
 	};
+
+	const toggleDatePicker = (field: "start" | "end") => {
+		setOpenDateInput((current) => (current === field ? null : field));
+	};
+
+	const handleStartDateChange = (value: Date | null) => {
+		const nextStartValue = dateToString(value);
+		setStartValue(nextStartValue);
+		onRangeChange?.(nextStartValue, endValue);
+		setOpenDateInput(null);
+	};
+
+	const handleEndDateChange = (value: Date | null) => {
+		const nextEndValue = dateToString(value);
+		setEndValue(nextEndValue);
+		onRangeChange?.(startValue, nextEndValue);
+		setOpenDateInput(null);
+	};
+
+	// for clearing the date filters
+	const clearStartDate = () => {
+		setStartValue("");
+		onRangeChange?.("", endValue);
+	};
+
+	const clearEndDate = () => {
+		setEndValue("");
+		onRangeChange?.(startValue, "");
+	};
+
+	/**
+	 * LOCAL COMPONENT FOR DATE INPUTS
+	 */
+	interface DateInputProps {
+		field: "start" | "end";
+		placeholder: string;
+		value: string;
+		onChange: (value: Date | null) => void;
+		onClear: () => void;
+		minDate?: Date | null;
+		maxDate?: Date | null;
+	}
+
+	const DateInput = ({field, placeholder, value, onChange, onClear, minDate, maxDate,}: DateInputProps) => (
+		<div className="relative">
+			<input
+				className="w-40 rounded border border-grey-600 px-2 py-1 pr-8 text-sm bg-white cursor-pointer"
+				type="text"
+				readOnly
+				placeholder={placeholder}
+				value={displayDate(value)}
+				onClick={() => toggleDatePicker(field)}
+			/>
+			<FontAwesomeIcon
+				icon={faCalendarDays}
+				className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-grey-600"
+			/>
+			{openDateInput === field && (
+				<div className="absolute left-0 top-full mt-2 z-50">
+					<div className="rounded border border-grey-300 bg-white p-2 shadow-md">
+						<DatePicker
+							selected={stringToDate(value)}
+							onChange={onChange}
+							minDate={minDate}
+							maxDate={maxDate}
+							inline
+						/>
+						<div className="flex justify-end px-2 pb-1">
+							<button
+								type="button"
+								className="text-sm font-semibold text-secondary-400"
+								onClick={onClear}
+							>
+								Clear
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
+		</div>
+	);
 
 	const directionSection = (
 		<div className="flex flex-col gap-2">
@@ -85,29 +205,51 @@ export default function FilterCard({
 	const rangeSection = (
 		<div className="flex flex-col gap-2">
 			<div className="text-sm font-semibold flex justify-start">{rangeLabel}</div>
-			<div className="flex gap-2 flex-wrap">
-				<input
-					className="w-32 rounded border border-grey-600 px-2 py-1 text-sm bg-white"
-					type={rangeType}
-					value={startValue}
-					placeholder={rangeType === "number" ? "Min" : undefined}
-					onChange={(e) => {
-						setStartValue(e.target.value);
-						onRangeChange?.(e.target.value, endValue);
-					}}
-				/>
-				<span className="text-sm font-semibold pt-2"> to </span>
-				<input
-					className="w-32 rounded border border-grey-600 px-2 py-1 text-sm bg-white"
-					type={rangeType}
-					value={endValue}
-					placeholder={rangeType === "number" ? "Max" : undefined}
-					onChange={(e) => {
-						setEndValue(e.target.value);
-						onRangeChange?.(startValue, e.target.value);
-					}}
-				/>
-			</div>
+			{rangeType === "date" ? (
+				<div ref={dropdownRef} className="flex gap-2 flex-wrap items-start">
+					<DateInput
+						field="start"
+						placeholder="Start date"
+						value={startValue}
+						onChange={handleStartDateChange}
+						onClear={clearStartDate}
+						maxDate={stringToDate(endValue)}
+					/>
+					<span className="text-sm font-semibold pt-2"> to </span>
+					<DateInput
+						field="end"
+						placeholder="End date"
+						value={endValue}
+						onChange={handleEndDateChange}
+						onClear={clearEndDate}
+						minDate={stringToDate(startValue)}
+					/>
+				</div>
+			) : (
+				<div className="flex gap-2 flex-wrap">
+					<input
+						className="w-32 rounded border border-grey-600 px-2 py-1 text-sm bg-white"
+						type="number"
+						value={startValue}
+						placeholder="Min"
+						onChange={(e) => {
+							setStartValue(e.target.value);
+							onRangeChange?.(e.target.value, endValue);
+						}}
+					/>
+					<span className="text-sm font-semibold pt-2"> to </span>
+					<input
+						className="w-32 rounded border border-grey-600 px-2 py-1 text-sm bg-white"
+						type="number"
+						value={endValue}
+						placeholder="Max"
+						onChange={(e) => {
+							setEndValue(e.target.value);
+							onRangeChange?.(startValue, e.target.value);
+						}}
+					/>
+				</div>
+			)}
 		</div>
 	);
 
