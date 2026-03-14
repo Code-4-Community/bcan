@@ -12,7 +12,7 @@ import { observer } from "mobx-react-lite";
 import { getAppStore } from "../../../external/bcanSatchel/store.ts";
 import StatusDropdown from "./StatusDropdown";
 import Button from "../../../components/Button";
-import { faChevronDown, faChevronUp, faSort } from "@fortawesome/free-solid-svg-icons";
+import { faAngleDown, faAngleUp, faChevronDown, faChevronUp, faSort, faSortUp, faSortDown } from "@fortawesome/free-solid-svg-icons";
 import FilterCard from "./components/FilterCard";
 import { Grant } from "../../../../../middle-layer/types/Grant.ts";
 import { Status } from "../../../../../middle-layer/types/Status.ts";
@@ -157,6 +157,14 @@ const FilterBar: React.FC = observer(() => {
 
   const dueDateActive = showDueDateCard || sort?.header === "application_deadline" || startDateFilter || endDateFilter;
   const amountActive = showAmountCard || sort?.header === "amount" || amountMinFilter !== null || amountMaxFilter !== null;
+  
+  // get correct icon for which sorting is currently being applied
+  const getSortIcon = (header: keyof Grant) => {
+    if (sort?.header !== header) return faSort;
+    return sort.asc ? faSortUp : faSortDown;
+  };
+  
+  
   const activeButtonClass =
     "border-2 border-primary-900 text-primary-900 active:!border-primary-900 active:!text-primary-900 focus:!border-primary-900 focus:!text-primary-900 focus:outline-none focus-visible:outline-none";
   const inactiveButtonClass =
@@ -182,7 +190,7 @@ const FilterBar: React.FC = observer(() => {
         <Button
           text="Alphabetical"
           onClick={handleAlphabeticalClick}
-          logo={faSort}
+          logo={getSortIcon("organization")}
           logoPosition="left"
           className={`bg-white text-base whitespace-nowrap ${
             sort?.header === "organization"
@@ -198,7 +206,7 @@ const FilterBar: React.FC = observer(() => {
               setShowDueDateCard(!showDueDateCard);
               setShowStatusDropdown(false);
             }}
-            logo={faSort}
+            logo={getSortIcon("application_deadline")}
             logoPosition="left"
             className={`bg-white text-base whitespace-nowrap ${
               dueDateActive ? activeButtonClass : inactiveButtonClass
@@ -233,7 +241,7 @@ const FilterBar: React.FC = observer(() => {
               setShowAmountCard(!showAmountCard);
               setShowStatusDropdown(false);
             }}
-            logo={faSort}
+            logo={getSortIcon("amount")}
             logoPosition="left"
             className={`bg-white text-base whitespace-nowrap ${
               amountActive ? activeButtonClass : inactiveButtonClass
