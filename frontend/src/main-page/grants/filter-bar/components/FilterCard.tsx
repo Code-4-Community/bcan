@@ -115,8 +115,8 @@ export default function FilterCard({
 		value: string;
 		onChange: (value: Date | null) => void;
 		onClear: () => void;
-		minDate: Date;
-		maxDate: Date;
+		minDate: Date | undefined;
+		maxDate: Date | undefined;
 	}
 
 	const DateInput = ({field, placeholder, value, onChange, onClear, minDate, maxDate,}: DateInputProps) => (
