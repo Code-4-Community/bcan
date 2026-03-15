@@ -131,7 +131,7 @@ export default function FilterCard({
 		return (
 		<div className="relative">
 			<input
-				className="w-40 rounded border border-grey-600 px-2 py-1 pr-8 text-sm bg-white cursor-pointer"
+				className="w-40 h-[2.25rem] rounded border border-grey-600 px-2 py-1 pr-8 text-sm bg-white cursor-pointer"
 				type="text"
 				readOnly
 				placeholder={placeholder}
@@ -244,7 +244,7 @@ export default function FilterCard({
 			) : (
 				<div className="flex gap-2 flex-wrap">
 					<input
-						className="w-32 rounded border border-grey-600 px-2 py-1 text-sm bg-white"
+						className="w-32 h-[2.25rem] rounded border border-grey-600 px-2 py-1 text-sm bg-white"
 						type="number"
 						value={startValue}
 						placeholder="Min"
@@ -255,7 +255,7 @@ export default function FilterCard({
 					/>
 					<span className="text-sm font-semibold pt-2"> to </span>
 					<input
-						className="w-32 rounded border border-grey-600 px-2 py-1 text-sm bg-white"
+						className="w-32 h-[2.25rem] rounded border border-grey-600 px-2 py-1 text-sm bg-white"
 						type="number"
 						value={endValue}
 						placeholder="Max"
