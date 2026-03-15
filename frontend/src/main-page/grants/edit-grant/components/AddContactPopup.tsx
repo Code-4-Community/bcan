@@ -200,6 +200,12 @@ const AddContactPopup = observer(
             </div>
           )}
 
+          {(error) && (
+            <div className="rounded-2xl bg-[#FFEEEE] px-4 py-3 text-sm font-bold text-[#CC0000]">
+              {"Please enter a valid email."}
+            </div>
+          )}
+
           {/* ACTION BUTTONS */}
           <div className="flex justify-end gap-2 mt-auto">
             <Button
