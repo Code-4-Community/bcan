@@ -1,5 +1,6 @@
 import { getAppStore } from "../../../external/bcanSatchel/store";
 import POC from "../../../../../middle-layer/types/POC";
+import Avatar from "../../../components/Avatar";
 import logo from "../../../images/logo.svg";
 
 type ContactCardProps = {
@@ -20,10 +21,11 @@ const contactPhoto =
 
   return (
     <div className="flex flex-row gap-4 w-full justify-items-start rounded border-2 p-3 h-full border-grey-500">
-      <img
-        src={contactPhoto || logo}
+      <Avatar
+        src={contactPhoto}
         alt="Profile"
-        className="max-w-14 rounded-full hidden lg:block"
+        className="max-w-14 rounded-full object-cover hidden lg:block"
+        fallbackSrc={logo}
       />
       <div className="flex flex-col align-middle justify-center">
         <p className="text-black text-md font-semibold ">

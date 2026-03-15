@@ -21,14 +21,16 @@ const mockInitiateAuth             = vi.fn(() => ({ promise: mockCognitoPromise 
 const mockGetUser                  = vi.fn(() => ({ promise: mockCognitoPromise }));
 const mockRespondToAuthChallenge   = vi.fn(() => ({ promise: mockCognitoPromise }));
 const mockGlobalSignOut            = vi.fn(() => ({ promise: mockCognitoPromise }));
+const mockUpdateUserAttributes     = vi.fn(() => ({ promise: mockCognitoPromise }));
 
 // ─── DynamoDB mocks ───────────────────────────────────────────────────────────
-const mockDynamoPromise = vi.fn();
-const mockDynamoGet    = vi.fn(() => ({ promise: mockDynamoPromise }));
-const mockDynamoPut    = vi.fn(() => ({ promise: mockDynamoPromise }));
-const mockDynamoUpdate = vi.fn(() => ({ promise: mockDynamoPromise }));
-const mockDynamoScan   = vi.fn(() => ({ promise: mockDynamoPromise }));
-const mockDynamoDelete = vi.fn(() => ({ promise: mockDynamoPromise }));
+const mockDynamoPromise       = vi.fn();
+const mockDynamoGet           = vi.fn(() => ({ promise: mockDynamoPromise }));
+const mockDynamoPut           = vi.fn(() => ({ promise: mockDynamoPromise }));
+const mockDynamoUpdate        = vi.fn(() => ({ promise: mockDynamoPromise }));
+const mockDynamoScan          = vi.fn(() => ({ promise: mockDynamoPromise }));
+const mockDynamoDelete        = vi.fn(() => ({ promise: mockDynamoPromise }));
+const mockDynamoTransactWrite = vi.fn(() => ({ promise: mockDynamoPromise }));
 
 // ─── AWS SDK mock ─────────────────────────────────────────────────────────────
 vi.mock('aws-sdk', () => {
@@ -43,16 +45,18 @@ vi.mock('aws-sdk', () => {
       getUser:                  mockGetUser,
       respondToAuthChallenge:   mockRespondToAuthChallenge,
       globalSignOut:            mockGlobalSignOut,
+      updateUserAttributes:     mockUpdateUserAttributes,
     };
   });
 
   const documentClientFactory = vi.fn(function () {
     return {
-      get:    mockDynamoGet,
-      put:    mockDynamoPut,
-      update: mockDynamoUpdate,
-      scan:   mockDynamoScan,
-      delete: mockDynamoDelete,
+      get:           mockDynamoGet,
+      put:           mockDynamoPut,
+      update:        mockDynamoUpdate,
+      scan:          mockDynamoScan,
+      delete:        mockDynamoDelete,
+      transactWrite: mockDynamoTransactWrite,
     };
   });
 
@@ -89,12 +93,14 @@ describe('AuthService', () => {
     mockGetUser.mockReturnValue({ promise: mockCognitoPromise });
     mockRespondToAuthChallenge.mockReturnValue({ promise: mockCognitoPromise });
     mockGlobalSignOut.mockReturnValue({ promise: mockCognitoPromise });
+    mockUpdateUserAttributes.mockReturnValue({ promise: mockCognitoPromise });
 
     mockDynamoGet.mockReturnValue({ promise: mockDynamoPromise });
     mockDynamoPut.mockReturnValue({ promise: mockDynamoPromise });
     mockDynamoUpdate.mockReturnValue({ promise: mockDynamoPromise });
     mockDynamoScan.mockReturnValue({ promise: mockDynamoPromise });
     mockDynamoDelete.mockReturnValue({ promise: mockDynamoPromise });
+    mockDynamoTransactWrite.mockReturnValue({ promise: mockDynamoPromise });
 
     mockCognitoPromise.mockResolvedValue({});
     mockDynamoPromise.mockResolvedValue({});
@@ -405,36 +411,119 @@ describe('AuthService', () => {
   // ── updateProfile ────────────────────────────────────────────────────────────
 
   describe('updateProfile', () => {
-    it('should successfully update user profile', async () => {
-      mockDynamoPromise.mockResolvedValueOnce({});
+    it('should successfully update first and last name when email is unchanged', async () => {
+      // Cognito getUser returns current email
+      mockCognitoPromise.mockResolvedValueOnce({
+        UserAttributes: [{ Name: 'email', Value: 'c4c@example.com' }],
+      });
 
-      await expect(service.updateProfile('c4c@example.com', 'Software Developer')).resolves.toBeUndefined();
+      // DynamoDB get returns existing user
+      mockDynamoPromise
+        .mockResolvedValueOnce({
+          Item: {
+            email: 'c4c@example.com',
+            position: UserStatus.Employee,
+            firstName: 'Old',
+            lastName: 'Name',
+          },
+        })
+        // DynamoDB update succeeds
+        .mockResolvedValueOnce({});
 
+      await expect(
+        service.updateProfile(
+          'access-token',
+          'c4c@example.com',
+          'NewFirst',
+          'NewLast',
+        ),
+      ).resolves.toBeUndefined();
+
+      expect(mockGetUser).toHaveBeenCalledWith({ AccessToken: 'access-token' });
       expect(mockDynamoUpdate).toHaveBeenCalledWith(
         expect.objectContaining({
           TableName: 'test-users-table',
           Key: { email: 'c4c@example.com' },
-          ExpressionAttributeValues: expect.objectContaining({
-            ':email': 'c4c@example.com',
-            ':position_or_role': 'Software Developer',
-          }),
-        })
+          UpdateExpression:
+            'SET firstName = :firstName, lastName = :lastName',
+          ExpressionAttributeValues: {
+            ':firstName': 'NewFirst',
+            ':lastName': 'NewLast',
+          },
+        }),
       );
     });
 
-    it('should throw BadRequestException when email is empty', async () => {
-      await expect(service.updateProfile('', 'role')).rejects.toThrow('Email is required');
-      await expect(service.updateProfile('   ', 'role')).rejects.toThrow('Email is required');
+    it('should throw BadRequestException when access token is empty', async () => {
+      await expect(
+        service.updateProfile('', 'user@test.com', 'John', 'Doe'),
+      ).rejects.toThrow('Access token is required');
+      await expect(
+        service.updateProfile('   ', 'user@test.com', 'John', 'Doe'),
+      ).rejects.toThrow('Access token is required');
     });
 
-    it('should throw BadRequestException when position_or_role is empty', async () => {
-      await expect(service.updateProfile('c4c@example.com', '')).rejects.toThrow('Position or role is required');
-      await expect(service.updateProfile('c4c@example.com', '   ')).rejects.toThrow('Position or role is required');
+    it('should throw BadRequestException when email is invalid or empty', async () => {
+      await expect(
+        service.updateProfile('access-token', '', 'John', 'Doe'),
+      ).rejects.toThrow('Valid email is required');
+      await expect(
+        service.updateProfile('access-token', '   ', 'John', 'Doe'),
+      ).rejects.toThrow('Valid email is required');
+      await expect(
+        service.updateProfile('access-token', 'not-an-email', 'John', 'Doe'),
+      ).rejects.toThrow('Valid email is required');
     });
 
-    it('should throw when DynamoDB update fails', async () => {
-      mockDynamoPromise.mockRejectedValueOnce(new Error('DB error'));
-      await expect(service.updateProfile('c4c@example.com', 'role')).rejects.toThrow('DB error');
+    it('should throw BadRequestException when firstName is empty', async () => {
+      await expect(
+        service.updateProfile('access-token', 'c4c@example.com', '', 'Doe'),
+      ).rejects.toThrow('First name is required');
+      await expect(
+        service.updateProfile('access-token', 'c4c@example.com', '   ', 'Doe'),
+      ).rejects.toThrow('First name is required');
+    });
+
+    it('should throw BadRequestException when lastName is empty', async () => {
+      await expect(
+        service.updateProfile('access-token', 'c4c@example.com', 'John', ''),
+      ).rejects.toThrow('Last name is required');
+      await expect(
+        service.updateProfile(
+          'access-token',
+          'c4c@example.com',
+          'John',
+          '   ',
+        ),
+      ).rejects.toThrow('Last name is required');
+    });
+
+    it('should throw when DynamoDB update fails for unchanged email', async () => {
+      // Cognito getUser
+      mockCognitoPromise.mockResolvedValueOnce({
+        UserAttributes: [{ Name: 'email', Value: 'c4c@example.com' }],
+      });
+
+      // DynamoDB get succeeds, update fails
+      mockDynamoPromise
+        .mockResolvedValueOnce({
+          Item: {
+            email: 'c4c@example.com',
+            position: UserStatus.Employee,
+            firstName: 'Old',
+            lastName: 'Name',
+          },
+        })
+        .mockRejectedValueOnce(new Error('DB error'));
+
+      await expect(
+        service.updateProfile(
+          'access-token',
+          'c4c@example.com',
+          'John',
+          'Doe',
+        ),
+      ).rejects.toThrow('Failed to update user data in database');
     });
   });
 

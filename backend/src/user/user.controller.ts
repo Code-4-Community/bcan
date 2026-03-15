@@ -321,4 +321,11 @@ async uploadProfilePic(
     throw new BadRequestException('Invalid user data format');
   }
 }
+
+@Post('remove-pfp')
+async removeProfilePic(
+  @Body('email') email: string
+) {
+  return await this.userService.removeProfilePicture(email);
+}
 }

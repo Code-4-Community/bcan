@@ -15,6 +15,7 @@ import {
   updateSort,
   updateUserQuery,
   updateUserSort,
+  removeProfilePic,
 } from './actions';
 import { getAppStore, persistToSessionStorage } from './store';
 import { setActiveUsers, setInactiveUsers } from './actions';
@@ -57,10 +58,35 @@ mutator(setAuthState, (actionMessage) => {
 mutator(updateUserProfile, (actionMessage) => {
   const store = getAppStore();
   if (store.user) {
+    // Capture old email before overwriting
+    const oldEmail = store.user.email;
+
     store.user = {
       ...store.user,
       ...actionMessage.user,
     };
+
+    const activeUserIndex = store.activeUsers?.findIndex(
+      (u) => u.email === oldEmail
+    );
+
+    if (activeUserIndex !== undefined && activeUserIndex !== -1) {
+      store.activeUsers[activeUserIndex] = {
+       ...store.user
+      };
+    } else {
+       // Find and update the matching user in inactiveUsers by old email
+      const inactiveUserIndex = store.inactiveUsers?.findIndex(
+      (u) => u.email === oldEmail
+    );
+
+    if (inactiveUserIndex !== undefined && inactiveUserIndex !== -1) {
+      store.inactiveUsers[inactiveUserIndex] = {
+       ...store.user
+      };
+    }
+    }
+
     persistToSessionStorage();
   }
 });
@@ -149,3 +175,21 @@ mutator(updateUserSort, (actionMessage) => {
   const store = getAppStore();
   store.userSort = actionMessage.sort;
 }) 
+
+mutator(removeProfilePic, () => {
+  const store = getAppStore();
+
+  if (!store.user) return;
+
+  delete store.user.profilePicUrl;
+
+  const activeUserIndex = store.activeUsers?.findIndex(
+    (u) => u.email === store.user!.email
+  );
+
+  if (activeUserIndex !== undefined && activeUserIndex !== -1) {
+    delete store.activeUsers[activeUserIndex].profilePicUrl;
+  }
+
+  persistToSessionStorage();
+});
