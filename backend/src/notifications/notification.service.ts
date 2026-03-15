@@ -7,7 +7,7 @@ export class NotificationService {
 
   private dynamoDb = new AWS.DynamoDB.DocumentClient();
   private ses = new AWS.SES({ region: process.env.AWS_REGION });
-    private readonly logger = new Logger(NotificationService.name);
+  private readonly logger = new Logger(NotificationService.name);
 
 
   // Function to create a notification in DynamoDB for a specific user

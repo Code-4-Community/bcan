@@ -55,7 +55,6 @@ export default function ChangePasswordModal({
       currentPassword: currentPassword.trim(),
       newPassword,
     });
-    handleClose();
   };
 
   return (

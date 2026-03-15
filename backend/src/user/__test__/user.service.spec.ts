@@ -156,7 +156,8 @@ describe('UserController', () => {
 
       const result = await userService.uploadProfilePic(user, file);
 
-      expect(result).toBe(s3Url);
+      expect(result).toContain(s3Url);
+      expect(result).toMatch(/\?t=\d+$/);
       expect(mockS3Upload).toHaveBeenCalledWith({
         Bucket: 'test-profile-pics-bucket',
         Key: 'Emp-One-emp-profilepic.jpg',
@@ -223,7 +224,8 @@ describe('UserController', () => {
           .mockResolvedValueOnce({ Attributes: { ...user, profilePicUrl: s3Url } });
 
         const result = await userService.uploadProfilePic(user, createMockFile({ mimetype }));
-        expect(result).toBe(s3Url);
+        expect(result).toContain(s3Url);
+        expect(result).toMatch(/\?t=\d+$/);
       }
     });
 
