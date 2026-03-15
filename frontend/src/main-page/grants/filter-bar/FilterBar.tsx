@@ -188,7 +188,7 @@ const FilterBar: React.FC = observer(() => {
           }`}
         />
         <Button
-          text="Alphabetical"
+          text="Org Name"
           onClick={handleAlphabeticalClick}
           logo={getSortIcon("organization")}
           logoPosition="left"

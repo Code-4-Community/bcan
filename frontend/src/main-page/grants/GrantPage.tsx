@@ -130,23 +130,6 @@ function GrantPage() {
             )}
           </div>
         </div>
-
-        {/* <div className="grid grid-cols-5 gap-8 px-4">
-          <div className="col-span-1">
-            <FilterBar />
-          </div>
-          <div className="bot-half col-span-4">
-            <div className="grant-list-container">
-              <GrantList
-                selectedGrantId={
-                  curGrant ? curGrant.grantId : undefined
-                }
-                currentUserEmail={currentUserEmail}
-                showOnlyMyGrants={showOnlyMyGrants}
-              />
-            </div>
-          </div>
-        </div>  */}
         <div className="hidden-features">
           {showNewGrantModal && (
             <NewGrantModal
