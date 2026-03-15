@@ -30,7 +30,7 @@ const UsersPage = observer(() => {
   // const currentPageUsers = filteredUsers.slice(pageStartIndex, pageEndIndex);
   const currentPageUsers = filteredUsers; // Temporarily disable pagination by showing all users
   return (
-    <div className="grant-page w-full items-end">
+    <div className="grant-page w-full min-h-[86vh] items-end">
       <UserSearch />
       <div className="flex w-full py-2 gap-2">
         <Button
