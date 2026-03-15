@@ -1,33 +1,35 @@
-import { mutator } from 'satcheljs';
+import { mutator } from "satcheljs";
 import {
   setAuthState,
   updateUserProfile,
   logoutUser,
   fetchAllGrants,
   updateFilter,
-  updateStartDateFilter, updateEndDateFilter,
+  updateStartDateFilter,
+  updateEndDateFilter,
   updateSearchQuery,
   updateYearFilter,
   setNotifications,
   updateSort,
   updateUserQuery,
   updateUserSort,
-} from './actions';
-import { getAppStore, persistToSessionStorage } from './store';
-import { setActiveUsers, setInactiveUsers } from './actions';
+  clearAllFilters,
+} from "./actions";
+import { getAppStore, persistToSessionStorage } from "./store";
+import { setActiveUsers, setInactiveUsers } from "./actions";
 
-/** 
+/**
  * setActiveUsers mutator
-*/
+ */
 mutator(setActiveUsers, (actionMessage) => {
   const store = getAppStore();
   store.activeUsers = actionMessage.users;
   persistToSessionStorage();
 });
 
-/** 
+/**
  * setInactiveUsers mutator
-*/
+ */
 mutator(setInactiveUsers, (actionMessage) => {
   const store = getAppStore();
   store.inactiveUsers = actionMessage.users;
@@ -38,13 +40,13 @@ mutator(setInactiveUsers, (actionMessage) => {
  * setAuthState mutator
  */
 mutator(setAuthState, (actionMessage) => {
-  console.log('=== setAuthState MUTATOR CALLED ===');
+  console.log("=== setAuthState MUTATOR CALLED ===");
   const store = getAppStore();
-  console.log('Setting user:', actionMessage.user);
+  console.log("Setting user:", actionMessage.user);
   store.isAuthenticated = actionMessage.isAuthenticated;
   store.user = actionMessage.user;
   store.accessToken = actionMessage.accessToken;
-  console.log('Calling persistToSessionStorage...');
+  console.log("Calling persistToSessionStorage...");
   persistToSessionStorage();
 });
 
@@ -70,9 +72,19 @@ mutator(logoutUser, () => {
   store.isAuthenticated = false;
   store.user = null;
   store.accessToken = null;
-  sessionStorage.removeItem('bcanAppStore');
+  sessionStorage.removeItem("bcanAppStore");
 });
 
+// Clears all store filters
+mutator(clearAllFilters, () => {
+  const store = getAppStore();
+  store.filterStatus = null;
+  store.startDateFilter = null;
+  store.endDateFilter = null;
+  store.searchQuery = "";
+  store.yearFilter = [];
+  store.userQuery = "";
+});
 
 /**
  * Reassigns all grants to new grants from the backend.
@@ -88,45 +100,44 @@ mutator(fetchAllGrants, (actionMessage) => {
 mutator(updateFilter, (actionMessage) => {
   const store = getAppStore();
   store.filterStatus = actionMessage.status;
-})
+});
 
 mutator(updateStartDateFilter, (actionMessage) => {
   const store = getAppStore();
   store.startDateFilter = actionMessage.startDateFilter;
-})
+});
 
 mutator(updateEndDateFilter, (actionMessage) => {
   const store = getAppStore();
   store.endDateFilter = actionMessage.endDateFilter;
-})
+});
 
 mutator(updateSearchQuery, (actionMessage) => {
   const store = getAppStore();
   store.searchQuery = actionMessage.searchQuery;
-})
+});
 
 mutator(updateYearFilter, (actionMessage) => {
   const store = getAppStore();
   store.yearFilter = actionMessage.yearFilter;
-})
+});
 
 mutator(setNotifications, (actionMessage) => {
   const store = getAppStore();
   store.notifications = actionMessage.notifications;
-})
+});
 
 mutator(updateSort, (actionMessage) => {
   const store = getAppStore();
   store.sort = actionMessage.sort;
-})
+});
 
 mutator(updateUserQuery, (actionMessage) => {
   const store = getAppStore();
   store.userQuery = actionMessage.userQuery;
-  console.log('Updated userQuery:', store.userQuery);
-})
+});
 
 mutator(updateUserSort, (actionMessage) => {
   const store = getAppStore();
   store.userSort = actionMessage.sort;
-}) 
+});

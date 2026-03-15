@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Dashboard from "./dashboard/Dashboard";
 import GrantPage from "./grants/GrantPage";
 import NavBar from "./navbar/NavBar";
@@ -13,7 +13,8 @@ import { observer } from "mobx-react-lite";
 import { Navigate } from "react-router-dom";
 import { getAppStore } from "../external/bcanSatchel/store";
 import BellButton from "./navbar/Bell";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { clearAllFilters } from "../external/bcanSatchel/actions";
 
 interface PositionGuardProps {
   children: React.ReactNode;
@@ -47,6 +48,13 @@ const PositionGuard = observer(
 
 function MainPage() {
   const [openModal, setOpenModal] = useState(false);
+
+  const location = useLocation();
+
+  // Clears all store filters when page changes
+  useEffect(() => {
+    clearAllFilters();
+  }, [location]);
 
   return (
     <div className="w-full flex-row flex h-screen overflow-hiden">

@@ -3,13 +3,6 @@ import { useEffect, useState } from "react";
 import { Grant } from "../../../../middle-layer/types/Grant.ts";
 import GrantItem from "./grant-view/GrantView.tsx";
 import { useAuthContext } from "../../context/auth/authContext";
-import {
-  updateEndDateFilter,
-  updateFilter,
-  updateSearchQuery,
-  updateStartDateFilter,
-  updateYearFilter,
-} from "../../external/bcanSatchel/actions.ts";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { ProcessGrantData } from "./filter-bar/processGrantData.ts";
@@ -44,16 +37,6 @@ function GrantPage({}: GrantPageProps) {
   // const currentUserEmail = userObj?.email || ""; //safe fallback
 
   console.log("Current logged-in user:", userObj);
-  // reset filters on initial render
-  useEffect(() => {
-    updateYearFilter([]);
-    updateFilter(null);
-    updateEndDateFilter(null);
-    updateStartDateFilter(null);
-    updateSearchQuery("");
-  }, []);
-
-  
 
   return (
     <div className="grant-page w-full items-end flex flex-col h-[86vh]">

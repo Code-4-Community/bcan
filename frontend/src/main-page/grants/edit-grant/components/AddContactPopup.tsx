@@ -2,8 +2,7 @@ import { InputField } from "../../../../sign-up";
 import Button from "../../../../components/Button";
 import { Action } from "../processGrantDataEditSave";
 import { GrantFormState } from "../EditGrant";
-import { useEffect, useState } from "react";
-import { updateUserQuery } from "../../../../external/bcanSatchel/actions";
+import { useState } from "react";
 import UserSearch from "../../../../main-page/users/UserSearch";
 import { ProcessUserData } from "../../../../main-page/users/processUserData";
 import { observer } from "mobx-react-lite";
@@ -28,10 +27,6 @@ const AddContactPopup = observer(
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     const { activeUsers } = ProcessUserData();
-
-    useEffect(() => {
-      updateUserQuery("");
-    }, []);
 
     const validateUser = () => {
       if (!selectedUser) {

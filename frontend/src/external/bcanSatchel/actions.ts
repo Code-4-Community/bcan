@@ -36,6 +36,8 @@ export const updateUserProfile = action("updateUserProfile", (user: User) => ({
  */
 export const logoutUser = action("logoutUser");
 
+export const clearAllFilters = action("clearAllFilters");
+
 /**
  * Moves along the all grants that are fetched from back end to mutator.
  */

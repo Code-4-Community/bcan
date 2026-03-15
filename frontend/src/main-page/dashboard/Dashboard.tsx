@@ -4,14 +4,6 @@ import DateFilter from "./DateFilter";
 import "./styles/Dashboard.css";
 import { observer } from "mobx-react-lite";
 import StackedBarMoneyReceived from "./Charts/StackedBarMoneyReceived";
-import { useEffect } from "react";
-import {
-  updateYearFilter,
-  updateFilter,
-  updateEndDateFilter,
-  updateStartDateFilter,
-  updateSearchQuery,
-} from "../../external/bcanSatchel/actions";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import BarYearGrantStatus from "./Charts/BarYearGrantStatus";
 import LineChartSuccessRate from "./Charts/LineChartSuccessRate";
@@ -21,14 +13,6 @@ import { ProcessGrantData } from "../grants/filter-bar/processGrantData";
 import KPICards from "./Charts/KPICards";
 
 const Dashboard = observer(() => {
-  // reset filters on initial render
-  useEffect(() => {
-    updateYearFilter([]);
-    updateFilter(null);
-    updateEndDateFilter(null);
-    updateStartDateFilter(null);
-    updateSearchQuery("");
-  }, []);
 
   const { yearFilter, allGrants } = getAppStore();
 
