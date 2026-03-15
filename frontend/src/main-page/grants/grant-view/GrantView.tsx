@@ -151,7 +151,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
                 },
                 {
                   label: "Application Date",
-                  value: "TBD (add to DB)",
+                  value: grant.application_date ? formatDate(grant.application_date) : "N/A",
                 },
               ]}
             />

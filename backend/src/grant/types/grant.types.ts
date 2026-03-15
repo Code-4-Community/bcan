@@ -22,6 +22,9 @@ export class GrantResponseDto {
   
   @ApiProperty({ description: 'When grant submission is due', example: '2024-06-01T00:00:00.000Z' })
   application_deadline!: string;
+
+  @ApiProperty({ description: 'When grant was submitted', example: '2024-06-01T00:00:00.000Z' })
+  application_date?: string;
   
   @ApiProperty({ description: 'Multiple report dates', type: [String], required: false })
   report_deadlines?: string[];
@@ -75,6 +78,9 @@ export class AddGrantBody {
   
   @ApiProperty({ description: 'When grant submission is due', example: '2024-06-01T00:00:00.000Z' })
   application_deadline!: string;
+
+  @ApiProperty({ description: 'When grant was submitted', example: '2024-06-01T00:00:00.000Z' })
+  application_date?: string;
   
   @ApiProperty({ description: 'Multiple report dates', type: [String], required: false, example: ['2024-12-01T00:00:00.000Z'] })
   report_deadlines?: string[];
@@ -122,6 +128,9 @@ export class UpdateGrantBody {
   
   @ApiProperty({ description: 'When grant submission is due', required: false })
   application_deadline?: string;
+
+  @ApiProperty({ description: 'When grant was submitted', required: false })
+  application_date?: string;
   
   @ApiProperty({ description: 'Multiple report dates', type: [String], required: false })
   report_deadlines?: string[];

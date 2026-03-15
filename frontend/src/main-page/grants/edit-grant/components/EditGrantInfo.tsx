@@ -103,11 +103,11 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
             <input
               type="date"
               className="appearance-none block w-full h-[2.25rem] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
-              value={form.applicationDate}
+              value={form.applicationDeadline}
               onChange={(e) =>
                 dispatch({
                   type: "SET_FIELD",
-                  field: "applicationDate",
+                  field: "applicationDeadline",
                   value: e.target.value as TDateISO,
                 })
               }

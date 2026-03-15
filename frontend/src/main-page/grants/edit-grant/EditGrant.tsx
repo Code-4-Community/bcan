@@ -21,8 +21,8 @@ import ActionConfirmation from "../../../custom/ActionConfirmation.tsx";
 
 export interface GrantFormState {
   organization: string;
-  // dueDate: TDateISO | "";
   applicationDate: TDateISO | "";
+  applicationDeadline: TDateISO | "";
   grantStartDate: TDateISO | "";
   reportDates: (TDateISO | "")[];
   timeline: number | null;
@@ -49,8 +49,8 @@ const EditGrant: React.FC<{
 
   const [form, dispatch] = useReducer(reducer, {
     organization: grantToEdit?.organization ?? "",
-    // dueDate: grantToEdit?.application_deadline ?? "",
-    applicationDate: grantToEdit?.application_deadline ?? "",
+    applicationDate: grantToEdit?.application_date ?? "",
+    applicationDeadline: grantToEdit?.application_deadline ?? "",
     grantStartDate: grantToEdit?.grant_start_date ?? "",
     reportDates: grantToEdit?.report_deadlines ?? [],
     timeline: grantToEdit?.timeline ?? null,
@@ -79,7 +79,7 @@ const EditGrant: React.FC<{
     if (!form.organization.trim()) return "Organization Name is required";
     if (!form.status) return "Status is required";
     if (form.amount == null || form.amount <= 0) return "Amount must be greater than 0";
-    // if (!form.dueDate) return "Due Date is required";
+    if (!form.applicationDeadline) return "Due Date is required";
     if (!form.grantStartDate) return "Grant Start Date is required";
     if (!form.estimatedCompletionTime || form.estimatedCompletionTime <= 0) return "Estimated completion time must be greater than 0";
     if (!form.doesBcanQualify) return "BCAN eligibility is required";
@@ -97,7 +97,8 @@ const EditGrant: React.FC<{
     does_bcan_qualify: form.doesBcanQualify === "yes",
     amount: form.amount ?? 0,
     grant_start_date: form.grantStartDate as TDateISO,
-    application_deadline: form.applicationDate as TDateISO,
+    application_deadline: form.applicationDeadline as TDateISO,
+    application_date: form.applicationDate as TDateISO,
     status: form.status as Status,
     report_deadlines: form.reportDates as TDateISO[],
     timeline: form.timeline ?? 0,
