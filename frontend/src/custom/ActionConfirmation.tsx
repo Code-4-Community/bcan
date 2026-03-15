@@ -53,7 +53,7 @@ import { IoIosWarning } from "react-icons/io";
               <IoIosWarning size={24} className="text-red"/>
               <p className="font-bold px-1 text-lg text-red"> Warning </p>
             </div>
-            <p className=" text-left text-lg font-semibold text-red">
+            <p className=" text-left font-semibold text-red">
               {warningMessage}
             </p>
 

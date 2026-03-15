@@ -2,8 +2,6 @@ import GrantSearch from "./filter-bar/GrantSearch.tsx";
 import { useEffect, useState } from "react";
 import { Grant } from "../../../../middle-layer/types/Grant.ts";
 import GrantItem from "./grant-view/GrantView.tsx";
-import { useAuthContext } from "../../context/auth/authContext";
-import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { ProcessGrantData } from "./filter-bar/processGrantData.ts";
 import GrantCard from "./grant-view/GrantCard.tsx";
@@ -30,13 +28,6 @@ function GrantPage({}: GrantPageProps) {
     const updated = grants.find((g) => g.grantId === curGrant?.grantId);
     setCurGrant(updated ?? grants[0]);
   }, [grants]);
-
-  const { user } = useAuthContext(); //gets current logged in user
-  const userObj = toJS(user);
-
-  // const currentUserEmail = userObj?.email || ""; //safe fallback
-
-  console.log("Current logged-in user:", userObj);
 
   return (
     <div className="grant-page w-full items-end flex flex-col h-[86vh]">

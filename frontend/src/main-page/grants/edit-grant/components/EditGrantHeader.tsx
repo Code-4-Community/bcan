@@ -39,7 +39,7 @@ export default function EditGrantHeader({ form, dispatch }: EditGrantProps) {
       {/* 5 Horizontal Buttons */}
       <div className="flex flex-row flex-wrap gap-2 mt-3">
         {buttonOptions.map((btn) => (
-          <div>
+          <div key={btn.id}>
             <StatusIndicator
               curStatus={btn.id}
               active={btn.id === form.status}

@@ -19,7 +19,6 @@ const UserRowHeaderButton = (props: UserRowHeaderButtonProps) => {
       className="font-medium flex w-fit items-center px-0 hover:border-white col-span-1 justify-start hover:text-grey-500 text-grey-600"
       onClick={props.onClick}
     >
-      <button />
       <span className="mr-2">
         <FontAwesomeIcon
           icon={

@@ -23,8 +23,9 @@ const [showPopup, setShowPopup] = useState<boolean>(false);
       <div className="columns-2 xl:columns-4 gap-6 space-y-2 lg:w-[90%] ml-2">
         {form.attachments.map((attachment, index) => (
           <EditGrantDeleteItem
+            key={index}
             item={
-              <div key={index} className="flex flex-col">
+              <div className="flex flex-col">
                 <a
                   href={attachment.url}
                   target="_blank"

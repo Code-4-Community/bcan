@@ -162,11 +162,11 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
               <div className="ml-2 flex flex-col gap-2">
               {form.reportDates.map((date, index) => (
                 <EditGrantDeleteItem
+                  key={index}
                   item={
                     <input
                       type="date"
                       value={date}
-                      key={index}
                       onChange={(e) =>
                         dispatch({
                           type: "UPDATE_REPORT_DATE",
