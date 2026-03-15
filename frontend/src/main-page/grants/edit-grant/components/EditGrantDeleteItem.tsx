@@ -14,7 +14,7 @@ export default function EditGrantDeleteItem({
   return (
     <div className="relative">
       <div
-        className={`rounded-full bg-red w-fit p-1 hover:cursor-pointer absolute ${position === "middle" ? "-left-2 bottom-2" : "-left-2"}`}
+        className={`rounded-full bg-red hover:bg-red-light w-fit p-1 hover:cursor-pointer absolute ${position === "middle" ? "-left-2 bottom-2" : "-left-2"}`}
         onClick={onDelete}
       >
         <FaXmark className="text-white text-xs" />

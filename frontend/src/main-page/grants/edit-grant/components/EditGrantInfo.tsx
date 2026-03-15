@@ -67,7 +67,7 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
                 logo={faCheckSquare}
                 logoPosition="left"
                 text="Yes"
-                className={`text-gray-700 px-3 py-1 text-sm border-2 active:bg-white ${form.doesBcanQualify === "yes" ? "text-green border-green" : "border-grey-300 text-grey-700"}`}
+                className={`text-gray-700 px-3 py-1 text-sm border-2 hover:border-green active:bg-white ${form.doesBcanQualify === "yes" ? "text-green border-green" : "border-grey-300 text-grey-700"}`}
                 onClick={() =>
                   dispatch({
                     type: "SET_FIELD",
@@ -80,7 +80,7 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
                 logo={faSquareXmark}
                 logoPosition="left"
                 text="No"
-                className={`text-gray-700 px-3 py-1 text-sm border-2 active:bg-white ${form.doesBcanQualify === "no" ? "text-red border-red" : "border-grey-300 text-grey-700"}`}
+                className={`text-gray-700 px-3 py-1 text-sm border-2 hover:border-red active:bg-white ${form.doesBcanQualify === "no" ? "text-red border-red" : "border-grey-300 text-grey-700"}`}
                 onClick={() =>
                   dispatch({
                     type: "SET_FIELD",
