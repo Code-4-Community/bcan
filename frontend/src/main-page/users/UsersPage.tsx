@@ -51,7 +51,7 @@ const UsersPage = observer(() => {
       </div>
 
       <div className="flex flex-row w-full gap-2 justify-between mt-4 bg-white rounded-md">
-        <div className="flex flex-col w-full overflow-y-scroll text-start">
+        <div className="flex flex-col w-full overflow-y-auto text-start">
           <UserRowHeader />
           {currentPageUsers.map((user) => (
             <div key={user.email}>
