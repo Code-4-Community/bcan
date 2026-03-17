@@ -17,7 +17,7 @@ import EditGrantInfo from "./components/EditGrantInfo.tsx";
 import EditGrantHeader from "./components/EditGrantHeader.tsx";
 import { EditGrantDocuments } from "./components/EditGrantDocuments.tsx";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import ActionConfirmation from "../../../custom/ActionConfirmation.tsx";
+import ActionConfirmation from "../../../components/ActionConfirmation.tsx";
 
 export interface GrantFormState {
   organization: string;
