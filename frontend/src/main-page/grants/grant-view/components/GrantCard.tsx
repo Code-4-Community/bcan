@@ -1,7 +1,7 @@
 // Meant to replace GrantItem.tsx when we implement new design
 
 import React from "react";
-import { Grant } from "../../../../../middle-layer/types/Grant";
+import { Grant } from "../../../../../../middle-layer/types/Grant";
 import StatusIndicator from "./StatusIndicator";
 
 interface GrantCardProps {

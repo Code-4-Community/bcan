@@ -10,7 +10,7 @@ import {
 } from "../../../external/bcanSatchel/actions.ts";
 import { observer } from "mobx-react-lite";
 import { getAppStore } from "../../../external/bcanSatchel/store.ts";
-import StatusDropdown from "./StatusDropdown";
+import StatusDropdown from "./components/StatusDropdown.tsx";
 import Button from "../../../components/Button";
 import { faChevronDown, faChevronUp, faSort, faSortUp, faSortDown } from "@fortawesome/free-solid-svg-icons";
 import FilterCard from "./components/FilterCard";

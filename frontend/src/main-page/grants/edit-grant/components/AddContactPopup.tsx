@@ -3,7 +3,7 @@ import Button from "../../../../components/Button";
 import { Action } from "../processGrantDataEditSave";
 import { GrantFormState } from "../EditGrant";
 import { useState } from "react";
-import UserSearch from "../../../../main-page/users/UserSearch";
+import UserSearch from "../../../users/components/UserSearch";
 import { ProcessUserData } from "../../../../main-page/users/processUserData";
 import { observer } from "mobx-react-lite";
 import logo from "../../../../images/logo.svg";

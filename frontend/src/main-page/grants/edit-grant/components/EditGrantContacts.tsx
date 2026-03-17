@@ -1,6 +1,6 @@
 import Button from "../../../../components/Button";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
-import ContactCard from "../../grant-view/ContactCard";
+import ContactCard from "../../grant-view/components/ContactCard";
 import { GrantFormState } from "../EditGrant";
 import EditGrantDeleteItem from "./EditGrantDeleteItem";
 import { Action } from "../processGrantDataEditSave";

@@ -4,7 +4,7 @@ import React from "react";
 import {
   Status,
   getColorStatus,
-} from "../../../../../middle-layer/types/Status.ts";
+} from "../../../../../../middle-layer/types/Status.ts";
 
 interface StatusIndicatorProps {
   curStatus: Status;

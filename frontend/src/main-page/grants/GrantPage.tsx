@@ -4,7 +4,7 @@ import FilterBar from "./filter-bar/FilterBar.tsx";
 import GrantItem from "./grant-view/GrantView.tsx";
 import { observer } from "mobx-react-lite";
 import { ProcessGrantData } from "./filter-bar/processGrantData.ts";
-import GrantCard from "./grant-view/GrantCard.tsx";
+import GrantCard from "./grant-view/components/GrantCard.tsx";
 import Button from "../../components/Button.tsx";
 import EditGrant from "./edit-grant/EditGrant.tsx";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";

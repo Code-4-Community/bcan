@@ -1,7 +1,7 @@
-import { getAppStore } from "../../../external/bcanSatchel/store";
-import POC from "../../../../../middle-layer/types/POC";
-import Avatar from "../../../components/Avatar";
-import logo from "../../../images/logo.svg";
+import { getAppStore } from "../../../../external/bcanSatchel/store";
+import POC from "../../../../../../middle-layer/types/POC";
+import Avatar from "../../../../components/Avatar";
+import logo from "../../../../images/logo.svg";
 
 type ContactCardProps = {
   contact?: POC;

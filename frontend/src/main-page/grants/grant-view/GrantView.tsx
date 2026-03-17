@@ -1,7 +1,7 @@
 import React, { useState, useLayoutEffect, useEffect } from "react";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { observer } from "mobx-react-lite";
-import StatusIndicator from "./StatusIndicator";
+import StatusIndicator from "./components/StatusIndicator";
 import {
   faPenToSquare,
   faCheckSquare,
@@ -9,9 +9,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../../components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ContactCard from "./ContactCard";
-import GrantFieldCol from "./GrantFieldCol";
-import { CostBenefitAnalysis } from "./CostBenefitAnalysis";
+import ContactCard from "./components/ContactCard";
+import GrantFieldCol from "./components/GrantFieldCol";
+import { CostBenefitAnalysis } from "./components/CostBenefitAnalysis";
 import EditGrant from "../edit-grant/EditGrant";
 import Footer from "../../../Footer";
 

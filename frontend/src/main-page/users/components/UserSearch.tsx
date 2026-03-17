@@ -1,9 +1,9 @@
 import { useState } from "react";
 import Fuse from "fuse.js";
-import { getAppStore } from "../../external/bcanSatchel/store";
-import { updateUserQuery } from "../../external/bcanSatchel/actions";
-import { User } from "../../../../middle-layer/types/User";
-import SearchBar from "../../components/SearchBar";
+import { getAppStore } from "../../../external/bcanSatchel/store";
+import { updateUserQuery } from "../../../external/bcanSatchel/actions";
+import { User } from "../../../../../middle-layer/types/User";
+import SearchBar from "../../../components/SearchBar";
 
 function UserSearch() {
   const [userInput, setUserInput] = useState(getAppStore().userQuery || "");

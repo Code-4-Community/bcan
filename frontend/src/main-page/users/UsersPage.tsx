@@ -3,12 +3,12 @@ import { useState } from "react";
 
 import { observer } from "mobx-react-lite";
 import Button from "../../components/Button.tsx";
-import UserSearch from "./UserSearch.tsx";
+import UserSearch from "./components/UserSearch.tsx";
 import { ProcessUserData } from "./processUserData.ts";
-import UserRow from "./user-rows/UserRow.tsx";
-import UserMenu from "./user-rows/UserMenu.tsx";
-import UserRowHeader from "./user-rows/UserRowHeader.tsx";
-import UserApprove from "./user-rows/UserApprove.tsx";
+import UserRow from "./components/UserRow.tsx";
+import UserMenu from "./components/UserMenu.tsx";
+import UserRowHeader from "./components/UserRowHeader.tsx";
+import UserApprove from "./components/UserApprove.tsx";
 
 const UsersPage = observer(() => {
   const [showAll, setShowAll] = useState(true);
