@@ -1,6 +1,7 @@
 import GrantSearch from "./filter-bar/GrantSearch.tsx";
 import { useEffect, useState } from "react";
 import { Grant } from "../../../../middle-layer/types/Grant.ts";
+import FilterBar from "./filter-bar/FilterBar.tsx";
 import GrantItem from "./grant-view/GrantView.tsx";
 import { observer } from "mobx-react-lite";
 import { ProcessGrantData } from "./filter-bar/processGrantData.ts";
@@ -19,25 +20,26 @@ function GrantPage({}: GrantPageProps) {
 
   // Use ProcessGrantData reactively to get filtered grants
   const { grants } = ProcessGrantData();
-  const [curGrant, setCurGrant] = useState<Grant | null>(null);
+  const [curId, setCurId] = useState<Grant | null>(null);
 
-  // Set the first grant when grants are loaded (only on initial mount)
+  const curGrant =
+  grants.find((g) => g.grantId === curId) ??
+  grants[0] ??
+  null;
+
+  // When the first grant in the list changes (sort/filter/initial load), show it
+  const firstGrantId = grants[0]?.grantId ?? null;
   useEffect(() => {
-    if (!grants.length) return;
-
-    const updated = grants.find((g) => g.grantId === curGrant?.grantId);
-    setCurGrant(updated ?? grants[0]);
-  }, [grants]);
+    setCurId(grants.length > 0 ? grants[0].grantId : null);
+  }, [firstGrantId]);
 
   return (
     <div className="grant-page w-full items-end flex flex-col h-[86vh]">
       <GrantSearch />
       <div className="flex w-full justify-between py-2 gap-4">
-        <Button
-          text="Filters Coming Soon"
-          onClick={() => {}}
-          className="border-2 border-grey-500 bg-white"
-        />
+        <span className="text-lg font-semibold">
+            <FilterBar />
+          </span>
         <Button
           text="Add"
           logo={faPlus}
@@ -54,7 +56,7 @@ function GrantPage({}: GrantPageProps) {
               key={grant.grantId}
               grant={grant}
               isSelected={curGrant?.grantId === grant.grantId}
-              onClick={() => setCurGrant(grant)}
+              onClick={() => setCurId(grant.grantId)}
             />
           ))}
         </div>
