@@ -112,6 +112,10 @@ mutator(clearAllFilters, () => {
   store.searchQuery = "";
   store.yearFilter = [];
   store.userQuery = "";
+  store.emailFilter = false;
+  store.eligibleOnly = false;
+  store.amountMinFilter = null;
+  store.amountMaxFilter = null;
 });
 
 /**
