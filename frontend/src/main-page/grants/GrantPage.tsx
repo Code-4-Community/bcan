@@ -1,6 +1,5 @@
 import GrantSearch from "./filter-bar/GrantSearch.tsx";
 import { useEffect, useState } from "react";
-import { Grant } from "../../../../middle-layer/types/Grant.ts";
 import FilterBar from "./filter-bar/FilterBar.tsx";
 import GrantItem from "./grant-view/GrantView.tsx";
 import { observer } from "mobx-react-lite";
@@ -20,7 +19,7 @@ function GrantPage({}: GrantPageProps) {
 
   // Use ProcessGrantData reactively to get filtered grants
   const { grants } = ProcessGrantData();
-  const [curId, setCurId] = useState<Grant | null>(null);
+  const [curId, setCurId] = useState<number | null>(null);
 
   const curGrant =
   grants.find((g) => g.grantId === curId) ??
@@ -49,7 +48,7 @@ function GrantPage({}: GrantPageProps) {
         />
       </div>
 
-      <div className="flex w-full gap-2 flex-1 overflow-hidden justify-between mt-4">
+      {curGrant ? (<div className="flex w-full gap-2 flex-1 overflow-hidden justify-between mt-4">
         <div className="flex flex-col w-[33%] overflow-y-auto mr-2">
           {grants.map((grant) => (
             <GrantCard
@@ -61,15 +60,11 @@ function GrantPage({}: GrantPageProps) {
           ))}
         </div>
         <div className="flex-1 overflow-y-auto rounded-md">
-          {curGrant ? (
-            <GrantItem grant={curGrant} />
-          ) : (
-            <div className="flex h-full justify-center mt-24 text-gray-500 text-2xl">
-              No grants found.
-            </div>
-          )}
+          <GrantItem grant={curGrant} />
         </div>
-      </div>
+      </div>) : (<div className="flex w-full h-full justify-center mt-24 text-gray-500 text-2xl">
+              No grants found.
+            </div>)}
       <div className="hidden-features">
         {showEditGrant && (
           <EditGrant

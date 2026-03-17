@@ -183,12 +183,10 @@ const EditGrant: React.FC<{
           <hr className="border-grey-400 border-t-2 rounded-full" />
 
           {/* Contacts and Documents Section */}
-          <div className="flex flex-col gap-4 items-start w-full">
             {/* Contacts */}
             <EditGrantContacts form={form} dispatch={dispatch} />
             {/* Documents */}
-            <EditGrantDocuments form={form} dispatch={dispatch} />            
-          </div>
+            <EditGrantDocuments form={form} dispatch={dispatch} />  
 
           {/* Divider */}
           {grantToEdit && (<div>

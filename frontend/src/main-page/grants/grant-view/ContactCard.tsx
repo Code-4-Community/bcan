@@ -19,7 +19,7 @@ export default function ContactCard({ contact, type }: ContactCardProps) {
       : logo;
 
   return (
-    <div className="flex flex-row gap-4 w-full text-left justify-items-start rounded border-2 p-3 h-full border-grey-500">
+    <div className="flex gap-4 w-full text-left justify-items-start rounded border-2 p-3 h-full border-grey-500">
       <div className="lg:flex h-full items-center hidden aspect-square">
         <Avatar
         src={contactPhoto}
