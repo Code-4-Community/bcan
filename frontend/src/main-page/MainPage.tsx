@@ -71,15 +71,7 @@ function MainPage() {
               path="/all-grants"
               element={
                 <PositionGuard adminOnly={false}>
-                  <GrantPage showOnlyMyGrants={false} />
-                </PositionGuard>
-              }
-            />
-            <Route
-              path="/my-grants"
-              element={
-                <PositionGuard adminOnly={false}>
-                  <GrantPage showOnlyMyGrants={true} />
+                  <GrantPage />
                 </PositionGuard>
               }
             />
@@ -112,7 +104,7 @@ function MainPage() {
               path="*"
               element={
                 <PositionGuard adminOnly={false}>
-                  <GrantPage showOnlyMyGrants={false} />
+                  <GrantPage />
                 </PositionGuard>
               }
             />

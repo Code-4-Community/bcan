@@ -66,7 +66,7 @@ export const updateYearFilter = action(
 
 export const updateSort = action(
   "updateSort",
-  (sort: {header: keyof Grant, asc: boolean}) => ({ sort, })
+  (sort: {header: keyof Grant, asc: boolean} | null) => ({ sort, })
 );
 
 export const updateUserSort = action(
@@ -87,6 +87,26 @@ export const updateSearchQuery = action(
 export const updateUserQuery = action(
   "updateUserQuery",
   (userQuery: string) => ({ userQuery })
+);
+
+// for seeing "my grants" only
+export const updateUserEmailFilter = action(
+  "updateUserEmailFilter",
+  (userEmailFilter: boolean) => ({ userEmailFilter })
+);
+
+// for seeing eligible grants only
+export const updateEligibleOnly = action(
+  "updateEligibleOnly",
+  (eligibleOnly: boolean) => ({ eligibleOnly })
+);
+
+export const updateAmountRange = action(
+  "updateAmountRange",
+  (amountMinFilter: number | null, amountMaxFilter: number | null) => ({
+    amountMinFilter,
+    amountMaxFilter,
+  })
 );
 
 export const setNotifications = action(

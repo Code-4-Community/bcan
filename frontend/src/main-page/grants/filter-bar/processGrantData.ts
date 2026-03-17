@@ -3,11 +3,14 @@ import { getAppStore } from "../../../external/bcanSatchel/store";
 import { fetchAllGrants } from "../../../external/bcanSatchel/actions";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import {
+  amountRangeFilter,
   dateRangeFilter,
+  eligibleFilter,
   filterGrants,
   yearFilterer,
   statusFilter,
   searchFilter,
+  userEmailFilter,
 } from "./grantFilters";
 import { sortGrants } from "./grantSorter.ts";
 import { api } from "../../../api.ts";
@@ -36,6 +39,11 @@ export const ProcessGrantData = () => {
     endDateFilter,
     yearFilter,
     searchQuery,
+    emailFilter,
+    eligibleOnly,
+    amountMinFilter,
+    amountMaxFilter,
+    user,
     sort,
   } = getAppStore();
 
@@ -47,9 +55,12 @@ export const ProcessGrantData = () => {
   // compute filtered grants dynamically — no useState needed
   const baseFiltered = filterGrants(allGrants, [
     statusFilter(filterStatus),
+    eligibleFilter(eligibleOnly),
     dateRangeFilter(startDateFilter, endDateFilter),
+    amountRangeFilter(amountMinFilter, amountMaxFilter),
     yearFilterer(yearFilter),
     searchFilter(searchQuery),
+    userEmailFilter(emailFilter, user)
   ]);
 
   const filteredGrants = sort
