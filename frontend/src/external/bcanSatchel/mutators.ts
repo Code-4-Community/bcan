@@ -156,6 +156,22 @@ mutator(updateAmountRange, (actionMessage) => {
   store.amountMaxFilter = actionMessage.amountMaxFilter;
 })
 
+mutator(updateUserEmailFilter, (actionMessage) => {
+  const store = getAppStore();
+  store.emailFilter = actionMessage.userEmailFilter;
+})
+
+mutator(updateEligibleOnly, (actionMessage) => {
+  const store = getAppStore();
+  store.eligibleOnly = actionMessage.eligibleOnly;
+})
+
+mutator(updateAmountRange, (actionMessage) => {
+  const store = getAppStore();
+  store.amountMinFilter = actionMessage.amountMinFilter;
+  store.amountMaxFilter = actionMessage.amountMaxFilter;
+})
+
 mutator(updateSearchQuery, (actionMessage) => {
   const store = getAppStore();
   store.searchQuery = actionMessage.searchQuery;
