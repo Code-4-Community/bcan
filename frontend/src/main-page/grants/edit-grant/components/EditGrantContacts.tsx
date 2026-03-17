@@ -58,7 +58,7 @@ const EditGrantContacts = ({ dispatch, form }: EditGrantProps) => {
           <Button
             text=""
             logoPosition="center"
-            className="rounded-md border-grey-400 text-primary-900 text-2xl"
+            className="rounded-md border-grey-400 text-primary-900 text-2xl min-h-24 w-full"
             logo={faPlusCircle}
             onClick={() => setShowPopup(true)}
           />
