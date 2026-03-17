@@ -176,14 +176,14 @@ const FilterBar: React.FC = observer(() => {
         <Button
           text="My Grants"
           onClick={handleMyGrantsClick}
-          className={`bg-white text-base whitespace-nowrap border-b-4 ${
+          className={`bg-white text-sm lg:text-base whitespace-nowrap border-b-4 ${
             emailFilter ? activeButtonClass : inactiveButtonClass
           }`}
         />
         <Button
           text="BCAN Eligible"
           onClick={handleEligibleClick}
-          className={`bg-white text-base whitespace-nowrap ${
+          className={`bg-white text-sm lg:text-base whitespace-nowrap ${
             eligibleOnly ? activeButtonClass : inactiveButtonClass
           }`}
         />
@@ -192,7 +192,7 @@ const FilterBar: React.FC = observer(() => {
           onClick={handleAlphabeticalClick}
           logo={getSortIcon("organization")}
           logoPosition="left"
-          className={`bg-white text-base whitespace-nowrap ${
+          className={`bg-white text-sm lg:text-base whitespace-nowrap ${
             sort?.header === "organization"
               ? activeButtonClass
               : inactiveButtonClass
@@ -208,7 +208,7 @@ const FilterBar: React.FC = observer(() => {
             }}
             logo={getSortIcon("application_deadline")}
             logoPosition="left"
-            className={`bg-white text-base whitespace-nowrap ${
+            className={`bg-white text-sm lg:text-base whitespace-nowrap ${
               dueDateActive ? activeButtonClass : inactiveButtonClass
             }`}
           />
@@ -243,7 +243,7 @@ const FilterBar: React.FC = observer(() => {
             }}
             logo={getSortIcon("amount")}
             logoPosition="left"
-            className={`bg-white text-base whitespace-nowrap ${
+            className={`bg-white text-sm lg:text-base whitespace-nowrap ${
               amountActive ? activeButtonClass : inactiveButtonClass
             }`}
           />
@@ -278,7 +278,7 @@ const FilterBar: React.FC = observer(() => {
             }}
             logo={showStatusDropdown ? faChevronUp : faChevronDown}
             logoPosition="right"
-            className={`bg-white text-base whitespace-nowrap ${
+            className={`bg-white text-sm lg:text-base whitespace-nowrap ${
               showStatusDropdown || selectedStatus ? activeButtonClass : inactiveButtonClass
             }`}
           />

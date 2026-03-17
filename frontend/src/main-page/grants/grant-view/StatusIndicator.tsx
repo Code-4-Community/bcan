@@ -19,7 +19,7 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({ curStatus, onClick, a
 
   return (
     <button
-      className="inline-flex w-fit cursor-default flex-none items-center rounded-full px-3 py-1 border-grey-300 border-2 text-gray-700 hover:border-primary-900"
+      className="inline-flex w-fit cursor-default flex-none items-center rounded-full px-3 py-1 border-grey-300 border-2 text-gray-700 hover:border-primary-900 text-sm lg:text-base"
       style={active !== false ? { color: darkColor, backgroundColor: lightColor, borderColor: lightColor } : {}}
       onClick={onClick}
 

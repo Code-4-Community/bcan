@@ -35,15 +35,15 @@ function GrantPage({}: GrantPageProps) {
   return (
     <div className="grant-page w-full items-end flex flex-col h-[86vh]">
       <GrantSearch />
-      <div className="flex w-full justify-between py-2 gap-4">
-        <span className="text-lg font-semibold">
+      <div className="flex w-full py-2 place-items-start gap-4">
+        <div className="text-lg w-fit font-semibold">
             <FilterBar />
-          </span>
+          </div>
         <Button
           text="Add"
           logo={faPlus}
           logoPosition="left"
-          className="bg-primary-900 text-white rounded-full border-2 border-solid"
+          className="bg-primary-900 text-white rounded-full border-2 border-solid ml-auto text-sm lg:text-base"
           onClick={() => setShowEditGrant(true)}
         />
       </div>

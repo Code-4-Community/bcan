@@ -81,7 +81,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
             <Button
               text="Edit"
               onClick={() => setShowEditGrant(true)}
-              className="bg-white text-black border-2 border-grey-500"
+              className="bg-white text-black border-2 border-grey-500 text-sm lg:text-base"
               logo={faPenToSquare}
               logoPosition="right"
             />

@@ -32,7 +32,7 @@ const UsersPage = observer(() => {
   return (
     <div className="grant-page w-full min-h-[86vh] items-end">
       <UserSearch />
-      <div className="flex w-full py-2 gap-2">
+      <div className="flex w-full py-2 gap-2 text-sm lg:text-base">
         <Button
           text="Active Users"
           onClick={() => setShowAll(true)}
