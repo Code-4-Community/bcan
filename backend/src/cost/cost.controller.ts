@@ -5,7 +5,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
 } from '@nestjs/common';
@@ -71,7 +70,7 @@ export class CostController {
    * @param costType type of cost you are trying to get (e.g. all Salary costs)
    * @returns array of costs of the specified type, if any exist
    */
-  @Get(':costType')
+  @Get('type/:costType')
   @ApiOperation({ summary: 'Get costs by type' })
   @ApiParam({ name: 'costType', type: String, description: 'Cost Type' })
   @ApiResponse({ status: 200, description: 'Successfully retrieved costs' })

@@ -111,6 +111,14 @@ export class CostService {
       throw new InternalServerErrorException('Server configuration error');
     }
 
+    const validCostTypes = Object.values(CostType) as CostType[];
+
+    if (!validCostTypes.includes(costType)) {
+      throw new BadRequestException(
+        `costType must be one of: ${Object.values(CostType).join(', ')}`,
+      );
+    }
+
     try {
       const result = await this.dynamoDb
         .scan({
