@@ -962,6 +962,7 @@ async updateProfile(
   async refreshTokens(refreshToken: string, cognitoUsername: string): Promise<{
   accessToken: string;
   idToken: string;
+  refreshToken?: string;
 }> {
   const clientId = process.env.COGNITO_CLIENT_ID;
   const clientSecret = process.env.COGNITO_CLIENT_SECRET;
@@ -1009,9 +1010,12 @@ async updateProfile(
 
     this.logger.log(`Tokens refreshed successfully for user: ${cognitoUsername}`);
 
+    const newRefreshToken = response.AuthenticationResult?.RefreshToken;
+
     return {
       accessToken: response.AuthenticationResult.AccessToken,
       idToken: response.AuthenticationResult.IdToken,
+      refreshToken: newRefreshToken,
     };
   } catch (error: unknown) {
     const cognitoError = error as AwsCognitoError;
