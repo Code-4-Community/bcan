@@ -4,7 +4,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 export default function CashAddRevenue() {
   return (
-    <div className="flex flex-col p-2 col-span-2 h-full gap-2">
+    <div className="flex flex-col pt-2 px-2 col-span-2 h-full gap-2">
       <div className="text-lg lg:text-xl w-full text-left font-bold">
         {"Add Revenue Source"}
       </div>

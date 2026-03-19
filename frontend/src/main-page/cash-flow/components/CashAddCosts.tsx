@@ -3,7 +3,7 @@ import InputField from "../../../components/InputField";
 
 export default function CashAddCosts() {
   return (
-    <div className="flex flex-col p-2 col-span-2 h-full gap-2">
+    <div className="flex flex-col pt-2 px-2 col-span-2 h-full gap-2">
       <div className="text-lg lg:text-xl w-full text-left font-bold">
         {"Add Cost Source"}
       </div>
