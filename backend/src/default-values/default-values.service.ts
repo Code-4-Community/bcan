@@ -28,17 +28,13 @@ export class DefaultValuesService {
         })
         .promise();
 
-      const items = (result.Items ?? []) as { name: string; value: number }[];
+      const items = (result.Items ?? []);
 
-      const startingCash = items.find((item) => item.name === 'startingCash')?.value || -1;
-      const benefitsIncrease = items.find((item) => item.name === 'benefitsIncrease')?.value || -1;
-      const salaryIncrease = items.find((item) => item.name === 'salaryIncrease')?.value || -1;
+      const startingCash = items.find((item) => item.name === 'startingCash')?.value || null;
+      const benefitsIncrease = items.find((item) => item.name === 'benefitsIncrease')?.value || null;
+      const salaryIncrease = items.find((item) => item.name === 'salaryIncrease')?.value || null;
 
-      if (
-        !Number.isFinite(startingCash) ||
-        !Number.isFinite(benefitsIncrease) ||
-        !Number.isFinite(salaryIncrease)
-      ) {
+      if (startingCash === null || benefitsIncrease === null || salaryIncrease === null) {
         this.logger.error('Default values table is missing required fields');
         throw new NotFoundException('Default values not found');
       }
