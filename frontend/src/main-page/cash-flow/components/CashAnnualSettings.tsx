@@ -6,7 +6,7 @@ export default function CashAnnualSettings() {
       <div className="text-lg lg:text-xl mb-2 w-full text-left font-bold">
         {"Annual Increase Settings"}
       </div>
-      <div className="flex flex-row justify-between gap-6">
+      <div className="flex flex-row justify-between gap-4">
         <InputField
           type="number"
           id="salary_increase"

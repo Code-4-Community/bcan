@@ -7,7 +7,7 @@ export default function CashAddCosts() {
       <div className="text-lg lg:text-xl w-full text-left font-bold">
         {"Add Cost Source"}
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 w-full justify-between gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 w-full justify-between gap-4">
         <div className="flex flex-col col-span-1 w-full gap-3">
           <InputField
             id="category"

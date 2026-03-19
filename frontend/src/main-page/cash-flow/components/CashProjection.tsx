@@ -14,9 +14,9 @@ export default function CashProjection() {
         {"36-Month Cash Flow Projection"}
       </div>
       <CashProjectionChart />
-      <div className="flex flex-wrap gap-2  justify-between place-items-center">
+      <div className="flex-wrap gap-2 items-center grid grid-cols-2 lg:grid-cols-4 mt-1">
         {cards.map((c) => (
-          <div className="bg-grey-150 rounded px-4 py-2 min-w-fit h-full flex flex-col">
+          <div className="bg-grey-150 rounded px-2 py-2 min-w-0 flex-1 flex flex-col h-full">
             <div className={`font-semibold ${c.color}`}>{c.field}</div>
             <div>
               {c.value.toLocaleString("en-US", {
