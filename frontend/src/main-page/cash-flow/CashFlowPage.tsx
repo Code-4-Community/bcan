@@ -1,26 +1,17 @@
-import "../dashboard/styles/Dashboard.css";
 import { observer } from "mobx-react-lite";
+import CashFlowCard from "./components/CashFlowCard";
+import { faDollarSign, faArrowTrendUp, faUserGroup } from "@fortawesome/free-solid-svg-icons";
+import "../dashboard/styles/Dashboard.css";
 
 const CashFlowPage = observer(() => {
   return (
     <div className="dashboard-page">
       <div className="grid grid-cols-4 grid-rows-[1fr_3fr_3fr] gap-4 min-h-screen">
         {/* Row 1 */}
-        <div className="chart-container h-full">
-          {/* Card 1 placeholder */}
-        </div>
-
-        <div className="chart-container h-full">
-          {/* Card 2 placeholder */}
-        </div>
-
-        <div className="chart-container h-full">
-          {/* Card 3 placeholder */}
-        </div>
-
-        <div className="chart-container h-full">
-          {/* Card 4 placeholder */}
-        </div>
+        <CashFlowCard text="Current Cash" value="$50,000" logo={faDollarSign} className="text-blue"/>
+        <CashFlowCard text="Current Cash" value="$50,000" logo={faArrowTrendUp} className="text-green"/>
+        <CashFlowCard text="Current Cash" value="$50,000" logo={faUserGroup} className="text-primary"/>
+        <CashFlowCard text="Current Cash" value="Salary: 4.5% | Benefits: 4%" logo={faArrowTrendUp} className="text-green" size="small"/>
 
         {/* Row 2 */}
         <div className="chart-container col-span-2 h-full">
