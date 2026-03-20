@@ -67,6 +67,7 @@ describe('DefaultValuesService', () => {
       });
       expect(mockDocumentClient.scan).toHaveBeenCalledWith({
         TableName: 'DefaultValues',
+        ConsistentRead: true,
       });
     });
 
@@ -163,12 +164,20 @@ describe('DefaultValuesService', () => {
 
   describe('updateDefaultValue()', () => {
     it('should successfully update startingCash', async () => {
-      mockPromise.mockResolvedValue({ Items: mockDefaultValues });
+      mockPromise
+        .mockResolvedValueOnce({})
+        .mockResolvedValueOnce({
+          Items: [
+            { name: 'startingCash', value: 15000 },
+            { name: 'benefitsIncrease', value: 3.5 },
+            { name: 'salaryIncrease', value: 2.0 },
+          ],
+        });
 
       const result = await service.updateDefaultValue('startingCash', 15000);
 
       expect(result).toEqual({
-        startingCash: 10000,
+        startingCash: 15000,
         benefitsIncrease: 3.5,
         salaryIncrease: 2.0,
       });
@@ -178,17 +187,29 @@ describe('DefaultValuesService', () => {
           name: 'startingCash',
           value: 15000,
         },
+        ConditionExpression: 'attribute_exists(#name)',
+        ExpressionAttributeNames: {
+          '#name': 'name',
+        },
       });
     });
 
     it('should successfully update benefitsIncrease', async () => {
-      mockPromise.mockResolvedValue({ Items: mockDefaultValues });
+      mockPromise
+        .mockResolvedValueOnce({})
+        .mockResolvedValueOnce({
+          Items: [
+            { name: 'startingCash', value: 10000 },
+            { name: 'benefitsIncrease', value: 5.0 },
+            { name: 'salaryIncrease', value: 2.0 },
+          ],
+        });
 
       const result = await service.updateDefaultValue('benefitsIncrease', 5.0);
 
       expect(result).toEqual({
         startingCash: 10000,
-        benefitsIncrease: 3.5,
+        benefitsIncrease: 5.0,
         salaryIncrease: 2.0,
       });
       expect(mockDocumentClient.put).toHaveBeenCalledWith({
@@ -197,24 +218,40 @@ describe('DefaultValuesService', () => {
           name: 'benefitsIncrease',
           value: 5.0,
         },
+        ConditionExpression: 'attribute_exists(#name)',
+        ExpressionAttributeNames: {
+          '#name': 'name',
+        },
       });
     });
 
     it('should successfully update salaryIncrease', async () => {
-      mockPromise.mockResolvedValue({ Items: mockDefaultValues });
+      mockPromise
+        .mockResolvedValueOnce({})
+        .mockResolvedValueOnce({
+          Items: [
+            { name: 'startingCash', value: 10000 },
+            { name: 'benefitsIncrease', value: 3.5 },
+            { name: 'salaryIncrease', value: 3.0 },
+          ],
+        });
 
       const result = await service.updateDefaultValue('salaryIncrease', 3.0);
 
       expect(result).toEqual({
         startingCash: 10000,
         benefitsIncrease: 3.5,
-        salaryIncrease: 2.0,
+        salaryIncrease: 3.0,
       });
       expect(mockDocumentClient.put).toHaveBeenCalledWith({
         TableName: 'DefaultValues',
         Item: {
           name: 'salaryIncrease',
           value: 3.0,
+        },
+        ConditionExpression: 'attribute_exists(#name)',
+        ExpressionAttributeNames: {
+          '#name': 'name',
         },
       });
     });
@@ -261,12 +298,20 @@ describe('DefaultValuesService', () => {
     });
 
     it('should successfully update with negative value', async () => {
-      mockPromise.mockResolvedValue({ Items: mockDefaultValues });
+      mockPromise
+        .mockResolvedValueOnce({})
+        .mockResolvedValueOnce({
+          Items: [
+            { name: 'startingCash', value: -1000 },
+            { name: 'benefitsIncrease', value: 3.5 },
+            { name: 'salaryIncrease', value: 2.0 },
+          ],
+        });
 
       const result = await service.updateDefaultValue('startingCash', -1000);
 
       expect(result).toEqual({
-        startingCash: 10000,
+        startingCash: -1000,
         benefitsIncrease: 3.5,
         salaryIncrease: 2.0,
       });
@@ -275,6 +320,10 @@ describe('DefaultValuesService', () => {
         Item: {
           name: 'startingCash',
           value: -1000,
+        },
+        ConditionExpression: 'attribute_exists(#name)',
+        ExpressionAttributeNames: {
+          '#name': 'name',
         },
       });
     });

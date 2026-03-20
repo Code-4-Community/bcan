@@ -1,11 +1,10 @@
-import { Body, Controller, Get, Patch, Logger } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Logger, UseGuards} from '@nestjs/common';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DefaultValuesService } from './default-values.service';
 import {
   DefaultValuesResponse,
   UpdateDefaultValueBody,
 } from './types/default-values.types';
-import { UseGuards } from '@nestjs/common';
 import { VerifyAdminRoleGuard } from '../guards/auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
@@ -22,6 +21,8 @@ export class DefaultValuesController {
      * @returns DefaultValuesResponse containing the default values
      */
     @Get()
+    @UseGuards(VerifyAdminRoleGuard)
+    @ApiBearerAuth()
     @ApiResponse({
         status: 200,
         description: 'Default values retrieved successfully',
@@ -45,6 +46,8 @@ export class DefaultValuesController {
      * @returns new DefaultValuesResponse with the updated default values
      */
     @Patch()
+    @UseGuards(VerifyAdminRoleGuard)
+    @ApiBearerAuth()
     @ApiBody({ schema: {
         type: 'object',
         properties: {
@@ -61,11 +64,13 @@ export class DefaultValuesController {
         description: 'Bad Request - Invalid key or value',
     })
     @ApiResponse({
+        status: 404,
+        description: 'Default value not found',
+    })
+    @ApiResponse({
         status: 500,
         description: 'Internal Server Error',
     })
-    @UseGuards(VerifyAdminRoleGuard)
-    @ApiBearerAuth()
     async updateDefaultValue(
         @Body() body: UpdateDefaultValueBody,
     ): Promise<DefaultValuesResponse> {

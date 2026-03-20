@@ -25,14 +25,16 @@ export class DefaultValuesService {
       const result = await this.dynamoDb
         .scan({
           TableName: tableName,
+          // Ensure update responses do not return stale values.
+          ConsistentRead: true,
         })
         .promise();
 
       const items = (result.Items ?? []);
 
-      const startingCash = items.find((item) => item.name === 'startingCash')?.value || null;
-      const benefitsIncrease = items.find((item) => item.name === 'benefitsIncrease')?.value || null;
-      const salaryIncrease = items.find((item) => item.name === 'salaryIncrease')?.value || null;
+      const startingCash = items.find((item) => item.name === 'startingCash')?.value ?? null;
+      const benefitsIncrease = items.find((item) => item.name === 'benefitsIncrease')?.value ?? null;
+      const salaryIncrease = items.find((item) => item.name === 'salaryIncrease')?.value ?? null;
 
       if (startingCash === null || benefitsIncrease === null || salaryIncrease === null) {
         this.logger.error('Default values table is missing required fields');
@@ -89,11 +91,26 @@ export class DefaultValuesService {
             name: key,
             value,
           },
+          ConditionExpression: 'attribute_exists(#name)',  
+          ExpressionAttributeNames: {  
+            '#name': 'name',  
+          }, 
         })
         .promise();
 
-      return await this.getDefaultValues();
-    } catch (error) {
+      return await this.getDefaultValues();  
+    } catch (error) {  
+      const awsError = error as AWS.AWSError;  
+
+      if (awsError && awsError.code === 'ConditionalCheckFailedException') {  
+        this.logger.warn(  
+          `Attempted to update non-existent default value '${key}'`,  
+        );  
+        throw new NotFoundException(  
+          `Default value '${key}' does not exist`,  
+        );  
+      }  
+      
       if (
         error instanceof BadRequestException ||
         error instanceof NotFoundException ||

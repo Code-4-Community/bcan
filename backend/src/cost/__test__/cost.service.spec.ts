@@ -3,6 +3,7 @@ import {
   BadRequestException,
   InternalServerErrorException,
   NotFoundException,
+  ConflictException,
 } from '@nestjs/common';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { CostService } from '../cost.service';
@@ -502,7 +503,7 @@ describe('CostService', () => {
       ).rejects.toThrow('Cost with name Food not found');
     });
 
-    it('throws BadRequestException when rename target already exists', async () => {
+    it('throws ConflictException when rename target already exists', async () => {
       mockGetPromise.mockResolvedValue({
         Item: { name: 'Food', amount: 200, type: CostType.MealsFood },
       });
@@ -512,7 +513,7 @@ describe('CostService', () => {
 
       await expect(
         service.updateCost('Food', { name: 'Meals' }),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow(ConflictException);
       await expect(
         service.updateCost('Food', { name: 'Meals' }),
       ).rejects.toThrow('Cost with name Meals already exists');

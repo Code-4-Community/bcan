@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -14,9 +15,11 @@ import {
   ApiParam,
   ApiResponse,
   ApiTags,
+  ApiBearerAuth
 } from '@nestjs/swagger';
 import { CostService } from './cost.service';
 import { CostType } from '../../../middle-layer/types/CostType';
+import { VerifyAdminRoleGuard } from '../guards/auth.guard';
 
 interface CreateCostBody {
   amount: number;
@@ -40,6 +43,8 @@ export class CostController {
    * @returns array of all CashflowCosts in db
    */
   @Get()
+  @UseGuards(VerifyAdminRoleGuard)
+  @ApiBearerAuth()
   @ApiResponse({ 
     status: 200, 
     description: 'Successfully retrieved all costs' })
@@ -56,6 +61,8 @@ export class CostController {
    * @returns the cost with the specified name, if it exists
    */
   @Get(':costName')
+  @UseGuards(VerifyAdminRoleGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get cost by name' })
   @ApiParam({ name: 'costName', type: String, description: 'Cost Name' })
   @ApiResponse({ status: 200, description: 'Successfully retrieved cost' })
@@ -71,6 +78,8 @@ export class CostController {
    * @returns array of costs of the specified type, if any exist
    */
   @Get('type/:costType')
+  @UseGuards(VerifyAdminRoleGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get costs by type' })
   @ApiParam({ name: 'costType', type: String, description: 'Cost Type' })
   @ApiResponse({ status: 200, description: 'Successfully retrieved costs' })
@@ -85,6 +94,8 @@ export class CostController {
    * @returns 
    */
   @Post()
+  @UseGuards(VerifyAdminRoleGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a cost' })
   @ApiBody({
     schema: {
@@ -103,12 +114,15 @@ export class CostController {
   })
   @ApiResponse({ status: 201, description: 'Successfully created cost' })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid cost payload' })
+  @ApiResponse({ status: 409, description: 'Conflict - Cost with the same name already exists' })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async createCost(@Body() body: CreateCostBody) {
     return await this.costService.createCost(body);
   }
 
   @Patch(':costName')
+  @UseGuards(VerifyAdminRoleGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update cost fields by name' })
   @ApiParam({ name: 'costName', type: String, description: 'Cost Name' })
   @ApiBody({
@@ -128,6 +142,7 @@ export class CostController {
   @ApiResponse({ status: 200, description: 'Successfully updated cost' })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid update payload' })
   @ApiResponse({ status: 404, description: 'Cost not found' })
+  @ApiResponse({ status: 409, description: 'Conflict - Cost with the updated name already exists' })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async updateCost(
     @Param('costName') costName: string,
@@ -141,6 +156,8 @@ export class CostController {
   }
 
   @Delete(':costName')
+  @UseGuards(VerifyAdminRoleGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete cost by name' })
   @ApiParam({ name: 'costName', type: String, description: 'Cost Name' })
   @ApiResponse({ status: 200, description: 'Successfully deleted cost' })

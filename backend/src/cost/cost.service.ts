@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -175,6 +176,12 @@ export class CostService {
         name: normalizedName,
       };
     } catch (error) {
+      const awsError = error as { code?: string };
+
+      if (awsError.code === 'ConditionalCheckFailedException') {
+        throw new ConflictException(`Cost with name ${normalizedName} already exists`);
+      }
+
       if (error instanceof BadRequestException) {
         throw error;
       }
@@ -266,7 +273,7 @@ export class CostService {
 
         const awsError = error as { code?: string };
         if (awsError.code === 'ConditionalCheckFailedException') {
-          throw new BadRequestException(`Cost with name ${targetName} already exists`);
+          throw new ConflictException(`Cost with name ${targetName} already exists`);
         }
 
         this.logger.error(
