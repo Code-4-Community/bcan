@@ -1,3 +1,4 @@
+import CashEditLineItem from "./CashEditLineItem";
 
 type SourceProps = {
     text: string;
@@ -10,6 +11,7 @@ export default function CashSourceList({ text}: SourceProps) {
           <div className="text-lg lg:text-xl mb-2 w-full text-left font-bold">
             {text}
           </div>
+          <CashEditLineItem/>
         </div>
   );
 }
