@@ -1,6 +1,8 @@
+import { RevenueType } from "../../../../../middle-layer/types/RevenueType";
 import Button from "../../../components/Button";
 import InputField from "../../../components/InputField";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import CashCategoryDropdown from "./CashCategoryDropdown";
 
 export default function CashAddRevenue() {
   return (
@@ -10,12 +12,7 @@ export default function CashAddRevenue() {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 w-full justify-between gap-4">
         <div className="flex flex-col col-span-1 w-full gap-2">
-          <InputField
-            id="category"
-            label="Category"
-            value={"Select Category"}
-            className=""
-          />
+          <CashCategoryDropdown type={RevenueType} onChange={()=>{}}/>
           <InputField
             type="number"
             id="amount"

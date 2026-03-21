@@ -1,5 +1,7 @@
+import { CostType } from "../../../../../middle-layer/types/CostType";
 import Button from "../../../components/Button";
 import InputField from "../../../components/InputField";
+import CashCategoryDropdown from "./CashCategoryDropdown";
 
 export default function CashAddCosts() {
   return (
@@ -9,12 +11,7 @@ export default function CashAddCosts() {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 w-full justify-between gap-4">
         <div className="flex flex-col col-span-1 w-full gap-3">
-          <InputField
-            id="category"
-            label="Category"
-            value={"Select Category"}
-            className=""
-          />
+                    <CashCategoryDropdown type={CostType} onChange={()=>{}}/>
         </div>
         <div className="flex flex-col col-span-1 gap-3">
           <InputField
