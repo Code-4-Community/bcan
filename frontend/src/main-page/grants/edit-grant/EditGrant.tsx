@@ -25,12 +25,12 @@ export interface GrantFormState {
   applicationDeadline: TDateISO | "";
   grantStartDate: TDateISO | "";
   reportDates: (TDateISO | "")[];
-  timeline: number | null;
-  estimatedCompletionTime: number | null;
+  timeline: number;
+  estimatedCompletionTime: number;
   doesBcanQualify: "yes" | "no" | "";
   isRestricted: "restricted" | "unrestricted" | "";
   status: Status;
-  amount: number | null;
+  amount: number;
   description: string;
   attachments: Attachment[];
   bcanPocName: string;
@@ -53,8 +53,8 @@ const EditGrant: React.FC<{
     applicationDeadline: grantToEdit?.application_deadline ?? "",
     grantStartDate: grantToEdit?.grant_start_date ?? "",
     reportDates: grantToEdit?.report_deadlines ?? [],
-    timeline: grantToEdit?.timeline ?? null,
-    estimatedCompletionTime: grantToEdit?.estimated_completion_time ?? null,
+    timeline: grantToEdit?.timeline ?? 0,
+    estimatedCompletionTime: grantToEdit?.estimated_completion_time ?? 0,
     doesBcanQualify: grantToEdit
       ? grantToEdit.does_bcan_qualify
         ? "yes"
@@ -66,7 +66,7 @@ const EditGrant: React.FC<{
         : "unrestricted"
       : "",
     status: grantToEdit?.status ?? Status.Inactive,
-    amount: grantToEdit?.amount ?? null,
+    amount: grantToEdit?.amount ?? 0,
     description: grantToEdit?.description ?? "",
     attachments: grantToEdit?.attachments ?? [],
     bcanPocName: grantToEdit?.bcan_poc?.POC_name ?? "",
@@ -137,6 +137,7 @@ const EditGrant: React.FC<{
     }
 
     const grantData = buildGrant();
+    console.log(grantData)
 
     const result = grantToEdit
       ? await saveGrantEdits(grantData)
@@ -148,7 +149,9 @@ const EditGrant: React.FC<{
     } else {
       setErrorMessage(result.error ?? "An error occurred");
       setShowErrorPopup(true);
+      setSaving(false);
     }
+    
   };
 
   return (

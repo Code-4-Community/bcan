@@ -46,7 +46,7 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
               type="number"
               min={0}
               className="appearance-none block w-full h-[2.25rem] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
-              value={form.amount || undefined}
+              value={form.amount}
               onChange={(e) =>
                 dispatch({
                   type: "SET_FIELD",
@@ -207,7 +207,7 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
               type="number"
               min="0"
               className="appearance-none block w-full h-[2.25rem] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
-              value={form.timeline || undefined}
+              value={form.timeline}
               onChange={(e) =>
                 dispatch({
                   type: "SET_FIELD",
@@ -226,7 +226,7 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
               type="number"
               min="0"
               className="appearance-none block h-[2.25rem] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
-              value={form.estimatedCompletionTime || undefined}
+              value={form.estimatedCompletionTime}
               onChange={(e) =>
                 dispatch({
                   type: "SET_FIELD",
