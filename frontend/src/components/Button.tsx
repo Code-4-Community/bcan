@@ -31,7 +31,7 @@ export default function Button({
       className={`
         px-4 py-2 rounded-3xl font-medium text-black border-2 
       active:bg-primary-900 active:border-primary-900 active:text-white
-        w-fit h-fit flex-grow-0 items-center justify-center     
+        h-fit flex-grow-0 items-center justify-center     
         transition-opacity flex whitespace-nowrap
         ${className} ${
           disabled ? "cursor-not-allowed opacity-50" : "hover:opacity-90"
