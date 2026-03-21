@@ -14,9 +14,9 @@ const CashFlowPage = observer(() => {
       <div className="grid grid-cols-4 grid-rows-[auto_auto_1fr] gap-4">
         {/* Row 1 */}
         <CashFlowCard text="Current Cash" value="$50,000" logo={faDollarSign} className="text-blue"/>
-        <CashFlowCard text="Current Cash" value="$50,000" logo={faArrowTrendUp} className="text-green"/>
-        <CashFlowCard text="Current Cash" value="$50,000" logo={faUserGroup} className="text-primary"/>
-        <CashFlowCard text="Current Cash" value="Salary: 4.5% | Benefits: 4%" logo={faArrowTrendUp} className="text-green" size="small"/>
+        <CashFlowCard text="Total Revenue" value="$50,000" logo={faArrowTrendUp} className="text-green"/>
+        <CashFlowCard text="Monthly Costs" value="$50,000" logo={faUserGroup} className="text-primary"/>
+        <CashFlowCard text="Annual Increases" value="Salary: 4.5% | Benefits: 4%" logo={faArrowTrendUp} className="text-green" size="small"/>
 
         {/* Row 2 */}
         <CashPosition/>
@@ -27,8 +27,8 @@ const CashFlowPage = observer(() => {
         <CashProjection/>
 
         {/* Row 4 */}
-        <CashSourceList text="Revenue Sources"/>
-        <CashSourceList text="Cost Sources"/>
+        <CashSourceList type="Revenue"/>
+        <CashSourceList type="Cost"/>
       </div>
     </div>
   );
