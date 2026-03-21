@@ -11,7 +11,7 @@ export default function CashAddCosts() {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 w-full justify-between gap-4">
         <div className="flex flex-col col-span-1 w-full gap-3">
-                    <CashCategoryDropdown type={CostType} onChange={()=>{}}/>
+          <CashCategoryDropdown type={CostType} onChange={() => {}} />
         </div>
         <div className="flex flex-col col-span-1 gap-3">
           <InputField

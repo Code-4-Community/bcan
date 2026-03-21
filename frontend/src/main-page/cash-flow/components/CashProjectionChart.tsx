@@ -11,8 +11,8 @@ import { observer } from "mobx-react-lite";
 import "../../dashboard/styles/Dashboard.css";
 
 const CashProjectionChart = observer(({}: {}) => {
-  // Wrap Legend with a React component type to satisfy JSX typing
 
+  // replace with actual data, filter for 36 months
   const data = [
     { date: new Date(), cash_balance: 68333, revenue: 10000, costs: 833 },
     {
@@ -76,7 +76,7 @@ const CashProjectionChart = observer(({}: {}) => {
             scale="time"
             dy={10}
             style={{ fontSize: "var(--font-size-sm)" }}
-            tickFormatter={(date: Date) => date.getFullYear().toString()}
+            tickFormatter={(date: Date) => date.getMonth().toLocaleString() + "/" + date.getFullYear()}
             axisLine={false}
             tickLine={false}
           />

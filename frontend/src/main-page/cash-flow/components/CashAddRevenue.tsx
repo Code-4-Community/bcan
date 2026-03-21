@@ -12,7 +12,7 @@ export default function CashAddRevenue() {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 w-full justify-between gap-4">
         <div className="flex flex-col col-span-1 w-full gap-2">
-          <CashCategoryDropdown type={RevenueType} onChange={()=>{}}/>
+          <CashCategoryDropdown type={RevenueType} onChange={() => {}} />
           <InputField
             type="number"
             id="amount"
