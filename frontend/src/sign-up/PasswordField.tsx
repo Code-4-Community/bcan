@@ -69,7 +69,7 @@ export default function PasswordField({
 
   return (
     <div className="w-full">
-      <label htmlFor={id} className="block text-left font-bold text-black">
+      <label htmlFor={id} className="block text-left font-semibold text-black">
         {label}
         {required && <span className="text-red">*</span>}
       </label>
@@ -78,7 +78,7 @@ export default function PasswordField({
           id={id}
           type={visible ? "text" : "password"}
           className={`block w-full rounded-md border-2 py-2.5 pl-4 pr-10 text-base placeholder:text-grey-500 ${
-            error ? "border-red bg-red-lightest" : "border-grey-500 bg-white "
+            error ? "border-red bg-red-lightest" : "border-grey-500 bg-grey-100 "
           }`}
           {...inputProps}
         />
