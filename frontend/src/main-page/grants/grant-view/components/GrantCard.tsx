@@ -51,7 +51,7 @@ const GrantCard: React.FC<GrantCardProps> = ({ grant, isSelected, onClick }) => 
             {grant.organization}
           </div>
           <div className="text-md font-medium text-gray-900 text-left">
-            ${grant.amount}
+            ${grant.amount.toLocaleString()}
           </div>
         </div>
       </div>

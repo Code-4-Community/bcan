@@ -3,6 +3,8 @@ import { User } from '../../../../middle-layer/types/User'
 import { Grant } from '../../../../middle-layer/types/Grant'
 import { Status } from '../../../../middle-layer/types/Status'
 import { Notification } from '../../../../middle-layer/types/Notification'
+import { CashflowRevenue } from '../../../../middle-layer/types/CashflowRevenue'
+import { CashflowCost } from '../../../../middle-layer/types/CashflowCost'
 
 export interface AppState {
   isAuthenticated: boolean;
@@ -25,6 +27,8 @@ export interface AppState {
   userSort: {header: keyof User, sort: "asc" | "desc" | "none"} | null;
   notifications: Notification[];
   userQuery: string;
+  revenueSource: CashflowRevenue[];
+  costSource: CashflowCost[];
 }
 
 // Define initial state
@@ -48,6 +52,8 @@ const initialState: AppState = {
   sort: null,
   userSort: null,
   userQuery: '',
+  revenueSource: [],
+  costSource: [],
 };
 
 /**
