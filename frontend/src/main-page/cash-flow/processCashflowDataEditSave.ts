@@ -3,6 +3,9 @@ import {CashflowCost} from "../../../../middle-layer/types/CashflowCost.ts";
 import { api } from "../../api.ts";
 import { fetchCosts, fetchRevenues } from "./processCashflowData.ts";
 
+// This has not been tested yet but the basic structure when implemented should be the same
+// Mirrored format for processGrantDataEditSave.ts
+
 // save a new revenue
 export const createNewRevenue = async (newRevenue: CashflowRevenue) => {
   try {

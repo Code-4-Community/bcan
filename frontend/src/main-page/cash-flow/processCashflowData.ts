@@ -5,6 +5,9 @@ import {CashflowRevenue} from "../../../../middle-layer/types/CashflowRevenue.ts
 import {CashflowCost} from "../../../../middle-layer/types/CashflowCost.ts";
 import { api } from "../../api.ts";
 
+// This has not been tested yet but the basic structure when implemented should be the same
+// Mirrored format for processGrantData.ts
+
 // fetch line items
 export const fetchCosts = async () => {
   try {
