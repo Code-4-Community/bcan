@@ -8,7 +8,7 @@ export default function CashCreateLineItem() {
 
   return (
     <div className="chart-container col-span-2 h-full">
-      <div className="flex flex-row rounded-4xl p-1 border border-grey-500 mb-2">
+      <div className="flex flex-row rounded-4xl p-1 border border-grey-500 mb-2 text-sm lg:text-base">
         <Button
           text="Revenue"
           onClick={() => setShowCosts(!showCosts)}

@@ -20,7 +20,7 @@ export default function CashProjection() {
         {cards.map((c) => (
           <div
             key={c.field}
-            className="bg-grey-150 rounded px-2 py-2 min-w-0 flex-1 flex flex-col h-full"
+            className="bg-grey-150 rounded px-2 py-2 min-w-0 flex-1 flex flex-col h-full text-sm lg:text-base"
           >
             <div className={`font-semibold ${c.color}`}>{c.field}</div>
             <div>
