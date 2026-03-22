@@ -1,6 +1,13 @@
+import { CashflowCost } from "../../../../../middle-layer/types/CashflowCost";
+import { CashflowRevenue } from "../../../../../middle-layer/types/CashflowRevenue";
 import CashProjectionChart from "./CashProjectionChart";
 
-export default function CashProjection() {
+type ProjectionProps = {
+  costs: CashflowCost[];
+  revenues: CashflowRevenue[];
+};
+
+export default function CashProjection({costs, revenues}:ProjectionProps) {
 
   // replace with actual data
   const cards = [
@@ -15,7 +22,7 @@ export default function CashProjection() {
       <div className="text-lg lg:text-xl mb-2 w-full text-left font-bold">
         {"36-Month Cash Flow Projection"}
       </div>
-      <CashProjectionChart />
+      <CashProjectionChart costs={costs} revenues={revenues} />
       <div className="flex-wrap gap-2 items-center grid grid-cols-2 lg:grid-cols-4 mt-1">
         {cards.map((c) => (
           <div

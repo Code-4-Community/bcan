@@ -9,7 +9,7 @@ type CardProps = {
   size?: "small" | "medium";
 };
 
-export default function CashFlowCard({
+export default function CashflowKPICard({
   text,
   value,
   className,

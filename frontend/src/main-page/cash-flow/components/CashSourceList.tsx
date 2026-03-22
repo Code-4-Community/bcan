@@ -1,10 +1,13 @@
+import { CashflowCost } from "../../../../../middle-layer/types/CashflowCost";
+import { CashflowRevenue } from "../../../../../middle-layer/types/CashflowRevenue";
 import CashEditLineItem from "./CashEditLineItem";
 
 type SourceProps = {
   type: "Revenue" | "Cost";
+  lineItems: CashflowRevenue[] | CashflowCost[];
 };
 
-export default function CashSourceList({ type }: SourceProps) {
+export default function CashSourceList({ type, lineItems }: SourceProps) {
   return (
     <div className="chart-container col-span-2 h-full">
       <div className="text-lg lg:text-xl mb-2 w-full text-left font-bold">
