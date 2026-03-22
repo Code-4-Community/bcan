@@ -43,6 +43,17 @@ export class CostService {
     }
   }
 
+  private validateDate(date: string) {
+    const iso8601Regex = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(.\d{3})?(Z|[+-]\d{2}:\d{2})?)?$/;
+    if (!iso8601Regex.test(date)) {
+      throw new BadRequestException('date must be a valid ISO 8601 format string (e.g., "2026-03-22" or "2026-03-22T16:09:52Z")');
+    }
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate.getTime())) {
+      throw new BadRequestException('date must be a valid ISO 8601 date');
+    }
+  }
+
   // get all costs for cash flow
   async getAllCosts(): Promise<CashflowCost[]> {
     const tableName = process.env.CASHFLOW_COST_TABLE_NAME || '';
@@ -191,7 +202,7 @@ export class CostService {
     }
   }
 
-  async updateCost(costName: string, updates: UpdateCostBody): Promise<CashflowCost> {
+  async updateCost(costName: string, updates: CashflowCost): Promise<CashflowCost> {
     const tableName = process.env.CASHFLOW_COST_TABLE_NAME || '';
     this.validateName(costName);
     const normalizedName = costName.trim();
@@ -210,6 +221,9 @@ export class CostService {
     if (updates.name !== undefined) {
       this.validateName(updates.name);
       updates.name = updates.name.trim();
+    }
+    if (updates.date !== undefined) {
+      this.validateDate(updates.date);
     }
 
     const shouldRename =
@@ -236,6 +250,7 @@ export class CostService {
           name: targetName,
           amount: updates.amount ?? existingCost.amount,
           type: updates.type ?? existingCost.type,
+          date: updates.date
         };
 
         await this.dynamoDb
@@ -286,7 +301,7 @@ export class CostService {
       }
     }
 
-    const nonKeyUpdates: UpdateCostBody = {};
+    let nonKeyUpdates: Partial<CashflowCost>= {};
 
     if (updates.amount !== undefined) {
       nonKeyUpdates.amount = updates.amount;
@@ -296,7 +311,7 @@ export class CostService {
       nonKeyUpdates.type = updates.type;
     }
 
-    const updateKeys = Object.keys(nonKeyUpdates) as Array<keyof UpdateCostBody>;
+    const updateKeys = Object.keys(nonKeyUpdates) as Array<keyof CashflowCost>;
 
     if (updateKeys.length === 0) {
       throw new BadRequestException('At least one field is required for update');

@@ -8,4 +8,5 @@ export interface CashflowRevenue {
     type : RevenueType;
     name : string;
     installments: Installment[];
+
 }

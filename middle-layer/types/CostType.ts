@@ -1,6 +1,6 @@
 
 
-export enum CostType{
+export enum CostType {
     Salary = "Personal Salaries",
     Benefits = "Personal Benefits",
     InternCompensation = "Intern Compensation",

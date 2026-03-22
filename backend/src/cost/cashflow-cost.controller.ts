@@ -17,24 +17,21 @@ import {
   ApiTags,
   ApiBearerAuth
 } from '@nestjs/swagger';
-import { CostService } from './cost.service';
+import { CostService } from './cashflow-cost.service';
 import { CostType } from '../../../middle-layer/types/CostType';
 import { VerifyAdminRoleGuard } from '../guards/auth.guard';
+import { CashflowCost } from '../types/CashflowCost';
 
-interface CreateCostBody {
-  amount: number;
-  type: CostType;
-  name: string;
-}
+// interface CreateCostBody {
+//  cost : CashflowCost;
+// }
 
-interface UpdateCostBody {
-  amount?: number;
-  type?: CostType;
-  name?: string;
-}
+// interface UpdateCostBody {
+//   cost : CashflowCost
+// }
 
-@ApiTags('cost')
-@Controller('cost')
+@ApiTags('cashflow-cost')
+@Controller('cashflow-cost')
 export class CostController {
   constructor(private readonly costService: CostService) {}
 
@@ -99,24 +96,21 @@ export class CostController {
   @ApiOperation({ summary: 'Create a cost' })
   @ApiBody({
     schema: {
-      type: 'object',
-      required: ['amount', 'type', 'name'],
-      properties: {
-        amount: { type: 'number', example: 12000 },
-        type: {
-          type: 'string',
-          enum: Object.values(CostType),
-          example: CostType.Salary,
-        },
-        name: { type: 'string', example: 'Program Manager Salary' },
-      },
+    type: 'object',
+    required: ['name', 'amount', 'type','date'],
+    properties: {
+      name: { type: 'string', example: 'PM Salary' },
+      amount: { type: 'number', example: 12000 },
+      type: { type: 'string', enum: Object.values(CostType), example: CostType.Salary },
+      date: { type: 'string', example: '2026-03-14T00:00:00.000Z' },
     },
-  })
+  },
+})
   @ApiResponse({ status: 201, description: 'Successfully created cost' })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid cost payload' })
   @ApiResponse({ status: 409, description: 'Conflict - Cost with the same name already exists' })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
-  async createCost(@Body() body: CreateCostBody) {
+  async createCost(@Body() body: CashflowCost) {
     return await this.costService.createCost(body);
   }
 
@@ -136,6 +130,7 @@ export class CostController {
           example: CostType.Benefits,
         },
         name: { type: 'string', example: 'Updated Cost Name' },
+        date: {type: 'string', example: "2026-03-22T16:09:52Z"}
       },
     },
   })
@@ -146,7 +141,7 @@ export class CostController {
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async updateCost(
     @Param('costName') costName: string,
-    @Body() body: UpdateCostBody,
+    @Body() body: CashflowCost,
   ) {
     if (Object.keys(body).length === 0) {
       throw new BadRequestException('At least one field is required for update');
