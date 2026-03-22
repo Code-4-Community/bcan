@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import CashflowKPICard from "./components/CashFlowCard";
+import CashflowKPICard from "./components/CashflowKPICard";
 import {
   faDollarSign,
   faArrowTrendUp,
