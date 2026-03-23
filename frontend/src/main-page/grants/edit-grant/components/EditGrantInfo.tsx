@@ -51,7 +51,7 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
                 dispatch({
                   type: "SET_FIELD",
                   field: "amount",
-                  value: e.target.value,
+                  value: e.target.valueAsNumber,
                 })
               }
             />
@@ -212,7 +212,7 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
                 dispatch({
                   type: "SET_FIELD",
                   field: "timeline",
-                  value: e.target.value,
+                  value: e.target.valueAsNumber,
                 })
               }
             />
@@ -231,7 +231,7 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
                 dispatch({
                   type: "SET_FIELD",
                   field: "estimatedCompletionTime",
-                  value: e.target.value,
+                  value: e.target.valueAsNumber,
                 })
               }
             />
