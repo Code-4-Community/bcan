@@ -410,7 +410,7 @@ export class GrantService {
         const userId = grant.bcan_poc.POC_email;
         this.logger.debug(`Preparing to create notifications for user: ${userId}`);
         
-        //await this.createGrantNotifications({ ...grant, grantId: newGrantId }, userId);
+        await this.createGrantNotifications({ ...grant, grantId: newGrantId }, userId);
         
         this.logger.log(`Successfully created grant ${newGrantId} with all associated data`);
       } catch (error: unknown) {
