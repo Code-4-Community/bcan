@@ -16,6 +16,8 @@ import {
   updateUserQuery,
   updateUserSort,
   removeProfilePic,
+  fetchCashflowRevenues,
+  fetchCashflowCosts,
 } from './actions';
 import { getAppStore, persistToSessionStorage } from './store';
 import { setActiveUsers, setInactiveUsers } from './actions';
@@ -109,6 +111,16 @@ mutator(logoutUser, () => {
 mutator(fetchAllGrants, (actionMessage) => {
   const store = getAppStore();
   store.allGrants = actionMessage.grants;
+});
+
+mutator(fetchCashflowCosts, (actionMessage) => {
+  const store = getAppStore();
+  store.costSources = actionMessage.costs;
+});
+
+mutator(fetchCashflowRevenues, (actionMessage) => {
+  const store = getAppStore();
+  store.revenueSources = actionMessage.revenues;
 });
 
 /**

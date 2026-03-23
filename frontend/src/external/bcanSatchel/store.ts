@@ -27,8 +27,8 @@ export interface AppState {
   userSort: {header: keyof User, sort: "asc" | "desc" | "none"} | null;
   notifications: Notification[];
   userQuery: string;
-  revenueSource: CashflowRevenue[];
-  costSource: CashflowCost[];
+  revenueSources: CashflowRevenue[];
+  costSources: CashflowCost[];
 }
 
 // Define initial state
@@ -52,8 +52,8 @@ const initialState: AppState = {
   sort: null,
   userSort: null,
   userQuery: '',
-  revenueSource: [],
-  costSource: [],
+  revenueSources: [],
+  costSources: [],
 };
 
 /**

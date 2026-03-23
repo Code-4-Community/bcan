@@ -3,6 +3,8 @@ import { Grant } from '../../../../middle-layer/types/Grant'
 import { User } from '../../../../middle-layer/types/User'
 import { Status } from '../../../../middle-layer/types/Status'
 import { Notification } from '../../../../middle-layer/types/Notification';
+import { CashflowCost } from '../../../../middle-layer/types/CashflowCost';
+import { CashflowRevenue } from '../../../../middle-layer/types/CashflowRevenue';
 
 /**
  * Set whether the user is authenticated, update the user object,
@@ -45,6 +47,14 @@ export const removeProfilePic = action("removeProfilePic");
  */
 export const fetchAllGrants = action("fetchAllGrants", (grants: Grant[]) => ({
   grants,
+}));
+
+export const fetchCashflowRevenues = action("fetchCashflowRevenues", (revenues: CashflowRevenue[]) => ({
+  revenues,
+}));
+
+export const fetchCashflowCosts = action("fetchCashflowCosts", (costs: CashflowCost[]) => ({
+  costs,
 }));
 
 export const updateFilter = action("updateFilter", (status: Status | null) => ({
