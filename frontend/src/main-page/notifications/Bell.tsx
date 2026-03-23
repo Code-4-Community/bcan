@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
-import NotificationPopup from "../notifications/NotificationPopup";
+import NotificationPopup from "./NotificationPopup";
 import { setNotifications as setNotificationsAction } from "../../external/bcanSatchel/actions";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { observer } from "mobx-react-lite";

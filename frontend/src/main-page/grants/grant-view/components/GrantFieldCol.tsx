@@ -20,7 +20,7 @@ export default function GrantFieldCol({
     <div
       className={
         `flex flex-col w-full gap-6 items-start text-left ` +
-        (colspan === 2 ? "col-span-2" : "col-span-1")
+        (colspan === 2 ? "col-span-1 md:col-span-2" : "col-span-1")
       }
     >
       {fields.map((field) => (

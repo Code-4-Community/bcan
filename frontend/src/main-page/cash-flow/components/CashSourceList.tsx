@@ -17,7 +17,7 @@ export default function CashSourceList({ type }: SourceProps) {
       {/* map over list of source and put casheditlineitem for each */}
       <CashEditLineItem
         cardText={
-          <div className="flex flex-col">
+          <div className="flex flex-col text-sm lg:text-base">
             <div className="font-semibold">{"Individual Donations"}</div>
             <div>{"$10,000 | 3/13/2323"}</div>
           </div>

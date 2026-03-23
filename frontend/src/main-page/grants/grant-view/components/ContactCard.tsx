@@ -1,32 +1,33 @@
-import { getAppStore } from "../../../external/bcanSatchel/store";
-import POC from "../../../../../middle-layer/types/POC";
-import Avatar from "../../../components/Avatar";
-import logo from "../../../images/logo.svg";
+import { getAppStore } from "../../../../external/bcanSatchel/store";
+import POC from "../../../../../../middle-layer/types/POC";
+import Avatar from "../../../../components/Avatar";
+import logo from "../../../../images/logo.svg";
 
 type ContactCardProps = {
   contact?: POC;
   type?: "BCAN" | "Granter";
 };
 
-const store = getAppStore()
+const store = getAppStore();
 const activeUsers = store.activeUsers || [];
 
 export default function ContactCard({ contact, type }: ContactCardProps) {
-
-const contactPhoto =
-  type === "BCAN"
-    ? activeUsers.find((user) => user.email === contact?.POC_email)
-        ?.profilePicUrl
-    : logo;
+  const contactPhoto =
+    type === "BCAN"
+      ? activeUsers.find((user) => user.email === contact?.POC_email)
+          ?.profilePicUrl
+      : logo;
 
   return (
-    <div className="flex flex-row gap-4 w-full justify-items-start rounded border-2 p-3 h-full border-grey-500">
-      <Avatar
+    <div className="flex gap-4 w-full text-left justify-items-start rounded border-2 p-3 h-full border-grey-500">
+      <div className="lg:flex h-full items-center hidden aspect-square">
+        <Avatar
         src={contactPhoto}
         alt="Profile"
         className="max-w-14 rounded-full object-cover hidden lg:block"
         fallbackSrc={logo}
       />
+      </div>
       <div className="flex flex-col align-middle justify-center">
         <p className="text-black text-md font-semibold ">
           {contact?.POC_name || "N/A"}
@@ -44,7 +45,7 @@ const contactPhoto =
       </div>
       <div className="place-items-end justify-end ml-auto flex items-start">
         <div
-          className={`w-fit h-fit p-2 text-xs rounded-full text-white ${type === "BCAN" ? "bg-primary-900" : "bg-secondary-500"}`}
+          className={`w-fit h-fit py-2 px-3 text-xs rounded-full text-white ${type === "BCAN" ? "bg-primary-900" : "bg-secondary-500"}`}
         >
           {type}
         </div>

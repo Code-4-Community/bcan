@@ -12,6 +12,7 @@ export interface Grant {
     amount: number; // amount of money given by the grant
     grant_start_date: TDateISO; // when the grant money will start being issued
     application_deadline: TDateISO; // when was grant submission due
+    application_date?: TDateISO; // when was grant submitted
     report_deadlines?: TDateISO[];  // multiple report dates
     description?: string; // any additional information about the grant
     timeline: number; // how long the grant will last BCAN (e.g. grant will last 6 months --> 0.5 years)

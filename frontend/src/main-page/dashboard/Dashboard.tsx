@@ -1,34 +1,18 @@
-import CsvExportButton from "./CsvExportButton";
+import CsvExportButton from "./components/CsvExportButton";
 
-import DateFilter from "./DateFilter";
+import DateFilter from "./components/DateFilter";
 import "./styles/Dashboard.css";
 import { observer } from "mobx-react-lite";
-import StackedBarMoneyReceived from "./Charts/StackedBarMoneyReceived";
-import { useEffect } from "react";
-import {
-  updateYearFilter,
-  updateFilter,
-  updateEndDateFilter,
-  updateStartDateFilter,
-  updateSearchQuery,
-} from "../../external/bcanSatchel/actions";
+import StackedBarMoneyReceived from "./components/StackedBarMoneyReceived";
 import { getAppStore } from "../../external/bcanSatchel/store";
-import BarYearGrantStatus from "./Charts/BarYearGrantStatus";
-import LineChartSuccessRate from "./Charts/LineChartSuccessRate";
-import GanttYearGrantTimeline from "./Charts/GanttYearGrantTimeline";
-import DonutMoneyApplied from "./Charts/DonutMoneyApplied";
+import BarYearGrantStatus from "./components/BarYearGrantStatus";
+import LineChartSuccessRate from "./components/LineChartSuccessRate";
+import GanttYearGrantTimeline from "./components/GanttYearGrantTimeline";
+import DonutMoneyApplied from "./components/DonutMoneyApplied";
 import { ProcessGrantData } from "../grants/filter-bar/processGrantData";
-import KPICards from "./Charts/KPICards";
+import KPICards from "./components/KPICards";
 
 const Dashboard = observer(() => {
-  // reset filters on initial render
-  useEffect(() => {
-    updateYearFilter([]);
-    updateFilter(null);
-    updateEndDateFilter(null);
-    updateStartDateFilter(null);
-    updateSearchQuery("");
-  }, []);
 
   const { yearFilter, allGrants } = getAppStore();
 

@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { updateYearFilter } from "../../external/bcanSatchel/actions";
-import { getAppStore } from "../../external/bcanSatchel/store";
+import { updateYearFilter } from "../../../external/bcanSatchel/actions";
+import { getAppStore } from "../../../external/bcanSatchel/store";
 import { observer } from "mobx-react-lite";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import Button from "../../components/Button";
+import Button from "../../../components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const DateFilter: React.FC = observer(() => {
@@ -52,7 +52,7 @@ const DateFilter: React.FC = observer(() => {
   };
 
   return (
-    <div className="flex flex-col space-y-2 w-64 lg:w-80 relative">
+    <div className="flex flex-col space-y-2 relative">
       <Button
         text={selectedYears.length === 0
             ? "Select years"
@@ -65,7 +65,7 @@ const DateFilter: React.FC = observer(() => {
         className="bg-white border-grey-500 inline-flex items-center justify-between text-sm lg:text-base"
       />
       <div
-        className={`z-[100] absolute  top-10 w-64 lg:w-80 bg-white ${showDropdown ? "" : "hidden"} rounded-md border-2 border-grey-500 shadow-lg`}
+        className={`z-[100] absolute  top-10 w-64 bg-white ${showDropdown ? "" : "hidden"} rounded-md border-2 border-grey-500 shadow-lg`}
       >
         <button
           className="close-button absolute top-3 right-4 text-lg"

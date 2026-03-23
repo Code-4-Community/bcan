@@ -27,7 +27,7 @@ import { IoIosWarning } from "react-icons/io";
         onClick={onCloseDelete}
       >
         <div 
-          className=" bg-white border-2 rounded-md shadow-2xl p-8 max-w-xl w-full mx-4 transform transition-all duration-300"
+          className=" bg-white rounded-md shadow-2xl p-8 max-w-xl w-full mx-4 transform transition-all duration-300"
           onClick={(e) => e.stopPropagation()}
         >
 
@@ -53,7 +53,7 @@ import { IoIosWarning } from "react-icons/io";
               <IoIosWarning size={24} className="text-red"/>
               <p className="font-bold px-1 text-lg text-red"> Warning </p>
             </div>
-            <p className=" text-left text-lg font-semibold text-red">
+            <p className=" text-left font-semibold text-red">
               {warningMessage}
             </p>
 

@@ -32,7 +32,7 @@ export default function CashAddCosts() {
       <Button
         text="Add Cost Item"
         onClick={() => alert("add cost source")}
-        className="bg-primary text-white mt-2"
+        className="bg-primary text-white mt-2 text-sm lg:text-base"
       />
     </div>
   );

@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Dashboard from "./dashboard/Dashboard";
 import GrantPage from "./grants/GrantPage";
 import NavBar from "./navbar/NavBar";
@@ -12,8 +12,9 @@ import { UserStatus } from "../../../middle-layer/types/UserStatus";
 import { observer } from "mobx-react-lite";
 import { Navigate } from "react-router-dom";
 import { getAppStore } from "../external/bcanSatchel/store";
-import BellButton from "./navbar/Bell";
-import { useState } from "react";
+import BellButton from "./notifications/Bell";
+import { useEffect, useState } from "react";
+import { clearAllFilters } from "../external/bcanSatchel/actions";
 
 interface PositionGuardProps {
   children: React.ReactNode;
@@ -48,13 +49,20 @@ const PositionGuard = observer(
 function MainPage() {
   const [openModal, setOpenModal] = useState(false);
 
+  const location = useLocation();
+
+  // Clears all store filters when page changes
+  useEffect(() => {
+    clearAllFilters();
+  }, [location]);
+
   return (
     <div className="w-full flex-row flex h-screen overflow-hiden">
       <div>
         <NavBar />
       </div>
-      <div className="px-6 lg:px-10 py-8 pt-8 w-full h-screen overflow-y-auto">
-        <div className="min-h-screen mb-8">
+      <div className="px-6 lg:px-10 pt-8 w-full h-screen overflow-y-auto">
+        <div className="">
           <div className="bell-container flex justify-end w-full">
             <BellButton setOpenModal={setOpenModal} openModal={openModal} />
           </div>
@@ -64,6 +72,7 @@ function MainPage() {
               element={
                 <PositionGuard adminOnly={false}>
                   <Dashboard />
+                  <Footer />
                 </PositionGuard>
               }
             />
@@ -80,6 +89,7 @@ function MainPage() {
               element={
                 <PositionGuard adminOnly={true}>
                   <UsersPage />
+                  <Footer />
                 </PositionGuard>
               }
             />
@@ -89,6 +99,7 @@ function MainPage() {
               element={
                 <PositionGuard adminOnly={false}>
                   <CashFlowPage />
+                  <Footer />
                 </PositionGuard>
               }
             />
@@ -97,6 +108,7 @@ function MainPage() {
               element={
                 <PositionGuard adminOnly={false}>
                   <Settings />
+                  <Footer />
                 </PositionGuard>
               }
             />
@@ -110,7 +122,6 @@ function MainPage() {
             />
           </Routes>
         </div>
-        <Footer />
       </div>
     </div>
   );

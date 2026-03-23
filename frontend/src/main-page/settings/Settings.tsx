@@ -168,7 +168,7 @@ function Settings() {
         }
 
   return (
-    <div className="max-w-5xl ">
+    <div className="max-w-5xl min-h-[86vh]">
       <h1 className="text-3xl lg:text-4xl font-bold mb-8 flex justify-start">Settings</h1>
 
       <div className="mb-12">
