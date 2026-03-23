@@ -202,7 +202,7 @@ export class CostService {
     }
   }
 
-  async updateCost(costName: string, updates: CashflowCost): Promise<CashflowCost> {
+  async updateCost(costName: string, updates: Partial<CashflowCost>): Promise<CashflowCost> {
     const tableName = process.env.CASHFLOW_COST_TABLE_NAME || '';
     this.validateName(costName);
     const normalizedName = costName.trim();
@@ -250,7 +250,7 @@ export class CostService {
           name: targetName,
           amount: updates.amount ?? existingCost.amount,
           type: updates.type ?? existingCost.type,
-          date: updates.date
+          date: updates.date ?? existingCost.date
         };
 
         await this.dynamoDb
