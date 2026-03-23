@@ -215,7 +215,7 @@ export class AuthController {
   async refresh(
     @Req() req: any,
     @Res({ passthrough: true}) response: Response,
-  ): Promise<{ message: string}> {
+  ): Promise<{ message: string; refreshToken: string; idToken: string }> {
 
     const refreshToken = req.cookies?.refresh_token;
 
@@ -236,7 +236,12 @@ export class AuthController {
       throw new UnauthorizedException('Could not extract user identity from token');
     }
 
-    const { accessToken, idToken: newIdToken } = await this.authService.refreshTokens(refreshToken, cognitoUsername);
+    const { accessToken, idToken: newIdToken, refreshToken: newRefreshToken } =
+      await this.authService.refreshTokens(refreshToken, cognitoUsername);
+
+    // Cognito may or may not rotate refresh tokens depending on configuration.
+    // To keep frontend contract stable, we always return the refresh token we're using.
+    const effectiveRefreshToken = newRefreshToken ?? refreshToken;
 
     response.cookie('access_token', accessToken, {
       httpOnly: true,
@@ -254,7 +259,19 @@ export class AuthController {
       path: '/',
     });
 
-    return { message: 'Tokens refreshed successfully' };
+    response.cookie('refresh_token', effectiveRefreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 30 * 24 * 60 * 60 * 1000, // match Cognito refresh token expiry (approx)
+      path: '/auth/refresh',
+    });
+
+    return {
+      message: 'Tokens refreshed successfully',
+      refreshToken: effectiveRefreshToken,
+      idToken: newIdToken,
+    };
   }
 
   /**
