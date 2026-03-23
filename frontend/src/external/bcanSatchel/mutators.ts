@@ -17,9 +17,13 @@ import {
   updateUserQuery,
   updateUserSort,
   clearAllFilters,
+  setActiveUsers, 
+  setInactiveUsers,
+  removeProfilePic,
+  fetchCashflowRevenues,
+  fetchCashflowCosts,
 } from "./actions";
 import { getAppStore, persistToSessionStorage } from "./store";
-import { setActiveUsers, setInactiveUsers, removeProfilePic } from "./actions";
 
 /**
  * setActiveUsers mutator
@@ -125,6 +129,16 @@ mutator(clearAllFilters, () => {
 mutator(fetchAllGrants, (actionMessage) => {
   const store = getAppStore();
   store.allGrants = actionMessage.grants;
+});
+
+mutator(fetchCashflowCosts, (actionMessage) => {
+  const store = getAppStore();
+  store.costSources = actionMessage.costs;
+});
+
+mutator(fetchCashflowRevenues, (actionMessage) => {
+  const store = getAppStore();
+  store.revenueSources = actionMessage.revenues;
 });
 
 /**

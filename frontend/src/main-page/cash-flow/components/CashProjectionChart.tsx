@@ -9,8 +9,15 @@ import {
 } from "recharts";
 import { observer } from "mobx-react-lite";
 import "../../dashboard/styles/Dashboard.css";
+import { CashflowRevenue } from "../../../../../middle-layer/types/CashflowRevenue";
+import { CashflowCost } from "../../../../../middle-layer/types/CashflowCost";
 
-const CashProjectionChart = observer(({}: {}) => {
+type ChartProps = {
+  costs: CashflowCost[];
+  revenues: CashflowRevenue[];
+};
+
+const CashProjectionChart = observer(({}: ChartProps) => {
 
   // replace with actual data, filter for 36 months
   const data = [
