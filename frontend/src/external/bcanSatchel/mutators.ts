@@ -100,7 +100,6 @@ mutator(updateUserProfile, (actionMessage) => {
  * logoutUser mutator
  */
 mutator(logoutUser, () => {
-  clearAllFilters();
   const store = getAppStore();
   store.isAuthenticated = false;
   store.user = null;

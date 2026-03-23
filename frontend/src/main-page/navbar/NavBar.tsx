@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import {
+  clearAllFilters,
   logoutUser
 } from "../../external/bcanSatchel/actions.ts";
 import { observer } from "mobx-react-lite";
@@ -27,6 +28,7 @@ const NavBar: React.FC = observer(() => {
 
   const handleLogout = () => {
     logoutUser();
+    clearAllFilters();
     navigate("/login");
   };
   
