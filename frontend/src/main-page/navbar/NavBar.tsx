@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import {
+  clearAllFilters,
   logoutUser
 } from "../../external/bcanSatchel/actions.ts";
 import { observer } from "mobx-react-lite";
@@ -27,11 +28,12 @@ const NavBar: React.FC = observer(() => {
 
   const handleLogout = () => {
     logoutUser();
+    clearAllFilters();
     navigate("/login");
   };
   
   return (
-    <aside className="left-0 top-0 h-screen w-48 lg:w-56 bg-white flex flex-col">
+    <aside className="left-0 top-0 min-h-screen w-48 lg:w-56 bg-white flex flex-col">
       {/* Logo at top */}
       <div className="p-6 flex items-center justify-center mr-2">
         <img className="w-12 h-12" src={NavBarBranding.logo} alt={`${NavBarBranding.name} Logo`} />

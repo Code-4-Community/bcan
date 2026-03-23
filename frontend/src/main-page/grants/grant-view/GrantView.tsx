@@ -1,7 +1,7 @@
 import React, { useState, useLayoutEffect, useEffect } from "react";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { observer } from "mobx-react-lite";
-import StatusIndicator from "../../grants/grant-list/StatusIndicator";
+import StatusIndicator from "./components/StatusIndicator";
 import {
   faPenToSquare,
   faCheckSquare,
@@ -9,19 +9,21 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../../components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ContactCard from "./ContactCard";
-import GrantFieldCol from "./GrantFieldCol";
-import { CostBenefitAnalysis } from "./CostBenefitAnalysis";
+import ContactCard from "./components/ContactCard";
+import GrantFieldCol from "./components/GrantFieldCol";
+import { CostBenefitAnalysis } from "./components/CostBenefitAnalysis";
+import EditGrant from "../edit-grant/EditGrant";
+import Footer from "../../../Footer";
 
 interface GrantItemProps {
   grant: Grant;
 }
 
 const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
-  
-  useEffect(() => {
-  }, [grant]);
-  
+  const [showEditGrant, setShowEditGrant] = useState(false);
+
+  useEffect(() => {}, [grant]);
+
   const useTruncatedElement = ({
     ref,
   }: {
@@ -56,11 +58,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
 
   function formatDate(isoString: string): string {
     if (!isoString) return "N/A";
-    const date = new Date(isoString);
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${month}/${day}/${year}`;
+    return new Date(isoString + "T00:00:00").toLocaleDateString();
   }
 
   function formatCurrency(amount: number): string {
@@ -69,193 +67,207 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
   }
 
   return (
-    <div className="w-full bg-white rounded-md flex flex-col gap-6 p-6">
-      {/* Top header part */}
-      <div className="flex justify-between">
-        {/* Left side */}
-        <div className="flex flex-col gap-2 items-start text-left">
-          <h2 className="text-2xl font-semibold">{grant.organization}</h2>
-          <StatusIndicator curStatus={grant.status} />
+    <div>
+      <div className="w-full bg-white rounded-md flex flex-col gap-6 p-6 h-full overflow-y-auto ">
+        {/* Top header part */}
+        <div className="flex justify-between">
+          {/* Left side */}
+          <div className="flex flex-col gap-2 items-start text-left">
+            <h2 className="text-2xl font-semibold">{grant.organization}</h2>
+            <StatusIndicator curStatus={grant.status} />
+          </div>
+          {/* Right side */}
+          <div className="flex flex-col gap-2 items-end">
+            <Button
+              text="Edit"
+              onClick={() => setShowEditGrant(true)}
+              className="bg-white text-black border-2 border-grey-500 text-sm lg:text-base"
+              logo={faPenToSquare}
+              logoPosition="right"
+            />
+          </div>
         </div>
-        {/* Right side */}
-        <div className="flex flex-col gap-2 items-end">
-          <Button
-            text="Edit"
-            onClick={() => alert("edit grant info")}
-            className="bg-white text-black border-2 border-grey-500"
-            logo={faPenToSquare}
-            logoPosition="right"
-          />
-        </div>
-      </div>
-      <hr className="border-grey-400 border-t-2 rounded-full" />
+        <hr className="border-grey-400 border-t-2 rounded-full" />
 
-      {/* Middle info part */}
-      <div className="flex flex-col gap-6 items-start text-left">
-        {/* Description */}
-        <GrantFieldCol
-          fields={[
-            {
-              label: "Description",
-              item: (
-                <div>
-                  <p
-                    ref={ref}
-                    className={` ${!isShowingMore && "line-clamp-3"}`}
-                    onClick={toggleIsShowingMore}
-                  >
-                    {grant?.description || "N/A"}
-                  </p>
-                  {isTruncated && (
-                    <button
-                      className="text-secondary"
-                      onClick={toggleIsShowingMore}
-                    >
-                      {isShowingMore ? "Show less" : "show more"}
-                    </button>
-                  )}
-                </div>
-              ),
-            },
-          ]}
-        />
-        {/* Other details */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 w-full gap-4">
+        {/* Middle info part */}
+        <div className="flex flex-col gap-6 items-start text-left">
+          {/* Description */}
           <GrantFieldCol
             fields={[
               {
-                label: "Amount ($)",
-                value: formatCurrency(grant.amount),
-                important: true,
-              },
-              {
-                label: "BCAN Eligible",
-                important: true,
-                item: grant.does_bcan_qualify ? (
-                  <span className="text-green">
-                    <FontAwesomeIcon icon={faCheckSquare} /> Yes
-                  </span>
-                ) : (
-                  <span className="text-red">
-                    <FontAwesomeIcon icon={faXmarkSquare} /> No
-                  </span>
+                label: "Description",
+                item: (
+                  <div>
+                    <p
+                      ref={ref}
+                      className={` ${!isShowingMore && "line-clamp-3"}`}
+                      onClick={toggleIsShowingMore}
+                    >
+                      {grant?.description || "N/A"}
+                    </p>
+                    {isTruncated && (
+                      <button
+                        className="text-secondary"
+                        onClick={toggleIsShowingMore}
+                      >
+                        {isShowingMore ? "Show less" : "show more"}
+                      </button>
+                    )}
+                  </div>
                 ),
               },
             ]}
           />
+          {/* Other details */}
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 w-full gap-4">
+            <GrantFieldCol
+              fields={[
+                {
+                  label: "Amount ($)",
+                  value: formatCurrency(grant.amount),
+                  important: true,
+                },
+                {
+                  label: "BCAN Eligible",
+                  important: true,
+                  item: grant.does_bcan_qualify ? (
+                    <span className="text-green">
+                      <FontAwesomeIcon icon={faCheckSquare} /> Yes
+                    </span>
+                  ) : (
+                    <span className="text-red">
+                      <FontAwesomeIcon icon={faXmarkSquare} /> No
+                    </span>
+                  ),
+                },
+              ]}
+            />
+            <GrantFieldCol
+              fields={[
+                {
+                  label: "Due Date",
+                  important: true,
+                  value: formatDate(grant.application_deadline),
+                },
+                {
+                  label: "Application Date",
+                  value: grant.application_date ? formatDate(grant.application_date) : "N/A",
+                },
+              ]}
+            />
+            <GrantFieldCol
+              fields={[
+                {
+                  label: "Grant Start Date",
+                  value: formatDate(grant.grant_start_date),
+                },
+                {
+                  label: "Report Deadlines",
+                  item:
+                    grant.report_deadlines &&
+                    grant.report_deadlines.length > 0 ? (
+                      grant.report_deadlines.map(
+                        (deadline: string, index: number) => (
+                          <div key={index} className="text-black">
+                            {formatDate(deadline)}
+                          </div>
+                        ),
+                      )
+                    ) : (
+                      <div className="">N/A</div>
+                    ),
+                },
+              ]}
+            />
+            <GrantFieldCol
+              colspan={2}
+              fields={[
+                {
+                  label: "Timeline (years)",
+                  value: grant.timeline,
+                },
+                {
+                  label: "Estimated Completion Time (hours)",
+                  value: grant.estimated_completion_time,
+                },
+              ]}
+            />
+          </div>
+        </div>
+        <hr className="border-grey-400 border-t-2 rounded-full" />
+
+        {/* Bottom info */}
+        <div className="flex flex-col gap-6 items-start text-left">
+          {/* Contacts */}
           <GrantFieldCol
             fields={[
               {
-                label: "Due Date",
-                important: true,
-                value: formatDate(grant.application_deadline),
-              },
-              {
-                label: "Application Date",
-                value: "TBD (add to DB)",
+                label: "Contacts",
+                item: (
+                  <div className="grid grid-cols-1 xl:grid-cols-2 w-full h-full lg:w-[85%] gap-6">
+                    <ContactCard contact={grant.bcan_poc} type="BCAN" />
+                    <ContactCard
+                      contact={grant.grantmaker_poc}
+                      type="Granter"
+                    />
+                  </div>
+                ),
               },
             ]}
           />
+          {/* Documents */}
           <GrantFieldCol
             fields={[
               {
-                label: "Grant Start Date",
-                value: formatDate(grant.grant_start_date),
-              },
-              {
-                label: "Report Deadlines",
+                label: "Documents",
                 item:
-                  grant.report_deadlines &&
-                  grant.report_deadlines.length > 0 ? (
-                    grant.report_deadlines.map(
-                      (deadline: string, index: number) => (
-                        <div key={index} className="text-black">
-                          {formatDate(deadline)}
-                        </div>
-                      ),
-                    )
+                  grant.attachments && grant.attachments.length > 0 ? (
+                    <div className="columns-2 xl:columns-4 gap-4 lg:w-[90%]">
+                      {grant.attachments.map((attachment, index) => (
+                        <p key={index} className="truncate w-full mb-1">
+                          <a
+                            href={attachment.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-secondary underline"
+                          >
+                            {attachment.attachment_name || attachment.url}
+                          </a>
+                        </p>
+                      ))}
+                    </div>
                   ) : (
                     <div className="">N/A</div>
                   ),
               },
             ]}
           />
+        </div>
+        <hr className="border-grey-400 border-t-2 rounded-full" />
+
+        {/* Cost Benefit */}
+        <div className="flex flex-col gap-6 items-start text-left">
           <GrantFieldCol
-            colspan={2}
             fields={[
               {
-                label: "Timeline (years)",
-                value: grant.timeline,
-              },
-              {
-                label: "Estimated Completion Time (hours)",
-                value: grant.estimated_completion_time,
+                label: "Cost Analysis Calculator",
+                item: <CostBenefitAnalysis grant={grant} />,
               },
             ]}
           />
         </div>
       </div>
-      <hr className="border-grey-400 border-t-2 rounded-full" />
-
-      {/* Bottom info */}
-      <div className="flex flex-col gap-6 items-start text-left">
-        {/* Contacts */}
-        <GrantFieldCol
-          fields={[
-            {
-              label: "Contacts",
-              item: (
-                <div className="grid grid-cols-1 xl:grid-cols-2 w-full h-full lg:w-[85%] gap-6">
-                  <ContactCard contact={grant.bcan_poc} type="BCAN" />
-                  <ContactCard contact={grant.grantmaker_poc} type="Granter" />
-                </div>
-              ),
-            },
-          ]}
-        />
-        {/* Documents */}
-        <GrantFieldCol
-          fields={[
-            {
-              label: "Documents",
-              item:
-                grant.attachments && grant.attachments.length > 0 ? (
-                  <div className="columns-2 xl:columns-4 gap-4 lg:w-[90%]">
-                    {grant.attachments.map((attachment, index) => (
-                      <p key={index} className="truncate w-full mb-1">
-                        <a
-                          href={attachment.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-secondary underline"
-                        >
-                          {attachment.attachment_name || attachment.url}
-                        </a>
-                      </p>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="">N/A</div>
-                ),
-            },
-          ]}
-        />
+      <Footer/>
+      <div>
+        {showEditGrant && (
+          <EditGrant
+            grantToEdit={grant}
+            onClose={async () => {
+              setShowEditGrant(false);
+            }}
+          />
+        )}
       </div>
-      <hr className="border-grey-400 border-t-2 rounded-full" />
-
-      {/* Cost Benefit */}
-      <div className="flex flex-col gap-6 items-start text-left">
-      <GrantFieldCol
-          fields={[
-            {
-              label: "Cost Analysis Calculator",
-              item: (
-                <CostBenefitAnalysis grant={grant} />
-              ),
-            },
-          ]}
-        />
-    </div>
     </div>
   );
 });

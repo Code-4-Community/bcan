@@ -45,7 +45,7 @@ export default function CashAddRevenue() {
       <Button
         text="Add Revenue Source"
         onClick={() => alert("add revenue source")}
-        className="bg-green text-white mt-2"
+        className="bg-green text-white mt-2 text-sm lg:text-base"
       />
     </div>
   );

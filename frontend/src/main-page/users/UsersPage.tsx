@@ -3,12 +3,12 @@ import { useState } from "react";
 
 import { observer } from "mobx-react-lite";
 import Button from "../../components/Button.tsx";
-import UserSearch from "./UserSearch.tsx";
+import UserSearch from "./components/UserSearch.tsx";
 import { ProcessUserData } from "./processUserData.ts";
-import UserRow from "./user-rows/UserRow.tsx";
-import UserMenu from "./user-rows/UserMenu.tsx";
-import UserRowHeader from "./user-rows/UserRowHeader.tsx";
-import UserApprove from "./user-rows/UserApprove.tsx";
+import UserRow from "./components/UserRow.tsx";
+import UserMenu from "./components/UserMenu.tsx";
+import UserRowHeader from "./components/UserRowHeader.tsx";
+import UserApprove from "./components/UserApprove.tsx";
 
 const UsersPage = observer(() => {
   const [showAll, setShowAll] = useState(true);
@@ -30,9 +30,9 @@ const UsersPage = observer(() => {
   // const currentPageUsers = filteredUsers.slice(pageStartIndex, pageEndIndex);
   const currentPageUsers = filteredUsers; // Temporarily disable pagination by showing all users
   return (
-    <div className="grant-page w-full items-end">
+    <div className="grant-page w-full min-h-[86vh] items-end">
       <UserSearch />
-      <div className="flex w-full py-2 gap-2">
+      <div className="flex w-full py-2 gap-2 text-sm lg:text-base">
         <Button
           text="Active Users"
           onClick={() => setShowAll(true)}
@@ -51,7 +51,7 @@ const UsersPage = observer(() => {
       </div>
 
       <div className="flex flex-row w-full gap-2 justify-between mt-4 bg-white rounded-md">
-        <div className="flex flex-col w-full overflow-y-scroll text-start">
+        <div className="flex flex-col w-full overflow-y-auto text-start">
           <UserRowHeader />
           {currentPageUsers.map((user) => (
             <div key={user.email}>

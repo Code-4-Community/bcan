@@ -26,21 +26,21 @@
   --font-size-4xl: 2.25rem;
   --font-size-hero: 3.2rem;
 
-  --color-green-dark: #007E4C;
-  --color-green: #04A967;
-  --color-green-light: #D0FFEF;
+  --color-green-dark: #007e4c;
+  --color-green: #04a967;
+  --color-green-light: #d0ffef;
 
-  --color-blue-dark: #006CA1;
-  --color-blue: #006CA1;
-  --color-blue-light: #D0EDFF;
+  --color-blue-dark: #006ca1;
+  --color-blue: #006ca1;
+  --color-blue-light: #d0edff;
 
-  --color-yellow-dark: #9B6000;
-  --color-yellow-light: #FFF0D3;
+  --color-yellow-dark: #9b6000;
+  --color-yellow-light: #fff0d3;
 
-  --color-red-dark: #C80000;
-  --color-red: #C80000;
-  --color-red-light: #FFD8D8;
-  --color-red-lightest: #FFF0F0;
+  --color-red-dark: #c80000;
+  --color-red: #c80000;
+  --color-red-light: #ffd8d8;
+  --color-red-lightest: #fff0f0;
 
   --color-primary-900: #e16f39;
   --color-primary-800: #e78c61;
@@ -67,7 +67,7 @@
   --color-grey-400: #ced4da;
   --color-grey-300: #dee2e6;
   --color-grey-200: #e9ecef;
-  --color-grey-150: #F2F2F2;
+  --color-grey-150: #f2f2f2;
   --color-grey-100: #f8f9fa;
 
   --color-black: #000000;
@@ -126,11 +126,7 @@ textarea {
 }
 
 button:hover {
-  border-color:  var(--color-primary-900);
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  border-color: var(--color-primary-900);
 }
 
 @media (prefers-color-scheme: light) {
@@ -152,6 +148,39 @@ input {
 }
 
 input:focus {
-  border-color: var(--color-primary-900);
-  outline: transparent;
+  outline: 2px solid var(--color-primary-900);
+  /* outline: transparent; */
+}
+
+textarea:focus {
+  outline: 2px solid var(--color-primary-900);
+  /* outline: transparent; */
+}
+
+button:focus,
+button:focus-visible {
+  outline: 1px solid var(--color-primary-700);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  /* Example: Invert the icon color for dark backgrounds */
+  color-scheme: light;
+}
+
+::-webkit-scrollbar {
+  width: 8px; 
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-grey-200); 
+  border-radius: 0.75rem; 
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-grey-400); 
+  border-radius: 0.75rem; 
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-grey-500); 
 }

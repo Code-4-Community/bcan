@@ -21,7 +21,7 @@ export default function InputField({
 }: InputFieldProps) {
   return (
     <div className="w-full">
-      <label htmlFor={id} className="block text-left font-semibold">
+      <label htmlFor={id} className="block text-left font-semibold text-sm lg:text-base">
         {label}
         {required && <span className="text-red">*</span>}
       </label>
@@ -29,7 +29,7 @@ export default function InputField({
         <input
           id={id}
           {...inputProps}
-          className={`block w-full rounded-md py-2.5 pl-4 pr-3 text-base border-2 placeholder:text-grey-500 ${
+          className={`block w-full rounded-md py-2.5 pl-4 pr-3 text-sm lg:text-base border-2 placeholder:text-grey-500 ${
             error ? "border-red bg-red-lightest" : "border-grey-500 bg-grey-100 " 
           }`}
           

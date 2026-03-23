@@ -15,5 +15,5 @@ enum AttachmentType {
 export default interface Attachment {
     attachment_name: string,
     url: string,
-    type: AttachmentType
+    type?: AttachmentType
 }

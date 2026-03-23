@@ -115,7 +115,7 @@ const BarYearGrantStatus = observer(
                 formatter={(label: any) =>
                   typeof label === "number"
                     ? checked
-                      ? `$${label / 1000}k`
+                      ? `$${(label / 1000).toFixed(0)}k`
                       : `${label}`
                     : label
                 }

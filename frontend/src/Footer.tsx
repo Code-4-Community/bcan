@@ -4,7 +4,7 @@ import { FooterText } from "./translations/general";
 
 const Footer: React.FC = () => {
   return (
-    <div className="footer flex flex-col items-center justify-center py-10 px-4 text-base text-grey-700">
+    <div className="footer flex flex-col items-center justify-center py-12 pt-16 px-4 text-base text-grey-700">
       <Group className="flex flex-col p-2">
         <Text>
           {FooterText.C4C_Motto}

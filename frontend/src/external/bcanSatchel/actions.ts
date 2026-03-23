@@ -42,6 +42,8 @@ export const logoutUser = action("logoutUser");
  */
 export const removeProfilePic = action("removeProfilePic");
 
+export const clearAllFilters = action("clearAllFilters");
+
 /**
  * Moves along the all grants that are fetched from back end to mutator.
  */

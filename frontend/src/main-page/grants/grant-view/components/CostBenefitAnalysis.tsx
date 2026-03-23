@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Grant } from "../../../../../middle-layer/types/Grant";
-import InputField from "../../../components/InputField";
-import Button from "../../../components/Button";
+import { Grant } from "../../../../../../middle-layer/types/Grant";
+import InputField from "../../../../components/InputField";
+import Button from "../../../../components/Button";
 
 interface CostBenefitAnalysisProps {
   grant: Grant;
@@ -108,7 +108,7 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({
           text="Calculate"
           onClick={calculateCostBenefit}
           disabled={!hourlyRate || !timePerReport}
-          className="border-2 ml-auto bg-primary-900 text-white"
+          className="border-2 ml-auto bg-primary-900 text-white text-sm"
         />
       </div>
 

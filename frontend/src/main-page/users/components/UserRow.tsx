@@ -17,7 +17,7 @@ const UserRow = ({ user, action }: UserRowProps) => {
         <Avatar
           src={user.profilePicUrl}
           alt="Profile"
-          className="max-w-12 mr-4 rounded-full object-cover hidden lg:block"
+          className="w-12 h-12 object-cover mr-4 rounded-full hidden lg:block"
           fallbackSrc={logo}
         />
         {user.firstName}&nbsp;{user.lastName}

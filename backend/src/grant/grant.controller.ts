@@ -64,7 +64,7 @@ export class GrantController {
     @ApiResponse({ status: 403, description: 'Forbidden - User does not have access to this resource' })
     @ApiResponse({ status: 500, description: 'Internal Server Error', example: 'Internal Server Error' })
     async addGrant(
-      @Body(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+      @Body()
       grant: AddGrantBody
     ): Promise<number> {
       this.logger.log(`POST /grant/new-grant - Creating new grant for organization: ${grant.organization}`);

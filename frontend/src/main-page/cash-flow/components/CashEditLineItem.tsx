@@ -36,14 +36,14 @@ export default function CashEditLineItem({
               onClick={onEdit}
               logo={faPenToSquare}
               logoPosition="right"
-              className="bg-white text-black border-grey-500"
+              className="bg-white text-black border-grey-500 text-sm lg:text-base"
             />
             <Button
               text="Remove"
               logo={faTrash}
               logoPosition="right"
               onClick={onRemove}
-              className="bg-red-light text-red"
+              className="bg-red-light text-red text-sm lg:text-base"
             />
           </div>
         </div>

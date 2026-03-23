@@ -384,6 +384,7 @@ export class GrantService {
           amount: grant.amount,
           grant_start_date: grant.grant_start_date,
           application_deadline: grant.application_deadline,
+          application_date: grant.application_date,
           report_deadlines: grant.report_deadlines,
           description: grant.description,
           timeline: grant.timeline,
