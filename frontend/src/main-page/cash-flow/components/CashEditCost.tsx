@@ -5,7 +5,7 @@ import { CostType } from "../../../../../middle-layer/types/CostType";
 import { useState } from "react";
 import { CashflowCost } from "../../../../../middle-layer/types/CashflowCost";
 import { saveCostEdits } from "../processCashflowDataEditSave";
-import { formatMoney } from "./CashSourceList";
+import { formatMoney } from "../CashFlowPage";
 
 type CashEditCostProps = {
   costItem: CashflowCost;

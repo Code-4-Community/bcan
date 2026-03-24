@@ -3,18 +3,11 @@ import { CashflowRevenue } from "../../../../../middle-layer/types/CashflowReven
 import { deleteCost, deleteRevenue } from "../processCashflowDataEditSave";
 import CashEditLineItem from "./CashEditLineItem";
 import CashEditCost from "./CashEditCost";
+import { formatMoney } from "../CashFlowPage";
 
 type SourceProps = {
   type: "Revenue" | "Cost";
   lineItems: CashflowRevenue[] | CashflowCost[];
-};
-
-export const formatMoney = (amount: number) => {
-  return amount.toLocaleString("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  });
 };
 
 export default function CashSourceList({ type, lineItems }: SourceProps) {

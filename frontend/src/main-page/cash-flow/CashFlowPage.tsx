@@ -13,6 +13,14 @@ import CashSourceList from "./components/CashSourceList";
 import { ProcessCashflowData } from "./processCashflowData";
 import CashCreateLineItem from "./components/CashCreateLineItem";
 
+export const formatMoney = (amount: number) => {
+  return amount.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  });
+};
+
 const CashFlowPage = observer(() => {
   const { costs, revenues } = ProcessCashflowData();
 
@@ -34,7 +42,7 @@ const CashFlowPage = observer(() => {
         />
         <CashflowKPICard
           text="Monthly Costs"
-          value="$50,000"
+          value={formatMoney(costs.reduce((accumulator, currentValue) => accumulator + currentValue.amount, 0))}
           logo={faUserGroup}
           className="text-primary"
         />
