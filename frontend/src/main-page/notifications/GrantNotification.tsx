@@ -32,7 +32,7 @@ const GrantNotification: React.FC<GrantNotificationProps> = ({
 
     return (
 
-        <div className="flex items-center gap-3 px-3 py-2.5 hover:bg-grey-100 transition-colors" role="listitem">
+        <div className="flex items-center gap-3 px-4 py-3 hover:bg-grey-100 transition-colors" role="listitem">
             <div className="w-10 h-10 rounded-full overflow-hidden bg-grey-500 flex items-center justify-center flex-shrink-0">
                 {avatarUrl ? (
                     <img src={avatarUrl} alt={`${firstName} ${lastName}`} className="w-full h-full object-cover" />

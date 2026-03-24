@@ -65,9 +65,9 @@ const NotificationPopup: React.FC<NotificationPopupProps> = observer(({
 
 
     return createPortal(
-    <div className="fixed inset-0 z-[999]" onClick={() => setOpenModal(false)}>
+    <div className="fixed inset-0 z-[999] bg-black bg-opacity-30" onClick={() => setOpenModal(false)}>
         <div className="absolute right-24 top-10 w-[26rem] bg-white rounded shadow-lg border border-grey-200 z-[1000]" role="dialog" aria-label="Notifications" onClick={e => e.stopPropagation()}>
-            <div className="flex justify-between items-center px-3 py-2">
+            <div className="flex justify-between items-center px-4 py-3">
                 <h3 className="text-lg font-medium text-black m-0">Your Notifications</h3>
                 <div className="flex items-center gap-2">
                     <button
@@ -80,7 +80,7 @@ const NotificationPopup: React.FC<NotificationPopupProps> = observer(({
                 </div>
             </div>
 
-            <div className="max-h-80 overflow-y-auto mt-1.5 [scrollbar-width:none]">
+            <div className="max-h-80 overflow-y-auto mt-1.5 px-1 [scrollbar-width:none]">
                 {liveNotifications && liveNotifications.length > 0 ? (
                     liveNotifications.map((n) => (
                         <GrantNotification 
