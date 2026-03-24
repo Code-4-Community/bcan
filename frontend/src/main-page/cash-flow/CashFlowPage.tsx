@@ -14,7 +14,6 @@ import { ProcessCashflowData } from "./processCashflowData";
 import CashCreateLineItem from "./components/CashCreateLineItem";
 
 const CashFlowPage = observer(() => {
-
   const { costs, revenues } = ProcessCashflowData();
 
   return (

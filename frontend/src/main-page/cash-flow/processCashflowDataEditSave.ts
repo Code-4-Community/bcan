@@ -71,7 +71,7 @@ export const saveRevenueEdits = async (updatedRevenue: CashflowRevenue) => {
   try {
         // Need to replace with acual endpoint
     const response = await api("/revenue/save", {
-      method: "PUT",
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedRevenue),
     });
@@ -96,11 +96,10 @@ export const saveRevenueEdits = async (updatedRevenue: CashflowRevenue) => {
   }
 };
 
-export const saveCostEdits = async (updatedCost: CashflowCost) => {
+export const saveCostEdits = async (updatedCost: CashflowCost, originalCostName: string) => {
   try {
-        // Need to replace with acual endpoint
-    const response = await api("/cost/save", {
-      method: "PUT",
+    const response = await api(`/cashflow-cost/${originalCostName}`, {
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedCost),
     });
@@ -169,10 +168,9 @@ export const deleteRevenue = async (revenueId: any) => {
         }
       };
 
-export const deleteCost = async (costId: any) => {
-      // Need to replace with acual endpoint
+export const deleteCost = async (costName: any) => {
         try {
-          const response = await api(`/revenue/${costId}`, {
+          const response = await api(`/cashflow-cost/${costName}`, {
             method: "DELETE",
             headers: {
               "Content-Type": "application/json",

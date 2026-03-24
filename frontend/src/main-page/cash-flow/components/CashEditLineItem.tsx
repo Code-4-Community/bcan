@@ -1,10 +1,11 @@
 import { useState } from "react";
 import Button from "../../../components/Button";
 import { faTrash, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import ActionConfirmation from "../../../components/ActionConfirmation";
 
 type CashEditLineItemProps = {
   cardText: React.ReactNode;
-  children: React.ReactNode;
+  children: (onClose: () => void) => React.ReactNode;
   sourceName: string;
   onRemove: () => void;
 };
@@ -15,22 +16,31 @@ export default function CashEditLineItem({
   sourceName,
   onRemove,
 }: CashEditLineItemProps) {
-  const [editting, setEditing] = useState<Boolean>(false);
+  const [editing, setEditing] = useState<boolean>(false);
 
   const onEdit = () => {
     setEditing(true);
   };
 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const handleDelete = async () => {
+    onRemove();
+    setShowDeleteModal(false);
+  };
+
   return (
     <div className="rounded border border-grey-500 p-4">
-      {!editting && (
+      {!editing && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
           <div className="flex flex-col text-start">
-            <div className="text-lg lg:text-xl font-bold">{sourceName}</div>
+            <div className="text-lg lg:text-xl font-bold text-nowrap text-ellipsis">
+              {sourceName}
+            </div>
             {cardText}
           </div>
 
-          <div className="flex flex-wrap gap-2 lg:ml-auto">
+          <div className="flex flex-wrap gap-2 lg:justify-end">
             <Button
               text="Edit"
               onClick={onEdit}
@@ -42,13 +52,24 @@ export default function CashEditLineItem({
               text="Remove"
               logo={faTrash}
               logoPosition="right"
-              onClick={onRemove}
+              onClick={() => setShowDeleteModal(true)}
               className="bg-red-light text-red text-sm lg:text-base"
             />
           </div>
         </div>
       )}
-      {editting && <div>{children}</div>}
+      {editing && <div>{children(() => setEditing(false))}</div>}
+      <ActionConfirmation
+        isOpen={showDeleteModal}
+        onCloseDelete={() => setShowDeleteModal(false)}
+        onConfirmDelete={() => {
+          handleDelete();
+        }}
+        title={`Delete Cashflow Item`}
+        subtitle={"Are you sure you want to delete"}
+        boldSubtitle={sourceName}
+        warningMessage="By deleting this item, it won't be available in the system anymore."
+      />
     </div>
   );
 }
