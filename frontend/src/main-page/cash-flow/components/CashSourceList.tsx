@@ -19,7 +19,7 @@ export const formatMoney = (amount: number) => {
 
 export default function CashSourceList({ type, lineItems }: SourceProps) {
   return (
-    <div className="chart-container col-span-2 h-full">
+    <div className="chart-container col-span-2 h-fit">
       <div className="text-lg lg:text-xl mb-2 w-full text-left font-bold">
         {type}
         {" Sources"}

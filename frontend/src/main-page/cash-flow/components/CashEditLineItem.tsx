@@ -34,13 +34,13 @@ export default function CashEditLineItem({
       {!editing && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
           <div className="flex flex-col text-start">
-            <div className="text-lg lg:text-xl font-bold text-nowrap text-ellipsis">
+            <div className="text-lg lg:text-xl font-bold">
               {sourceName}
             </div>
             {cardText}
           </div>
 
-          <div className="flex flex-wrap gap-2 lg:justify-end">
+          <div className="flex flex-wrap gap-2 justify-end h-fit">
             <Button
               text="Edit"
               onClick={onEdit}
