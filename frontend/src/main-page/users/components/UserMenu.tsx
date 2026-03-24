@@ -1,5 +1,5 @@
 import { UserStatus } from "../../../../../middle-layer/types/UserStatus";
-import { faUserPen, faTrash, faTrashCan, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { faUserPen, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ActionConfirmation from "../../../components/ActionConfirmation";
 import { useState } from "react";
