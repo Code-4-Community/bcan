@@ -15,7 +15,6 @@ import { NavBarBranding } from "../../translations/general.ts";
 const tabs: NavTabProps[] = [
   { name: "Dashboard", linkTo: "/main/dashboard", icon: faChartLine },
   { name: "Grants", linkTo: "/main/all-grants", icon: faClipboardCheck },
-  { name: "Cash Flow", linkTo: "/main/cash-flow", icon: faMoneyBill },
 ];
 
 /**
@@ -52,6 +51,17 @@ const NavBar: React.FC = observer(() => {
               />
             </li>
           ))}
+
+          {/* Admin-only Cashflow tab */}
+          {isAdmin && (
+            <li>
+              <NavTab
+                name="Cash Flow"
+                linkTo="/main/cash-flow"
+                icon={faMoneyBill}
+              />
+            </li>
+          )}
           
           {/* Admin-only Users tab */}
           {isAdmin && (
@@ -79,7 +89,7 @@ const NavBar: React.FC = observer(() => {
             className="flex items-center gap-3 w-[85%] pl-8 pr-4 py-3 rounded-r-full transition-colors hover:bg-grey-500 hover:text-white text-left border-none font-medium"
           >
             <FontAwesomeIcon icon={faRightFromBracket} className="w-5 h-5" />
-            <span className="text-sm lg:text-base">Sign Out</span>
+            <span className="text-sm lg:text-base font-normal">Sign Out</span>
           </button>
         </div>
       </div>
