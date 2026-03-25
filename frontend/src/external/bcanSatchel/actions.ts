@@ -5,6 +5,7 @@ import { Status } from '../../../../middle-layer/types/Status'
 import { Notification } from '../../../../middle-layer/types/Notification';
 import { CashflowCost } from '../../../../middle-layer/types/CashflowCost';
 import { CashflowRevenue } from '../../../../middle-layer/types/CashflowRevenue';
+import { CashflowSettings } from '../../../../middle-layer/types/CashflowSettings';
 
 /**
  * Set whether the user is authenticated, update the user object,
@@ -58,6 +59,10 @@ export const fetchCashflowRevenues = action("fetchCashflowRevenues", (revenues: 
 export const fetchCashflowCosts = action("fetchCashflowCosts", (costs: CashflowCost[]) => ({
   costs,
 }));
+
+export const setCashflowSettings = action("setCashflowSettings", 
+  (cashflowSettings: CashflowSettings) => ({ cashflowSettings })
+);
 
 export const updateFilter = action("updateFilter", (status: Status | null) => ({
   status,
