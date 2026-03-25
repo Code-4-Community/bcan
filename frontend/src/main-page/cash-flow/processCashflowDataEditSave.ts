@@ -1,7 +1,8 @@
 import {CashflowRevenue} from "../../../../middle-layer/types/CashflowRevenue.ts";
 import {CashflowCost} from "../../../../middle-layer/types/CashflowCost.ts";
+import { CashflowSettings } from "../../../../middle-layer/types/CashflowSettings.ts";
 import { api } from "../../api.ts";
-import { fetchCosts, fetchRevenues } from "./processCashflowData.ts";
+import { fetchCosts, fetchRevenues, fetchCashflowSettings } from "./processCashflowData.ts";
 
 // This has not been tested yet but the basic structure when implemented should be the same
 // Mirrored format for processGrantDataEditSave.ts
@@ -212,3 +213,34 @@ export const deleteCost = async (costId: any) => {
           console.error("Full error:", err);
         }
       };
+
+export const saveCashflowSettings = async (settings: CashflowSettings) => {
+  try {
+    const updates = [
+      { key: "startingCash", value: settings.startingCash },
+      { key: "salaryIncrease", value: settings.salaryIncrease },
+      { key: "benefitsIncrease", value: settings.benefitsIncrease },
+    ];
+
+    for (const update of updates) {
+      const response = await api("/default-values", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(update),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Failed to update ${update.key}`);
+      }
+    }
+
+    await fetchCashflowSettings();
+    return { success: true };
+  } catch (error) {
+    console.error("Error saving cashflow settings:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Server error. Please try again.",
+    };
+  }
+};

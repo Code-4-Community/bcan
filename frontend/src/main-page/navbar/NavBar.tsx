@@ -11,6 +11,7 @@ import { UserStatus } from "../../../../middle-layer/types/UserStatus";
 import NavTab, { NavTabProps } from "./NavTab.tsx";
 import { faChartLine, faMoneyBill, faClipboardCheck } from "@fortawesome/free-solid-svg-icons";
 import { NavBarBranding } from "../../translations/general.ts";
+import { saveCashflowSettings } from "../cash-flow/processCashflowDataEditSave";
 
 const tabs: NavTabProps[] = [
   { name: "Dashboard", linkTo: "/main/dashboard", icon: faChartLine },
@@ -26,7 +27,11 @@ const NavBar: React.FC = observer(() => {
   const user = getAppStore().user;
   const isAdmin = user?.position === UserStatus.Admin;
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const { cashflowSettings } = getAppStore();
+    if (cashflowSettings) {
+    await saveCashflowSettings(cashflowSettings);
+  }
     logoutUser();
     clearAllFilters();
     navigate("/login");

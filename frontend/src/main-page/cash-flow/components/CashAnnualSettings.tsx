@@ -1,6 +1,27 @@
 import InputField from "../../../components/InputField";
+import { observer } from "mobx-react-lite";
+import { getAppStore } from "../../../external/bcanSatchel/store";
+import { setCashflowSettings } from "../../../external/bcanSatchel/actions";
 
-export default function CashAnnualSettings() {
+const CashAnnualSettings = observer(() => {
+
+  const { cashflowSettings } = getAppStore();
+
+  const handleSalaryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!cashflowSettings) return;
+    setCashflowSettings({
+      ...cashflowSettings,
+      salaryIncrease: e.target.valueAsNumber,
+    });
+  };
+
+  const handleBenefitsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!cashflowSettings) return;
+    setCashflowSettings({
+      ...cashflowSettings,
+      benefitsIncrease: e.target.valueAsNumber,
+    });
+  };
 
   return (
     <div className="chart-container col-span-2 h-full">
@@ -12,16 +33,20 @@ export default function CashAnnualSettings() {
           type="number"
           id="salary_increase"
           label="Personnel Salary Increase (%)"
-          value={"3.5"}
+          value={cashflowSettings?.salaryIncrease ?? 0}
+          onChange={handleSalaryChange}
           className=""
         />
         <InputField
           type="number"
           id="benefits_increase"
           label="Personnel Benefits Increase (%)"
-          value={"4.0"}
+          value={cashflowSettings?.benefitsIncrease ?? 0}
+          onChange={handleBenefitsChange}
         />
       </div>
     </div>
   );
-}
+});
+
+export default CashAnnualSettings;
