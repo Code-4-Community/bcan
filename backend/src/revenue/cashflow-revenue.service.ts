@@ -79,6 +79,10 @@ export class RevenueService {
         );
     }
   }
+  /**
+   * Method to validate the money amount of a revenue object is valid
+   * @param amount Number amount for a revenue source
+   */
   private validateAmount(amount: number): void {
   if (amount === undefined || amount === null) {
     this.logger.error('Validation failed: amount is required');
@@ -90,6 +94,10 @@ export class RevenueService {
   }
 }
 
+/**
+ * Method to validate a revenue source
+ * @param type Type of revenue source
+ */
 private validateType(type: RevenueType): void {
   if (type === undefined || type === null) {
     this.logger.error('Validation failed: type is required');
@@ -103,6 +111,10 @@ private validateType(type: RevenueType): void {
   }
 }
 
+/**
+ * Method to validate the name of a revenue source
+ * @param name Name of a revenue source
+ */
 private validateName(name: string): void {
   if (name === undefined || name === null) {
     this.logger.error('Validation failed: name is required');
@@ -114,6 +126,10 @@ private validateName(name: string): void {
   }
 }
 
+/**
+ * Method to validate the inputted installments are valid
+ * @param installments Installment array to represent when a revenue would be dispersed
+ */
 private validateInstallments(installments: Installment[]): void {
   if (installments === undefined || installments === null) {
     this.logger.error('Validation failed: installments is required');
@@ -141,6 +157,10 @@ private validateInstallments(installments: Installment[]): void {
   });
 }
 
+/**
+ * Method to validate a revenue object for the cashflow
+ * @param revenue Revenue object to represent a cashflow revenue source
+ */
 private validateRevenueObject(revenue: CashflowRevenue): void {
   if (!revenue) {
     this.logger.error('Validation failed: revenue body is required');
@@ -152,6 +172,10 @@ private validateRevenueObject(revenue: CashflowRevenue): void {
   this.validateInstallments(revenue.installments);
 }
 
+/**
+ * Method to validate the dynamo db table name
+ * @param tableName name of the revenue dynamo db table
+ */
 private validateTableName(tableName : string){
     if (
       tableName === "" ||
@@ -163,7 +187,10 @@ private validateTableName(tableName : string){
     }
 }
 
-  // Method to retrieve all of the revenue data
+  /**
+   * Method to retrieve all of the revenue data
+   * @returns All the revenue objects in the data base
+   */
   async getAllRevenue(): Promise<CashflowRevenue[]> {
     this.logger.log("Retreiving all the cashflow revenue data");
 
@@ -208,6 +235,11 @@ private validateTableName(tableName : string){
     // Handle errors based off errors
   }
 
+  /**
+   * Method to create a new revenue object
+   * @param revenue Revenue object being created
+   * @returns Returns the uploaded cashflow revenue
+   */
   async createRevenue(revenue: CashflowRevenue): Promise<CashflowRevenue> {
   this.validateRevenueObject(revenue);
   this.validateTableName(this.revenueTableName);
@@ -248,4 +280,84 @@ private validateTableName(tableName : string){
     throw new InternalServerErrorException('Internal Server Error');
   }
 }
+
+async updateRevenue(name: string, revenue: CashflowRevenue): Promise<CashflowRevenue> {
+    this.validateRevenueObject(revenue);
+    this.validateTableName(this.revenueTableName);
+
+    const normalizedRevenue = {
+      ...revenue,
+      name: revenue.name.trim(),
+    };
+
+    const params = {
+      TableName: this.revenueTableName,
+      Item: normalizedRevenue,
+      ConditionExpression: 'attribute_exists(#name)',
+      ExpressionAttributeNames: {
+        '#name': 'name',
+      },
+    };
+
+    try {
+      this.logger.log(`Updating revenue item with name: ${name}`);
+      await this.dynamoDb.put(params).promise();
+      this.logger.log(`Successfully updated revenue item with name: ${name}`);
+      return normalizedRevenue;
+    } catch (error) {
+      if (error instanceof BadRequestException || error instanceof InternalServerErrorException) {
+        throw error;
+      }
+
+      if (this.isAWSError(error)) {
+        try {
+          this.handleAWSError(error, 'updateRevenue', `table ${params.TableName}`);
+        } catch (handledError) {
+          throw new InternalServerErrorException('Internal Server Error');
+        }
+      }
+
+      this.logger.error('Uncaught error updating revenue item: ', error);
+      throw new InternalServerErrorException('Internal Server Error');
+    }
+  }
+
+  async deleteRevenue(name: string): Promise<void> {
+    this.validateTableName(this.revenueTableName);
+
+    if (!name || name.trim().length === 0) {
+      this.logger.error('Validation failed: name param is required for delete');
+      throw new BadRequestException('name is required');
+    }
+
+    const params = {
+      TableName: this.revenueTableName,
+      Key: { name: name.trim() },
+      ConditionExpression: 'attribute_exists(#name)',
+      ExpressionAttributeNames: {
+        '#name': 'name',
+      },
+    };
+
+    try {
+      this.logger.log(`Deleting revenue item with name: ${name}`);
+      await this.dynamoDb.delete(params).promise();
+      this.logger.log(`Successfully deleted revenue item with name: ${name}`);
+    } catch (error) {
+      if (error instanceof BadRequestException || error instanceof InternalServerErrorException) {
+        throw error;
+      }
+
+      if (this.isAWSError(error)) {
+        try {
+          this.handleAWSError(error, 'deleteRevenue', `table ${params.TableName}`);
+        } catch (handledError) {
+          throw new InternalServerErrorException('Internal Server Error');
+        }
+      }
+
+      this.logger.error('Uncaught error deleting revenue item: ', error);
+      throw new InternalServerErrorException('Internal Server Error');
+    }
+  }
 }
