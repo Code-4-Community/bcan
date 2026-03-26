@@ -40,8 +40,7 @@ export const createNewRevenue = async (newRevenue: CashflowRevenue) => {
 // save a new cost
 export const createNewCost = async (newCost: CashflowCost) => {
   try {
-    // Need to replace with acual endpoint
-    const response = await api("/cost/new-cost", {
+    const response = await api("/cashflow-cost", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newCost),

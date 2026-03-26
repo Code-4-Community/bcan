@@ -119,6 +119,15 @@ export default function CashAddRevenue() {
     };
   };
 
+  const resetForm = () => {
+    setType(null);
+    setName("");
+    setSingleInstallment(EMPTY_INSTALLMENT);
+    setInstallments([]);
+    setIsMultipleInstallments(false);
+    setErrors({});
+  }
+
   const handleSubmit = async () => {
     const payload = buildPayload();
     if (!payload) {
@@ -139,6 +148,7 @@ export default function CashAddRevenue() {
     }
 
     setIsSubmitting(false);
+    resetForm();
   };
 
   const addInstallment = () => {
