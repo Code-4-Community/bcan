@@ -1,6 +1,5 @@
 import { Controller, Post, Body, Get, Req, Res, UseGuards, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { User } from '../types/User';
 import { Response } from 'express';
 import { VerifyUserGuard } from "../guards/auth.guard";
 import { LoginBody, RegisterBody, SetPasswordBody, UpdateProfileBody, ChangePasswordBody } from './types/auth.types';
@@ -146,13 +145,7 @@ export class AuthController {
   async login(
     @Res({ passthrough: true }) response: Response,
     @Body() body:LoginBody
-  ): Promise<{
-    user: User;
-    session?: string;
-    challenge?: string;
-    requiredAttributes?: string[];
-    position?: string;
-  }> {
+  ): Promise<{ message: string }> {
     const result = await this.authService.login(body.email, body.password);
   
   // Set cookie with access token
@@ -190,10 +183,7 @@ export class AuthController {
   }
 
   
-  delete result.idToken;
-  delete result.access_token;
-  delete result.refreshToken;
-    return result
+  return { message: 'User logged in successfully' };
   }
 
   /**
@@ -215,7 +205,7 @@ export class AuthController {
   async refresh(
     @Req() req: any,
     @Res({ passthrough: true}) response: Response,
-  ): Promise<{ message: string}> {
+  ): Promise<{ message: string }> {
 
     const refreshToken = req.cookies?.refresh_token;
 
@@ -236,7 +226,12 @@ export class AuthController {
       throw new UnauthorizedException('Could not extract user identity from token');
     }
 
-    const { accessToken, idToken: newIdToken } = await this.authService.refreshTokens(refreshToken, cognitoUsername);
+    const { accessToken, idToken: newIdToken, refreshToken: newRefreshToken } =
+      await this.authService.refreshTokens(refreshToken, cognitoUsername);
+
+    // Cognito may or may not rotate refresh tokens depending on configuration.
+    // To keep frontend contract stable, we always return the refresh token we're using.
+    const effectiveRefreshToken = newRefreshToken ?? refreshToken;
 
     response.cookie('access_token', accessToken, {
       httpOnly: true,
@@ -252,6 +247,14 @@ export class AuthController {
       sameSite: 'strict',
       maxAge: 3600000, // 1 hour
       path: '/',
+    });
+
+    response.cookie('refresh_token', effectiveRefreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 30 * 24 * 60 * 60 * 1000, // match Cognito refresh token expiry (approx)
+      path: '/auth/refresh',
     });
 
     return { message: 'Tokens refreshed successfully' };
