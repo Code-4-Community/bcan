@@ -1,10 +1,11 @@
-import { useContext, createContext, ReactNode, useEffect, useRef } from 'react';
+import { useContext, createContext, ReactNode, useEffect, useRef, useState } from 'react';
 import { getAppStore } from '../../external/bcanSatchel/store';
 import { setAuthState, logoutUser } from '../../external/bcanSatchel/actions';
 import { observer } from 'mobx-react-lite';
 import { User } from '../../../../middle-layer/types/User';
-import { api } from '../../api';
+import { api, COOKIE_MISSING_EVENT } from '../../api';
 import { fetchUsers } from '../../main-page/users/UserActions.ts';
+import Button from '../../components/Button';
 
 
 /**
@@ -32,6 +33,7 @@ export const useAuthContext = () => {
 export const AuthProvider = observer(({ children }: { children: ReactNode }) => {
   const store = getAppStore();
   const logoutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [showCookieErrorPrompt, setShowCookieErrorPrompt] = useState(false);
   // Auto-logout timeout duration (in milliseconds)
   // 8 hours = 8 * 60 * 60 * 1000
   const SESSION_TIMEOUT = 8 * 60 * 60 * 1000;
@@ -135,6 +137,26 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
     };
   }, [store.isAuthenticated]);
 
+  useEffect(() => {
+    const onCookieMissing = () => {
+      if (store.isAuthenticated) {
+        setShowCookieErrorPrompt(true);
+      }
+    };
+
+    window.addEventListener(COOKIE_MISSING_EVENT, onCookieMissing);
+
+    return () => {
+      window.removeEventListener(COOKIE_MISSING_EVENT, onCookieMissing);
+    };
+  }, [store.isAuthenticated]);
+
+  useEffect(() => {
+    if (!store.isAuthenticated && showCookieErrorPrompt) {
+      setShowCookieErrorPrompt(false);
+    }
+  }, [showCookieErrorPrompt, store.isAuthenticated]);
+
   /** Restore user session on refresh */
   // useEffect(() => {
   //   api('/auth/session')
@@ -154,6 +176,22 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
       }}
     >
       {children}
+      {showCookieErrorPrompt && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-md px-8 py-6 max-w-md mx-4 text-center">
+            <h3 className="text-xl font-bold mb-2">Internal Error</h3>
+            <p className="mb-4">
+              An internal error occurred and your session could not be verified.
+              Please log out and log back in.
+            </p>
+            <Button
+              text="Logout"
+              onClick={logout}
+              className="text-white bg-primary-900 mx-auto"
+            />
+          </div>
+        </div>
+      )}
     </AuthContext.Provider>
   );
 });
