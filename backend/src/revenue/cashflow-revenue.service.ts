@@ -130,7 +130,7 @@ private validateName(name: string): void {
  * Method to validate the inputted installments are valid
  * @param installments Installment array to represent when a revenue would be dispersed
  */
-private validateInstallments(installments: Installment[]): void {
+private validateInstallments(installments: Installment[], amount: number): void {
   if (installments === undefined || installments === null) {
     this.logger.error('Validation failed: installments is required');
     throw new BadRequestException('installments is required');
@@ -139,6 +139,7 @@ private validateInstallments(installments: Installment[]): void {
     this.logger.error(`Validation failed: installments is not an array, received: ${typeof installments}`);
     throw new BadRequestException('installments must be an array');
   }
+  let total = 0;
   installments.forEach((installment, index) => {
     if (!Number.isFinite(installment.amount) || installment.amount <= 0) {
       this.logger.error(
@@ -150,11 +151,27 @@ private validateInstallments(installments: Installment[]): void {
     }
     if (!installment.date) {
       this.logger.error(`Validation failed: installments[${index}].date is required`);
-      throw new BadRequestException(
-        `installments[${index}].date is required`,
-      );
+      throw new BadRequestException(`installments[${index}].date is required`);
     }
+    const isoFullRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+    const isoDateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    const dateStr = String(installment.date);
+    if (!isoFullRegex.test(dateStr) && !isoDateRegex.test(dateStr)) {
+      this.logger.error(`Validation failed: installments[${index}].date is not a valid ISO date: ${installment.date}`);
+      throw new BadRequestException(`installments[${index}].date must be a valid ISO date (YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS.mmmZ)`);
+    }
+    const parsedDate = new Date(installment.date);
+    if (isNaN(parsedDate.getTime())) {
+      this.logger.error(`Validation failed: installments[${index}].date is not a valid date: ${installment.date}`);
+      throw new BadRequestException(`installments[${index}].date must be a valid date`);
+    }
+    total += installment.amount;
   });
+
+  if (amount != total) {
+    this.logger.error(`Validation failed: installments summed up does not equal total amount`);
+    throw new BadRequestException('Installment summed up does not equal total amount');
+  }
 }
 
 /**
@@ -169,7 +186,9 @@ private validateRevenueObject(revenue: CashflowRevenue): void {
   this.validateAmount(revenue.amount);
   this.validateType(revenue.type);
   this.validateName(revenue.name);
-  this.validateInstallments(revenue.installments);
+  this.validateInstallments(revenue.installments,revenue.amount);
+
+  
 }
 
 /**
@@ -192,7 +211,7 @@ private validateTableName(tableName : string){
    * @returns All the revenue objects in the data base
    */
   async getAllRevenue(): Promise<CashflowRevenue[]> {
-    this.logger.log("Retreiving all the cashflow revenue data");
+    this.logger.log("Retrieving all the cashflow revenue data");
 
 
     this.validateTableName(this.revenueTableName)
@@ -240,7 +259,7 @@ private validateTableName(tableName : string){
    * @param revenue Revenue object being created
    * @returns Returns the uploaded cashflow revenue
    */
-  async createRevenue(revenue: CashflowRevenue): Promise<CashflowRevenue> {
+async createRevenue(revenue: CashflowRevenue): Promise<CashflowRevenue> {
   this.validateRevenueObject(revenue);
   this.validateTableName(this.revenueTableName);
 
@@ -248,6 +267,31 @@ private validateTableName(tableName : string){
     ...revenue,
     name: revenue.name.trim(),
   };
+
+  // Check if a revenue item with the same name already exists
+  const getParams = {
+    TableName: this.revenueTableName,
+    Key: { name: normalizedRevenue.name },
+  };
+
+  try {
+    this.logger.log(`Checking if revenue item with name '${normalizedRevenue.name}' already exists`);
+    const existing = await this.dynamoDb.get(getParams).promise();
+    if (existing.Item) {
+      this.logger.error(`Revenue item with name '${normalizedRevenue.name}' already exists`);
+      throw new BadRequestException(`A revenue item with the name '${normalizedRevenue.name}' already exists`);
+    }
+  } catch (error) {
+    if (error instanceof BadRequestException || error instanceof InternalServerErrorException) {
+      throw error;
+    }
+    if (this.isAWSError(error)) {
+      this.logger.error('AWS error during duplicate check for createRevenue: ', error);
+      throw new InternalServerErrorException('Internal Server Error');
+    }
+    this.logger.error('Uncaught error checking for duplicate revenue item: ', error);
+    throw new InternalServerErrorException('Internal Server Error');
+  }
 
   const params = {
     TableName: this.revenueTableName,
@@ -267,63 +311,88 @@ private validateTableName(tableName : string){
     if (error instanceof BadRequestException || error instanceof InternalServerErrorException) {
       throw error;
     }
-
     if (this.isAWSError(error)) {
-      try {
-        this.handleAWSError(error, 'createRevenue', `table ${params.TableName}`);
-      } catch (handledError) {
-        throw new InternalServerErrorException("Internal Service Error")
+      if (error.code === 'ConditionalCheckFailedException') {
+        this.logger.error(`Revenue item with name '${normalizedRevenue.name}' already exists (race condition)`);
+        throw new BadRequestException(`A revenue item with the name '${normalizedRevenue.name}' already exists`);
       }
+      this.logger.error('AWS error during createRevenue: ', error);
+      throw new InternalServerErrorException('Internal Server Error');
     }
-
     this.logger.error('Uncaught error creating revenue item: ', error);
     throw new InternalServerErrorException('Internal Server Error');
   }
 }
 
 async updateRevenue(name: string, revenue: CashflowRevenue): Promise<CashflowRevenue> {
-    this.validateRevenueObject(revenue);
-    this.validateTableName(this.revenueTableName);
+  this.validateRevenueObject(revenue);
+  this.validateName(name);
+  this.validateTableName(this.revenueTableName);
 
-    const normalizedRevenue = {
-      ...revenue,
-      name: revenue.name.trim(),
-    };
+  const normalizedRevenue = {
+    ...revenue,
+    name: revenue.name.trim(),
+  };
 
-    const params = {
-      TableName: this.revenueTableName,
-      Item: normalizedRevenue,
-      ConditionExpression: 'attribute_exists(#name)',
-      ExpressionAttributeNames: {
-        '#name': 'name',
-      },
-    };
+  // Check if the revenue item actually exists before updating
+  const getParams = {
+    TableName: this.revenueTableName,
+    Key: { name: name.trim() },
+  };
 
-    try {
-      this.logger.log(`Updating revenue item with name: ${name}`);
-      await this.dynamoDb.put(params).promise();
-      this.logger.log(`Successfully updated revenue item with name: ${name}`);
-      return normalizedRevenue;
-    } catch (error) {
-      if (error instanceof BadRequestException || error instanceof InternalServerErrorException) {
-        throw error;
-      }
-
-      if (this.isAWSError(error)) {
-        try {
-          this.handleAWSError(error, 'updateRevenue', `table ${params.TableName}`);
-        } catch (handledError) {
-          throw new InternalServerErrorException('Internal Server Error');
-        }
-      }
-
-      this.logger.error('Uncaught error updating revenue item: ', error);
+  try {
+    this.logger.log(`Checking if revenue item with name '${name}' exists`);
+    const existing = await this.dynamoDb.get(getParams).promise();
+    if (!existing.Item) {
+      this.logger.error(`Revenue item with name '${name}' does not exist`);
+      throw new BadRequestException(`A revenue item with the name '${name}' does not exist`);
+    }
+  } catch (error) {
+    if (error instanceof BadRequestException || error instanceof InternalServerErrorException) {
+      throw error;
+    }
+    if (this.isAWSError(error)) {
+      this.logger.error('AWS error during existence check for updateRevenue: ', error);
       throw new InternalServerErrorException('Internal Server Error');
     }
+    this.logger.error('Uncaught error checking for revenue item existence: ', error);
+    throw new InternalServerErrorException('Internal Server Error');
   }
+
+  const params = {
+    TableName: this.revenueTableName,
+    Item: normalizedRevenue,
+    ConditionExpression: 'attribute_exists(#name)',
+    ExpressionAttributeNames: {
+      '#name': 'name',
+    },
+  };
+
+  try {
+    this.logger.log(`Updating revenue item with name: ${name}`);
+    await this.dynamoDb.put(params).promise();
+    this.logger.log(`Successfully updated revenue item with name: ${name}`);
+    return normalizedRevenue;
+  } catch (error) {
+    if (error instanceof BadRequestException || error instanceof InternalServerErrorException) {
+      throw error;
+    }
+    if (this.isAWSError(error)) {
+      if (error.code === 'ConditionalCheckFailedException') {
+        this.logger.error(`Revenue item with name '${name}' does not exist (race condition)`);
+        throw new BadRequestException(`A revenue item with the name '${name}' does not exist`);
+      }
+      this.logger.error('AWS error during updateRevenue: ', error);
+      throw new InternalServerErrorException('Internal Server Error');
+    }
+    this.logger.error('Uncaught error updating revenue item: ', error);
+    throw new InternalServerErrorException('Internal Server Error');
+  }
+}
 
   async deleteRevenue(name: string): Promise<void> {
     this.validateTableName(this.revenueTableName);
+    this.validateName(name)
 
     if (!name || name.trim().length === 0) {
       this.logger.error('Validation failed: name param is required for delete');
