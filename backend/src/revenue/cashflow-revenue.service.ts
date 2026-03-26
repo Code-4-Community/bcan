@@ -362,11 +362,8 @@ async updateRevenue(name: string, revenue: CashflowRevenue): Promise<CashflowRev
   const params = {
     TableName: this.revenueTableName,
     Item: normalizedRevenue,
-    ConditionExpression: 'attribute_exists(#name)',
-    ExpressionAttributeNames: {
-      '#name': 'name',
-    },
   };
+  this.logger.log(`Params for update call to dynamo db ${JSON.stringify(params, null, 2)}`)
 
   try {
     this.logger.log(`Updating revenue item with name: ${name}`);
