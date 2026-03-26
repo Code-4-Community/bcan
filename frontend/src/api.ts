@@ -47,7 +47,7 @@ export async function api(
   const url = `${BASE}${cleanPath}`;
 
   const response = await fetch(url, {
-    credentials: 'include',  // ← send & receive the jwt cookie
+    credentials: 'include',
     ...init,
   });
 
