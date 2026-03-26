@@ -1,6 +1,5 @@
 import { Controller, Post, Body, Get, Req, Res, UseGuards, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { User } from '../types/User';
 import { Response } from 'express';
 import { VerifyUserGuard } from "../guards/auth.guard";
 import { LoginBody, RegisterBody, SetPasswordBody, UpdateProfileBody, ChangePasswordBody } from './types/auth.types';
@@ -146,13 +145,7 @@ export class AuthController {
   async login(
     @Res({ passthrough: true }) response: Response,
     @Body() body:LoginBody
-  ): Promise<{
-    user: User;
-    session?: string;
-    challenge?: string;
-    requiredAttributes?: string[];
-    position?: string;
-  }> {
+  ): Promise<{ message: string }> {
     const result = await this.authService.login(body.email, body.password);
   
   // Set cookie with access token
@@ -190,10 +183,7 @@ export class AuthController {
   }
 
   
-  delete result.idToken;
-  delete result.access_token;
-  delete result.refreshToken;
-    return result
+  return { message: 'User logged in successfully' };
   }
 
   /**
@@ -215,7 +205,7 @@ export class AuthController {
   async refresh(
     @Req() req: any,
     @Res({ passthrough: true}) response: Response,
-  ): Promise<{ message: string; refreshToken: string; idToken: string }> {
+  ): Promise<{ message: string }> {
 
     const refreshToken = req.cookies?.refresh_token;
 
@@ -267,11 +257,7 @@ export class AuthController {
       path: '/auth/refresh',
     });
 
-    return {
-      message: 'Tokens refreshed successfully',
-      refreshToken: effectiveRefreshToken,
-      idToken: newIdToken,
-    };
+    return { message: 'Tokens refreshed successfully' };
   }
 
   /**
