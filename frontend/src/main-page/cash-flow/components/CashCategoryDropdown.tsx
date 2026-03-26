@@ -4,13 +4,17 @@ import { RevenueType } from "../../../../../middle-layer/types/RevenueType";
 type CashCategoryDropdown = {
   type: typeof RevenueType | typeof CostType;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  value: RevenueType | CostType;
+  value: RevenueType | CostType | "";
+  placeholder?: string;
+  error?: boolean;
 };
 
 export default function CashCategoryDropdown({
   type,
   onChange,
   value,
+  placeholder = "Select a category",
+  error,
 }: CashCategoryDropdown) {
   return (
     <div className="w-full">
@@ -25,9 +29,11 @@ export default function CashCategoryDropdown({
           id="Category"
           value={value}
           onChange={onChange}
-          className="block w-full rounded-md py-2.5 pl-4 pr-3 text-sm lg:text-base border-2 placeholder:text-grey-500 ${
-            border-grey-500 bg-grey-100 h-[2.71rem]  lg:h-[2.95rem]"
+          className={`block w-full rounded-md py-2.5 pl-4 pr-3 text-sm lg:text-base border-2 placeholder:text-grey-500 h-[2.71rem] lg:h-[2.95rem] ${
+            error ? "border-red bg-red-lightest" : "border-grey-500 bg-grey-100"
+          }`}
         >
+          <option value="">{placeholder}</option>
           {Object.values(type).map((r) => (
             <option key={r} value={r}>
               {r}
