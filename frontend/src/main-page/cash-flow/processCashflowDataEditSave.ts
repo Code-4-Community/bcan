@@ -9,8 +9,7 @@ import { fetchCosts, fetchRevenues } from "./processCashflowData.ts";
 // save a new revenue
 export const createNewRevenue = async (newRevenue: CashflowRevenue) => {
   try {
-    // Need to replace with acual endpoint
-    const response = await api("/revenue/new-revenue", {
+    const response = await api("/cashflow-revenue", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newRevenue),
@@ -66,11 +65,11 @@ export const createNewCost = async (newCost: CashflowCost) => {
   }
 };
 
-export const saveRevenueEdits = async (updatedRevenue: CashflowRevenue) => {
+export const saveRevenueEdits = async (oldName: string, updatedRevenue: CashflowRevenue) => {
   try {
         // Need to replace with acual endpoint
-    const response = await api("/revenue/save", {
-      method: "PATCH",
+    const response = await api(`/cashflow-revenue/${oldName}`, {
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedRevenue),
     });

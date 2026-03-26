@@ -19,6 +19,7 @@ export default function CashAddCosts() {
   const [amount, setAmount] = useState<number | null>(null);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const getTodayIsoDate = () => {
     return new Date().toISOString();
@@ -67,6 +68,7 @@ export default function CashAddCosts() {
     }
 
     setIsSubmitting(true);
+    setSuccessMessage(null);
     setErrors((previous) => ({ ...previous, submit: undefined }));
 
     const result = await createNewCost(payload);
@@ -75,12 +77,14 @@ export default function CashAddCosts() {
         ...previous,
         submit: result.error || "Unable to create cost item.",
       }));
+      setSuccessMessage(null);
       setIsSubmitting(false);
       return;
     }
 
     setIsSubmitting(false);
     resetForm();
+    setSuccessMessage("Cost item created successfully.");
   };
 
   return (
@@ -128,6 +132,9 @@ export default function CashAddCosts() {
         {errors.amount ? <p className="text-red text-sm">{errors.amount}</p> : null}
       </div>
       {errors.submit ? <p className="text-red text-sm">{errors.submit}</p> : null}
+      {successMessage ? (
+        <p className="text-green text-sm">{successMessage}</p>
+      ) : null}
       <Button
         text="Add Cost Item"
         onClick={handleSubmit}

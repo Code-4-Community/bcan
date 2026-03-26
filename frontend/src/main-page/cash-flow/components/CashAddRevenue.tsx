@@ -42,6 +42,7 @@ export default function CashAddRevenue() {
   const [type, setType] = useState<RevenueType | null>(null);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const isValidInstallment = (installment: EditableInstallment) => {
     if (installment.amount === null || installment.date === null) {
@@ -135,6 +136,7 @@ export default function CashAddRevenue() {
     }
 
     setIsSubmitting(true);
+    setSuccessMessage(null);
     setErrors((previous) => ({ ...previous, submit: undefined }));
 
     const result = await createNewRevenue(payload);
@@ -143,12 +145,14 @@ export default function CashAddRevenue() {
         ...previous,
         submit: result.error || "Unable to create revenue source.",
       }));
+      setSuccessMessage(null);
       setIsSubmitting(false);
       return;
     }
 
     setIsSubmitting(false);
     resetForm();
+    setSuccessMessage("Revenue source created successfully.");
   };
 
   const addInstallment = () => {
@@ -288,6 +292,9 @@ export default function CashAddRevenue() {
           </div>
         )}
         {errors.submit ? <p className="text-red text-sm">{errors.submit}</p> : null}
+        {successMessage ? (
+          <p className="text-green text-sm">{successMessage}</p>
+        ) : null}
       </div>
       <Button
         text="Add Installment"
