@@ -70,22 +70,6 @@ export class CostController {
   }
 
   /**
-   * gets costs by type (e.g. Personal Salary, Personal Benefits, etc.)
-   * @param costType type of cost you are trying to get (e.g. all Salary costs)
-   * @returns array of costs of the specified type, if any exist
-   */
-  @Get('type/:costType')
-  @UseGuards(VerifyAdminRoleGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get costs by type' })
-  @ApiParam({ name: 'costType', type: String, description: 'Cost Type' })
-  @ApiResponse({ status: 200, description: 'Successfully retrieved costs' })
-  @ApiResponse({ status: 500, description: 'Internal Server Error' })
-  async getCostsByType(@Param('costType') costType: CostType) {
-    return await this.costService.getCostsByType(costType);
-  }
-
-  /**
    * creates a new cost with the specified fields in the request body
    * @param body must include amount, type, and name of the cost to be created
    * @returns 

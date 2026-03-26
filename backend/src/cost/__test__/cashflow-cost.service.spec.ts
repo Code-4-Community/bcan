@@ -162,47 +162,7 @@ describe('CostService', () => {
       );
     });
   });
-
-  describe('getCostsByType()', () => {
-    it('returns costs filtered by type', async () => {
-      const items = [{ name: 'Food', amount: 200, type: CostType.MealsFood }];
-      mockScanPromise.mockResolvedValue({ Items: items });
-
-      const result = await service.getCostsByType(CostType.MealsFood);
-
-      expect(result).toEqual(items);
-      expect(mockScan).toHaveBeenCalledWith({
-        TableName: 'Costs',
-        FilterExpression: '#type = :type',
-        ExpressionAttributeNames: {
-          '#type': 'type',
-        },
-        ExpressionAttributeValues: {
-          ':type': CostType.MealsFood,
-        },
-      });
-    });
-
-    it('throws InternalServerErrorException when table name is missing', async () => {
-      delete process.env.CASHFLOW_COST_TABLE_NAME;
-
-      await expect(service.getCostsByType(CostType.MealsFood)).rejects.toThrow(
-        InternalServerErrorException,
-      );
-    });
-
-    it('throws InternalServerErrorException on DynamoDB error', async () => {
-      mockScanPromise.mockRejectedValue(new Error('scan failed'));
-
-      await expect(service.getCostsByType(CostType.MealsFood)).rejects.toThrow(
-        InternalServerErrorException,
-      );
-      await expect(service.getCostsByType(CostType.MealsFood)).rejects.toThrow(
-        `Failed to retrieve costs with type ${CostType.MealsFood}`,
-      );
-    });
-  });
-
+  
   describe('createCost()', () => {
     it('creates a cost and trims the name', async () => {
       mockPutPromise.mockResolvedValue({});

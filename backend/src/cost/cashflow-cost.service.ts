@@ -114,45 +114,6 @@ export class CostService {
     }
   }
 
-  async getCostsByType(costType: CostType): Promise<CashflowCost[]> {
-    const tableName = process.env.CASHFLOW_COST_TABLE_NAME || '';
-    this.logger.log(`Retrieving costs with type ${costType}`);
-
-    if (!tableName) {
-      this.logger.error('CASHFLOW_COST_TABLE_NAME is not defined');
-      throw new InternalServerErrorException('Server configuration error');
-    }
-
-    const validCostTypes = Object.values(CostType) as CostType[];
-
-    if (!validCostTypes.includes(costType)) {
-      throw new BadRequestException(
-        `costType must be one of: ${Object.values(CostType).join(', ')}`,
-      );
-    }
-
-    try {
-      const result = await this.dynamoDb
-        .scan({
-          TableName: tableName,
-          FilterExpression: '#type = :type',
-          ExpressionAttributeNames: {
-            '#type': 'type',
-          },
-          ExpressionAttributeValues: {
-            ':type': costType,
-          },
-        })
-        .promise();
-      
-      this.logger.log(`Retrieved ${result.Items?.length ?? 0} costs with type ${costType}`);
-      return (result.Items ?? []) as CashflowCost[];
-    } catch (error) {
-      this.logger.error(`Failed to retrieve costs with type ${costType}`, error as Error);
-      throw new InternalServerErrorException(`Failed to retrieve costs with type ${costType}`);
-    }
-  }
-
   async createCost(cost: CashflowCost): Promise<CashflowCost> {
     const tableName = process.env.CASHFLOW_COST_TABLE_NAME || '';
     this.validateAmount(cost.amount);
