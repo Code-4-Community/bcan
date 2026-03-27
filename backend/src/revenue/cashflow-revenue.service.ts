@@ -329,9 +329,10 @@ async updateRevenue(name: string, revenue: CashflowRevenue): Promise<CashflowRev
   this.validateName(name);
   this.validateTableName(this.revenueTableName);
 
-  const normalizedRevenue = {
+  // Use route param as the key — ignore body name to prevent key mismatches
+  const normalizedRevenue: CashflowRevenue = {
     ...revenue,
-    name: revenue.name.trim(),
+    name: name.trim(),  // ← route param, not revenue.name
   };
 
   // Check if the revenue item actually exists before updating
@@ -359,11 +360,13 @@ async updateRevenue(name: string, revenue: CashflowRevenue): Promise<CashflowRev
     throw new InternalServerErrorException('Internal Server Error');
   }
 
+  // Put replaces the entire item at the given key with the new values
   const params = {
     TableName: this.revenueTableName,
     Item: normalizedRevenue,
   };
-  this.logger.log(`Params for update call to dynamo db ${JSON.stringify(params, null, 2)}`)
+
+  this.logger.log(`Params for update call to dynamo db: ${JSON.stringify(params, null, 2)}`);
 
   try {
     this.logger.log(`Updating revenue item with name: ${name}`);
@@ -375,10 +378,6 @@ async updateRevenue(name: string, revenue: CashflowRevenue): Promise<CashflowRev
       throw error;
     }
     if (this.isAWSError(error)) {
-      if (error.code === 'ConditionalCheckFailedException') {
-        this.logger.error(`Revenue item with name '${name}' does not exist (race condition)`);
-        throw new BadRequestException(`A revenue item with the name '${name}' does not exist`);
-      }
       this.logger.error('AWS error during updateRevenue: ', error);
       throw new InternalServerErrorException('Internal Server Error');
     }
