@@ -62,13 +62,13 @@ export default function CashAddCosts() {
   }
 
   const handleSubmit = async () => {
+    setSuccessMessage(null);
     const payload = buildPayload();
     if (!payload) {
       return;
     }
 
     setIsSubmitting(true);
-    setSuccessMessage(null);
     setErrors((previous) => ({ ...previous, submit: undefined }));
 
     const result = await createNewCost(payload);

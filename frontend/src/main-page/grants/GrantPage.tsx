@@ -9,12 +9,7 @@ import Button from "../../components/Button.tsx";
 import EditGrant from "./edit-grant/EditGrant.tsx";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
-// still needed potentially?
-interface GrantPageProps {
-  showOnlyMyGrants?: boolean; //if true, filters grants by user email
-}
-
-function GrantPage({}: GrantPageProps) {
+function GrantPage() {
   const [showEditGrant, setShowEditGrant] = useState(false);
 
   // Use ProcessGrantData reactively to get filtered grants
