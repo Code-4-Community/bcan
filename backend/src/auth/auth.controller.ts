@@ -4,6 +4,7 @@ import { Response } from 'express';
 import { VerifyUserGuard } from "../guards/auth.guard";
 import { LoginBody, RegisterBody, SetPasswordBody, UpdateProfileBody, ChangePasswordBody } from './types/auth.types';
 import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import { User } from '../../../middle-layer/types/User';
 
 @Controller('auth')
 export class AuthController {
@@ -145,7 +146,7 @@ export class AuthController {
   async login(
     @Res({ passthrough: true }) response: Response,
     @Body() body:LoginBody
-  ): Promise<{ message: string }> {
+  ): Promise<{ message: string; user: User }> {
     const result = await this.authService.login(body.email, body.password);
   
   // Set cookie with access token
@@ -183,7 +184,10 @@ export class AuthController {
   }
 
   
-  return { message: 'User logged in successfully' };
+  return {
+    message: 'User logged in successfully',
+    user: result.user,
+  };
   }
 
   /**
