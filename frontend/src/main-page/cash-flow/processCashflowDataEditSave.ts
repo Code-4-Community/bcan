@@ -96,7 +96,7 @@ export const saveRevenueEdits = async (oldName: string, updatedRevenue: Cashflow
 export const saveCostEdits = async (updatedCost: CashflowCost, originalCostName: string) => {
   try {
     const response = await api(`/cashflow-cost/${originalCostName}`, {
-      method: "PATCH",
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedCost),
     });
