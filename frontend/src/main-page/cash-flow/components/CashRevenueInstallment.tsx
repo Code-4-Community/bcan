@@ -76,7 +76,7 @@ export default function CashRevenueInstallment({
             type="button"
             aria-label="Delete installment"
             onClick={onDelete}
-            className="rounded-full bg-red hover:bg-red-light text-white w-10 h-10 flex items-center justify-center mb-0.5 shrink-0"
+            className="rounded-full bg-red hover:bg-red-light text-white w-10 h-10 flex items-center justify-center mb-1.5 shrink-0"
           >
             <FontAwesomeIcon icon={faXmark} className="text-lg" />
           </button>

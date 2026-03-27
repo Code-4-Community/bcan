@@ -301,7 +301,7 @@ export default function CashAddRevenue() {
         onClick={addInstallment}
         logo={faPlus}
         logoPosition="left"
-        className="bg-primary-900 text-white w-fit ml-auto text-sm"
+        className="bg-primary-900 text-white w-fit ml-auto text-sm mt-2"
       />
       <Button
         text="Add Revenue Source"

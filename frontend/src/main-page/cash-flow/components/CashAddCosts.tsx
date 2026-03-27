@@ -117,7 +117,7 @@ export default function CashAddCosts() {
           {errors.name ? <p className="text-red text-sm">{errors.name}</p> : null}
         </div>
       </div>
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 mt-2">
         <InputField
           type="number"
           id="amount"
