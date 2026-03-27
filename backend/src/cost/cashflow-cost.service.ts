@@ -38,7 +38,7 @@ export class CostService {
   }
 
   private validateName(name: string) {
-    if (name.trim().length === 0 || name === null) {
+    if (name === null || name.trim().length === 0) {
       throw new BadRequestException('name must be a non-empty string');
     }
   }

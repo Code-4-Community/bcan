@@ -67,7 +67,7 @@ export const createNewCost = async (newCost: CashflowCost) => {
 
 export const saveRevenueEdits = async (oldName: string, updatedRevenue: CashflowRevenue) => {
   try {
-    const response = await api(`/cashflow-revenue/${oldName}`, {
+    const response = await api(`/cashflow-revenue/${encodeURIComponent(oldName)}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedRevenue),
@@ -95,7 +95,7 @@ export const saveRevenueEdits = async (oldName: string, updatedRevenue: Cashflow
 
 export const saveCostEdits = async (updatedCost: CashflowCost, originalCostName: string) => {
   try {
-    const response = await api(`/cashflow-cost/${originalCostName}`, {
+    const response = await api(`/cashflow-cost/${encodeURIComponent(originalCostName)}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedCost),
@@ -123,7 +123,7 @@ export const saveCostEdits = async (updatedCost: CashflowCost, originalCostName:
 
 export const deleteRevenue = async (revenueName: string) => {
         try {
-          const response = await api(`/cashflow-revenue/${revenueName}`, {
+          const response = await api(`/cashflow-revenue/${encodeURIComponent(revenueName)}`, {
             method: "DELETE",
             headers: {
               "Content-Type": "application/json",
@@ -166,7 +166,7 @@ export const deleteRevenue = async (revenueName: string) => {
 
 export const deleteCost = async (costName: string) => {
         try {
-          const response = await api(`/cashflow-cost/${costName}`, {
+          const response = await api(`/cashflow-cost/${encodeURIComponent(costName)}`, {
             method: "DELETE",
             headers: {
               "Content-Type": "application/json",

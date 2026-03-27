@@ -55,7 +55,7 @@ export class RevenueController {
         @Param('name') name: string,
         @Body() body: CashflowRevenue
     ): Promise<CashflowRevenue> {
-        return await this.revService.updateRevenue(name, body);
+        return await this.revService.updateRevenue(decodeURIComponent(name), body);
     }
 
     @Delete(':name')
@@ -70,6 +70,6 @@ export class RevenueController {
     async deleteRevenue(
         @Param('name') name: string
     ): Promise<void> {
-        return await this.revService.deleteRevenue(name);
+        return await this.revService.deleteRevenue(decodeURIComponent(name));
     }
 }
