@@ -302,6 +302,17 @@ describe('CostService', () => {
   });
 
   describe('updateCost()', () => {
+    beforeEach(() => {
+      mockGetPromise.mockResolvedValue({
+        Item: {
+          name: 'Food',
+          amount: 200,
+          type: CostType.MealsFood,
+          date: '2026-03-22',
+        },
+      });
+    });
+
     it('updates non-key fields for an existing cost', async () => {
       const updatedItem = {
         name: 'Food',
@@ -319,6 +330,10 @@ describe('CostService', () => {
       });
 
       expect(result).toEqual(updatedItem);
+      expect(mockGet).toHaveBeenCalledWith({
+        TableName: 'Costs',
+        Key: { name: 'Food' },
+      });
       expect(mockPut).toHaveBeenCalledWith({
         TableName: 'Costs',
         Item: {
@@ -332,6 +347,24 @@ describe('CostService', () => {
           '#name': 'name',
         },
       });
+    });
+
+    it('does nothing when incoming payload matches existing cost', async () => {
+      const result = await service.updateCost('Food', {
+        name: 'Food',
+        amount: 200,
+        type: CostType.MealsFood,
+        date: '2026-03-22' as TDateISO,
+      });
+
+      expect(result).toEqual({
+        name: 'Food',
+        amount: 200,
+        type: CostType.MealsFood,
+        date: '2026-03-22',
+      });
+      expect(mockPut).not.toHaveBeenCalled();
+      expect(mockTransactWrite).not.toHaveBeenCalled();
     });
 
     it('throws BadRequestException for invalid amount', async () => {
@@ -376,8 +409,7 @@ describe('CostService', () => {
     });
 
     it('throws NotFoundException when non-rename update target does not exist', async () => {
-      const err = { code: 'ConditionalCheckFailedException' };
-      mockPutPromise.mockRejectedValue(err);
+      mockGetPromise.mockResolvedValue({ Item: undefined });
 
       await expect(
         service.updateCost('Food', {
@@ -395,6 +427,7 @@ describe('CostService', () => {
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow('Cost with name Food not found');
+      expect(mockPut).not.toHaveBeenCalled();
     });
 
     it('throws InternalServerErrorException on non-rename DynamoDB error', async () => {

@@ -178,9 +178,43 @@ export class CostService {
 
     this.validateAmount(updates.amount);
     this.validateCostType(updates.type);
-    this.validateName(updates.name);
-    updates.name = updates.name.trim();
+
+    if (updates.name !== undefined) {
+      this.validateName(updates.name);
+      updates.name = updates.name.trim();
+    }
+
     this.validateDate(updates.date);
+
+    const existingResult = await this.dynamoDb
+      .get({
+        TableName: tableName,
+        Key: { name: normalizedName },
+      })
+      .promise();
+
+    if (!existingResult.Item) {
+      throw new NotFoundException(`Cost with name ${normalizedName} not found`);
+    }
+
+    const existingCost = existingResult.Item as CashflowCost;
+    const existingDateTime = new Date(existingCost.date).getTime();
+    const updatesDateTime = new Date(updates.date).getTime();
+    const datesAreEqual =
+      !Number.isNaN(existingDateTime) &&
+      !Number.isNaN(updatesDateTime) &&
+      existingDateTime === updatesDateTime;
+
+    const isUnchanged =
+      existingCost.name === updates.name &&
+      existingCost.amount === updates.amount &&
+      existingCost.type === updates.type &&
+      datesAreEqual;
+
+    if (isUnchanged) {
+      this.logger.log(`No changes detected for cost ${normalizedName}; skipping update`);
+      return existingCost;
+    }
 
     const shouldRename = updates.name.trim() !== normalizedName;
 
@@ -188,17 +222,6 @@ export class CostService {
       this.logger.log(`Renaming cost ${normalizedName} to ${updates.name.trim()}`);
 
       try {
-        const existingResult = await this.dynamoDb
-          .get({
-            TableName: tableName,
-            Key: { name: normalizedName },
-          })
-          .promise();
-
-        if (!existingResult.Item) {
-          throw new NotFoundException(`Cost with name ${normalizedName} not found`);
-        }
-
         await this.dynamoDb
           .transactWrite({
             TransactItems: [
@@ -226,6 +249,7 @@ export class CostService {
           })
           .promise();
 
+        this.logger.log(`Successfully renamed cost ${normalizedName} to ${updates.name.trim()}`);
         return updates;
       } catch (error) {
         if (error instanceof NotFoundException) {
