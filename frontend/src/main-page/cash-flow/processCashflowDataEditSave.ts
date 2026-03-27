@@ -67,7 +67,6 @@ export const createNewCost = async (newCost: CashflowCost) => {
 
 export const saveRevenueEdits = async (oldName: string, updatedRevenue: CashflowRevenue) => {
   try {
-        // Need to replace with acual endpoint
     const response = await api(`/cashflow-revenue/${oldName}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -122,10 +121,9 @@ export const saveCostEdits = async (updatedCost: CashflowCost, originalCostName:
   }
 };
 
-export const deleteRevenue = async (revenueId: any) => {
-      // Need to replace with acual endpoint
+export const deleteRevenue = async (revenueName: string) => {
         try {
-          const response = await api(`/revenue/${revenueId}`, {
+          const response = await api(`/cashflow-revenue/${revenueName}`, {
             method: "DELETE",
             headers: {
               "Content-Type": "application/json",
@@ -166,7 +164,7 @@ export const deleteRevenue = async (revenueId: any) => {
         }
       };
 
-export const deleteCost = async (costName: any) => {
+export const deleteCost = async (costName: string) => {
         try {
           const response = await api(`/cashflow-cost/${costName}`, {
             method: "DELETE",

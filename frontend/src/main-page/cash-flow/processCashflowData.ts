@@ -11,7 +11,6 @@ import { api } from "../../api.ts";
 // fetch line items
 export const fetchCosts = async () => {
   try {
-    // Need to replace with actual endpoint
     const response = await api("/cashflow-cost");
     if (!response.ok) {
       throw new Error(`HTTP Error, Status: ${response.status}`);
@@ -25,7 +24,6 @@ export const fetchCosts = async () => {
 
 export const fetchRevenues = async () => {
   try {
-    // Need to replace with actual endpoint
     const response = await api("/cashflow-revenue");
     if (!response.ok) {
       throw new Error(`HTTP Error, Status: ${response.status}`);

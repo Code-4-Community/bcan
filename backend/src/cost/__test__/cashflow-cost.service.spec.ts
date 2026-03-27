@@ -162,7 +162,7 @@ describe('CostService', () => {
       );
     });
   });
-  
+
   describe('createCost()', () => {
     it('creates a cost and trims the name', async () => {
       mockPutPromise.mockResolvedValue({});
@@ -307,139 +307,114 @@ describe('CostService', () => {
         name: 'Food',
         amount: 300,
         type: CostType.Services,
+        date: '2026-03-22' as TDateISO,
       };
-      mockUpdatePromise.mockResolvedValue({ Attributes: updatedItem });
+      mockPutPromise.mockResolvedValue({});
 
       const result = await service.updateCost('Food', {
+        name: 'Food',
         amount: 300,
         type: CostType.Services,
+        date: '2026-03-22' as TDateISO,
       });
 
       expect(result).toEqual(updatedItem);
-      expect(mockUpdate).toHaveBeenCalledWith({
+      expect(mockPut).toHaveBeenCalledWith({
         TableName: 'Costs',
-        Key: { name: 'Food' },
-        UpdateExpression: 'SET #amount = :amount, #type = :type',
-        ExpressionAttributeNames: {
-          '#amount': 'amount',
-          '#type': 'type',
-          '#name': 'name',
-        },
-        ExpressionAttributeValues: {
-          ':amount': 300,
-          ':type': CostType.Services,
+        Item: {
+          name: 'Food',
+          amount: 300,
+          type: CostType.Services,
+          date: '2026-03-22',
         },
         ConditionExpression: 'attribute_exists(#name)',
-        ReturnValues: 'ALL_NEW',
-      });
-    });
-
-    it('updates only amount when type is not provided', async () => {
-      const updatedItem = {
-        name: 'Food',
-        amount: 275,
-        type: CostType.MealsFood,
-      };
-      mockUpdatePromise.mockResolvedValue({ Attributes: updatedItem });
-
-      const result = await service.updateCost('Food', { amount: 275 });
-
-      expect(result).toEqual(updatedItem);
-      expect(mockUpdate).toHaveBeenCalledWith({
-        TableName: 'Costs',
-        Key: { name: 'Food' },
-        UpdateExpression: 'SET #amount = :amount',
         ExpressionAttributeNames: {
-          '#amount': 'amount',
           '#name': 'name',
         },
-        ExpressionAttributeValues: {
-          ':amount': 275,
-        },
-        ConditionExpression: 'attribute_exists(#name)',
-        ReturnValues: 'ALL_NEW',
       });
-    });
-
-    it('updates only type when amount is not provided', async () => {
-      const updatedItem = {
-        name: 'Food',
-        amount: 200,
-        type: CostType.Services,
-      };
-      mockUpdatePromise.mockResolvedValue({ Attributes: updatedItem });
-
-      const result = await service.updateCost('Food', {
-        type: CostType.Services,
-      });
-
-      expect(result).toEqual(updatedItem);
-      expect(mockUpdate).toHaveBeenCalledWith({
-        TableName: 'Costs',
-        Key: { name: 'Food' },
-        UpdateExpression: 'SET #type = :type',
-        ExpressionAttributeNames: {
-          '#type': 'type',
-          '#name': 'name',
-        },
-        ExpressionAttributeValues: {
-          ':type': CostType.Services,
-        },
-        ConditionExpression: 'attribute_exists(#name)',
-        ReturnValues: 'ALL_NEW',
-      });
-    });
-
-    it('throws BadRequestException when update payload is empty', async () => {
-      await expect(service.updateCost('Food', {})).rejects.toThrow(
-        BadRequestException,
-      );
-      await expect(service.updateCost('Food', {})).rejects.toThrow(
-        'At least one field is required for update',
-      );
     });
 
     it('throws BadRequestException for invalid amount', async () => {
       await expect(
-        service.updateCost('Food', { amount: Number.NaN }),
+        service.updateCost('Food', {
+          name: 'Food',
+          amount: Number.NaN,
+          type: CostType.MealsFood,
+          date: '2026-03-22' as TDateISO,
+        }),
       ).rejects.toThrow(BadRequestException);
     });
 
     it('throws BadRequestException for invalid type', async () => {
       await expect(
-        service.updateCost('Food', { type: 'INVALID' as unknown as CostType }),
+        service.updateCost('Food', {
+          name: 'Food',
+          amount: 250,
+          type: 'INVALID' as unknown as CostType,
+          date: '2026-03-22' as TDateISO,
+        }),
       ).rejects.toThrow(BadRequestException);
     });
 
     it('throws BadRequestException for invalid date format', async () => {
       await expect(
-        service.updateCost('Food', { date: 'not-a-date' as unknown as TDateISO }),
+        service.updateCost('Food', {
+          name: 'Food',
+          amount: 250,
+          type: CostType.MealsFood,
+          date: 'not-a-date' as unknown as TDateISO,
+        }),
       ).rejects.toThrow(BadRequestException);
       await expect(
-        service.updateCost('Food', { date: 'not-a-date' as unknown as TDateISO }),
+        service.updateCost('Food', {
+          name: 'Food',
+          amount: 250,
+          type: CostType.MealsFood,
+          date: 'not-a-date' as unknown as TDateISO,
+        }),
       ).rejects.toThrow('date must be a valid ISO 8601 format string');
     });
 
     it('throws NotFoundException when non-rename update target does not exist', async () => {
       const err = { code: 'ConditionalCheckFailedException' };
-      mockUpdatePromise.mockRejectedValue(err);
+      mockPutPromise.mockRejectedValue(err);
 
       await expect(
-        service.updateCost('Food', { amount: 250 }),
+        service.updateCost('Food', {
+          name: 'Food',
+          amount: 250,
+          type: CostType.MealsFood,
+          date: '2026-03-22' as TDateISO,
+        }),
       ).rejects.toThrow(NotFoundException);
       await expect(
-        service.updateCost('Food', { amount: 250 }),
+        service.updateCost('Food', {
+          name: 'Food',
+          amount: 250,
+          type: CostType.MealsFood,
+          date: '2026-03-22' as TDateISO,
+        }),
       ).rejects.toThrow('Cost with name Food not found');
     });
 
     it('throws InternalServerErrorException on non-rename DynamoDB error', async () => {
-      mockUpdatePromise.mockRejectedValue(new Error('update failed'));
+      mockPutPromise.mockRejectedValue(new Error('update failed'));
 
       await expect(
-        service.updateCost('Food', { amount: 250 }),
+        service.updateCost('Food', {
+          name: 'Food',
+          amount: 250,
+          type: CostType.MealsFood,
+          date: '2026-03-22' as TDateISO,
+        }),
       ).rejects.toThrow(InternalServerErrorException);
       await expect(
-        service.updateCost('Food', { amount: 250 }),
+        service.updateCost('Food', {
+          name: 'Food',
+          amount: 250,
+          type: CostType.MealsFood,
+          date: '2026-03-22' as TDateISO,
+        }),
       ).rejects.toThrow('Failed to update cost Food');
     });
 
@@ -452,13 +427,15 @@ describe('CostService', () => {
       const result = await service.updateCost('Food', {
         name: 'Meals',
         amount: 300,
+        type: CostType.MealsFood,
+        date: '2026-03-22' as TDateISO,
       });
 
       expect(result).toEqual({
         name: 'Meals',
         amount: 300,
         type: CostType.MealsFood,
-        date: undefined,
+        date: '2026-03-22',
       });
       expect(mockGet).toHaveBeenCalledWith({
         TableName: 'Costs',
@@ -473,7 +450,7 @@ describe('CostService', () => {
                 name: 'Meals',
                 amount: 300,
                 type: CostType.MealsFood,
-                date: undefined,
+                date: '2026-03-22',
               },
               ConditionExpression: 'attribute_not_exists(#name)',
               ExpressionAttributeNames: {
@@ -504,6 +481,7 @@ describe('CostService', () => {
       const result = await service.updateCost('Food', {
         name: 'Meals',
         amount: 300,
+        type: CostType.MealsFood,
         date: '2026-03-22' as TDateISO,
       });
 
@@ -519,10 +497,20 @@ describe('CostService', () => {
       mockGetPromise.mockResolvedValue({ Item: undefined });
 
       await expect(
-        service.updateCost('Food', { name: 'Meals' }),
+        service.updateCost('Food', {
+          name: 'Meals',
+          amount: 300,
+          type: CostType.MealsFood,
+          date: '2026-03-22' as TDateISO,
+        }),
       ).rejects.toThrow(NotFoundException);
       await expect(
-        service.updateCost('Food', { name: 'Meals' }),
+        service.updateCost('Food', {
+          name: 'Meals',
+          amount: 300,
+          type: CostType.MealsFood,
+          date: '2026-03-22' as TDateISO,
+        }),
       ).rejects.toThrow('Cost with name Food not found');
     });
 
@@ -535,10 +523,20 @@ describe('CostService', () => {
       });
 
       await expect(
-        service.updateCost('Food', { name: 'Meals' }),
+        service.updateCost('Food', {
+          name: 'Meals',
+          amount: 300,
+          type: CostType.MealsFood,
+          date: '2026-03-22' as TDateISO,
+        }),
       ).rejects.toThrow(ConflictException);
       await expect(
-        service.updateCost('Food', { name: 'Meals' }),
+        service.updateCost('Food', {
+          name: 'Meals',
+          amount: 300,
+          type: CostType.MealsFood,
+          date: '2026-03-22' as TDateISO,
+        }),
       ).rejects.toThrow('Cost with name Meals already exists');
     });
 
@@ -549,19 +547,34 @@ describe('CostService', () => {
       mockTransactWritePromise.mockRejectedValue(new Error('txn failed'));
 
       await expect(
-        service.updateCost('Food', { name: 'Meals' }),
+        service.updateCost('Food', {
+          name: 'Meals',
+          amount: 300,
+          type: CostType.MealsFood,
+          date: '2026-03-22' as TDateISO,
+        }),
       ).rejects.toThrow(InternalServerErrorException);
       await expect(
-        service.updateCost('Food', { name: 'Meals' }),
+        service.updateCost('Food', {
+          name: 'Meals',
+          amount: 300,
+          type: CostType.MealsFood,
+          date: '2026-03-22' as TDateISO,
+        }),
       ).rejects.toThrow('Failed to update cost Food');
     });
 
     it('throws InternalServerErrorException when table name is missing', async () => {
       delete process.env.CASHFLOW_COST_TABLE_NAME;
 
-      await expect(service.updateCost('Food', { amount: 200 })).rejects.toThrow(
-        InternalServerErrorException,
-      );
+      await expect(
+        service.updateCost('Food', {
+          name: 'Food',
+          amount: 200,
+          type: CostType.MealsFood,
+          date: '2026-03-22' as TDateISO,
+        }),
+      ).rejects.toThrow(InternalServerErrorException);
     });
   });
 
