@@ -1,5 +1,20 @@
 // API INDEX
 const BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+export const COOKIE_MISSING_EVENT = 'bcan:cookie-missing';
+let hasDispatchedCookieMissingEvent = false;
+
+function notifyCookieMissing(path: string): void {
+  if (hasDispatchedCookieMissingEvent || typeof window === 'undefined') {
+    return;
+  }
+
+  hasDispatchedCookieMissingEvent = true;
+  window.dispatchEvent(
+    new CustomEvent(COOKIE_MISSING_EVENT, {
+      detail: { path },
+    })
+  );
+}
 
 type ApiInit = RequestInit & { __retry?: boolean };
 let refreshInFlight: Promise<boolean> | null = null;
@@ -31,6 +46,16 @@ export async function api(
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
   const url = `${BASE}${cleanPath}`;
 
+  const response = await fetch(url, {
+    credentials: 'include',
+    ...init,
+  });
+
+  if (response.status === 401) {
+    notifyCookieMissing(cleanPath);
+  }
+
+  return response;
   const typedInit = init as ApiInit;
   const { __retry, ...fetchInit } = typedInit;
 
