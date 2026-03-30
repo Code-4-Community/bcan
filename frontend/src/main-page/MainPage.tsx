@@ -97,7 +97,7 @@ function MainPage() {
             <Route
               path="/cash-flow"
               element={
-                <PositionGuard adminOnly={false}>
+                <PositionGuard adminOnly={true}>
                   <CashFlowPage />
                   <Footer />
                 </PositionGuard>

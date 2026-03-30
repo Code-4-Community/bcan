@@ -10,9 +10,13 @@ export default function CashAddRevenue() {
       <div className="text-lg lg:text-xl w-full text-left font-bold">
         {"Add Revenue Source"}
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 w-full justify-between gap-4">
+      <div className="grid grid-cols-1 xl:grid-cols-2 w-full justify-between gap-4">
         <div className="flex flex-col col-span-1 w-full gap-2">
-          <CashCategoryDropdown type={RevenueType} onChange={() => {}} />
+          <CashCategoryDropdown
+            type={RevenueType}
+            onChange={(value) => alert(value)}
+            value={RevenueType.Fundraising}
+          />
           <InputField
             type="number"
             id="amount"

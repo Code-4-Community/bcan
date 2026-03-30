@@ -9,9 +9,13 @@ export default function CashAddCosts() {
       <div className="text-lg lg:text-xl w-full text-left font-bold">
         {"Add Cost Source"}
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 w-full justify-between gap-4">
+      <div className="grid grid-cols-1 xl:grid-cols-2 w-full justify-between gap-4">
         <div className="flex flex-col col-span-1 w-full gap-3">
-          <CashCategoryDropdown type={CostType} onChange={() => {}} />
+          <CashCategoryDropdown
+            type={CostType}
+            onChange={(value) => alert(value)}
+            value={CostType.Benefits}
+          />
         </div>
         <div className="flex flex-col col-span-1 gap-3">
           <InputField

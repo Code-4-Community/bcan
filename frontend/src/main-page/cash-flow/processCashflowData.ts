@@ -12,7 +12,7 @@ import { api } from "../../api.ts";
 export const fetchCosts = async () => {
   try {
     // Need to replace with actual endpoint
-    const response = await api("/cost");
+    const response = await api("/cashflow-cost");
     if (!response.ok) {
       throw new Error(`HTTP Error, Status: ${response.status}`);
     }
