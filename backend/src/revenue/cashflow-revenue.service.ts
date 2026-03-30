@@ -329,16 +329,20 @@ async updateRevenue(name: string, revenue: CashflowRevenue): Promise<CashflowRev
   this.validateName(name);
   this.validateTableName(this.revenueTableName);
 
+  const trimmedRouteName = name.trim();
+  const trimmedBodyName = revenue.name.trim();
+  const isRename = trimmedRouteName !== trimmedBodyName;
+
   // Use route param as the key — ignore body name to prevent key mismatches
   const normalizedRevenue: CashflowRevenue = {
     ...revenue,
-    name: name.trim(),  // ← route param, not revenue.name
+    name: trimmedBodyName,
   };
 
   // Check if the revenue item actually exists before updating
   const getParams = {
     TableName: this.revenueTableName,
-    Key: { name: name.trim() },
+    Key: { name: trimmedRouteName },
   };
 
   try {
@@ -361,17 +365,29 @@ async updateRevenue(name: string, revenue: CashflowRevenue): Promise<CashflowRev
   }
 
   // Put replaces the entire item at the given key with the new values
-  const params = {
+  const putParams = {
     TableName: this.revenueTableName,
     Item: normalizedRevenue,
   };
 
-  this.logger.log(`Params for update call to dynamo db: ${JSON.stringify(params, null, 2)}`);
+  this.logger.log(`Params for update call to dynamo db: ${JSON.stringify(putParams, null, 2)}`);
 
   try {
     this.logger.log(`Updating revenue item with name: ${name}`);
-    await this.dynamoDb.put(params).promise();
+    await this.dynamoDb.put(putParams).promise();
     this.logger.log(`Successfully updated revenue item with name: ${name}`);
+
+    // If the name changed, delete the old item so we don't leave a stale record
+    if (isRename) {
+      this.logger.log(`Name changed from '${trimmedRouteName}' to '${trimmedBodyName}' — deleting old record`);
+      const deleteParams = {
+        TableName: this.revenueTableName,
+        Key: { name: trimmedRouteName },
+      };
+      await this.dynamoDb.delete(deleteParams).promise();
+      this.logger.log(`Successfully deleted old revenue item with name: '${trimmedRouteName}'`);
+    }
+
     return normalizedRevenue;
   } catch (error) {
     if (error instanceof BadRequestException || error instanceof InternalServerErrorException) {
