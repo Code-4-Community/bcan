@@ -26,8 +26,7 @@ export const fetchCosts = async () => {
 
 export const fetchRevenues = async () => {
   try {
-    // Need to replace with actual endpoint
-    const response = await api("/revenue");
+    const response = await api("/cashflow-revenue");
     if (!response.ok) {
       throw new Error(`HTTP Error, Status: ${response.status}`);
     }

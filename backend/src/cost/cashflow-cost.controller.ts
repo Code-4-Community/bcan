@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -18,9 +17,9 @@ import {
   ApiBearerAuth
 } from '@nestjs/swagger';
 import { CostService } from './cashflow-cost.service';
-import { CostType } from '../../../middle-layer/types/CostType';
 import { VerifyAdminRoleGuard } from '../guards/auth.guard';
 import { CashflowCost } from '../types/CashflowCost';
+import { CashflowCostDTO } from './types/cost.types';
 
 // interface CreateCostBody {
 //  cost : CashflowCost;
@@ -70,22 +69,6 @@ export class CostController {
   }
 
   /**
-   * gets costs by type (e.g. Personal Salary, Personal Benefits, etc.)
-   * @param costType type of cost you are trying to get (e.g. all Salary costs)
-   * @returns array of costs of the specified type, if any exist
-   */
-  @Get('type/:costType')
-  @UseGuards(VerifyAdminRoleGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get costs by type' })
-  @ApiParam({ name: 'costType', type: String, description: 'Cost Type' })
-  @ApiResponse({ status: 200, description: 'Successfully retrieved costs' })
-  @ApiResponse({ status: 500, description: 'Internal Server Error' })
-  async getCostsByType(@Param('costType') costType: CostType) {
-    return await this.costService.getCostsByType(costType);
-  }
-
-  /**
    * creates a new cost with the specified fields in the request body
    * @param body must include amount, type, and name of the cost to be created
    * @returns 
@@ -94,46 +77,21 @@ export class CostController {
   @UseGuards(VerifyAdminRoleGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a cost' })
-  @ApiBody({
-    schema: {
-    type: 'object',
-    required: ['name', 'amount', 'type','date'],
-    properties: {
-      name: { type: 'string', example: 'PM Salary' },
-      amount: { type: 'number', example: 12000 },
-      type: { type: 'string', enum: Object.values(CostType), example: CostType.Salary },
-      date: { type: 'string', example: '2026-03-14T00:00:00.000Z' },
-    },
-  },
-})
+  @ApiBody({ type: CashflowCostDTO, description: 'Full cost payload' })
   @ApiResponse({ status: 201, description: 'Successfully created cost' })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid cost payload' })
   @ApiResponse({ status: 409, description: 'Conflict - Cost with the same name already exists' })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
-  async createCost(@Body() body: CashflowCost) {
+  async createCost(@Body() body: CashflowCostDTO) {
     return await this.costService.createCost(body);
   }
 
   @Put(':costName')
   @UseGuards(VerifyAdminRoleGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update cost fields by name' })
+  @ApiOperation({ summary: 'Replace cost by name' })
   @ApiParam({ name: 'costName', type: String, description: 'Cost Name' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        amount: { type: 'number', example: 13000 },
-        type: {
-          type: 'string',
-          enum: Object.values(CostType),
-          example: CostType.Benefits,
-        },
-        name: { type: 'string', example: 'Updated Cost Name' },
-        date: {type: 'string', example: "2026-03-22T16:09:52Z"}
-      },
-    },
-  })
+  @ApiBody({ type: CashflowCostDTO, description: 'Full replacement payload (all fields required)' })
   @ApiResponse({ status: 200, description: 'Successfully updated cost' })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid update payload' })
   @ApiResponse({ status: 404, description: 'Cost not found' })
@@ -141,13 +99,9 @@ export class CostController {
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async updateCost(
     @Param('costName') costName: string,
-    @Body() body: CashflowCost,
+    @Body() body: CashflowCostDTO,
   ) {
-    if (Object.keys(body).length === 0) {
-      throw new BadRequestException('At least one field is required for update');
-    }
-
-    return await this.costService.updateCost(costName, body);
+    return await this.costService.updateCost(decodeURIComponent(costName), body);
   }
 
   @Delete(':costName')
@@ -159,6 +113,6 @@ export class CostController {
   @ApiResponse({ status: 404, description: 'Cost not found' })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async deleteCost(@Param('costName') costName: string) {
-    return await this.costService.deleteCost(costName);
+    return await this.costService.deleteCost(decodeURIComponent(costName));
   }
 }

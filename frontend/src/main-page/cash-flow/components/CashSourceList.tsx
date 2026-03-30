@@ -10,6 +10,15 @@ type SourceProps = {
   lineItems: CashflowRevenue[] | CashflowCost[];
 };
 
+const formatInstallmentDate = (dateValue: Date | string) => {
+  const parsedDate = new Date(dateValue);
+  if (Number.isNaN(parsedDate.getTime())) {
+    return "Invalid date";
+  }
+
+  return parsedDate.toLocaleDateString("en-US");
+};
+
 export default function CashSourceList({ type, lineItems }: SourceProps) {
   return (
     <div className="chart-container col-span-2 h-fit">
@@ -38,7 +47,18 @@ export default function CashSourceList({ type, lineItems }: SourceProps) {
                     </div>
                   )}
                   {type === "Revenue" && (
-                    <div>{/* Revenue card info here */}</div>
+                    <div>
+                      {(item as CashflowRevenue).installments.map((installment, index) => (
+                        <div key={`${item.name}-installment-${index}`}>
+                          {formatMoney(installment.amount)}
+                          {" • "}
+                          {formatInstallmentDate(installment.date)}
+                        </div>
+                      ))}
+                      <div className="font-semibold pt-1">
+                        {"Total: "}{formatMoney(item.amount)}
+                      </div>
+                    </div>
                   )}
                 </div>
               }

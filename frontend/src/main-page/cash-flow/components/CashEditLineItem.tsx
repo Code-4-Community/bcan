@@ -7,7 +7,7 @@ type CashEditLineItemProps = {
   cardText: React.ReactNode;
   children: (onClose: () => void) => React.ReactNode;
   sourceName: string;
-  onRemove: () => void;
+  onRemove: () => Promise<void>;
 };
 
 export default function CashEditLineItem({
@@ -25,7 +25,7 @@ export default function CashEditLineItem({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handleDelete = async () => {
-    onRemove();
+    await onRemove();
     setShowDeleteModal(false);
   };
 
