@@ -22,6 +22,7 @@ import {
   removeProfilePic,
   fetchCashflowRevenues,
   fetchCashflowCosts,
+  setCashflowSettings
 } from "./actions";
 import { getAppStore, persistToSessionStorage } from "./store";
 
@@ -236,4 +237,13 @@ mutator(removeProfilePic, () => {
   }
 
   persistToSessionStorage();
+});
+
+/**
+ * setCashflowSettings mutator
+ */
+
+mutator(setCashflowSettings, (actionMessage) => {
+  const store = getAppStore();
+  store.cashflowSettings = actionMessage.cashflowSettings;
 });

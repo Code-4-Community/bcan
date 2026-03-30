@@ -5,6 +5,7 @@ import { Status } from '../../../../middle-layer/types/Status'
 import { Notification } from '../../../../middle-layer/types/Notification'
 import { CashflowRevenue } from '../../../../middle-layer/types/CashflowRevenue'
 import { CashflowCost } from '../../../../middle-layer/types/CashflowCost'
+import { CashflowSettings } from '../../../../middle-layer/types/CashflowSettings'
 
 export interface AppState {
   isAuthenticated: boolean;
@@ -29,6 +30,7 @@ export interface AppState {
   userQuery: string;
   revenueSources: CashflowRevenue[];
   costSources: CashflowCost[];
+  cashflowSettings: CashflowSettings | null;
 }
 
 // Define initial state
@@ -54,6 +56,7 @@ const initialState: AppState = {
   userQuery: '',
   revenueSources: [],
   costSources: [],
+  cashflowSettings: null,
 };
 
 /**
