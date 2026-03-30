@@ -1,39 +1,57 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { FaTrash } from "react-icons/fa";
 
 interface GrantNotificationProps {
     notificationId: string;
-    title: string;
     message: string;
+    alertTime: string;
     onDelete: (notificationId: string) => void;
+    avatarUrl: string | null;
+    firstName: string;
+    lastName: string;
+}
+
+function formatAlertTime(dateStr: string): string {
+    return new Date(dateStr).toLocaleString('en-US', {
+        weekday: 'long',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+    });
 }
 
 const GrantNotification: React.FC<GrantNotificationProps> = ({
     notificationId, 
-    title, 
     message, 
-    onDelete 
+    alertTime,
+    onDelete,
+    avatarUrl,
+    firstName,
+    lastName,
 }) => {
-    const handleDelete = () => {
-        onDelete(notificationId);
-    };
+    const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
 
     return (
-        <div className="grant-notification" role="listitem">
-            <div className="bell-notif">
-                <FontAwesomeIcon className="text-gray" icon={faBell}/>
+
+        <div className="flex items-center gap-3 px-4 py-3 hover:bg-grey-100 transition-colors" role="listitem">
+            <div className="w-10 h-10 rounded-full overflow-hidden bg-grey-500 flex items-center justify-center flex-shrink-0">
+                {avatarUrl ? (
+                    <img src={avatarUrl} alt={`${firstName} ${lastName}`} className="w-full h-full object-cover" />
+                ) : (
+                    <span className="text-sm font-semibold text-white">{initials}</span>
+                )}
             </div>
-            <div className="notification-text">
-                <div className="notification-title">{title}</div>
-                <div className="notification-message">{message}</div>
+
+            <div className="flex-1 min-w-0">
+                <div className="font-medium text-sm text-black truncate">{message}</div>
+                <div className="text-xs text-grey-500 mt-0.5">{formatAlertTime(alertTime)}</div>
             </div>
+
             <FaTrash
-                className="notification-trash-icon cursor-pointer"
+                className="flex-shrink-0 text-red hover:text-red-dark cursor-pointer text-sm"
                 title="Delete notification"
-                onClick={handleDelete}
+                onClick={() => onDelete(notificationId)}
             />
-            </div>
+        </div>
     );
 };
 
