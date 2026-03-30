@@ -5,7 +5,7 @@ import {
   Delete,
   Get,
   Param,
-  Patch,
+  Put,
   Post,
   UseGuards
 } from '@nestjs/common';
@@ -114,7 +114,7 @@ export class CostController {
     return await this.costService.createCost(body);
   }
 
-  @Patch(':costName')
+  @Put(':costName')
   @UseGuards(VerifyAdminRoleGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update cost fields by name' })
