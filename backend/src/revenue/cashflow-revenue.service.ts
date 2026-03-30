@@ -329,15 +329,20 @@ async updateRevenue(name: string, revenue: CashflowRevenue): Promise<CashflowRev
   this.validateName(name);
   this.validateTableName(this.revenueTableName);
 
-  const normalizedRevenue = {
+  const trimmedRouteName = name.trim();
+  const trimmedBodyName = revenue.name.trim();
+  const isRename = trimmedRouteName !== trimmedBodyName;
+
+  // Use route param as the key — ignore body name to prevent key mismatches
+  const normalizedRevenue: CashflowRevenue = {
     ...revenue,
-    name: revenue.name.trim(),
+    name: trimmedBodyName,
   };
 
   // Check if the revenue item actually exists before updating
   const getParams = {
     TableName: this.revenueTableName,
-    Key: { name: name.trim() },
+    Key: { name: trimmedRouteName },
   };
 
   try {
@@ -359,29 +364,36 @@ async updateRevenue(name: string, revenue: CashflowRevenue): Promise<CashflowRev
     throw new InternalServerErrorException('Internal Server Error');
   }
 
-  const params = {
+  // Put replaces the entire item at the given key with the new values
+  const putParams = {
     TableName: this.revenueTableName,
     Item: normalizedRevenue,
-    ConditionExpression: 'attribute_exists(#name)',
-    ExpressionAttributeNames: {
-      '#name': 'name',
-    },
   };
+
+  this.logger.log(`Params for update call to dynamo db: ${JSON.stringify(putParams, null, 2)}`);
 
   try {
     this.logger.log(`Updating revenue item with name: ${name}`);
-    await this.dynamoDb.put(params).promise();
+    await this.dynamoDb.put(putParams).promise();
     this.logger.log(`Successfully updated revenue item with name: ${name}`);
+
+    // If the name changed, delete the old item so we don't leave a stale record
+    if (isRename) {
+      this.logger.log(`Name changed from '${trimmedRouteName}' to '${trimmedBodyName}' — deleting old record`);
+      const deleteParams = {
+        TableName: this.revenueTableName,
+        Key: { name: trimmedRouteName },
+      };
+      await this.dynamoDb.delete(deleteParams).promise();
+      this.logger.log(`Successfully deleted old revenue item with name: '${trimmedRouteName}'`);
+    }
+
     return normalizedRevenue;
   } catch (error) {
     if (error instanceof BadRequestException || error instanceof InternalServerErrorException) {
       throw error;
     }
     if (this.isAWSError(error)) {
-      if (error.code === 'ConditionalCheckFailedException') {
-        this.logger.error(`Revenue item with name '${name}' does not exist (race condition)`);
-        throw new BadRequestException(`A revenue item with the name '${name}' does not exist`);
-      }
       this.logger.error('AWS error during updateRevenue: ', error);
       throw new InternalServerErrorException('Internal Server Error');
     }
