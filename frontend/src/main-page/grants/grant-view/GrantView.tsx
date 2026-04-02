@@ -204,7 +204,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
               {
                 label: "Contacts",
                 item: (
-                  <div className="grid grid-cols-1 xl:grid-cols-2 w-full h-full lg:w-[85%] gap-6">
+                  <div className="grid grid-cols-1 2xl:grid-cols-2 w-full h-full lg:w-[85%] gap-6">
                     <ContactCard contact={grant.bcan_poc} type="BCAN" />
                     <ContactCard
                       contact={grant.grantmaker_poc}
