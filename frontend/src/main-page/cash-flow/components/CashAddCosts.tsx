@@ -5,16 +5,20 @@ import Button from "../../../components/Button";
 import InputField from "../../../components/InputField";
 import CashCategoryDropdown from "./CashCategoryDropdown";
 import { createNewCost } from "../processCashflowDataEditSave";
+import { Frequency } from "../../../../../middle-layer/types/Frequency";
+import { set } from "mobx";
 
 type FieldErrors = {
   type?: string;
   name?: string;
+  frequency?: string;
   amount?: string;
   submit?: string;
 };
 
 export default function CashAddCosts() {
   const [type, setType] = useState<CostType | null>(null);
+  const [frequency, setFrequency] = useState<Frequency | null>(null);
   const [costName, setCostName] = useState<string>("");
   const [amount, setAmount] = useState<number | null>(null);
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -30,6 +34,10 @@ export default function CashAddCosts() {
 
     if (!type) {
       nextErrors.type = "Please select a category.";
+    }
+
+    if (!frequency) {
+      nextErrors.frequency = "Please select a frequency.";
     }
 
     if (!costName.trim()) {
@@ -50,12 +58,14 @@ export default function CashAddCosts() {
       name: costName.trim(),
       type,
       amount,
+      frequency,
       date: getTodayIsoDate(),
     };
   };
 
   const resetForm = () => {
     setType(null);
+    setFrequency(null);
     setCostName("");
     setAmount(null);
     setErrors({});
