@@ -22,7 +22,7 @@ export const formatMoney = (amount: number) => {
 };
 
 const CashFlowPage = observer(() => {
-  const { costs, revenues } = ProcessCashflowData();
+  const { costs, revenues, cashflowSettings } = ProcessCashflowData();
 
   return (
     <div className="">
@@ -30,25 +30,25 @@ const CashFlowPage = observer(() => {
         {/* Row 1 */}
         <CashflowKPICard
           text="Current Cash"
-          value="$50,000"
+          value={formatMoney(cashflowSettings?.startingCash ?? 0)}
           logo={faDollarSign}
           className="text-blue"
         />
         <CashflowKPICard
           text="Total Revenue"
-          value="$50,000"
+          value={formatMoney(revenues.reduce((accumulator, currentValue) => accumulator + currentValue.amount, 0))}
           logo={faArrowTrendUp}
           className="text-green"
         />
         <CashflowKPICard
           text="Monthly Costs"
-          value={formatMoney(costs.reduce((accumulator, currentValue) => accumulator + currentValue.amount, 0))}
+          value={formatMoney(costs.reduce((accumulator, currentValue) => accumulator + currentValue.amount, 0)/12)}
           logo={faUserGroup}
           className="text-primary"
         />
         <CashflowKPICard
           text="Annual Increases"
-          value="Salary: 4.5% | Benefits: 4%"
+          value={`Salary: ${cashflowSettings?.salaryIncrease}% | Benefits: ${cashflowSettings?.benefitsIncrease}%`}
           logo={faArrowTrendUp}
           className="text-green"
           size="small"
