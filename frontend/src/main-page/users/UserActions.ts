@@ -45,6 +45,7 @@ export const fetchInactiveUsers = async (): Promise<User[]> => {
 export const fetchUsers = async () => {
   console.log("Fetching users...");
   const active = await fetchActiveUsers();
+  preloadImages(active)
   const inactive = await fetchInactiveUsers();
   if (active) {
     setActiveUsers(active);
@@ -55,6 +56,15 @@ export const fetchUsers = async () => {
     console.log("Inactive users fetched:", toJS(store.inactiveUsers));
   }
 };
+
+function preloadImages(users : User[]) {
+  Promise.all(
+    users.map(user => new Promise(() => {
+      const img = new Image()
+      img.src = user.profilePicUrl || ""
+    }))
+  )
+}
 
 export const moveUserToActive = (user: User) => {
   setActiveUsers([...store.activeUsers, user]);
