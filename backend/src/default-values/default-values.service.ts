@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
 import { DefaultValuesResponse } from './types/default-values.types';
+import { TDateISO } from '../utils/date';
 
 @Injectable()
 export class DefaultValuesService {
@@ -35,8 +36,9 @@ export class DefaultValuesService {
       const startingCash = items.find((item) => item.name === 'startingCash')?.value ?? null;
       const benefitsIncrease = items.find((item) => item.name === 'benefitsIncrease')?.value ?? null;
       const salaryIncrease = items.find((item) => item.name === 'salaryIncrease')?.value ?? null;
+      const startDate = items.find((item) => item.name === 'startDate')?.value ?? null;
 
-      if (startingCash === null || benefitsIncrease === null || salaryIncrease === null) {
+      if (startingCash === null || benefitsIncrease === null || salaryIncrease === null || startDate === null) {
         this.logger.error('Default values table is missing required fields');
         throw new NotFoundException('Default values not found');
       }
@@ -45,6 +47,7 @@ export class DefaultValuesService {
         startingCash,
         benefitsIncrease,
         salaryIncrease,
+        startDate,
       };
 
       return defaultValues;
@@ -64,7 +67,7 @@ export class DefaultValuesService {
 
   async updateDefaultValue(
     key: string,
-    value: number,
+    value: number | TDateISO,
   ): Promise<DefaultValuesResponse> {
     const tableName = process.env.CASHFLOW_DEFAULT_VALUE_TABLE_NAME;
 

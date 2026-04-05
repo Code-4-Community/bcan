@@ -35,9 +35,9 @@ export default function CashCategoryDropdown({
           onChange={onChange}
           className={`block w-full rounded-md py-2.5 pl-4 pr-3 text-sm lg:text-base border-2 placeholder:text-grey-500 h-[2.71rem] lg:h-[2.95rem] ${
             error ? "border-red bg-red-lightest" : "border-grey-500 bg-grey-100"}
-            ${!value && "text-grey-600"}`}
+            ${!value && "text-grey-500"}`}
         >
-          <option value="" selected disabled hidden>{"Select a "}{name.toLowerCase()}</option>
+          <option value="" disabled hidden>{"Select a "}{name.toLowerCase()}</option>
           {Object.values(type).map((r) => (
             <option key={r} value={r}>
               {r}

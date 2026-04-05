@@ -216,6 +216,7 @@ export const saveCashflowSettings = async (settings: CashflowSettings) => {
       { key: "startingCash", value: settings.startingCash },
       { key: "salaryIncrease", value: settings.salaryIncrease },
       { key: "benefitsIncrease", value: settings.benefitsIncrease },
+      { key: "startDate", value: settings.startDate },
     ];
 
     for (const update of updates) {

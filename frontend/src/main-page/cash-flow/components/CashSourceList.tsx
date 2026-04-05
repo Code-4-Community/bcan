@@ -47,11 +47,6 @@ export default function CashSourceList({ type, lineItems }: SourceProps) {
                         {" • "}
                         {new Date(((item as CashflowCost).date)  + "T00:00:00").toLocaleDateString('en-US',{ month: '2-digit', year: 'numeric' })}
                       </div>
-                      <div className="font-semibold pt-1">
-                        {(item as CashflowCost).frequency === Frequency.OneTime
-                          ? "One Time"
-                          : "Annually"}
-                      </div>
                     </div>
                   )}
                   {type === "Revenue" && (

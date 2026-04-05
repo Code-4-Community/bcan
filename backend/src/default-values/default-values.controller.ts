@@ -51,8 +51,13 @@ export class DefaultValuesController {
     @ApiBody({ schema: {
         type: 'object',
         properties: {
-          key: { type: 'string', enum: ['startingCash', 'benefitsIncrease', 'salaryIncrease'] },
-          value: { type: 'number' }
+          key: { type: 'string', enum: ['startingCash', 'benefitsIncrease', 'salaryIncrease', 'startDate'] },
+          value: {
+            oneOf: [
+              { type: 'number' },
+              { type: 'string' },
+            ],
+          },
         }
       }})
     @ApiResponse({
