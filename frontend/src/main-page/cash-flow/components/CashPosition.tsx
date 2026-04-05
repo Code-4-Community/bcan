@@ -42,8 +42,8 @@ const CashPosition = observer(() => {
           label="Projection Start Date"
           value={
             cashflowSettings?.startDate
-              ? new Date(cashflowSettings.startDate).toISOString().split("T")[0]
-              : new Date().toISOString().split("T")[0]
+              ? cashflowSettings.startDate
+              : ""
           }
           onChange={handleDateChange}
         />

@@ -7,6 +7,7 @@ import CashCategoryDropdown from "./CashCategoryDropdown";
 import { createNewCost, saveCostEdits } from "../processCashflowDataEditSave";
 import { Frequency } from "../../../../../middle-layer/types/Frequency";
 import { TDateISO } from "../../../../../backend/src/utils/date";
+import { getAppStore } from "../../../external/bcanSatchel/store";
 
 type FieldErrors = {
   type?: string;
@@ -44,6 +45,8 @@ export default function CashAddEditCost({
   const [errors, setErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const { cashflowSettings } = getAppStore();
 
   const showSuccessMessage = (message: string) => {
     setSuccessMessage(message);
@@ -195,7 +198,7 @@ export default function CashAddEditCost({
             type="date"
             id="date"
             label="Start Date"
-            value={date ?? ""}
+            value={date ?? cashflowSettings?.startDate}
             onChange={(event) =>
               setDate(
                 event.target.value ? (event.target.value as TDateISO) : null,
