@@ -3,7 +3,7 @@ import { CashflowRevenue } from "../../../../../middle-layer/types/CashflowReven
 import { deleteCost, deleteRevenue } from "../processCashflowDataEditSave";
 import CashEditLineItem from "./CashEditLineItem";
 import { formatMoney } from "../CashFlowPage";
-import { Frequency } from "../../../../../middle-layer/types/Frequency";
+import { formatDateByFrequency, Frequency, frequencyLabels } from "../../../../../middle-layer/types/Frequency";
 import CashAddEditCost from "./CashAddEditCost";
 
 type SourceProps = {
@@ -38,16 +38,13 @@ export default function CashSourceList({ type, lineItems }: SourceProps) {
                 <div className="flex flex-col text-sm lg:text-base gap-1">
                   <div className="font-semibold">{item.type}</div>
                   {type === "Cost" && (
-                    <div>
-                      {(item as CashflowCost).frequency === Frequency.OneTime
-                          ? "One Time"
-                          : "Annually"}
                       <div>
-                        {formatMoney(item.amount)}
-                        {" • "}
-                        {new Date(((item as CashflowCost).date)  + "T00:00:00").toLocaleDateString('en-US',{ month: '2-digit', year: 'numeric' })}
+                        {formatMoney(item.amount)}{frequencyLabels.find(
+                          (label) => label.value === (item as CashflowCost).frequency,
+                        )?.label}
+                        {" on "}
+                        {formatDateByFrequency((item as CashflowCost).date, (item as CashflowCost).frequency)}
                       </div>
-                    </div>
                   )}
                   {type === "Revenue" && (
                     <div>

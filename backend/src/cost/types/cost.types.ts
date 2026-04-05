@@ -27,7 +27,7 @@ export class CashflowCostDTO implements CashflowCost {
   @IsEnum(CostType)
   type!: CostType;
 
-  @ApiProperty({ description: 'The frequency type of cost', enum: Frequency, example: Frequency.Annual })
+  @ApiProperty({ description: 'The frequency type of cost', enum: Frequency, example: Frequency.Yearly })
   @IsEnum(Frequency)
   frequency!: Frequency;
 
