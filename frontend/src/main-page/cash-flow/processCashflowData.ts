@@ -75,5 +75,8 @@ export const ProcessCashflowData = () => {
     if (!cashflowSettings) fetchCashflowSettings();
   }, [cashflowSettings]);
 
-  return { costs: costSources, revenues: revenueSources, cashflowSettings };
+  const sortedCosts = costSources.slice().sort((a, b) => a.name.localeCompare(b.name));
+  const sortedRevenues = revenueSources.slice().sort((a, b) => a.name.localeCompare(b.name));
+
+  return { costs: sortedCosts, revenues: sortedRevenues, cashflowSettings };
 };

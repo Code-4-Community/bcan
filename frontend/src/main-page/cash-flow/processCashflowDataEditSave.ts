@@ -3,6 +3,8 @@ import {CashflowCost} from "../../../../middle-layer/types/CashflowCost.ts";
 import { CashflowSettings } from "../../../../middle-layer/types/CashflowSettings.ts";
 import { api } from "../../api.ts";
 import { fetchCosts, fetchRevenues, fetchCashflowSettings } from "./processCashflowData.ts";
+import { EditableInstallment } from "./components/CashRevenueInstallment.tsx";
+import { Installment } from "../../../../middle-layer/types/Installment.ts";
 
 // This has not been tested yet but the basic structure when implemented should be the same
 // Mirrored format for processGrantDataEditSave.ts
@@ -214,6 +216,7 @@ export const saveCashflowSettings = async (settings: CashflowSettings) => {
       { key: "startingCash", value: settings.startingCash },
       { key: "salaryIncrease", value: settings.salaryIncrease },
       { key: "benefitsIncrease", value: settings.benefitsIncrease },
+      { key: "startDate", value: settings.startDate },
     ];
 
     for (const update of updates) {
@@ -238,3 +241,22 @@ export const saveCashflowSettings = async (settings: CashflowSettings) => {
     };
   }
 };
+
+export const isValidInstallment = (installment: EditableInstallment) => {
+    if (installment.amount === null || installment.date === null) {
+      return false;
+    }
+
+    return (
+      Number.isFinite(installment.amount) &&
+      installment.amount > 0 &&
+      !Number.isNaN(installment.date.getTime())
+    );
+  };
+
+  export const toInstallment = (installment: EditableInstallment): Installment => {
+    return {
+      amount: installment.amount as number,
+      date: installment.date as Date,
+    };
+  };

@@ -8,6 +8,7 @@ import {
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { CostService } from '../cashflow-cost.service';
 import { CostType } from '../../../../middle-layer/types/CostType';
+import { Frequency } from '../../../../middle-layer/types/Frequency';
 import { CashflowCost } from '../../../../middle-layer/types/CashflowCost';
 import { TDateISO } from '../../utils/date';
 
@@ -170,6 +171,7 @@ describe('CostService', () => {
         name: '  Food  ',
         amount: 200,
         type: CostType.MealsFood,
+        frequency: Frequency.Yearly,
         date: '2026-03-22' as TDateISO,
       };
 
@@ -179,6 +181,7 @@ describe('CostService', () => {
         name: 'Food',
         amount: 200,
         type: CostType.MealsFood,
+        frequency: Frequency.Yearly,
         date: '2026-03-22',
       });
       expect(mockPut).toHaveBeenCalledWith({
@@ -187,6 +190,7 @@ describe('CostService', () => {
           name: 'Food',
           amount: 200,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22',
         },
         ConditionExpression: 'attribute_not_exists(#name)',
@@ -202,6 +206,7 @@ describe('CostService', () => {
           name: 'Food',
           amount: 0,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow(BadRequestException);
@@ -210,6 +215,7 @@ describe('CostService', () => {
           name: 'Food',
           amount: 0,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow('amount must be a finite positive number');
@@ -221,6 +227,19 @@ describe('CostService', () => {
           name: 'Food',
           amount: 100,
           type: 'INVALID' as unknown as CostType,
+          frequency: Frequency.Yearly,
+          date: '2026-03-22' as TDateISO,
+        }),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('throws BadRequestException for invalid frequency', async () => {
+      await expect(
+        service.createCost({
+          name: 'Food',
+          amount: 100,
+          type: CostType.MealsFood,
+          frequency: 'INVALID' as unknown as Frequency,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow(BadRequestException);
@@ -232,6 +251,7 @@ describe('CostService', () => {
           name: '   ',
           amount: 100,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow(BadRequestException);
@@ -240,6 +260,7 @@ describe('CostService', () => {
           name: '   ',
           amount: 100,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow('name must be a non-empty string');
@@ -253,6 +274,7 @@ describe('CostService', () => {
           name: 'Food',
           amount: 100,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow(ConflictException);
@@ -261,6 +283,7 @@ describe('CostService', () => {
           name: 'Food',
           amount: 100,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow('Cost with name Food already exists');
@@ -274,6 +297,7 @@ describe('CostService', () => {
           name: 'Food',
           amount: 100,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow(InternalServerErrorException);
@@ -287,6 +311,7 @@ describe('CostService', () => {
           name: 'Food',
           amount: 100,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow(InternalServerErrorException);
@@ -295,6 +320,7 @@ describe('CostService', () => {
           name: 'Food',
           amount: 100,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow('Failed to create cost');
@@ -308,6 +334,7 @@ describe('CostService', () => {
           name: 'Food',
           amount: 200,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22',
         },
       });
@@ -318,6 +345,7 @@ describe('CostService', () => {
         name: 'Food',
         amount: 300,
         type: CostType.Services,
+        frequency: Frequency.OneTime,
         date: '2026-03-22' as TDateISO,
       };
       mockPutPromise.mockResolvedValue({});
@@ -326,6 +354,7 @@ describe('CostService', () => {
         name: 'Food',
         amount: 300,
         type: CostType.Services,
+        frequency: Frequency.OneTime,
         date: '2026-03-22' as TDateISO,
       });
 
@@ -340,6 +369,7 @@ describe('CostService', () => {
           name: 'Food',
           amount: 300,
           type: CostType.Services,
+          frequency: Frequency.OneTime,
           date: '2026-03-22',
         },
         ConditionExpression: 'attribute_exists(#name)',
@@ -354,6 +384,7 @@ describe('CostService', () => {
         name: 'Food',
         amount: 200,
         type: CostType.MealsFood,
+        frequency: Frequency.Yearly,
         date: '2026-03-22' as TDateISO,
       });
 
@@ -361,6 +392,7 @@ describe('CostService', () => {
         name: 'Food',
         amount: 200,
         type: CostType.MealsFood,
+        frequency: Frequency.Yearly,
         date: '2026-03-22',
       });
       expect(mockPut).not.toHaveBeenCalled();
@@ -373,6 +405,7 @@ describe('CostService', () => {
           name: 'Food',
           amount: Number.NaN,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow(BadRequestException);
@@ -384,6 +417,19 @@ describe('CostService', () => {
           name: 'Food',
           amount: 250,
           type: 'INVALID' as unknown as CostType,
+          frequency: Frequency.Yearly,
+          date: '2026-03-22' as TDateISO,
+        }),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('throws BadRequestException for invalid frequency', async () => {
+      await expect(
+        service.updateCost('Food', {
+          name: 'Food',
+          amount: 250,
+          type: CostType.MealsFood,
+          frequency: 'INVALID' as unknown as Frequency,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow(BadRequestException);
@@ -395,6 +441,7 @@ describe('CostService', () => {
           name: 'Food',
           amount: 250,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: 'not-a-date' as unknown as TDateISO,
         }),
       ).rejects.toThrow(BadRequestException);
@@ -403,6 +450,7 @@ describe('CostService', () => {
           name: 'Food',
           amount: 250,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: 'not-a-date' as unknown as TDateISO,
         }),
       ).rejects.toThrow('date must be a valid ISO 8601 format string');
@@ -416,6 +464,7 @@ describe('CostService', () => {
           name: 'Food',
           amount: 250,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow(NotFoundException);
@@ -424,6 +473,7 @@ describe('CostService', () => {
           name: 'Food',
           amount: 250,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow('Cost with name Food not found');
@@ -438,6 +488,7 @@ describe('CostService', () => {
           name: 'Food',
           amount: 250,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow(InternalServerErrorException);
@@ -446,6 +497,7 @@ describe('CostService', () => {
           name: 'Food',
           amount: 250,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow('Failed to update cost Food');
@@ -461,6 +513,7 @@ describe('CostService', () => {
         name: 'Meals',
         amount: 300,
         type: CostType.MealsFood,
+        frequency: Frequency.Yearly,
         date: '2026-03-22' as TDateISO,
       });
 
@@ -468,6 +521,7 @@ describe('CostService', () => {
         name: 'Meals',
         amount: 300,
         type: CostType.MealsFood,
+        frequency: Frequency.Yearly,
         date: '2026-03-22',
       });
       expect(mockGet).toHaveBeenCalledWith({
@@ -483,6 +537,7 @@ describe('CostService', () => {
                 name: 'Meals',
                 amount: 300,
                 type: CostType.MealsFood,
+                frequency: Frequency.Yearly,
                 date: '2026-03-22',
               },
               ConditionExpression: 'attribute_not_exists(#name)',
@@ -515,6 +570,7 @@ describe('CostService', () => {
         name: 'Meals',
         amount: 300,
         type: CostType.MealsFood,
+        frequency: Frequency.Yearly,
         date: '2026-03-22' as TDateISO,
       });
 
@@ -522,6 +578,7 @@ describe('CostService', () => {
         name: 'Meals',
         amount: 300,
         type: CostType.MealsFood,
+        frequency: Frequency.Yearly,
         date: '2026-03-22',
       });
     });
@@ -534,6 +591,7 @@ describe('CostService', () => {
           name: 'Meals',
           amount: 300,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow(NotFoundException);
@@ -542,6 +600,7 @@ describe('CostService', () => {
           name: 'Meals',
           amount: 300,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow('Cost with name Food not found');
@@ -560,6 +619,7 @@ describe('CostService', () => {
           name: 'Meals',
           amount: 300,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow(ConflictException);
@@ -568,6 +628,7 @@ describe('CostService', () => {
           name: 'Meals',
           amount: 300,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow('Cost with name Meals already exists');
@@ -584,6 +645,7 @@ describe('CostService', () => {
           name: 'Meals',
           amount: 300,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow(InternalServerErrorException);
@@ -592,6 +654,7 @@ describe('CostService', () => {
           name: 'Meals',
           amount: 300,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow('Failed to update cost Food');
@@ -605,6 +668,7 @@ describe('CostService', () => {
           name: 'Food',
           amount: 200,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow(InternalServerErrorException);

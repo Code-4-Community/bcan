@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Button from "../../../components/Button";
 import CashAddRevenue from "./CashAddRevenue";
-import CashAddCosts from "./CashAddCosts";
+import CashAddEditCost from "./CashAddEditCost";
 
 export default function CashCreateLineItem() {
   const [showCosts, setShowCosts] = useState<boolean>(false);
@@ -23,7 +23,7 @@ export default function CashCreateLineItem() {
 
       <div className="">
         {!showCosts && <CashAddRevenue />}
-        {showCosts && <CashAddCosts />}
+        {showCosts && <CashAddEditCost  />}
       </div>
     </div>
   );
