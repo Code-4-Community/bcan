@@ -28,7 +28,7 @@ const CashPosition = observer(() => {
       <div className="text-lg lg:text-xl mb-2 w-full text-left font-bold">
         {"Starting Cash Position"}
       </div>
-      <div className="flex flex-row justify-between gap-4">
+      <div className="flex flex-col xl:flex-row justify-between gap-4">
         <InputField
           type="number"
           id="starting_balance"
