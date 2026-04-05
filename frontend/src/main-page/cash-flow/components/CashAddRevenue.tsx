@@ -10,7 +10,6 @@ import CashRevenueInstallment, {
   EditableInstallment,
 } from "./CashRevenueInstallment";
 import { createNewRevenue, isValidInstallment, toInstallment } from "../../cash-flow/processCashflowDataEditSave";
-import { toDateInputValue } from "../CashFlowPage";
 
 type FieldErrors = {
   type?: string;
@@ -19,6 +18,17 @@ type FieldErrors = {
   singleDate?: string;
   installments?: string;
   submit?: string;
+};
+
+const toDateInputValue = (date: Date | null) => {
+  if (!date || Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getDate()}`.padStart(2, "0");
+  return `${year}-${month}-${day}`;
 };
 
 const EMPTY_INSTALLMENT: EditableInstallment = {
@@ -41,7 +51,7 @@ export default function CashAddRevenue() {
     setSuccessMessage(message);
     setTimeout(() => {
       setSuccessMessage(null);
-    }, 4000);
+    }, 3500);
   };
 
   const buildPayload = (): CashflowRevenue | null => {
@@ -275,7 +285,7 @@ export default function CashAddRevenue() {
         )}
         {errors.submit ? <p className="text-red text-sm">{errors.submit}</p> : null}
         {successMessage ? (
-          <p className="text-green text-sm animate-[fadeout_0.5s_ease-in-out_4s_forwards]">{successMessage}</p>
+          <p className="text-green text-sm animate-[fadeout_0.3s_ease-in-out_3s_forwards]">{successMessage}</p>
         ) : null}
       </div>
       <Button

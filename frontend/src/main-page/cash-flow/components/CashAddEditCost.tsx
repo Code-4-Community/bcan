@@ -49,7 +49,7 @@ export default function CashAddEditCost({
     setSuccessMessage(message);
     setTimeout(() => {
       setSuccessMessage(null);
-    }, 4000);
+    }, 3500);
   };
 
   const buildPayload = (): CashflowCost | null => {
@@ -231,7 +231,7 @@ export default function CashAddEditCost({
         <p className="text-red text-sm">{errors.submit}</p>
       ) : null}
       {successMessage ? (
-        <p className="text-green text-sm">{successMessage}</p>
+        <p className="text-green text-sm animate-[fadeout_0.3s_ease-in-out_3s_forwards]">{successMessage}</p>
       ) : null}
       {!costItem ? (
         <Button
