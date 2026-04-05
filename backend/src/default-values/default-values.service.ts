@@ -76,7 +76,7 @@ export class DefaultValuesService {
       throw new InternalServerErrorException('Server configuration error');
     }
 
-    if (!Number.isFinite(value)) {
+    if (typeof value == 'number' && !Number.isFinite(value)) {
       throw new BadRequestException('Value must be a valid number');
     }
 
