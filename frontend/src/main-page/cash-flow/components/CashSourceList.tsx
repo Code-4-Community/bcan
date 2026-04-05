@@ -3,7 +3,7 @@ import { CashflowRevenue } from "../../../../../middle-layer/types/CashflowReven
 import { deleteCost, deleteRevenue } from "../processCashflowDataEditSave";
 import CashEditLineItem from "./CashEditLineItem";
 import { formatMoney } from "../CashFlowPage";
-import { formatDateByFrequency, Frequency, frequencyLabels } from "../../../../../middle-layer/types/Frequency";
+import { formatDateByFrequency, frequencyLabels } from "../../../../../middle-layer/types/Frequency";
 import CashAddEditCost from "./CashAddEditCost";
 
 type SourceProps = {
@@ -30,7 +30,7 @@ export default function CashSourceList({ type, lineItems }: SourceProps) {
         {" Sources"}
       </div>
       {/* map over list of source and put casheditlineitem for each */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 h-[35rem] overflow-y-auto">
         {lineItems.map((item) => (
           <div key={item.name}>
             <CashEditLineItem
