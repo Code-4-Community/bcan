@@ -21,6 +21,19 @@ export const formatMoney = (amount: number) => {
   });
 };
 
+export const toDateInputValue = (date: Date | null) => {
+  if (!date || Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  const localDate = new Date(date + "T00:00:00")
+
+  const year = localDate.getFullYear();
+  const month = `${localDate.getMonth() + 1}`.padStart(2, "0");
+  const day = `${localDate.getDate()}`.padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 const CashFlowPage = observer(() => {
   const { costs, revenues } = ProcessCashflowData();
 

@@ -2,8 +2,9 @@ import { CashflowCost } from "../../../../../middle-layer/types/CashflowCost";
 import { CashflowRevenue } from "../../../../../middle-layer/types/CashflowRevenue";
 import { deleteCost, deleteRevenue } from "../processCashflowDataEditSave";
 import CashEditLineItem from "./CashEditLineItem";
-import CashEditCost from "./CashEditCost";
 import { formatMoney } from "../CashFlowPage";
+import { Frequency } from "../../../../../middle-layer/types/Frequency";
+import CashAddEditCost from "./CashAddEditCost";
 
 type SourceProps = {
   type: "Revenue" | "Cost";
@@ -16,7 +17,9 @@ const formatInstallmentDate = (dateValue: Date | string) => {
     return "Invalid date";
   }
 
-  return parsedDate.toLocaleDateString("en-US");
+  
+
+  return parsedDate.toLocaleDateString();
 };
 
 export default function CashSourceList({ type, lineItems }: SourceProps) {
@@ -36,27 +39,35 @@ export default function CashSourceList({ type, lineItems }: SourceProps) {
                   <div className="font-semibold">{item.type}</div>
                   {type === "Cost" && (
                     <div>
+                      {(item as CashflowCost).frequency === Frequency.OneTime
+                          ? "One Time"
+                          : "Annually"}
                       <div>
                         {formatMoney(item.amount)}
-                        {"/year"}
+                        {" • "}
+                        {new Date(((item as CashflowCost).date)  + "T00:00:00").toLocaleDateString('en-US',{ month: '2-digit', year: 'numeric' })}
                       </div>
-                      <div>
-                        {formatMoney(item.amount / 12)}
-                        {"/month"}
+                      <div className="font-semibold pt-1">
+                        {(item as CashflowCost).frequency === Frequency.OneTime
+                          ? "One Time"
+                          : "Annually"}
                       </div>
                     </div>
                   )}
                   {type === "Revenue" && (
                     <div>
-                      {(item as CashflowRevenue).installments.map((installment, index) => (
-                        <div key={`${item.name}-installment-${index}`}>
-                          {formatMoney(installment.amount)}
-                          {" • "}
-                          {formatInstallmentDate(installment.date)}
-                        </div>
-                      ))}
+                      {(item as CashflowRevenue).installments.map(
+                        (installment, index) => (
+                          <div key={`${item.name}-installment-${index}`}>
+                            {formatMoney(installment.amount)}
+                            {" • "}
+                            {formatInstallmentDate(installment.date)}
+                          </div>
+                        ),
+                      )}
                       <div className="font-semibold pt-1">
-                        {"Total: "}{formatMoney(item.amount)}
+                        {"Total: "}
+                        {formatMoney(item.amount)}
                       </div>
                     </div>
                   )}
@@ -71,7 +82,7 @@ export default function CashSourceList({ type, lineItems }: SourceProps) {
             >
               {(onClose) =>
                 type === "Cost" && (
-                  <CashEditCost
+                  <CashAddEditCost
                     costItem={item as CashflowCost}
                     onClose={onClose}
                   />
