@@ -11,6 +11,7 @@ const mockDefaultValues = [
   { name: 'startingCash', value: 10000 },
   { name: 'benefitsIncrease', value: 3.5 },
   { name: 'salaryIncrease', value: 2.0 },
+  { name: 'startDate', value: '2023-01-01' },
 ];
 
 const mockPromise = vi.fn();
@@ -75,6 +76,7 @@ describe('DefaultValuesService', () => {
       const incompleteValues = [
         { name: 'benefitsIncrease', value: 3.5 },
         { name: 'salaryIncrease', value: 2.0 },
+        { name: 'startDate', value: '2023-01-01' },
       ];
       mockPromise.mockResolvedValue({ Items: incompleteValues });
 
@@ -90,6 +92,7 @@ describe('DefaultValuesService', () => {
       const incompleteValues = [
         { name: 'startingCash', value: 10000 },
         { name: 'salaryIncrease', value: 2.0 },
+        { name: 'startDate', value: '2023-01-01' },
       ];
       mockPromise.mockResolvedValue({ Items: incompleteValues });
 
@@ -102,6 +105,7 @@ describe('DefaultValuesService', () => {
       const incompleteValues = [
         { name: 'startingCash', value: 10000 },
         { name: 'benefitsIncrease', value: 3.5 },
+        { name: 'startDate', value: '2023-01-01' },
       ];
       mockPromise.mockResolvedValue({ Items: incompleteValues });
 
@@ -149,6 +153,7 @@ describe('DefaultValuesService', () => {
         { name: 'startingCash', value: -5000 },
         { name: 'benefitsIncrease', value: -1.5 },
         { name: 'salaryIncrease', value: -0.5 },
+        { name: 'startDate', value: '2023-01-01' },
       ];
       mockPromise.mockResolvedValue({ Items: negativeValues });
 
@@ -171,6 +176,7 @@ describe('DefaultValuesService', () => {
             { name: 'startingCash', value: 15000 },
             { name: 'benefitsIncrease', value: 3.5 },
             { name: 'salaryIncrease', value: 2.0 },
+            { name: 'startDate', value: '2023-01-01' },
           ],
         });
 
@@ -202,6 +208,7 @@ describe('DefaultValuesService', () => {
             { name: 'startingCash', value: 10000 },
             { name: 'benefitsIncrease', value: 5.0 },
             { name: 'salaryIncrease', value: 2.0 },
+            { name: 'startDate', value: '2023-01-01' },
           ],
         });
 
@@ -233,6 +240,7 @@ describe('DefaultValuesService', () => {
             { name: 'startingCash', value: 10000 },
             { name: 'benefitsIncrease', value: 3.5 },
             { name: 'salaryIncrease', value: 3.0 },
+            { name: 'startDate', value: '2023-01-01' },
           ],
         });
 
@@ -305,6 +313,7 @@ describe('DefaultValuesService', () => {
             { name: 'startingCash', value: -1000 },
             { name: 'benefitsIncrease', value: 3.5 },
             { name: 'salaryIncrease', value: 2.0 },
+            { name: 'startDate', value: '2023-01-01' },
           ],
         });
 

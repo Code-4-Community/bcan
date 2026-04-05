@@ -80,9 +80,9 @@ export class DefaultValuesService {
       throw new BadRequestException('Value must be a valid number');
     }
 
-    if (!(key === 'startingCash' || key === 'benefitsIncrease' || key === 'salaryIncrease')) {
+    if (!(key === 'startingCash' || key === 'benefitsIncrease' || key === 'salaryIncrease' || key === 'startDate')) {
       throw new BadRequestException(
-        'Default value must be one of: startingCash, benefitsIncrease, salaryIncrease',
+        'Default value must be one of: startingCash, benefitsIncrease, salaryIncrease, startDate',
       );
     }
 

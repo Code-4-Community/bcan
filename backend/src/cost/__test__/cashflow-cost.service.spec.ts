@@ -521,6 +521,7 @@ describe('CostService', () => {
         name: 'Meals',
         amount: 300,
         type: CostType.MealsFood,
+        frequency: Frequency.Annual,
         date: '2026-03-22',
       });
       expect(mockGet).toHaveBeenCalledWith({
@@ -536,6 +537,7 @@ describe('CostService', () => {
                 name: 'Meals',
                 amount: 300,
                 type: CostType.MealsFood,
+                frequency: Frequency.Annual,
                 date: '2026-03-22',
               },
               ConditionExpression: 'attribute_not_exists(#name)',
@@ -576,6 +578,7 @@ describe('CostService', () => {
         name: 'Meals',
         amount: 300,
         type: CostType.MealsFood,
+        frequency: Frequency.Annual,
         date: '2026-03-22',
       });
     });
