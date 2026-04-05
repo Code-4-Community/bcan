@@ -44,7 +44,7 @@ function GrantPage() {
       </div>
 
       {curGrant ? (<div className="flex w-full gap-2 flex-1 overflow-hidden justify-between mt-4">
-        <div className="flex flex-col w-[33%] overflow-y-auto mr-2">
+        <div className="flex flex-col w-[33%] overflow-y-auto mr-2 pr-1">
           {grants.map((grant) => (
             <GrantCard
               key={grant.grantId}

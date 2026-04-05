@@ -30,7 +30,7 @@ export default function CashSourceList({ type, lineItems }: SourceProps) {
         {" Sources"}
       </div>
       {/* map over list of source and put casheditlineitem for each */}
-      <div className="flex flex-col gap-2 h-[35rem] overflow-y-auto">
+      <div className="flex flex-col gap-2 h-[30rem] overflow-y-auto pr-1">
         {lineItems.map((item) => (
           <div key={item.name}>
             <CashEditLineItem
