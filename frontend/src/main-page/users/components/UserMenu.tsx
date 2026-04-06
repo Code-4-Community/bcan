@@ -64,7 +64,7 @@ const UserMenu = ({ user }: UserMenuProps) => {
               }
             />
             <span
-              className={`max-w-0 overflow-hidden whitespace-nowrap text-xs font-medium opacity-0 transition-all duration-200 group-hover:max-w-[120px] group-hover:opacity-100 group-focus-visible:max-w-[120px] group-focus-visible:opacity-100 ${
+              className={`max-w-0 overflow-hidden whitespace-nowrap text-xs font-medium opacity-0 transition-all duration-200 group-hover:max-w-32 group-hover:opacity-100 group-focus-visible:max-w-32 group-focus-visible:opacity-100 ${
                 user.position === UserStatus.Admin
                   ? "text-yellow-dark"
                   : "text-green-dark"
