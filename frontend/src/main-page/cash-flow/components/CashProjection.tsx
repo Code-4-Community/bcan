@@ -23,7 +23,7 @@ export default function CashProjection({costs, revenues}:ProjectionProps) {
         {"36-Month Cash Flow Projection"}
       </div>
       <CashProjectionChart costs={costs} revenues={revenues} />
-      <div className="flex-wrap gap-2 items-center grid grid-cols-2 lg:grid-cols-4 mt-1">
+      <div className="flex-wrap gap-2 items-center grid grid-cols-2 xl:grid-cols-4 mt-1">
         {cards.map((c) => (
           <div
             key={c.field}
