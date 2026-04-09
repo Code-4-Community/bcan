@@ -3,6 +3,8 @@ import { BadRequestException, InternalServerErrorException } from '@nestjs/commo
 import { RevenueService } from '../cashflow-revenue.service';
 import { RevenueType } from '../../../../middle-layer/types/RevenueType';
 import { CashflowRevenue } from '../../../../middle-layer/types/CashflowRevenue';
+import { Grant } from '../../../../middle-layer/types/Grant';
+import { Status } from '../../../../middle-layer/types/Status';
 import { describe, it, expect, beforeEach, afterEach, beforeAll, vi } from 'vitest';
 
 // ─── Mock function declarations ───────────────────────────────────────────────
@@ -43,23 +45,63 @@ const mockDatabase: CashflowRevenue[] = [
   { name: 'Revenue Three', amount: 3000, type: RevenueType.Sponsorship, installments: [{ amount: 3000, date: '2024-03-01' as any }] },
 ];
 
+const activeGrant: Grant = {
+  grantId: 1,
+  organization: 'Active Grant Org',
+  does_bcan_qualify: true,
+  status: Status.Active,
+  amount: 4000,
+  grant_start_date: '2024-07-01' as any,
+  application_deadline: '2024-06-01' as any,
+  timeline: 1,
+  estimated_completion_time: 8,
+  bcan_poc: { POC_name: 'bcan', POC_email: 'bcan@gmail.com' } as any,
+  attachments: [] as any,
+  isRestricted: false,
+} as Grant;
+
+const inactiveGrant: Grant = {
+  ...activeGrant,
+  grantId: 2,
+  organization: 'Inactive Grant Org',
+  status: Status.Inactive,
+  grant_start_date: '2024-08-01' as any,
+} as Grant;
+
 // ─── Test suite ───────────────────────────────────────────────────────────────
 describe('RevenueService', () => {
   let service: RevenueService;
+  let revenueItems: CashflowRevenue[];
+  let grantItems: Grant[];
 
   beforeAll(() => {
     process.env.CASHFLOW_REVENUE_TABLE_NAME = 'test-revenue-table';
+    process.env.DYNAMODB_GRANT_TABLE_NAME = 'test-grant-table';
   });
 
   // Guarantee env var is restored after every test, even if the test throws
   afterEach(() => {
     process.env.CASHFLOW_REVENUE_TABLE_NAME = 'test-revenue-table';
+    process.env.DYNAMODB_GRANT_TABLE_NAME = 'test-grant-table';
   });
 
   beforeEach(async () => {
     vi.clearAllMocks();
 
-    mockScan.mockReturnValue(resolved({}));
+    revenueItems = mockDatabase;
+    grantItems = [];
+
+    mockScan.mockImplementation((params) => {
+      if (params.TableName === 'test-revenue-table') {
+        return resolved({ Items: revenueItems });
+      }
+
+      if (params.TableName === 'test-grant-table') {
+        return resolved({ Items: grantItems });
+      }
+
+      return resolved({});
+    });
     mockGet.mockReturnValue(resolved({}));
     mockPut.mockReturnValue(resolved({}));
     mockDelete.mockReturnValue(resolved({}));
@@ -79,6 +121,23 @@ describe('RevenueService', () => {
       const result = await service.getAllRevenue();
       expect(result).toHaveLength(3);
       expect(mockScan).toHaveBeenCalledWith({ TableName: 'test-revenue-table' });
+      expect(mockScan).toHaveBeenCalledWith({ TableName: 'test-grant-table' });
+    });
+
+    it('should include the active grant in the revenue list', async () => {
+      grantItems = [activeGrant, inactiveGrant];
+
+      const result = await service.getAllRevenue();
+
+      expect(result).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          name: 'Active Grant Org',
+          amount: 4000,
+          type: RevenueType.Grants,
+          installments: [{ amount: 4000, date: '2024-07-01' }],
+        }),
+      ]));
+      expect(result.some((item) => item.name === 'Inactive Grant Org')).toBe(false);
     });
 
     it('should return an empty array when no items exist', async () => {
