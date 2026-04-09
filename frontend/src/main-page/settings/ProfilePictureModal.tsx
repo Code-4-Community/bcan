@@ -164,10 +164,10 @@ export default function ProfilePictureModal({
             type="button"
             onClick={handleClose}
             disabled={isUploading}
-            className="rounded p-1 text-grey-600 hover:bg-grey-200 hover:text-grey-800 disabled:opacity-50"
+            className=" text-grey-600 disabled:opacity-50 hover:text-red"
             aria-label="Close"
           >
-            <FontAwesomeIcon icon={faXmark} className="h-6 w-6" />
+            <FontAwesomeIcon icon={faXmark} className="text-2xl align-middle" />
           </button>
         </div>
 
