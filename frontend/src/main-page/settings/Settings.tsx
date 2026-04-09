@@ -13,6 +13,7 @@ import ChangePasswordModal, { ChangePasswordFormValues } from "./ChangePasswordM
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { setActiveUsers, updateUserProfile } from "../../external/bcanSatchel/actions";
 import { User } from "../../../../middle-layer/types/User";
+import ActionConfirmation from "../../components/ActionConfirmation";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -30,7 +31,11 @@ function Settings() {
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
   const [changePasswordError, setChangePasswordError] = useState<string | null>(null);
   const [isProfilePictureModalOpen, setIsProfilePictureModalOpen] = useState(false);
+  const [isRemoveProfilePicModalOpen, setIsRemoveProfilePicModalOpen] = useState(false);
+  const [isSaveProfileModalOpen, setIsSaveProfileModalOpen] = useState(false);
   const [profilePictureMessage, setProfilePictureMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const isEmailChanged =
+    editForm.email.trim().toLowerCase() !== (store.user?.email ?? "").trim().toLowerCase();
 
   useEffect(() => {
     if (user) {
@@ -204,7 +209,7 @@ function Settings() {
               />
               <Button
                 text="Remove"
-                onClick={() => handleRemoveProfilePic()}
+                onClick={() => setIsRemoveProfilePicModalOpen(true)}
                 className="bg-white text-black border-2 border-grey-500"
               />
             </div>
@@ -221,6 +226,32 @@ function Settings() {
         onClose={() => setIsProfilePictureModalOpen(false)}
         onSuccess={() => setProfilePictureMessage({ type: "success", text: "Profile picture updated." })}
         onError={(msg) => setProfilePictureMessage({ type: "error", text: msg })}
+      />
+      <ActionConfirmation
+        isOpen={isRemoveProfilePicModalOpen}
+        onCloseDelete={() => setIsRemoveProfilePicModalOpen(false)}
+        onConfirmDelete={() => {
+          handleRemoveProfilePic();
+        }}
+        title="Remove Profile Picture"
+        subtitle="Are you sure you want to remove your"
+        boldSubtitle="profile picture"
+        warningMessage="Your profile picture will be removed and replaced with the default avatar."
+      />
+      <ActionConfirmation
+        isOpen={isSaveProfileModalOpen}
+        onCloseDelete={() => setIsSaveProfileModalOpen(false)}
+        onConfirmDelete={() => {
+          handleSaveEdit();
+        }}
+        title="Save Profile Changes"
+        subtitle="Are you sure you want to save changes to your"
+        boldSubtitle="profile information"
+        warningMessage={
+          isEmailChanged
+            ? "Changing your email will also change the email you use to log in."
+            : "Your personal information will be updated in the system."
+        }
       />
 
       <InfoCard
@@ -294,7 +325,7 @@ function Settings() {
               />
               <Button
                 text="Save"
-                onClick={handleSaveEdit}
+                onClick={() => setIsSaveProfileModalOpen(true)}
                 className="bg-primary-900 text-white"
               />
             </div>

@@ -46,6 +46,7 @@ const EditGrant: React.FC<{
   // State to track if form was submitted successfully
   const [saving, setSaving] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(false);
 
   const [form, dispatch] = useReducer(reducer, {
     organization: grantToEdit?.organization ?? "",
@@ -170,7 +171,7 @@ const EditGrant: React.FC<{
               <Button
                 text="Save"
                 className="bg-primary-900 text-white px-3 py-1"
-                onClick={handleSubmit}
+                onClick={() => setShowSaveModal(true)}
                 disabled={saving}
               />
             </div>
@@ -207,6 +208,17 @@ const EditGrant: React.FC<{
                       warningMessage="By deleting this grant, they won't be available in the system anymore."
                     />
           </div>)}
+          <ActionConfirmation
+            isOpen={showSaveModal}
+            onCloseDelete={() => setShowSaveModal(false)}
+            onConfirmDelete={() => {
+              handleSubmit();
+            }}
+            title="Save Grant"
+            subtitle="Are you sure you want to save changes to"
+            boldSubtitle={form.organization}
+            warningMessage="Saving will update this grant's details in the system."
+          />
         </div>
       </div>
       {/* Error Popup */}
