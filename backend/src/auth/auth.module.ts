@@ -13,12 +13,7 @@ import { GrantModule } from '../grant/grant.module';
     GrantModule,
   ],
   controllers: [AuthController],
-  providers: [
-    {
-      provide: AuthService,
-      useClass: AuthService,
-    },
-  ],
+  providers: [AuthService],
   exports: [AuthService],
 })
 export class AuthModule {}
