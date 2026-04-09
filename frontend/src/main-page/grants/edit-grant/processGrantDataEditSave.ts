@@ -4,8 +4,14 @@ import { api } from "../../../api.ts";
 import { GrantFormState } from "./EditGrant.tsx";
 import { fetchGrants } from "../filter-bar/processGrantData.ts";
 
+export type GrantMutationResult =
+  | { success: true; grantId?: number }
+  | { success: false; error: string };
+
 // save a new grant
-export const createNewGrant = async (newGrant: Grant) => {
+export const createNewGrant = async (
+  newGrant: Grant
+): Promise<GrantMutationResult> => {
   try {
     const response = await api("/grant/new-grant", {
       method: "POST",
@@ -14,8 +20,9 @@ export const createNewGrant = async (newGrant: Grant) => {
     });
 
     if (response.ok) {
+      const createdGrantId = (await response.json()) as number;
       await fetchGrants();
-      return { success: true };
+      return { success: true, grantId: createdGrantId };
     } else {
       const errorData = await response.json();
       throw new Error(errorData.message || "Failed to create grant");
@@ -34,7 +41,9 @@ export const createNewGrant = async (newGrant: Grant) => {
   }
 };
 
-export const saveGrantEdits = async (updatedGrant: Grant) => {
+export const saveGrantEdits = async (
+  updatedGrant: Grant
+): Promise<GrantMutationResult> => {
   try {
     const response = await api("/grant/save", {
       method: "PUT",
