@@ -9,6 +9,7 @@ import { group, table } from "console";
 import * as crypto from "crypto";
 import { User } from "../../../middle-layer/types/User";
 import { UserStatus } from "../../../middle-layer/types/UserStatus";
+import { GrantService } from '../grant/grant.service';
 import {
   HttpException,
   HttpStatus,
@@ -37,7 +38,7 @@ export class AuthService {
       .digest("base64");
   }
 
-  constructor() {
+  constructor(private readonly grantService: GrantService) {
     try {
       this.logger.log("Starting AuthService constructor...");
       this.logger.log("AWS module:", typeof AWS);
@@ -812,6 +813,42 @@ async updateProfile(
       }
 
       this.logger.log(`✓ User profile updated in DynamoDB for email ${newEmail}`);
+      // ── Step 3: Update grants where user is BCAN POC ──────────────────────
+      try {
+        await this.grantService.updateGrantsByPOC(
+          currentEmail,
+          newEmail,
+          `${firstName} ${lastName}`,
+        );
+        this.logger.log(`Grants updated for new POC info`);
+      } catch (grantError: any) {
+        this.logger.error(`Failed to update grants, rolling back profile changes`, grantError);
+
+        // Rollback DynamoDB
+        await this.dynamoDb.update({
+          TableName: tableName,
+          Key: { email: currentEmail },
+          UpdateExpression: "SET firstName = :firstName, lastName = :lastName, email = :email",
+          ExpressionAttributeValues: {
+            ":firstName": existingUser.firstName,
+            ":lastName": existingUser.lastName,
+            ":email": currentEmail,
+          },
+          ReturnValues: "NONE",
+        }).promise();
+        this.logger.log(`DynamoDB rolled back to original values`);
+
+        // Rollback Cognito if email changed
+        if (isEmailChanging) {
+          await this.cognito.updateUserAttributes({
+            AccessToken: accessToken,
+            UserAttributes: [{ Name: "email", Value: currentEmail }],
+          }).promise();
+          this.logger.log(`Cognito rolled back to ${currentEmail}`);
+        }
+
+        throw new InternalServerErrorException("Failed to update grants. All changes have been rolled back.");
+      }
     } catch (dynamoError: any) {
       this.logger.error(
         `✗ Failed to update DynamoDB for ${currentEmail} -> ${newEmail}:`,
