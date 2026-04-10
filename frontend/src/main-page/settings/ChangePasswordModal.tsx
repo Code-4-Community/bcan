@@ -68,7 +68,7 @@ export default function ChangePasswordModal({
         <div className="flex items-start justify-between gap-4">
           <h2
             id="change-password-title"
-            className="text-2xl font-bold text-black"
+            className="text-2xl font-bold text-black "
           >
             Change Password
           </h2>

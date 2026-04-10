@@ -183,7 +183,7 @@ const LineChartSuccessRate = observer(({ grants }: { grants: Grant[] }) => {
 
           <Tooltip
             contentStyle={{
-              borderRadius: "12px",
+              borderRadius: "1rem",
               backgroundColor: "white",
               border: "1px solid lightgray",
               boxShadow: "0 2px 8px rgba(0,0,0,0.1)",

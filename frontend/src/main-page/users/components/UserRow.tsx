@@ -11,7 +11,7 @@ const UserRow = ({ user, action }: UserRowProps) => {
   return (
     <div
       key={user.email}
-      className="grid grid-cols-2 md:grid-cols-[30%_35%_25%_10%] cols gap-2 md:gap-0 text-sm lg:text-base border-b-2 border-grey-150 py-4 px-8 items-center"
+      className="grid grid-cols-2 lg:grid-cols-[30%_35%_25%_10%] cols gap-2 lg:gap-0 text-sm lg:text-base border-b-2 border-grey-150 py-4 px-8 items-center"
     >
       <div className="col-span-1 flex items-center font-medium">
         <Avatar
@@ -22,11 +22,11 @@ const UserRow = ({ user, action }: UserRowProps) => {
         />
         {user.firstName}&nbsp;{user.lastName}
       </div>
-      <div className="col-span-1">{user.email}</div>
-      <div className="col-span-1">
+      <div className="col-span-1 py-1">{user.email}</div>
+      <div className="col-span-1 py-1">
         <UserPositionCard position={user.position} />
       </div>
-      <div className="col-span-1">{action}</div>
+      <div className="col-span-1 py-1">{action}</div>
     </div>
   );
 };
