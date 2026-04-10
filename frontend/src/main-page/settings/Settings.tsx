@@ -14,6 +14,7 @@ import { getAppStore } from "../../external/bcanSatchel/store";
 import { setActiveUsers, updateUserProfile } from "../../external/bcanSatchel/actions";
 import { User } from "../../../../middle-layer/types/User";
 import ActionConfirmation from "../../components/ActionConfirmation";
+import { fetchGrants } from "../grants/filter-bar/processGrantData";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -108,6 +109,7 @@ function Settings() {
             ]);
       updateUserProfile(updatedUser);
       setPersonalInfo(editForm);
+      await fetchGrants();
 
       setIsEditingPersonalInfo(false);
       setPersonalInfoError(null);
