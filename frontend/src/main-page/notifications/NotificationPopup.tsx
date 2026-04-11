@@ -66,7 +66,7 @@ const NotificationPopup: React.FC<NotificationPopupProps> = observer(({
 
     return createPortal(
     <div className="fixed inset-0 z-[999] bg-black bg-opacity-30" onClick={() => setOpenModal(false)}>
-        <div className="absolute right-24 top-10 w-[26rem] bg-white rounded shadow-lg border border-grey-200 z-[1000]" role="dialog" aria-label="Notifications" onClick={e => e.stopPropagation()}>
+        <div className="absolute right-24 top-10 w-[26rem] bg-white rounded shadow-lg border border-grey-200 z-[1000] p-1" role="dialog" aria-label="Notifications" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center px-4 py-3">
                 <h3 className="text-lg font-medium text-black m-0">Your Notifications</h3>
                 <div className="flex items-center gap-2">
@@ -95,7 +95,7 @@ const NotificationPopup: React.FC<NotificationPopupProps> = observer(({
                         />
                     ))
                 ) : (
-                    <p className="pl-2 pb-2 text-sm text-grey-500">No new notifications</p>
+                    <p className="pl-4 pb-4 text-sm text-grey-500">No new notifications</p>
                 )}
             </div>
         </div>
