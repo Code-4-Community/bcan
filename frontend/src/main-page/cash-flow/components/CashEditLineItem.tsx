@@ -68,7 +68,7 @@ export default function CashEditLineItem({
         title={`Delete Cashflow Item`}
         subtitle={"Are you sure you want to delete"}
         boldSubtitle={sourceName}
-        warningMessage="By deleting this item, it won't be available in the system anymore."
+        warningMessage="If you delete this item, it will be permanently removed from the system."
       />
     </div>
   );

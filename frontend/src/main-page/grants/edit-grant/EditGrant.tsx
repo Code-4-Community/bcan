@@ -208,7 +208,7 @@ const EditGrant: React.FC<{
                       title="Delete Grant"
                       subtitle={"Are you sure you want to delete"}
                       boldSubtitle={form.organization}
-                      warningMessage="By deleting this grant, they won't be available in the system anymore."
+                      warningMessage="If you delete this grant, it will be permanently removed from the system."
                     />
           </div>)}
         </div>
