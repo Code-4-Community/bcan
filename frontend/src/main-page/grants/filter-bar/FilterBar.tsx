@@ -175,7 +175,7 @@ const FilterBar: React.FC = observer(() => {
         <Button
           text="My Grants"
           onClick={handleMyGrantsClick}
-          className={`bg-white text-sm lg:text-base whitespace-nowrap border-b-4 ${
+          className={`bg-white text-sm lg:text-base whitespace-nowrap ${
             emailFilter ? activeButtonClass : inactiveButtonClass
           }`}
         />
