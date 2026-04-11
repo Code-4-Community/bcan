@@ -188,8 +188,8 @@ export default function FilterCard({
 					logoPosition="left"
 					text="Increasing"
 					onClick={() => {
-						setDirection("increasing");
-						onDirectionChange("increasing");
+						setDirection(direction =="increasing" ? null : "increasing");
+						onDirectionChange(direction =="increasing" ? null : "increasing");
 					}}
 					className={
 						direction === "increasing"
@@ -203,8 +203,8 @@ export default function FilterCard({
 					logoPosition="left"
 					text="Decreasing"
 					onClick={() => {
-						setDirection("decreasing");
-						onDirectionChange("decreasing");
+						setDirection(direction =="decreasing" ? null : "decreasing");
+						onDirectionChange(direction =="decreasing" ? null : "decreasing");
 					}}
 					className={
 						direction === "decreasing"
