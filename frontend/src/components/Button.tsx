@@ -34,7 +34,7 @@ export default function Button({
         h-fit flex-grow-0 items-center justify-center hover:border-primary-900    
         transition-opacity flex whitespace-nowrap
         ${className} ${
-          disabled ? "cursor-not-allowed opacity-50" : "hover:opacity-90"
+          disabled ? "cursor-not-allowed opacity-50" : "hover:opacity-85"
         }
       `}
     >
