@@ -86,14 +86,14 @@ const EditGrant: React.FC<{
       new Date(form.applicationDate).getTime() >
         new Date(form.applicationDeadline).getTime()
     ) {
-      return "Application Date cannot be after Due Date.";
+      return "Application Date cannot be after Due Date";
     }
     if (!form.grantStartDate) return "Grant Start Date is required";
     if (
       new Date(form.grantStartDate).getTime() <
         new Date(form.applicationDeadline).getTime()
     ) {
-      return "Grant Start Date cannot be before Due Date.";
+      return "Grant Start Date cannot be before Due Date";
     }
     if (!form.estimatedCompletionTime || form.estimatedCompletionTime <= 0) return "Estimated completion time must be greater than 0";
     if (!form.doesBcanQualify) return "BCAN eligibility is required";
