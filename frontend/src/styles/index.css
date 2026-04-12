@@ -132,7 +132,7 @@ button:hover {
 @media (prefers-color-scheme: light) {
   :root {
     color: var(--color-grey-800);
-    background-color: white;
+    background-color: var(--color-grey-150);
   }
   a:hover {
     color: var(--color-secondary-500);
