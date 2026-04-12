@@ -101,10 +101,7 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
       const data = await response.json();
 
       if (response.ok) {
-        const loggedIn = await login(email, password);
-        if (loggedIn) return {state: true, message: ''};
-        console.warn('User registered but auto-login failed');
-        return {state: false, message: 'User registered but auto-login failed'};
+        return {state: true, message: ''};
       }
 
       if (response.status === 409 || data.message?.includes('exists')) {
