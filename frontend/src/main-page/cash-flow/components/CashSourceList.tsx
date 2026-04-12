@@ -2,7 +2,7 @@ import { CashflowCost } from "../../../../../middle-layer/types/CashflowCost";
 import { CashflowRevenue } from "../../../../../middle-layer/types/CashflowRevenue";
 import { deleteCost, deleteRevenue } from "../processCashflowDataEditSave";
 import CashEditLineItem from "./CashEditLineItem";
-import CashEditRevenue from "./CashEditRevenue";
+import CashAddEditRevenue from "./CashAddEditRevenue";
 import { formatMoney } from "../CashFlowPage";
 import { formatDateByFrequency, frequencyLabels } from "../../../../../middle-layer/types/Frequency";
 import CashAddEditCost from "./CashAddEditCost";
@@ -80,7 +80,7 @@ export default function CashSourceList({ type, lineItems }: SourceProps) {
                     onClose={onClose}
                   />
                 ) : (
-                  <CashEditRevenue
+                  <CashAddEditRevenue
                     revenueItem={item as CashflowRevenue}
                     onClose={onClose}
                   />

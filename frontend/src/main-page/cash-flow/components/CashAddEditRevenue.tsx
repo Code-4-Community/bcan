@@ -9,7 +9,13 @@ import CashCategoryDropdown from "./CashCategoryDropdown";
 import CashRevenueInstallment, {
   EditableInstallment,
 } from "./CashRevenueInstallment";
-import { createNewRevenue, isValidInstallment, toInstallment } from "../../cash-flow/processCashflowDataEditSave";
+import {
+  createNewRevenue,
+  isValidInstallment,
+  saveRevenueEdits,
+  toInstallment,
+} from "../processCashflowDataEditSave";
+import { formatMoney } from "../CashFlowPage";
 
 type FieldErrors = {
   type?: string;
@@ -19,6 +25,31 @@ type FieldErrors = {
   installments?: string;
   submit?: string;
 };
+
+type RevenueEditProps = {
+  revenueItem?: CashflowRevenue;
+  onClose?: () => void;
+};
+
+const toDateValue = (dateValue: Date | string | null | undefined) => {
+  if (!dateValue) {
+    return null;
+  }
+
+  const parsedDate = new Date(dateValue);
+  if (Number.isNaN(parsedDate.getTime())) {
+    return null;
+  }
+
+  return parsedDate;
+};
+
+const toEditableInstallment = (
+  installment: Installment,
+): EditableInstallment => ({
+  amount: Number.isFinite(installment.amount) ? installment.amount : null,
+  date: toDateValue(installment.date),
+});
 
 const toDateInputValue = (date: Date | null) => {
   if (!date || Number.isNaN(date.getTime())) {
@@ -36,13 +67,40 @@ const EMPTY_INSTALLMENT: EditableInstallment = {
   date: null,
 };
 
-export default function CashAddRevenue() {
-  const [isMultipleInstallments, setIsMultipleInstallments] = useState(false);
+export default function CashAddEditRevenue({
+  revenueItem,
+  onClose = () => {},
+}: RevenueEditProps) {
+  // One component handles both flows:
+  // - add mode (no revenueItem)
+  // - edit mode (revenueItem provided)
+  const isEditing = Boolean(revenueItem);
+  const existingRevenue = revenueItem ?? null;
+
+  // Convert existing installments into editable UI values
+  const initialInstallments = (existingRevenue?.installments ?? []).map(
+    toEditableInstallment,
+  );
+
+  // If there is more than one installment, show multiple installments not jsut the one
+  const startsWithMultipleInstallments = initialInstallments.length > 1;
+  const initialSingleInstallment = initialInstallments[0] ?? EMPTY_INSTALLMENT;
+  const initialMultipleInstallments = startsWithMultipleInstallments
+    ? initialInstallments
+    : [];
+
+  const [isMultipleInstallments, setIsMultipleInstallments] = useState(
+    startsWithMultipleInstallments,
+  );
   const [singleInstallment, setSingleInstallment] =
-    useState<EditableInstallment>(EMPTY_INSTALLMENT);
-  const [installments, setInstallments] = useState<EditableInstallment[]>([]);
-  const [name, setName] = useState("");
-  const [type, setType] = useState<RevenueType | null>(null);
+    useState<EditableInstallment>(initialSingleInstallment);
+  const [installments, setInstallments] = useState<EditableInstallment[]>(
+    initialMultipleInstallments,
+  );
+  const [name, setName] = useState(existingRevenue?.name ?? "");
+  const [type, setType] = useState<RevenueType | null>(
+    existingRevenue?.type ?? null,
+  );
   const [errors, setErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -130,20 +188,26 @@ export default function CashAddRevenue() {
     setIsSubmitting(true);
     setErrors((previous) => ({ ...previous, submit: undefined }));
 
-    const result = await createNewRevenue(payload);
+    const result = existingRevenue
+      ? await saveRevenueEdits(existingRevenue.name, payload)
+      : await createNewRevenue(payload);
     if (!result.success) {
       setErrors((previous) => ({
         ...previous,
-        submit: result.error || "Unable to create revenue source.",
+        submit: result.error || "Unable to save revenue source.",
       }));
       setSuccessMessage(null);
       setIsSubmitting(false);
       return;
     }
 
-    setIsSubmitting(false);
-    resetForm();
-    showSuccessMessage("Revenue source created successfully.");
+    if (isEditing) {
+      onClose();
+    } else {
+      setIsSubmitting(false);
+      resetForm();
+      showSuccessMessage("Revenue source created successfully.");
+    }
   };
 
   const addInstallment = () => {
@@ -190,11 +254,20 @@ export default function CashAddRevenue() {
     });
   };
 
+  const totalAmount = isMultipleInstallments
+    ? installments.reduce(
+        (sum, installment) => sum + (installment.amount ?? 0),
+        0,
+      )
+    : (singleInstallment.amount ?? 0);
+
   return (
     <div className="flex flex-col pt-2 px-2 col-span-2 h-full gap-2">
-      <div className="text-lg lg:text-xl w-full text-left font-bold">
-        {"Add Revenue Source"}
-      </div>
+      {!isEditing && (
+        <div className="text-lg lg:text-xl w-full text-left font-bold">
+          {"Add Revenue Source"}
+        </div>
+      )}
       <div className="flex flex-col w-full gap-4">
         <div className="grid grid-cols-1 xl:grid-cols-2 w-full gap-4">
           <div className="flex flex-col gap-1">
@@ -227,7 +300,7 @@ export default function CashAddRevenue() {
             {installments.map((installment, index) => (
               <CashRevenueInstallment
                 key={index}
-                id={index}
+                id={isEditing ? `edit_${index}` : index}
                 installment={installment}
                 onAmountChange={(value) => updateInstallment(index, "amount", value)}
                 onDateChange={(value) => updateInstallment(index, "date", value)}
@@ -293,14 +366,36 @@ export default function CashAddRevenue() {
         onClick={addInstallment}
         logo={faPlus}
         logoPosition="left"
-        className="bg-primary-900 text-white w-fit ml-auto text-sm mt-2"
+        className={isEditing
+          ? "bg-primary-900 text-white text-sm"
+          : "bg-primary-900 text-white w-fit ml-auto text-sm mt-2"}
       />
-      <Button
-        text="Add Revenue Source"
-        onClick={handleSubmit}
-        disabled={isSubmitting}
-        className="bg-green text-white mt-2 text-sm lg:text-base"
-      />
+      {!isEditing ? (
+        <Button
+          text="Add Revenue Source"
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+          className="bg-green text-white mt-2 text-sm lg:text-base"
+        />
+      ) : (
+        <div className="flex flex-wrap items-center gap-2 mt-2">
+          <div className="font-semibold ml-auto text-sm lg:text-base">
+            {"Total: "}
+            {formatMoney(totalAmount)}
+          </div>
+          <Button
+            text="Cancel"
+            onClick={onClose}
+            className="bg-white text-black border border-grey-500 text-sm lg:text-base"
+          />
+          <Button
+            text={isSubmitting ? "Saving..." : "Save"}
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="bg-primary-900 text-white text-sm lg:text-base"
+          />
+        </div>
+      )}
     </div>
   );
 }
