@@ -8,6 +8,8 @@ type CashEditLineItemProps = {
   children: (onClose: () => void) => React.ReactNode;
   sourceName: string;
   onRemove: () => Promise<void>;
+  isReadOnly: boolean;
+  readOnlyMessage?: string;
 };
 
 export default function CashEditLineItem({
@@ -15,6 +17,8 @@ export default function CashEditLineItem({
   children,
   sourceName,
   onRemove,
+  isReadOnly,
+  readOnlyMessage = "Any edits must be made in the Grant Page",
 }: CashEditLineItemProps) {
   const [editing, setEditing] = useState<boolean>(false);
 
@@ -41,6 +45,8 @@ export default function CashEditLineItem({
           </div>
 
           <div className="flex flex-wrap gap-2 justify-end h-fit">
+            {!isReadOnly && (
+              <>
             <Button
               text="Edit"
               onClick={onEdit}
@@ -55,6 +61,13 @@ export default function CashEditLineItem({
               onClick={() => setShowDeleteModal(true)}
               className="bg-red-light text-red text-sm lg:text-base"
             />
+              </>
+            )}
+            {isReadOnly && (
+              <div className="text-sm text-gray-600 italic">
+                {readOnlyMessage}
+              </div>
+            )}
           </div>
         </div>
       )}

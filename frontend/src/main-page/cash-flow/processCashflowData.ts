@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { getAppStore } from "../../external/bcanSatchel/store.ts";
 import { fetchCashflowCosts, fetchCashflowRevenues, setCashflowSettings } from "../../external/bcanSatchel/actions.ts";
-import {CashflowRevenue} from "../../../../middle-layer/types/CashflowRevenue.ts";
+import {CashflowRevenue, GrantPageGrant} from "../../../../middle-layer/types/CashflowRevenue.ts";
 import {CashflowCost} from "../../../../middle-layer/types/CashflowCost.ts";
 import {CashflowSettings} from "../../../../middle-layer/types/CashflowSettings.ts";
 import { Grant } from "../../../../middle-layer/types/Grant.ts";
@@ -45,7 +45,7 @@ export const fetchRevenues = async () => {
     const updatedRevenues: CashflowRevenue[] = await revenueResponse.json();
     const grants: Grant[] = await grantResponse.json();
 
-    const mappedActiveGrantRevenues: CashflowRevenue[] = grants
+    const mappedActiveGrantRevenues: GrantPageGrant[] = grants
       .filter((grant) => grant.status === Status.Active)
       .map((grant) => ({
         amount: grant.amount,
@@ -57,6 +57,8 @@ export const fetchRevenues = async () => {
             date: new Date(grant.grant_start_date),
           },
         ],
+        isGrantBased: true,
+        grantId: grant.grantId,
       }));
 
     fetchCashflowRevenues([...updatedRevenues, ...mappedActiveGrantRevenues]);
