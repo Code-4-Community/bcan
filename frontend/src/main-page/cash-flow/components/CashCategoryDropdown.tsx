@@ -1,12 +1,13 @@
 import { useId } from "react";
 import { CostType } from "../../../../../middle-layer/types/CostType";
 import { RevenueType } from "../../../../../middle-layer/types/RevenueType";
+import { Frequency } from "../../../../../middle-layer/types/Frequency";
 
 type CashCategoryDropdown = {
-  type: typeof RevenueType | typeof CostType;
+  type: typeof RevenueType | typeof CostType | typeof Frequency;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  value: RevenueType | CostType | "";
-  placeholder?: string;
+  value: RevenueType | CostType | Frequency | "";
+  name?: string;
   error?: boolean;
 };
 
@@ -14,7 +15,7 @@ export default function CashCategoryDropdown({
   type,
   onChange,
   value,
-  placeholder = "Select a category",
+  name = "Category",
   error,
 }: CashCategoryDropdown) {
   const generatedId = useId();
@@ -25,7 +26,7 @@ export default function CashCategoryDropdown({
         htmlFor={generatedId}
         className="block text-left font-semibold text-sm lg:text-base"
       >
-        {"Category"}
+        {name}
       </label>
       <div className="mt-2 flex items-center rounded-md relative">
           <select
@@ -38,7 +39,7 @@ export default function CashCategoryDropdown({
                 : "border-grey-500 bg-grey-100"
             }`}
           >
-            <option value="">{placeholder}</option>
+            <option value="">{"Select a "}{name.toLowerCase()}</option>
             {Object.values(type).map((r) => (
               <option key={r} value={r}>
                 {r}
