@@ -5,7 +5,7 @@ import {
   Logger,
 } from "@nestjs/common";
 import * as AWS from "aws-sdk";
-import { CashflowRevenue } from "../types/CashflowRevenue";
+import { CashflowRevenue, GrantPageGrant } from "../types/CashflowRevenue";
 import { AWSError } from "aws-sdk";
 import { RevenueType } from "../../../middle-layer/types/RevenueType";
 import { Installment } from "../../../middle-layer/types/Installment";
@@ -331,7 +331,7 @@ async updateRevenue(name: string, revenue: CashflowRevenue): Promise<CashflowRev
   this.validateTableName(this.revenueTableName);
 
   // Prevent editing grant-based revenues
-  if ((revenue as any).isGrantBased && (revenue as any).isGrantBased === true) {
+  if ((revenue as GrantPageGrant).isGrantBased && (revenue as GrantPageGrant).isGrantBased === true) {
     this.logger.error('Attempted to update a grant-based revenue');
     throw new BadRequestException('You cannot edit a grant page grant as a revenue. Must be edited on Grant Page.');
   }
