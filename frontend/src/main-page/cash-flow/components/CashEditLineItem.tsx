@@ -53,7 +53,7 @@ export default function CashEditLineItem({
               logo={faTrash}
               logoPosition="right"
               onClick={() => setShowDeleteModal(true)}
-              className="bg-red-light text-red text-sm lg:text-base"
+              className="bg-red-light text-red hover:!border-red text-sm lg:text-base"
             />
           </div>
         </div>

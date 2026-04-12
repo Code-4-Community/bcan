@@ -198,7 +198,7 @@ const EditGrant: React.FC<{
           {/* Divider */}
           {grantToEdit && (<div>
           <hr className="border-grey-400 border-t-2 rounded-full" />
-          <Button text="Delete Grant" logo={faTrash} logoPosition="right" className="w-fit mt-6 ml-auto text-red bg-red-light" onClick={() => setShowDeleteModal(true)}/>
+          <Button text="Delete Grant" logo={faTrash} logoPosition="right" className="w-fit mt-6 ml-auto text-red hover:border-red bg-red-light" onClick={() => setShowDeleteModal(true)}/>
           <ActionConfirmation
                       isOpen={showDeleteModal}
                       onCloseDelete={() => setShowDeleteModal(false)}
