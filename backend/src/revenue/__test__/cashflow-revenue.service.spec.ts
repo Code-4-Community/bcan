@@ -121,23 +121,15 @@ describe('RevenueService', () => {
       const result = await service.getAllRevenue();
       expect(result).toHaveLength(3);
       expect(mockScan).toHaveBeenCalledWith({ TableName: 'test-revenue-table' });
-      expect(mockScan).toHaveBeenCalledWith({ TableName: 'test-grant-table' });
     });
 
-    it('should include the active grant in the revenue list', async () => {
+    it('should only scan the revenue table', async () => {
       grantItems = [activeGrant, inactiveGrant];
 
-      const result = await service.getAllRevenue();
+      await service.getAllRevenue();
 
-      expect(result).toEqual(expect.arrayContaining([
-        expect.objectContaining({
-          name: 'Active Grant Org',
-          amount: 4000,
-          type: RevenueType.Grants,
-          installments: [{ amount: 4000, date: '2024-07-01' }],
-        }),
-      ]));
-      expect(result.some((item) => item.name === 'Inactive Grant Org')).toBe(false);
+      expect(mockScan).toHaveBeenCalledTimes(1);
+      expect(mockScan).toHaveBeenCalledWith({ TableName: 'test-revenue-table' });
     });
 
     it('should return an empty array when no items exist', async () => {
