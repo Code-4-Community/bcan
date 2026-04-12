@@ -330,6 +330,12 @@ async updateRevenue(name: string, revenue: CashflowRevenue): Promise<CashflowRev
   this.validateName(name);
   this.validateTableName(this.revenueTableName);
 
+  // Prevent editing grant-based revenues
+  if ((revenue as any).isGrantBased && (revenue as any).isGrantBased === true) {
+    this.logger.error('Attempted to update a grant-based revenue');
+    throw new BadRequestException('You cannot edit a grant page grant as a revenue. Must be edited on Grant Page.');
+  }
+
   const trimmedRouteName = name.trim();
   const trimmedBodyName = revenue.name.trim();
   const isRename = trimmedRouteName !== trimmedBodyName;
