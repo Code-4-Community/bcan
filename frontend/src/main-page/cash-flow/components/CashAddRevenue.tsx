@@ -9,7 +9,7 @@ import CashCategoryDropdown from "./CashCategoryDropdown";
 import CashRevenueInstallment, {
   EditableInstallment,
 } from "./CashRevenueInstallment";
-import { createNewRevenue } from "../../cash-flow/processCashflowDataEditSave";
+import { createNewRevenue, isValidInstallment, toInstallment } from "../../cash-flow/processCashflowDataEditSave";
 import ActionConfirmation from "../../../components/ActionConfirmation";
 
 type FieldErrors = {
@@ -21,11 +21,6 @@ type FieldErrors = {
   submit?: string;
 };
 
-const EMPTY_INSTALLMENT: EditableInstallment = {
-  amount: null,
-  date: null,
-};
-
 const toDateInputValue = (date: Date | null) => {
   if (!date || Number.isNaN(date.getTime())) {
     return "";
@@ -35,6 +30,11 @@ const toDateInputValue = (date: Date | null) => {
   const month = `${date.getMonth() + 1}`.padStart(2, "0");
   const day = `${date.getDate()}`.padStart(2, "0");
   return `${year}-${month}-${day}`;
+};
+
+const EMPTY_INSTALLMENT: EditableInstallment = {
+  amount: null,
+  date: null,
 };
 
 export default function CashAddRevenue() {
@@ -52,23 +52,11 @@ export default function CashAddRevenue() {
     null,
   );
 
-  const isValidInstallment = (installment: EditableInstallment) => {
-    if (installment.amount === null || installment.date === null) {
-      return false;
-    }
-
-    return (
-      Number.isFinite(installment.amount) &&
-      installment.amount > 0 &&
-      !Number.isNaN(installment.date.getTime())
-    );
-  };
-
-  const toInstallment = (installment: EditableInstallment): Installment => {
-    return {
-      amount: installment.amount as number,
-      date: installment.date as Date,
-    };
+  const showSuccessMessage = (message: string) => {
+    setSuccessMessage(message);
+    setTimeout(() => {
+      setSuccessMessage(null);
+    }, 3500);
   };
 
   const buildPayload = (): CashflowRevenue | null => {
@@ -167,7 +155,7 @@ export default function CashAddRevenue() {
 
     setIsSubmitting(false);
     resetForm();
-    setSuccessMessage("Revenue source created successfully.");
+    showSuccessMessage("Revenue source created successfully.");
   };
 
   const addInstallment = () => {
@@ -254,6 +242,7 @@ export default function CashAddRevenue() {
               type="text"
               id="source_name"
               label="Revenue Source Name"
+              placeholder="Enter item name..."
               value={name}
               onChange={(event) => setName(event.target.value)}
               error={Boolean(errors.name)}
@@ -324,7 +313,7 @@ export default function CashAddRevenue() {
         )}
         {errors.submit ? <p className="text-red text-sm">{errors.submit}</p> : null}
         {successMessage ? (
-          <p className="text-green text-sm">{successMessage}</p>
+          <p className="text-green text-sm animate-[fadeout_0.3s_ease-in-out_3s_forwards]">{successMessage}</p>
         ) : null}
       </div>
       <Button

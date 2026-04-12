@@ -68,7 +68,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
 
   return (
     <div>
-      <div className="w-full bg-white rounded-md flex flex-col gap-6 p-6 h-full overflow-y-auto ">
+      <div className="w-full bg-white rounded-md flex flex-col gap-6 p-6 h-full overflow-y-auto">
         {/* Top header part */}
         <div className="flex justify-between">
           {/* Left side */}
