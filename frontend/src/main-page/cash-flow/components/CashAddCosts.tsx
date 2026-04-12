@@ -5,6 +5,7 @@ import Button from "../../../components/Button";
 import InputField from "../../../components/InputField";
 import CashCategoryDropdown from "./CashCategoryDropdown";
 import { createNewCost } from "../processCashflowDataEditSave";
+import ActionConfirmation from "../../../components/ActionConfirmation";
 
 type FieldErrors = {
   type?: string;
@@ -20,6 +21,8 @@ export default function CashAddCosts() {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingCost, setPendingCost] = useState<CashflowCost | null>(null);
 
   const getTodayIsoDate = () => {
     return new Date().toISOString();
@@ -61,12 +64,19 @@ export default function CashAddCosts() {
     setErrors({});
   }
 
-  const handleSubmit = async () => {
+  const requestSubmit = () => {
     setSuccessMessage(null);
     const payload = buildPayload();
     if (!payload) {
       return;
     }
+    setPendingCost(payload);
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmedSubmit = async () => {
+    if (!pendingCost) return;
+    const payload = pendingCost;
 
     setIsSubmitting(true);
     setErrors((previous) => ({ ...previous, submit: undefined }));
@@ -89,6 +99,22 @@ export default function CashAddCosts() {
 
   return (
     <div className="flex flex-col pt-2 px-2 col-span-2 h-full gap-2">
+      <ActionConfirmation
+        isOpen={showConfirmModal}
+        onCloseDelete={() => {
+          setShowConfirmModal(false);
+          setPendingCost(null);
+        }}
+        onConfirmDelete={() => {
+          void handleConfirmedSubmit();
+          setPendingCost(null);
+        }}
+        title="Create cost item"
+        subtitle="Are you sure you want to add"
+        boldSubtitle={pendingCost?.name ?? ""}
+        warningMessage="This will create a new cost line in your cash flow."
+        variant="create"
+      />
       <div className="text-lg lg:text-xl w-full text-left font-bold">
         {"Add Cost Source"}
       </div>
@@ -137,7 +163,7 @@ export default function CashAddCosts() {
       ) : null}
       <Button
         text="Add Cost Item"
-        onClick={handleSubmit}
+        onClick={requestSubmit}
         disabled={isSubmitting}
         className="bg-primary text-white mt-2 text-sm lg:text-base"
       />

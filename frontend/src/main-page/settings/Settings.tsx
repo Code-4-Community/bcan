@@ -237,6 +237,7 @@ function Settings() {
         subtitle="Are you sure you want to remove your"
         boldSubtitle="profile picture"
         warningMessage="Your profile picture will be removed and replaced with the default avatar."
+        variant="delete"
       />
       <ActionConfirmation
         isOpen={isSaveProfileModalOpen}
@@ -252,6 +253,7 @@ function Settings() {
             ? "Changing your email will also change the email you use to log in."
             : "Your personal information will be updated in the system."
         }
+        variant="update"
       />
 
       <InfoCard

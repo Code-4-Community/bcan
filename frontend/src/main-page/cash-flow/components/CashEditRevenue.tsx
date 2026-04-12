@@ -5,9 +5,8 @@ import { Installment } from "../../../../../middle-layer/types/Installment";
 import { RevenueType } from "../../../../../middle-layer/types/RevenueType";
 import Button from "../../../components/Button";
 import InputField from "../../../components/InputField";
-import {
-  saveRevenueEdits,
-} from "../processCashflowDataEditSave";
+import { saveRevenueEdits } from "../processCashflowDataEditSave";
+import ActionConfirmation from "../../../components/ActionConfirmation";
 import CashCategoryDropdown from "./CashCategoryDropdown";
 import CashRevenueInstallment, {
   EditableInstallment,
@@ -71,6 +70,10 @@ export default function CashEditRevenue({
   );
   const [errors, setErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingRevenue, setPendingRevenue] = useState<CashflowRevenue | null>(
+    null,
+  );
 
   const isValidInstallment = (installment: EditableInstallment) => {
     if (installment.amount === null || installment.date === null) {
@@ -196,11 +199,18 @@ export default function CashEditRevenue({
       )
     : (singleInstallment.amount ?? 0);
 
-  const handleSave = async () => {
+  const requestSave = () => {
     const payload = buildPayload();
     if (!payload) {
       return;
     }
+    setPendingRevenue(payload);
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmedSave = async () => {
+    if (!pendingRevenue) return;
+    const payload = pendingRevenue;
 
     setIsSubmitting(true);
     setErrors((previous) => ({ ...previous, submit: undefined }));
@@ -221,6 +231,22 @@ export default function CashEditRevenue({
 
   return (
     <div className="flex flex-col w-full gap-4">
+      <ActionConfirmation
+        isOpen={showConfirmModal}
+        onCloseDelete={() => {
+          setShowConfirmModal(false);
+          setPendingRevenue(null);
+        }}
+        onConfirmDelete={() => {
+          void handleConfirmedSave();
+          setPendingRevenue(null);
+        }}
+        title="Update revenue source"
+        subtitle="Are you sure you want to save changes to"
+        boldSubtitle={pendingRevenue?.name ?? revenueItem.name}
+        warningMessage="This will update this revenue line in your cash flow."
+        variant="update"
+      />
       <div className="grid grid-cols-1 xl:grid-cols-2 w-full gap-4">
         <div className="flex flex-col gap-1">
           <InputField
@@ -333,7 +359,7 @@ export default function CashEditRevenue({
         />
         <Button
           text={isSubmitting ? "Saving..." : "Save"}
-          onClick={handleSave}
+          onClick={requestSave}
           disabled={isSubmitting}
           className="bg-primary-900 text-white text-sm lg:text-base"
         />

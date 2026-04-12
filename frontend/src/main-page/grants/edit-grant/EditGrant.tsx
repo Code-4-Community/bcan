@@ -210,6 +210,7 @@ const EditGrant: React.FC<{
                       subtitle={"Are you sure you want to delete"}
                       boldSubtitle={form.organization}
                       warningMessage="By deleting this grant, they won't be available in the system anymore."
+                      variant="delete"
                     />
           </div>)}
           <ActionConfirmation
@@ -218,10 +219,19 @@ const EditGrant: React.FC<{
             onConfirmDelete={() => {
               handleSubmit();
             }}
-            title="Save Grant"
-            subtitle="Are you sure you want to save changes to"
+            title={grantToEdit ? "Save Grant" : "Create Grant"}
+            subtitle={
+              grantToEdit
+                ? "Are you sure you want to save changes to"
+                : "Are you sure you want to create a grant for"
+            }
             boldSubtitle={form.organization}
-            warningMessage="Saving will update this grant's details in the system."
+            warningMessage={
+              grantToEdit
+                ? "Saving will update this grant's details in the system."
+                : "A new grant will be added to the system with these details."
+            }
+            variant={grantToEdit ? "update" : "create"}
           />
         </div>
       </div>

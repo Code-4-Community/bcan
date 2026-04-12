@@ -23,6 +23,7 @@ const UserApprove = ({ user }: UserApproveProps) => {
         subtitle="Are you sure you want to approve"
         boldSubtitle={user.email}
         warningMessage="Approving this user grants access to the application."
+        variant="create"
       />
       <ActionConfirmation
         isOpen={isDenyModalOpen}
@@ -32,6 +33,7 @@ const UserApprove = ({ user }: UserApproveProps) => {
         subtitle="Are you sure you want to deny"
         boldSubtitle={user.email}
         warningMessage="Denying this user will remove their pending access request."
+        variant="delete"
       />
       <button
         className={`bg-green-light flex-none w-8 h-8 focus:outline-none rounded-sm hover:border-green-dark ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}

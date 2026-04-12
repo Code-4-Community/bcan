@@ -10,6 +10,7 @@ import CashRevenueInstallment, {
   EditableInstallment,
 } from "./CashRevenueInstallment";
 import { createNewRevenue } from "../../cash-flow/processCashflowDataEditSave";
+import ActionConfirmation from "../../../components/ActionConfirmation";
 
 type FieldErrors = {
   type?: string;
@@ -46,6 +47,10 @@ export default function CashAddRevenue() {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingRevenue, setPendingRevenue] = useState<CashflowRevenue | null>(
+    null,
+  );
 
   const isValidInstallment = (installment: EditableInstallment) => {
     if (installment.amount === null || installment.date === null) {
@@ -132,12 +137,19 @@ export default function CashAddRevenue() {
     setErrors({});
   }
 
-  const handleSubmit = async () => {
+  const requestSubmit = () => {
     setSuccessMessage(null);
     const payload = buildPayload();
     if (!payload) {
       return;
     }
+    setPendingRevenue(payload);
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmedSubmit = async () => {
+    if (!pendingRevenue) return;
+    const payload = pendingRevenue;
 
     setIsSubmitting(true);
     setErrors((previous) => ({ ...previous, submit: undefined }));
@@ -204,6 +216,22 @@ export default function CashAddRevenue() {
 
   return (
     <div className="flex flex-col pt-2 px-2 col-span-2 h-full gap-2">
+      <ActionConfirmation
+        isOpen={showConfirmModal}
+        onCloseDelete={() => {
+          setShowConfirmModal(false);
+          setPendingRevenue(null);
+        }}
+        onConfirmDelete={() => {
+          void handleConfirmedSubmit();
+          setPendingRevenue(null);
+        }}
+        title="Create revenue source"
+        subtitle="Are you sure you want to add"
+        boldSubtitle={pendingRevenue?.name ?? ""}
+        warningMessage="This will create a new revenue line in your cash flow."
+        variant="create"
+      />
       <div className="text-lg lg:text-xl w-full text-left font-bold">
         {"Add Revenue Source"}
       </div>
@@ -308,7 +336,7 @@ export default function CashAddRevenue() {
       />
       <Button
         text="Add Revenue Source"
-        onClick={handleSubmit}
+        onClick={requestSubmit}
         disabled={isSubmitting}
         className="bg-green text-white mt-2 text-sm lg:text-base"
       />

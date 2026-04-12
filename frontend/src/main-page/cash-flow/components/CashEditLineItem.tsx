@@ -69,6 +69,7 @@ export default function CashEditLineItem({
         subtitle={"Are you sure you want to delete"}
         boldSubtitle={sourceName}
         warningMessage="By deleting this item, it won't be available in the system anymore."
+        variant="delete"
       />
     </div>
   );

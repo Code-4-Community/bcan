@@ -6,6 +6,7 @@ import { useState } from "react";
 import { CashflowCost } from "../../../../../middle-layer/types/CashflowCost";
 import { saveCostEdits } from "../processCashflowDataEditSave";
 import { formatMoney } from "../CashFlowPage";
+import ActionConfirmation from "../../../components/ActionConfirmation";
 
 type CashEditCostProps = {
   costItem: CashflowCost;
@@ -16,6 +17,7 @@ export default function CashEditCost({ costItem, onClose }: CashEditCostProps) {
   const [type, setType] = useState<CostType>(costItem.type);
   const [name, setName] = useState<string>(costItem.name);
   const [amount, setAmount] = useState<number>(costItem.amount);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const handleChangeCategory = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setType(e.target.value as CostType);
@@ -29,13 +31,23 @@ export default function CashEditCost({ costItem, onClose }: CashEditCostProps) {
     setAmount(e.target.valueAsNumber);
   };
 
-  const handleSave = () => {
+  const handleConfirmedSave = () => {
     saveCostEdits({ name, type, amount, date: "2020-01-01" }, costItem.name);
     onClose();
   };
 
   return (
     <div>
+      <ActionConfirmation
+        isOpen={showConfirmModal}
+        onCloseDelete={() => setShowConfirmModal(false)}
+        onConfirmDelete={handleConfirmedSave}
+        title="Update cost item"
+        subtitle="Are you sure you want to save changes to"
+        boldSubtitle={name}
+        warningMessage="This will update this cost line in your cash flow."
+        variant="update"
+      />
       <div className="grid grid-cols-1 lg:grid-cols-2 w-full justify-between gap-4 mb-2">
         <div className="flex flex-col col-span-1 w-full gap-3">
           <CashCategoryDropdown
@@ -75,7 +87,7 @@ export default function CashEditCost({ costItem, onClose }: CashEditCostProps) {
         />
         <Button
           text="Save"
-          onClick={() => handleSave()}
+          onClick={() => setShowConfirmModal(true)}
           className="bg-primary-900 text-white mt-2 text-sm lg:text-base"
         />
       </div>

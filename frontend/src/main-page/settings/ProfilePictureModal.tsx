@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Cropper, { Area } from "react-easy-crop";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
@@ -15,6 +15,7 @@ import { getAppStore } from "../../external/bcanSatchel/store";
 import { updateUserProfile } from "../../external/bcanSatchel/actions";
 import { setActiveUsers } from "../../external/bcanSatchel/actions";
 import { User } from "../../../../middle-layer/types/User";
+import ActionConfirmation from "../../components/ActionConfirmation";
 
 type ProfilePictureModalProps = {
   isOpen: boolean;
@@ -36,8 +37,13 @@ export default function ProfilePictureModal({
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [showUploadConfirm, setShowUploadConfirm] = useState(false);
 
   const user = getAppStore().user;
+
+  useEffect(() => {
+    if (!isOpen) setShowUploadConfirm(false);
+  }, [isOpen]);
 
   const onCropComplete = useCallback((_croppedArea: Area, croppedAreaPixels: Area) => {
     setCroppedAreaPixels(croppedAreaPixels);
@@ -51,6 +57,7 @@ export default function ProfilePictureModal({
     setUploadError(null);
     setValidationError(null);
     setIsUploading(false);
+    setShowUploadConfirm(false);
     onClose();
   };
 
@@ -82,7 +89,7 @@ export default function ProfilePictureModal({
     reader.readAsDataURL(file);
   };
 
-  const handleSave = async () => {
+  const performUpload = async () => {
     if (!imageSrc || !croppedAreaPixels || !user) return;
 
     setIsUploading(true);
@@ -152,6 +159,18 @@ export default function ProfilePictureModal({
       aria-modal="true"
       aria-labelledby="profile-picture-title"
     >
+      <ActionConfirmation
+        isOpen={showUploadConfirm}
+        onCloseDelete={() => setShowUploadConfirm(false)}
+        onConfirmDelete={() => {
+          void performUpload();
+        }}
+        title="Update profile picture"
+        subtitle="Are you sure you want to upload"
+        boldSubtitle="this profile picture"
+        warningMessage="This will replace your current profile picture for your account."
+        variant="update"
+      />
       <div className="w-full max-w-lg rounded-xl bg-white p-6 shadow-lg flex flex-col">
         <div className="flex items-start justify-between gap-4 mb-4">
           <h2
@@ -248,7 +267,7 @@ export default function ProfilePictureModal({
                 />
                 <Button
                   text={isUploading ? "Uploading…" : "Save"}
-                  onClick={handleSave}
+                  onClick={() => setShowUploadConfirm(true)}
                   disabled={isUploading || !croppedAreaPixels}
                   className="bg-primary-900 text-white"
                 />
