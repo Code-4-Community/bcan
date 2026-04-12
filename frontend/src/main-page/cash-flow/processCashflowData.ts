@@ -4,6 +4,9 @@ import { fetchCashflowCosts, fetchCashflowRevenues, setCashflowSettings } from "
 import {CashflowRevenue} from "../../../../middle-layer/types/CashflowRevenue.ts";
 import {CashflowCost} from "../../../../middle-layer/types/CashflowCost.ts";
 import {CashflowSettings} from "../../../../middle-layer/types/CashflowSettings.ts";
+import { Grant } from "../../../../middle-layer/types/Grant.ts";
+import { RevenueType } from "../../../../middle-layer/types/RevenueType.ts";
+import { Status } from "../../../../middle-layer/types/Status.ts";
 import { api } from "../../api.ts";
 
 // This has not been tested yet but the basic structure when implemented should be the same
@@ -26,12 +29,37 @@ export const fetchCosts = async () => {
 
 export const fetchRevenues = async () => {
   try {
-    const response = await api("/cashflow-revenue");
-    if (!response.ok) {
-      throw new Error(`HTTP Error, Status: ${response.status}`);
+    const [revenueResponse, grantResponse] = await Promise.all([
+      api("/cashflow-revenue"),
+      api("/grant"),
+    ]);
+
+    if (!revenueResponse.ok) {
+      throw new Error(`HTTP Error, Status: ${revenueResponse.status}`);
     }
-    const updatedRevenues: CashflowRevenue[] = await response.json();
-    fetchCashflowRevenues(updatedRevenues);
+
+    if (!grantResponse.ok) {
+      throw new Error(`HTTP Error, Status: ${grantResponse.status}`);
+    }
+
+    const updatedRevenues: CashflowRevenue[] = await revenueResponse.json();
+    const grants: Grant[] = await grantResponse.json();
+
+    const mappedActiveGrantRevenues: CashflowRevenue[] = grants
+      .filter((grant) => grant.status === Status.Active)
+      .map((grant) => ({
+        amount: grant.amount,
+        type: RevenueType.Grants,
+        name: grant.organization.trim(),
+        installments: [
+          {
+            amount: grant.amount,
+            date: new Date(grant.grant_start_date),
+          },
+        ],
+      }));
+
+    fetchCashflowRevenues([...updatedRevenues, ...mappedActiveGrantRevenues]);
   } catch (error) {
     console.error("Error fetching revenues:", error);
   }

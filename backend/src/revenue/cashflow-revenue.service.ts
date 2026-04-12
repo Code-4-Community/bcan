@@ -14,7 +14,7 @@ import { Installment } from "../../../middle-layer/types/Installment";
 export class RevenueService {
   private readonly logger = new Logger(RevenueService.name);
   private dynamoDb = new AWS.DynamoDB.DocumentClient();
-  private revenueTableName : string = process.env.CASHFLOW_REVENUE_TABLE_NAME || ""
+  private revenueTableName : string = process.env.CASHFLOW_REVENUE_TABLE_NAME || "";
   /**
    * Helper method to check if an error is an AWS error and extract relevant information
    */
@@ -205,6 +205,7 @@ private validateTableName(tableName : string){
       throw new InternalServerErrorException("Server Config Error");
     }
 }
+
 
   /**
    * Method to retrieve all of the revenue data
