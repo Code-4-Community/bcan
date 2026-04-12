@@ -5,7 +5,7 @@ import {
   Logger,
 } from "@nestjs/common";
 import * as AWS from "aws-sdk";
-import { CashflowRevenue, GrantPageGrant } from "../types/CashflowRevenue";
+import { CashflowRevenue } from "../types/CashflowRevenue";
 import { AWSError } from "aws-sdk";
 import { RevenueType } from "../../../middle-layer/types/RevenueType";
 import { Installment } from "../../../middle-layer/types/Installment";

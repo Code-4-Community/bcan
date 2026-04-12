@@ -5,6 +5,7 @@ import CashEditLineItem from "./CashEditLineItem";
 import CashEditRevenue from "./CashEditRevenue";
 import { formatMoney } from "../CashFlowPage";
 import { useNavigate } from "react-router-dom";
+import CashAddEditCost from "./CashAddEditCost";
 
 type SourceProps = {
   type: "Revenue" | "Cost";
@@ -90,7 +91,7 @@ export default function CashSourceList({ type, lineItems }: SourceProps) {
               >
                 {(onClose) =>
                   type === "Cost" ? (
-                    <CashEditCost
+                    <CashAddEditCost
                       costItem={item as CashflowCost}
                       onClose={onClose}
                     />

@@ -20,11 +20,12 @@ import EditGrant from "./edit-grant/EditGrant.tsx";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { clearAllFilters } from "../../external/bcanSatchel/actions.ts";
 import { getAppStore } from "../../external/bcanSatchel/store.ts";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function GrantPage() {
   const [showEditGrant, setShowEditGrant] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Use ProcessGrantData reactively to get filtered grants
   const { grants } = ProcessGrantData();
@@ -93,6 +94,8 @@ function GrantPage() {
       if (curId !== selectedGrantId) {
         setCurId(selectedGrantId);
       }
+
+      navigate(location.pathname, { replace: true, state: null });
       return;
     }
 
@@ -100,7 +103,7 @@ function GrantPage() {
     if (!currentSelectionStillVisible) {
       setCurId(grants[0].grantId);
     }
-  }, [curId, grants, selectedGrantId]);
+  }, [curId, grants, selectedGrantId, navigate, location.pathname]);
 
   return (
     <div className="grant-page w-full items-end flex flex-col h-[86vh]">
