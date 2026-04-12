@@ -80,7 +80,7 @@ export default function CashRevenueInstallment({
             className="bg-red-light text-red w-10 h-10 p-0 rounded-full mb-1.5 shrink-0 border-0"
           />
         ) : (
-          <div className="hidden xl:block w-10 h-10 shrink-0" />
+          <div className="hidden xl:block w-8 h-8 shrink-0" />
         )}
       </div>
     </div>
