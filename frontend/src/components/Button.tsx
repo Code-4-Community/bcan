@@ -39,19 +39,19 @@ export default function Button({
       `}
     >
       {logo && logoPosition === "left" && (
-        <span className="mr-2">
-          <FontAwesomeIcon icon={logo} className="" />
+        <span className="mr-2 flex items-center justify-center">
+          <FontAwesomeIcon icon={logo} className="w-3 h-3 xl:w-4 xl:h-4" />
         </span>
       )}
       {text}
       {logo && logoPosition === "right" && (
-        <span className="ml-2">
-          <FontAwesomeIcon icon={logo} className="" />
+        <span className="ml-2 flex items-center justify-center">
+          <FontAwesomeIcon icon={logo} className="w-3 h-3 lg:w-4 lg:h-4" />
         </span>
       )}
       {logo && logoPosition === "center" && (
-        <span className="">
-          <FontAwesomeIcon icon={logo} className="" />
+        <span className="flex items-center justify-center">
+          <FontAwesomeIcon icon={logo} className="w-3 h-3 lg:w-4 lg:h-4" />
         </span>
       )}
     </button>
