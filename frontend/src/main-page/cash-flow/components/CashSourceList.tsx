@@ -5,6 +5,7 @@ import CashEditLineItem from "./CashEditLineItem";
 import CashEditCost from "./CashEditCost";
 import CashEditRevenue from "./CashEditRevenue";
 import { formatMoney } from "../CashFlowPage";
+import { useNavigate } from "react-router-dom";
 
 type SourceProps = {
   type: "Revenue" | "Cost";
@@ -21,6 +22,8 @@ const formatInstallmentDate = (dateValue: Date | string) => {
 };
 
 export default function CashSourceList({ type, lineItems }: SourceProps) {
+  const navigate = useNavigate();
+
   return (
     <div className="chart-container col-span-2 h-fit">
       <div className="text-lg lg:text-xl mb-2 w-full text-left font-bold">
@@ -73,6 +76,16 @@ export default function CashSourceList({ type, lineItems }: SourceProps) {
                     : deleteRevenue(item.name)
                 }
                 isReadOnly={isGrantPageGrantRevenue}
+                onReadOnlyAction={() => {
+                  if (isGrantPageGrantRevenue) {
+                    const grantId = (item as any).grantId;
+                    if (typeof grantId === "number") {
+                      navigate("/main/all-grants", {
+                        state: { selectedGrantId: grantId },
+                      });
+                    }
+                  }
+                }}
               >
                 {(onClose) =>
                   type === "Cost" ? (

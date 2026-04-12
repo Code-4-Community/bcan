@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Button from "../../../components/Button";
-import { faTrash, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faPenToSquare, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import ActionConfirmation from "../../../components/ActionConfirmation";
 
 type CashEditLineItemProps = {
@@ -9,7 +9,7 @@ type CashEditLineItemProps = {
   sourceName: string;
   onRemove: () => Promise<void>;
   isReadOnly: boolean;
-  readOnlyMessage?: string;
+  onReadOnlyAction?: () => void;
 };
 
 export default function CashEditLineItem({
@@ -18,7 +18,7 @@ export default function CashEditLineItem({
   sourceName,
   onRemove,
   isReadOnly,
-  readOnlyMessage = "Any edits must be made in the Grant Page",
+  onReadOnlyAction,
 }: CashEditLineItemProps) {
   const [editing, setEditing] = useState<boolean>(false);
 
@@ -64,9 +64,13 @@ export default function CashEditLineItem({
               </>
             )}
             {isReadOnly && (
-              <div className="text-sm text-gray-600 italic">
-                {readOnlyMessage}
-              </div>
+            <Button
+              text="Open in Grants"
+              onClick={() => onReadOnlyAction?.()}
+              logo={faArrowRight}
+              logoPosition="right"
+              className="bg-white text-black border-grey-500 text-sm lg:text-base"
+            />
             )}
           </div>
         </div>
