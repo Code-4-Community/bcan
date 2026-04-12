@@ -324,6 +324,12 @@ async createRevenue(revenue: CashflowRevenue): Promise<CashflowRevenue> {
   }
 }
 
+  /**
+   * Method to update an existing revenue object
+   * @param name Name of the revenue item to update
+   * @param revenue Updated revenue object
+   * @returns Returns the updated cashflow revenue
+   */
 async updateRevenue(name: string, revenue: CashflowRevenue): Promise<CashflowRevenue> {
   this.validateRevenueObject(revenue);
   this.validateName(name);
@@ -345,6 +351,7 @@ async updateRevenue(name: string, revenue: CashflowRevenue): Promise<CashflowRev
     Key: { name: trimmedRouteName },
   };
 
+  // checks the current/original name from the route (the record you want to edit) exists
   try {
     this.logger.log(`Checking if revenue item with name '${name}' exists`);
     const existing = await this.dynamoDb.get(getParams).promise();
@@ -364,11 +371,43 @@ async updateRevenue(name: string, revenue: CashflowRevenue): Promise<CashflowRev
     throw new InternalServerErrorException('Internal Server Error');
   }
 
+  // When renaming, check if it is a duplicated name
+  if (isRename) {
+    const duplicateCheckParams = {
+      TableName: this.revenueTableName,
+      Key: { name: trimmedBodyName },
+    };
+
+    try {
+      this.logger.log(`Checking if target revenue name '${trimmedBodyName}' already exists`);
+      const duplicate = await this.dynamoDb.get(duplicateCheckParams).promise();
+      if (duplicate.Item) {
+        this.logger.error(`Revenue item with name '${trimmedBodyName}' already exists`);
+        throw new BadRequestException(`A revenue item with the name '${trimmedBodyName}' already exists`);
+      }
+    } catch (error) {
+      if (error instanceof BadRequestException || error instanceof InternalServerErrorException) {
+        throw error;
+      }
+      if (this.isAWSError(error)) {
+        this.logger.error('AWS error during duplicate check for updateRevenue: ', error);
+        throw new InternalServerErrorException('Internal Server Error');
+      }
+      this.logger.error('Uncaught error checking for duplicate revenue item on update: ', error);
+      throw new InternalServerErrorException('Internal Server Error');
+    }
+  }
+
   // Put replaces the entire item at the given key with the new values
-  const putParams = {
+  const putParams: AWS.DynamoDB.DocumentClient.PutItemInput = {
     TableName: this.revenueTableName,
     Item: normalizedRevenue,
   };
+
+  if (isRename) {
+    putParams.ConditionExpression = 'attribute_not_exists(#name)';
+    putParams.ExpressionAttributeNames = { '#name': 'name' };
+  }
 
   this.logger.log(`Params for update call to dynamo db: ${JSON.stringify(putParams, null, 2)}`);
 
@@ -392,6 +431,12 @@ async updateRevenue(name: string, revenue: CashflowRevenue): Promise<CashflowRev
   } catch (error) {
     if (error instanceof BadRequestException || error instanceof InternalServerErrorException) {
       throw error;
+    }
+    if (this.isAWSError(error)) {
+      const awsError = error as { code?: string };
+      if (awsError.code === 'ConditionalCheckFailedException') {
+        throw new BadRequestException(`A revenue item with the name '${trimmedBodyName}' already exists`);
+      }
     }
     if (this.isAWSError(error)) {
       this.logger.error('AWS error during updateRevenue: ', error);

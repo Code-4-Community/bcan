@@ -4,6 +4,7 @@ import { RevenueService } from '../cashflow-revenue.service';
 import { RevenueType } from '../../../../middle-layer/types/RevenueType';
 import { CashflowRevenue } from '../../../../middle-layer/types/CashflowRevenue';
 import { describe, it, expect, beforeEach, afterEach, beforeAll, vi } from 'vitest';
+import { mock } from 'node:test';
 
 // ─── Mock function declarations ───────────────────────────────────────────────
 const mockGet    = vi.fn();
@@ -330,7 +331,9 @@ describe('RevenueService', () => {
     });
 
     it('should put the new item and delete the old one when name changes', async () => {
-      mockGet.mockReturnValue(resolved({ Item: mockRevenue }));
+      mockGet
+        .mockReturnValueOnce(resolved({ Item: mockRevenue }))
+        .mockReturnValueOnce(resolved({ Item: undefined }));
       mockPut.mockReturnValue(resolved({}));
       mockDelete.mockReturnValue(resolved({}));
 
@@ -354,7 +357,9 @@ describe('RevenueService', () => {
     });
 
     it('should use the route param name as the DynamoDB get key, not the body name', async () => {
-      mockGet.mockReturnValue(resolved({ Item: mockRevenue }));
+      mockGet
+        .mockReturnValueOnce(resolved({ Item: mockRevenue }))
+        .mockReturnValueOnce(resolved({ Item: undefined}));
       mockPut.mockReturnValue(resolved({}));
       await service.updateRevenue('Test Revenue', { ...mockRevenue, name: 'Different Name' });
       expect(mockGet).toHaveBeenCalledWith(expect.objectContaining({
@@ -362,8 +367,38 @@ describe('RevenueService', () => {
       }));
     });
 
+    it('should fail on missing original route-name item before checking rename target or writing', async () => {
+      mockGet.mockReturnValueOnce(resolved({ Item: undefined }));
+
+      await expect(
+        service.updateRevenue('Missing Revenue', { ...mockRevenue, name: 'Revenue Two' })
+      ).rejects.toThrow(/does not exist/i);
+
+      expect(mockGet).toHaveBeenCalledTimes(1);
+      expect(mockGet).toHaveBeenCalledWith(expect.objectContaining({
+        Key: { name: 'Missing Revenue' },
+      }));
+      expect(mockPut).not.toHaveBeenCalled();
+      expect(mockDelete).not.toHaveBeenCalled();
+    });
+
+    it('should reject rename when target name already exists and should not delete the original item', async () => {
+      mockGet
+        .mockReturnValueOnce(resolved({ Item: mockRevenue }))
+        .mockReturnValueOnce(resolved({ Item: { ...mockRevenue, name: 'Revenue Two' } }));
+
+      await expect(
+        service.updateRevenue('Test Revenue', { ...mockRevenue, name: 'Revenue Two' })
+      ).rejects.toThrow(/already exists/i);
+
+      expect(mockPut).not.toHaveBeenCalled();
+      expect(mockDelete).not.toHaveBeenCalled();
+    });
+
     it('should throw InternalServerErrorException when delete fails after successful put during rename', async () => {
-      mockGet.mockReturnValue(resolved({ Item: mockRevenue }));
+      mockGet
+        .mockReturnValueOnce(resolved({ Item: mockRevenue }))
+        .mockReturnValueOnce(resolved({ Item: undefined }));
       mockPut.mockReturnValue(resolved({}));
       mockDelete.mockReturnValue(rejected(awsError('InternalServerError')));
       await expect(
