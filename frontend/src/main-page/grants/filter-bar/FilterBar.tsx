@@ -25,6 +25,7 @@ const FilterBar: React.FC = observer(() => {
     emailFilter,
     eligibleOnly,
     sort,
+    filterStatus,
     startDateFilter,
     endDateFilter,
     amountMinFilter,
@@ -34,7 +35,6 @@ const FilterBar: React.FC = observer(() => {
   const [showDueDateCard, setShowDueDateCard] = useState(false);
   const [showAmountCard, setShowAmountCard] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState<Status | null>(null);
   const dueDateDropdownRef = useRef<HTMLDivElement | null>(null);
   const amountDropdownRef = useRef<HTMLDivElement | null>(null);
   const statusDropdownRef = useRef<HTMLDivElement | null>(null);
@@ -82,8 +82,7 @@ const FilterBar: React.FC = observer(() => {
   };
 
   const handleStatusSelect = (status: Status) => {
-    const newSelected = selectedStatus === status ? null : status;
-    setSelectedStatus(newSelected);
+    const newSelected = filterStatus === status ? null : status;
     updateFilter(newSelected);
   };
 
@@ -279,11 +278,11 @@ const FilterBar: React.FC = observer(() => {
             logo={showStatusDropdown ? faChevronUp : faChevronDown}
             logoPosition="right"
             className={`bg-white text-sm lg:text-base whitespace-nowrap ${
-              showStatusDropdown || selectedStatus ? activeButtonClass : inactiveButtonClass
+              showStatusDropdown || filterStatus ? activeButtonClass : inactiveButtonClass
             }`}
           />
           {showStatusDropdown && (
-            <StatusDropdown selected={selectedStatus} onSelect={handleStatusSelect} />
+            <StatusDropdown selected={filterStatus} onSelect={handleStatusSelect} />
           )}
         </div>
       </div>
