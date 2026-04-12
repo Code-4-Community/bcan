@@ -28,7 +28,7 @@ const CashAnnualSettings = observer(() => {
       <div className="text-lg lg:text-xl mb-2 w-full text-left font-bold">
         {"Annual Increase Settings"}
       </div>
-      <div className="flex flex-row justify-between gap-4">
+      <div className="grid grid-cols-1 xl:grid-cols-2 justify-between gap-4">
         <InputField
           type="number"
           id="salary_increase"
