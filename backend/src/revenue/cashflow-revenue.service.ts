@@ -7,17 +7,14 @@ import {
 import * as AWS from "aws-sdk";
 import { CashflowRevenue } from "../types/CashflowRevenue";
 import { AWSError } from "aws-sdk";
-import { Grant } from "../../../middle-layer/types/Grant";
 import { RevenueType } from "../../../middle-layer/types/RevenueType";
 import { Installment } from "../../../middle-layer/types/Installment";
-import { Status } from "../../../middle-layer/types/Status";
 
 @Injectable()
 export class RevenueService {
   private readonly logger = new Logger(RevenueService.name);
   private dynamoDb = new AWS.DynamoDB.DocumentClient();
   private revenueTableName : string = process.env.CASHFLOW_REVENUE_TABLE_NAME || "";
-  private grantTableName : string = process.env.DYNAMODB_GRANT_TABLE_NAME || "";
   /**
    * Helper method to check if an error is an AWS error and extract relevant information
    */
@@ -210,52 +207,6 @@ private validateTableName(tableName : string){
 }
 
 
-/**
- * Retrieves all active grants and maps them into cashflow revenue items.
- */
-private async getActiveGrantRevenues(): Promise<CashflowRevenue[]> {
-  this.validateTableName(this.grantTableName);
-
-  const params = { TableName: this.grantTableName };
-
-  this.logger.debug(`Scanning Grant DynamoDB table: ${params.TableName}`);
-  const data = await this.dynamoDb.scan(params).promise();
-
-  if (!data || !data.Items) {
-    this.logger.error("There has been an error retrieving grants for revenue mapping");
-    throw new InternalServerErrorException("Internal Server Error");
-  }
-
-  const grants = (data.Items as Grant[]) || [];
-  const activeGrantRevenues = grants
-    .filter((grant) => grant.status === Status.Active)
-    .map((grant) => this.mapGrantToRevenue(grant));
-
-  this.logger.log(
-    `Mapped ${activeGrantRevenues.length} active grants into cashflow revenue items`,
-  );
-
-  return activeGrantRevenues;
-}
-
-/**
- * Maps an active grant to a cashflow revenue item.
- * Only the fields needed by the cashflow UI are preserved.
- */
-private mapGrantToRevenue(grant: Grant): CashflowRevenue {
-  return {
-    amount: grant.amount,
-    type: RevenueType.Grants,
-    name: grant.organization.trim(),
-    installments: [
-      {
-        amount: grant.amount,
-        date: grant.grant_start_date as unknown as Date,
-      },
-    ],
-  };
-}
-
   /**
    * Method to retrieve all of the revenue data
    * @returns All the revenue objects in the data base
@@ -265,7 +216,6 @@ private mapGrantToRevenue(grant: Grant): CashflowRevenue {
 
 
     this.validateTableName(this.revenueTableName)
-    this.validateTableName(this.grantTableName)
 
     const params = { TableName: this.revenueTableName };
 
@@ -282,11 +232,10 @@ private mapGrantToRevenue(grant: Grant): CashflowRevenue {
         return [] as CashflowRevenue[];
       }
       const revenue = (data.Items as CashflowRevenue[]) || [];
-      const grantRevenues = await this.getActiveGrantRevenues();
       this.logger.log(
         `Retrived ${revenue.length} revenue items from the backend`,
       );
-      return [...revenue, ...grantRevenues];
+      return revenue;
     } catch (error) {
       if (error instanceof InternalServerErrorException) {
         throw error;
