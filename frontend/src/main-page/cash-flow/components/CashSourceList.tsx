@@ -3,6 +3,7 @@ import { CashflowRevenue } from "../../../../../middle-layer/types/CashflowReven
 import { deleteCost, deleteRevenue } from "../processCashflowDataEditSave";
 import CashEditLineItem from "./CashEditLineItem";
 import CashEditCost from "./CashEditCost";
+import CashEditRevenue from "./CashEditRevenue";
 import { formatMoney } from "../CashFlowPage";
 
 type SourceProps = {
@@ -70,9 +71,14 @@ export default function CashSourceList({ type, lineItems }: SourceProps) {
               }
             >
               {(onClose) =>
-                type === "Cost" && (
+                type === "Cost" ? (
                   <CashEditCost
                     costItem={item as CashflowCost}
+                    onClose={onClose}
+                  />
+                ) : (
+                  <CashEditRevenue
+                    revenueItem={item as CashflowRevenue}
                     onClose={onClose}
                   />
                 )

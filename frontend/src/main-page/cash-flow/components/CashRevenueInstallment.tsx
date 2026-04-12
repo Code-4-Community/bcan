@@ -1,6 +1,6 @@
 import InputField from "../../../components/InputField";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import Button from "../../../components/Button";
 
 export type EditableInstallment = {
   amount: number | null;
@@ -72,14 +72,13 @@ export default function CashRevenueInstallment({
           />
         </div>
         {showDelete ? (
-          <button
-            type="button"
-            aria-label="Delete installment"
-            onClick={onDelete}
-            className="rounded-full bg-red hover:bg-red-light text-white w-10 h-10 flex items-center justify-center mb-1.5 shrink-0"
-          >
-            <FontAwesomeIcon icon={faXmark} className="text-lg" />
-          </button>
+          <Button
+            text=""
+            onClick={() => onDelete?.()}
+            logo={faTrash}
+            logoPosition="center"
+            className="bg-red-light text-red w-10 h-10 p-0 rounded-full mb-1.5 shrink-0 border-0"
+          />
         ) : (
           <div className="hidden xl:block w-10 h-10 shrink-0" />
         )}
