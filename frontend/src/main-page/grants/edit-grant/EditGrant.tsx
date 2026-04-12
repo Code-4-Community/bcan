@@ -42,7 +42,8 @@ export interface GrantFormState {
 const EditGrant: React.FC<{
   grantToEdit: Grant | null;
   onClose: () => void;
-}> = observer(({ grantToEdit, onClose }) => {
+  onGrantCreated?: (grantId: number) => void;
+}> = observer(({ grantToEdit, onClose, onGrantCreated }) => {
   // State to track if form was submitted successfully
   const [saving, setSaving] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -145,6 +146,9 @@ const EditGrant: React.FC<{
       : await createNewGrant(grantData);
 
     if (result.success) {
+      if (!grantToEdit && result.grantId != null) {
+        onGrantCreated?.(result.grantId);
+      }
       setSaving(false);
       onClose();
     } else {
