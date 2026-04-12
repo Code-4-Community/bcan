@@ -2,6 +2,8 @@ import { CashflowCost } from "../../../../../middle-layer/types/CashflowCost";
 import { CashflowRevenue } from "../../../../../middle-layer/types/CashflowRevenue";
 import { deleteCost, deleteRevenue } from "../processCashflowDataEditSave";
 import CashEditLineItem from "./CashEditLineItem";
+import CashEditCost from "./CashEditCost";
+import CashEditRevenue from "./CashEditRevenue";
 import { formatMoney } from "../CashFlowPage";
 import { formatDateByFrequency, frequencyLabels } from "../../../../../middle-layer/types/Frequency";
 import CashAddEditCost from "./CashAddEditCost";
@@ -76,6 +78,11 @@ export default function CashSourceList({ type, lineItems }: SourceProps) {
                 type === "Cost" && (
                   <CashAddEditCost
                     costItem={item as CashflowCost}
+                    onClose={onClose}
+                  />
+                ) : (
+                  <CashEditRevenue
+                    revenueItem={item as CashflowRevenue}
                     onClose={onClose}
                   />
                 )
