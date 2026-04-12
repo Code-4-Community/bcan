@@ -2,7 +2,6 @@ import { CashflowCost } from "../../../../../middle-layer/types/CashflowCost";
 import { CashflowRevenue } from "../../../../../middle-layer/types/CashflowRevenue";
 import { deleteCost, deleteRevenue } from "../processCashflowDataEditSave";
 import CashEditLineItem from "./CashEditLineItem";
-import CashEditCost from "./CashEditCost";
 import CashEditRevenue from "./CashEditRevenue";
 import { formatMoney } from "../CashFlowPage";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +17,9 @@ const formatInstallmentDate = (dateValue: Date | string) => {
     return "Invalid date";
   }
 
-  return parsedDate.toLocaleDateString("en-US");
+  
+
+  return parsedDate.toLocaleDateString();
 };
 
 export default function CashSourceList({ type, lineItems }: SourceProps) {
