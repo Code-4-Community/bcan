@@ -4,7 +4,6 @@ export default {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx,html}"],
   theme: {
     colors: {
-
       green: {
         dark: "#007E4C",
         DEFAULT: "#04A967",
@@ -100,6 +99,15 @@ export default {
         DEFAULT: "0.75rem",
         lg: "1rem",
         "4xl": "2rem",
+      },
+      keyframes: {
+        fadeout: {
+          "0%": { opacity: "1" },
+          "100%": { opacity: "0" },
+        },
+      },
+      animation: {
+        fadeout: "fadeout 0.5s ease-in-out 4s forwards",
       },
     },
   },

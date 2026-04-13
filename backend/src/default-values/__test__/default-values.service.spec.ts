@@ -6,11 +6,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { start } from 'repl';
 
 const mockDefaultValues = [
   { name: 'startingCash', value: 10000 },
   { name: 'benefitsIncrease', value: 3.5 },
   { name: 'salaryIncrease', value: 2.0 },
+  { name: 'startDate', value: '2023-01-01' },
 ];
 
 const mockPromise = vi.fn();
@@ -64,6 +66,7 @@ describe('DefaultValuesService', () => {
         startingCash: 10000,
         benefitsIncrease: 3.5,
         salaryIncrease: 2.0,
+        startDate: '2023-01-01',
       });
       expect(mockDocumentClient.scan).toHaveBeenCalledWith({
         TableName: 'DefaultValues',
@@ -75,6 +78,7 @@ describe('DefaultValuesService', () => {
       const incompleteValues = [
         { name: 'benefitsIncrease', value: 3.5 },
         { name: 'salaryIncrease', value: 2.0 },
+        { name: 'startDate', value: '2023-01-01' },
       ];
       mockPromise.mockResolvedValue({ Items: incompleteValues });
 
@@ -90,6 +94,7 @@ describe('DefaultValuesService', () => {
       const incompleteValues = [
         { name: 'startingCash', value: 10000 },
         { name: 'salaryIncrease', value: 2.0 },
+        { name: 'startDate', value: '2023-01-01' },
       ];
       mockPromise.mockResolvedValue({ Items: incompleteValues });
 
@@ -102,6 +107,7 @@ describe('DefaultValuesService', () => {
       const incompleteValues = [
         { name: 'startingCash', value: 10000 },
         { name: 'benefitsIncrease', value: 3.5 },
+        { name: 'startDate', value: '2023-01-01' },
       ];
       mockPromise.mockResolvedValue({ Items: incompleteValues });
 
@@ -149,6 +155,7 @@ describe('DefaultValuesService', () => {
         { name: 'startingCash', value: -5000 },
         { name: 'benefitsIncrease', value: -1.5 },
         { name: 'salaryIncrease', value: -0.5 },
+        { name: 'startDate', value: '2023-01-01' },
       ];
       mockPromise.mockResolvedValue({ Items: negativeValues });
 
@@ -158,6 +165,7 @@ describe('DefaultValuesService', () => {
         startingCash: -5000,
         benefitsIncrease: -1.5,
         salaryIncrease: -0.5,
+        startDate: '2023-01-01',
       });
     });
   });
@@ -171,6 +179,7 @@ describe('DefaultValuesService', () => {
             { name: 'startingCash', value: 15000 },
             { name: 'benefitsIncrease', value: 3.5 },
             { name: 'salaryIncrease', value: 2.0 },
+            { name: 'startDate', value: '2023-01-01' },
           ],
         });
 
@@ -180,6 +189,7 @@ describe('DefaultValuesService', () => {
         startingCash: 15000,
         benefitsIncrease: 3.5,
         salaryIncrease: 2.0,
+        startDate: '2023-01-01',
       });
       expect(mockDocumentClient.put).toHaveBeenCalledWith({
         TableName: 'DefaultValues',
@@ -202,6 +212,7 @@ describe('DefaultValuesService', () => {
             { name: 'startingCash', value: 10000 },
             { name: 'benefitsIncrease', value: 5.0 },
             { name: 'salaryIncrease', value: 2.0 },
+            { name: 'startDate', value: '2023-01-01' },
           ],
         });
 
@@ -211,12 +222,46 @@ describe('DefaultValuesService', () => {
         startingCash: 10000,
         benefitsIncrease: 5.0,
         salaryIncrease: 2.0,
+        startDate: '2023-01-01',
       });
       expect(mockDocumentClient.put).toHaveBeenCalledWith({
         TableName: 'DefaultValues',
         Item: {
           name: 'benefitsIncrease',
           value: 5.0,
+        },
+        ConditionExpression: 'attribute_exists(#name)',
+        ExpressionAttributeNames: {
+          '#name': 'name',
+        },
+      });
+    });
+
+    it('should successfully update startDate', async () => {
+      mockPromise
+        .mockResolvedValueOnce({})
+        .mockResolvedValueOnce({
+          Items: [
+            { name: 'startingCash', value: 15000 },
+            { name: 'benefitsIncrease', value: 3.5 },
+            { name: 'salaryIncrease', value: 2.0 },
+            { name: 'startDate', value: '2023-02-01' },
+          ],
+        });
+
+      const result = await service.updateDefaultValue('startDate', '2023-02-01');
+
+      expect(result).toEqual({
+        startingCash: 15000,
+        benefitsIncrease: 3.5,
+        salaryIncrease: 2.0,
+        startDate: '2023-02-01',
+      });
+      expect(mockDocumentClient.put).toHaveBeenCalledWith({
+        TableName: 'DefaultValues',
+        Item: {
+          name: 'startDate',
+          value: '2023-02-01',
         },
         ConditionExpression: 'attribute_exists(#name)',
         ExpressionAttributeNames: {
@@ -233,6 +278,7 @@ describe('DefaultValuesService', () => {
             { name: 'startingCash', value: 10000 },
             { name: 'benefitsIncrease', value: 3.5 },
             { name: 'salaryIncrease', value: 3.0 },
+            { name: 'startDate', value: '2023-01-01' },
           ],
         });
 
@@ -242,6 +288,7 @@ describe('DefaultValuesService', () => {
         startingCash: 10000,
         benefitsIncrease: 3.5,
         salaryIncrease: 3.0,
+        startDate: '2023-01-01',
       });
       expect(mockDocumentClient.put).toHaveBeenCalledWith({
         TableName: 'DefaultValues',
@@ -305,6 +352,7 @@ describe('DefaultValuesService', () => {
             { name: 'startingCash', value: -1000 },
             { name: 'benefitsIncrease', value: 3.5 },
             { name: 'salaryIncrease', value: 2.0 },
+            { name: 'startDate', value: '2023-01-01' },
           ],
         });
 
@@ -314,6 +362,7 @@ describe('DefaultValuesService', () => {
         startingCash: -1000,
         benefitsIncrease: 3.5,
         salaryIncrease: 2.0,
+        startDate: '2023-01-01',
       });
       expect(mockDocumentClient.put).toHaveBeenCalledWith({
         TableName: 'DefaultValues',
