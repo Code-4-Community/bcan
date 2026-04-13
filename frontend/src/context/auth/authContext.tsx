@@ -12,6 +12,7 @@ import {
   fetchRevenues,
 } from '../../main-page/cash-flow/processCashflowData.ts';
 import Button from '../../components/Button';
+import { UserStatus } from '../../../../middle-layer/types/UserStatus.ts';
 
 
 /**
@@ -53,12 +54,18 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
   const fetchAllData = async () => {
     if (!store.isAuthenticated) return;
 
-    await Promise.all([
-      fetchUsers(),
-      fetchGrants(),
+    if(store.user?.position === "Admin" as UserStatus){
+      console.log("fetched admin data")
+       await Promise.all([
       fetchCosts(),
       fetchRevenues(),
       fetchCashflowSettings(),
+    ]);
+  };
+
+    await Promise.all([
+      fetchUsers(),
+      fetchGrants(),
     ]);
   };
 
