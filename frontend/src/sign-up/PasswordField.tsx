@@ -69,7 +69,7 @@ export default function PasswordField({
 
   return (
     <div className="w-full">
-      <label htmlFor={id} className="block text-left font-semibold text-black">
+      <label htmlFor={id} className="block text-left font-semibold text-black text-sm lg:text-base">
         {label}
         {required && <span className="text-red">*</span>}
       </label>
