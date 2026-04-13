@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ContactCard from "./components/ContactCard";
 import GrantFieldCol from "./components/GrantFieldCol";
 import { CostBenefitAnalysis } from "./components/CostBenefitAnalysis";
+
 import EditGrant from "../edit-grant/EditGrant";
 import Footer from "../../../Footer";
 
@@ -251,7 +252,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
             fields={[
               {
                 label: "Cost Analysis Calculator",
-                item: <CostBenefitAnalysis grant={grant} />,
+                item: <CostBenefitAnalysis key={grant.grantId} grant={grant} />,
               },
             ]}
           />
