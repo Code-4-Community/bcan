@@ -15,6 +15,7 @@ const Register = observer(() => {
   const navigate = useNavigate();
   const { register } = useAuthContext();
 
+  const [submitting, setSubmitting] = useState(false);
   const [values, setValues] = useState({
     firstName: "",
     lastName: "",
@@ -36,6 +37,7 @@ const Register = observer(() => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    setSubmitting(true);
     e.preventDefault();
 
     if (!EMAIL_REGEX.test(values.email)) {
@@ -77,6 +79,7 @@ const Register = observer(() => {
         item: "registration",
       });
     }
+    setSubmitting(false);
   };
 
   return (
@@ -96,6 +99,7 @@ const Register = observer(() => {
             values.passwordRe !== ""
           }
           passwordsMatch={values.password === values.passwordRe}
+          submitting={submitting}
         />
       </div>
       <div className="w-1/4 lg:w-1/2  p-8">

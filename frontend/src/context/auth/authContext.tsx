@@ -5,6 +5,12 @@ import { observer } from 'mobx-react-lite';
 import { User } from '../../../../middle-layer/types/User';
 import { api, COOKIE_MISSING_EVENT } from '../../api';
 import { fetchUsers } from '../../main-page/users/UserActions.ts';
+import { fetchGrants } from '../../main-page/grants/filter-bar/processGrantData.ts';
+import {
+  fetchCashflowSettings,
+  fetchCosts,
+  fetchRevenues,
+} from '../../main-page/cash-flow/processCashflowData.ts';
 import Button from '../../components/Button';
 
 
@@ -33,10 +39,28 @@ export const useAuthContext = () => {
 export const AuthProvider = observer(({ children }: { children: ReactNode }) => {
   const store = getAppStore();
   const logoutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const autoFetchTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [showCookieErrorPrompt, setShowCookieErrorPrompt] = useState(false);
+  
   // Auto-logout timeout duration (in milliseconds)
   // 8 hours = 8 * 60 * 60 * 1000
   const SESSION_TIMEOUT = 8 * 60 * 60 * 1000;
+
+  // Auto-fetch timeout duration (in milliseconds)
+  // 5 mins = 5 * 60 * 1000
+  const AUTO_FETCH_INTERVAL = 5 * 60 * 1000;
+
+  const fetchAllData = async () => {
+    if (!store.isAuthenticated) return;
+
+    await Promise.all([
+      fetchUsers(),
+      fetchGrants(),
+      fetchCosts(),
+      fetchRevenues(),
+      fetchCashflowSettings(),
+    ]);
+  };
 
   /** Attempt to log in the user */
   const login = async (email: string, password: string): Promise<boolean> => {
@@ -51,7 +75,7 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
       if (response.ok && data.user) {
         console.log("Login successful:", data.user);
         setAuthState(true, data.user, null);
-        await fetchUsers();
+        await fetchAllData();
         return true;
       } else {
         console.warn('Login failed:', data.message || 'Unknown error');
@@ -77,10 +101,7 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
       const data = await response.json();
 
       if (response.ok) {
-        const loggedIn = await login(email, password);
-        if (loggedIn) return {state: true, message: ''};
-        console.warn('User registered but auto-login failed');
-        return {state: false, message: 'User registered but auto-login failed'};
+        return {state: true, message: ''};
       }
 
       if (response.status === 409 || data.message?.includes('exists')) {
@@ -136,6 +157,22 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
       }
     };
   }, [store.isAuthenticated]);
+
+  // Auto-fetch all app data every 5 minutes using one shared timer
+  useEffect(() => {
+    fetchAllData();
+
+    autoFetchTimerRef.current = setInterval(() => {
+      fetchAllData();
+    }, AUTO_FETCH_INTERVAL);
+
+    return () => {
+      if (autoFetchTimerRef.current) {
+        clearInterval(autoFetchTimerRef.current);
+        autoFetchTimerRef.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const onCookieMissing = () => {

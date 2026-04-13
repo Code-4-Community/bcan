@@ -152,7 +152,7 @@ export const GanttYearGrantTimeline = observer(
             : ""}
           {recentYear}
         </div>
-        <div className="w-full h-96 max-w-screen relative">
+        <div className="w-full h-[30rem] max-w-screen relative">
           <Scheduler
             data={filteredSchedulerData}
             isLoading={false}

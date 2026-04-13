@@ -33,7 +33,7 @@ export default function CashSourceList({ type, lineItems }: SourceProps) {
         {" Sources"}
       </div>
       {/* map over list of source and put casheditlineitem for each */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 h-[38rem] overflow-y-auto pr-1">
         {lineItems.map((item) => {
           const isGrantPageGrantRevenue = type === "Revenue" && (item as any).isGrantBased === true;
 
