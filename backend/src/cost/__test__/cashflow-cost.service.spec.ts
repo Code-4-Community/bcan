@@ -651,6 +651,7 @@ describe('CostService', () => {
           name: 'Meals',
           amount: 300,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow(NotFoundException);
@@ -659,6 +660,7 @@ describe('CostService', () => {
           name: 'Meals',
           amount: 300,
           type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow('Cost with name Food not found');
