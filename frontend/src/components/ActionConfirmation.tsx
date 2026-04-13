@@ -99,7 +99,6 @@ const ActionConfirmation = ({
               </p>
             </div>
           </div>
-
           <div className="flex w-full justify-between ">
             <Button
               text="No, cancel"

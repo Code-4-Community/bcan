@@ -101,16 +101,8 @@ const NotificationPopup: React.FC<NotificationPopupProps> = observer(
           }
           variant="delete"
         />
-        <div
-          className="fixed inset-0 z-[999] bg-black bg-opacity-30"
-          onClick={() => setOpenModal(false)}
-        >
-          <div
-            className="absolute right-24 top-10 w-[26rem] bg-white rounded shadow-lg border border-grey-200 z-[1000]"
-            role="dialog"
-            aria-label="Notifications"
-            onClick={(e) => e.stopPropagation()}
-          >
+    <div className="fixed inset-0 z-[999] bg-black bg-opacity-30" onClick={() => setOpenModal(false)}>
+        <div className="absolute end-0 right-6 lg:right-10 top-[4.5rem] w-[26rem] bg-white rounded shadow-lg border border-grey-200 z-[1000] p-1" role="dialog" aria-label="Notifications" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center px-4 py-3">
               <h3 className="text-lg font-medium text-black m-0">
                 Your Notifications

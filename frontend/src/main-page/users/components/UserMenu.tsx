@@ -41,7 +41,7 @@ const UserMenu = ({ user }: UserMenuProps) => {
         title="Delete User"
         subtitle="Are you sure you want to delete"
         boldSubtitle={user.email}
-        warningMessage="By deleting this user, they won't be available in the system anymore."
+        warningMessage="If you delete this user, they will be permanently removed from the system."
         variant="delete"
       />
       <div className="flex items-center justify-start gap-2">

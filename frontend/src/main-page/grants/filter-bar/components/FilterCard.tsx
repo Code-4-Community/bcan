@@ -178,11 +178,9 @@ export default function FilterCard({
 		<div className="flex flex-col gap-2">
 			<div className="text-sm font-semibold flex justify-between items-center">
 				<span>Direction</span>
-				<Button
-					text="Clear all"
-					onClick={handleClearAll}
-					className="text-xs font-semibold text-secondary-400 border-0 hover:text-secondary-400 hover:bg-opacity-0 hover:border hover:border-white"
-				/>
+				<button onClick={handleClearAll} className="text-xs font-semibold text-secondary-400 border-0 hover:text-secondary-400 hover:bg-opacity-0 focus:outline-none active:text-secondary">
+					{"Clear all"}
+				</button>
 			</div>
 			<div className="flex gap-2 flex-wrap">
 				<Button
@@ -190,8 +188,8 @@ export default function FilterCard({
 					logoPosition="left"
 					text="Increasing"
 					onClick={() => {
-						setDirection("increasing");
-						onDirectionChange("increasing");
+						setDirection(direction =="increasing" ? null : "increasing");
+						onDirectionChange(direction =="increasing" ? null : "increasing");
 					}}
 					className={
 						direction === "increasing"
@@ -205,8 +203,8 @@ export default function FilterCard({
 					logoPosition="left"
 					text="Decreasing"
 					onClick={() => {
-						setDirection("decreasing");
-						onDirectionChange("decreasing");
+						setDirection(direction =="decreasing" ? null : "decreasing");
+						onDirectionChange(direction =="decreasing" ? null : "decreasing");
 					}}
 					className={
 						direction === "decreasing"
