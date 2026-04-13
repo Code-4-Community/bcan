@@ -50,10 +50,11 @@ function MainPage() {
   const [openModal, setOpenModal] = useState(false);
 
   const location = useLocation();
+  const mainContainer = document.getElementsByClassName('main-container');
 
-  // Clears all store filters when page changes
   useEffect(() => {
     clearAllFilters();
+    mainContainer[0].scrollTo(0, 0);
   }, [location]);
 
   return (
@@ -61,7 +62,7 @@ function MainPage() {
       <div>
         <NavBar />
       </div>
-      <div className="px-6 lg:px-10 pt-8 w-full h-screen overflow-y-auto">
+      <div className="main-container px-6 lg:px-10 pt-8 w-full h-screen overflow-y-auto">
         <div className="">
           <div className="bell-container flex justify-end w-full">
             <BellButton setOpenModal={setOpenModal} openModal={openModal} />

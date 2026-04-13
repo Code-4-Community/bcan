@@ -25,6 +25,7 @@ const FilterBar: React.FC = observer(() => {
     emailFilter,
     eligibleOnly,
     sort,
+    filterStatus,
     startDateFilter,
     endDateFilter,
     amountMinFilter,
@@ -34,7 +35,6 @@ const FilterBar: React.FC = observer(() => {
   const [showDueDateCard, setShowDueDateCard] = useState(false);
   const [showAmountCard, setShowAmountCard] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState<Status | null>(null);
   const dueDateDropdownRef = useRef<HTMLDivElement | null>(null);
   const amountDropdownRef = useRef<HTMLDivElement | null>(null);
   const statusDropdownRef = useRef<HTMLDivElement | null>(null);
@@ -82,8 +82,7 @@ const FilterBar: React.FC = observer(() => {
   };
 
   const handleStatusSelect = (status: Status) => {
-    const newSelected = selectedStatus === status ? null : status;
-    setSelectedStatus(newSelected);
+    const newSelected = filterStatus === status ? null : status;
     updateFilter(newSelected);
   };
 
@@ -166,9 +165,9 @@ const FilterBar: React.FC = observer(() => {
   
   
   const activeButtonClass =
-    "border-2 border-primary-900 text-primary-900 active:!border-primary-900 active:!text-primary-900 focus:!border-primary-900 focus:!text-primary-900 focus:outline-none focus-visible:outline-none";
+    "border-2 border-primary-900 text-primary-900 active:!border-primary-900 active:!text-white focus:!border-primary-900 focus:!text-primary-900 focus:outline-none focus-visible:outline-none";
   const inactiveButtonClass =
-    "border-2 border-grey-500 text-grey-600 active:!border-grey-500 active:!text-grey-600 focus:!border-grey-500 focus:!text-grey-600 focus:outline-none focus-visible:outline-none";
+    "border-2 border-grey-500 text-grey-600 active:!border-primary-900 active:!text-white focus:!border-grey-500 focus:!text-grey-600 focus:outline-none focus-visible:outline-none";
 
   return (
     <div className="relative w-full">
@@ -176,7 +175,7 @@ const FilterBar: React.FC = observer(() => {
         <Button
           text="My Grants"
           onClick={handleMyGrantsClick}
-          className={`bg-white text-sm lg:text-base whitespace-nowrap border-b-4 ${
+          className={`bg-white text-sm lg:text-base whitespace-nowrap ${
             emailFilter ? activeButtonClass : inactiveButtonClass
           }`}
         />
@@ -279,11 +278,11 @@ const FilterBar: React.FC = observer(() => {
             logo={showStatusDropdown ? faChevronUp : faChevronDown}
             logoPosition="right"
             className={`bg-white text-sm lg:text-base whitespace-nowrap ${
-              showStatusDropdown || selectedStatus ? activeButtonClass : inactiveButtonClass
+              showStatusDropdown || filterStatus ? activeButtonClass : inactiveButtonClass
             }`}
           />
           {showStatusDropdown && (
-            <StatusDropdown selected={selectedStatus} onSelect={handleStatusSelect} />
+            <StatusDropdown selected={filterStatus} onSelect={handleStatusSelect} />
           )}
         </div>
       </div>

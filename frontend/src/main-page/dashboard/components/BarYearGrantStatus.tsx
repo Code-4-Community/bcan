@@ -128,6 +128,7 @@ const BarYearGrantStatus = observer(
                 border: "1px solid lightgray",
                 boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
               }}
+              cursor={{ fill: "rgba(0,0,0,0.1)" }}
               formatter={(value: number) =>
                 checked ? `$${value.toLocaleString()}` : `${value}`
               }
