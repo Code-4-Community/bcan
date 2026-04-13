@@ -36,7 +36,7 @@ const Login = observer(() => {
           <h1 className="text-3xl lg:text-4xl font-bold flex justify-start">Log in</h1>
         </div>
         <form onSubmit={handleSubmit} className="w-full">
-          <div className="grid grid-cols-1 gap-x-6 gap-y-4">
+          <div className="grid grid-cols-1 gap-x-6">
             <div className="mb-4">
               <div>
                 <InputField id="email" label="Email" type="email" required placeholder="Enter your email address" value={email} onChange={(e) => setEmail(e.target.value)} error={failure} />
@@ -56,7 +56,6 @@ const Login = observer(() => {
               </div>
             </div>
           </div>
-
           {/* Error Message */}
           <div className="">
             {failure && (

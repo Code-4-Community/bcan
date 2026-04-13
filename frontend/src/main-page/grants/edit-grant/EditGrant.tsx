@@ -211,7 +211,7 @@ const EditGrant: React.FC<{
           {/* Divider */}
           {grantToEdit && (<div>
           <hr className="border-grey-400 border-t-2 rounded-full" />
-          <Button text="Delete Grant" logo={faTrash} logoPosition="right" className="w-fit mt-6 ml-auto text-red bg-red-light" onClick={() => setShowDeleteModal(true)}/>
+          <Button text="Delete Grant" logo={faTrash} logoPosition="right" className="w-fit mt-6 ml-auto text-red hover:border-red bg-red-light" onClick={() => setShowDeleteModal(true)}/>
           <ActionConfirmation
                       isOpen={showDeleteModal}
                       onCloseDelete={() => setShowDeleteModal(false)}
@@ -221,7 +221,7 @@ const EditGrant: React.FC<{
                       title="Delete Grant"
                       subtitle={"Are you sure you want to delete"}
                       boldSubtitle={form.organization}
-                      warningMessage="By deleting this grant, they won't be available in the system anymore."
+                      warningMessage="If you delete this grant, it will be permanently removed from the system."
                     />
           </div>)}
         </div>

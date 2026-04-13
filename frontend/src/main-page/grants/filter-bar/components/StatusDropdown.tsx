@@ -31,6 +31,7 @@ const StatusDropdown: React.FC<StatusDropdownProps> = observer(({ selected, onSe
               aria-label={`Filter by ${String(status)} status`}
               className="cursor-pointer w-4 h-4 flex-shrink-0"
             />
+            
             <span
               className="px-3 py-1 rounded-full text-sm font-medium"
               style={{
@@ -41,6 +42,7 @@ const StatusDropdown: React.FC<StatusDropdownProps> = observer(({ selected, onSe
               {status}
             </span>
           </label>
+          
         ))}
       </div>
     </div>
