@@ -25,7 +25,7 @@ export default function InputField({
         {label}
         {required && <span className="text-red">*</span>}
       </label>
-      <div className="mt-2 flex items-center rounded-md">
+      <div className="mt-1 flex items-center rounded-md">
         <input
           id={id}
           {...inputProps}

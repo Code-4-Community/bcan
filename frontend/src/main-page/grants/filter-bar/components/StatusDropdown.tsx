@@ -7,7 +7,7 @@ import {
 import { observer } from "mobx-react-lite";
 
 interface StatusDropdownProps {
-  selected: Status | null;
+  selected: Status[];
   onSelect: (status: Status) => void;
 }
 
@@ -26,7 +26,7 @@ const StatusDropdown: React.FC<StatusDropdownProps> = observer(({ selected, onSe
             <input
               id={`status-filter-${String(status)}`}
               type="checkbox"
-              checked={selected === status}
+              checked={selected.includes(status)}
               onChange={() => onSelect(status)}
               aria-label={`Filter by ${String(status)} status`}
               className="cursor-pointer w-4 h-4 flex-shrink-0"

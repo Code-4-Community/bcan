@@ -7,9 +7,8 @@ export const filterGrants = (
   predicates: ((grant: Grant) => boolean)[]
 ) => grants.filter((grant) => predicates.every((fn) => fn(grant)));
 
-// for subheaders for a single status
-export const statusFilter = (status: string | null) => (grant: Grant) =>
-  !status || grant.status === status;
+export const statusFilter = (statuses: string[]) => (grant: Grant) =>
+  !statuses.length || statuses.includes(grant.status);
 
 // TODO note: what attribute to filter by? currently doing application deadline
 // filter for calendar feature, if both null no filter, if 1 null, one-sided filter

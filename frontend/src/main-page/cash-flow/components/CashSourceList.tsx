@@ -1,3 +1,4 @@
+import { observer } from "mobx-react-lite";
 import { CashflowCost } from "../../../../../middle-layer/types/CashflowCost";
 import { CashflowRevenue } from "../../../../../middle-layer/types/CashflowRevenue";
 import { deleteCost, deleteRevenue } from "../processCashflowDataEditSave";
@@ -6,6 +7,8 @@ import CashEditRevenue from "./CashEditRevenue";
 import { formatMoney } from "../CashFlowPage";
 import { formatDateByFrequency, frequencyLabels } from "../../../../../middle-layer/types/Frequency";
 import CashAddEditCost from "./CashAddEditCost";
+import CategoryFilter from "./CategoryFilter";
+import { getAppStore } from "../../../external/bcanSatchel/store";
 
 type SourceProps = {
   type: "Revenue" | "Cost";
@@ -23,16 +26,25 @@ const formatInstallmentDate = (dateValue: Date | string) => {
   return parsedDate.toLocaleDateString();
 };
 
-export default function CashSourceList({ type, lineItems }: SourceProps) {
+const CashSourceList = observer(({ type, lineItems }: SourceProps) => {
+  const { filterRevenueCategory, filterCostCategory } = getAppStore();
+  const activeFilter = type === "Revenue" ? filterRevenueCategory : filterCostCategory;
+
+  const filteredItems = activeFilter.length > 0
+    ? lineItems.filter((item) => (activeFilter as string[]).includes(item.type))
+    : lineItems;
+
   return (
     <div className="chart-container col-span-2 h-fit">
-      <div className="text-lg lg:text-xl mb-2 w-full text-left font-bold">
-        {type}
-        {" Sources"}
+      <div className="flex items-center justify-between mb-2 md:flex-row flex-col">
+        <div className="text-lg lg:text-2xl text-left font-bold">
+          {type}{" Sources"}
+        </div>
+        <CategoryFilter type={type} />
       </div>
       {/* map over list of source and put casheditlineitem for each */}
       <div className="flex flex-col gap-2 h-[30rem] overflow-y-auto pr-1">
-        {lineItems.map((item) => (
+        {filteredItems.map((item) => (
           <div key={item.name}>
             <CashEditLineItem
               cardText={
@@ -92,4 +104,6 @@ export default function CashSourceList({ type, lineItems }: SourceProps) {
       </div>
     </div>
   );
-}
+});
+
+export default CashSourceList;
