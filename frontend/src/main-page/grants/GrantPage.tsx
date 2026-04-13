@@ -4,10 +4,22 @@ import FilterBar from "./filter-bar/FilterBar.tsx";
 import GrantItem from "./grant-view/GrantView.tsx";
 import { observer } from "mobx-react-lite";
 import { ProcessGrantData } from "./filter-bar/processGrantData.ts";
+import {
+  amountRangeFilter,
+  dateRangeFilter,
+  eligibleFilter,
+  filterGrants,
+  searchFilter,
+  statusFilter,
+  userEmailFilter,
+  yearFilterer,
+} from "./filter-bar/grantFilters.ts";
 import GrantCard from "./grant-view/components/GrantCard.tsx";
 import Button from "../../components/Button.tsx";
 import EditGrant from "./edit-grant/EditGrant.tsx";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { clearAllFilters } from "../../external/bcanSatchel/actions.ts";
+import { getAppStore } from "../../external/bcanSatchel/store.ts";
 
 function GrantPage() {
   const [showEditGrant, setShowEditGrant] = useState(false);
@@ -21,11 +33,55 @@ function GrantPage() {
   grants[0] ??
   null;
 
-  // When the first grant in the list changes (sort/filter/initial load), show it
-  const firstGrantId = grants[0]?.grantId ?? null;
+  const handleGrantCreated = (grantId: number) => {
+    setCurId(grantId);
+
+    const {
+      allGrants,
+      filterStatus,
+      startDateFilter,
+      endDateFilter,
+      yearFilter,
+      searchQuery,
+      emailFilter,
+      eligibleOnly,
+      amountMinFilter,
+      amountMaxFilter,
+      user,
+    } = getAppStore();
+
+    const createdGrant = allGrants.find((grant) => grant.grantId === grantId);
+
+    if (createdGrant) {
+      const grantIsVisible =
+        filterGrants([createdGrant], [
+          statusFilter(filterStatus),
+          eligibleFilter(eligibleOnly),
+          dateRangeFilter(startDateFilter, endDateFilter),
+          amountRangeFilter(amountMinFilter, amountMaxFilter),
+          yearFilterer(yearFilter),
+          searchFilter(searchQuery),
+          userEmailFilter(emailFilter, user),
+        ]).length > 0;
+
+      if (!grantIsVisible) {
+        clearAllFilters();
+      }
+    }
+  };
+
+  // Preserve current selection when still visible; otherwise show the first visible grant.
   useEffect(() => {
-    setCurId(grants.length > 0 ? grants[0].grantId : null);
-  }, [firstGrantId]);
+    if (grants.length === 0) {
+      setCurId(null);
+      return;
+    }
+
+    const currentSelectionStillVisible = grants.some((grant) => grant.grantId === curId);
+    if (!currentSelectionStillVisible) {
+      setCurId(grants[0].grantId);
+    }
+  }, [curId, grants]);
 
   return (
     <div className="grant-page w-full items-end flex flex-col h-[86vh]">
@@ -44,7 +100,7 @@ function GrantPage() {
       </div>
 
       {curGrant ? (<div className="flex w-full gap-2 flex-1 overflow-hidden justify-between mt-4">
-        <div className="flex flex-col w-[33%] overflow-y-auto mr-2">
+        <div className="flex flex-col w-[33%] overflow-y-auto mr-2 pr-1">
           {grants.map((grant) => (
             <GrantCard
               key={grant.grantId}
@@ -64,6 +120,7 @@ function GrantPage() {
         {showEditGrant && (
           <EditGrant
             grantToEdit={null}
+            onGrantCreated={handleGrantCreated}
             onClose={async () => {
               setShowEditGrant(false);
             }}

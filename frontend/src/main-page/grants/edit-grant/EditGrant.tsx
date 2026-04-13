@@ -42,7 +42,8 @@ export interface GrantFormState {
 const EditGrant: React.FC<{
   grantToEdit: Grant | null;
   onClose: () => void;
-}> = observer(({ grantToEdit, onClose }) => {
+  onGrantCreated?: (grantId: number) => void;
+}> = observer(({ grantToEdit, onClose, onGrantCreated }) => {
   // State to track if form was submitted successfully
   const [saving, setSaving] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -80,7 +81,20 @@ const EditGrant: React.FC<{
     if (!form.status) return "Status is required";
     if (form.amount == null || form.amount <= 0) return "Amount must be greater than 0";
     if (!form.applicationDeadline) return "Due Date is required";
+    if (
+      form.applicationDate &&
+      new Date(form.applicationDate).getTime() >
+        new Date(form.applicationDeadline).getTime()
+    ) {
+      return "Application Date cannot be after Due Date";
+    }
     if (!form.grantStartDate) return "Grant Start Date is required";
+    if (
+      new Date(form.grantStartDate).getTime() <
+        new Date(form.applicationDeadline).getTime()
+    ) {
+      return "Grant Start Date cannot be before Due Date";
+    }
     if (!form.estimatedCompletionTime || form.estimatedCompletionTime <= 0) return "Estimated completion time must be greater than 0";
     if (!form.doesBcanQualify) return "BCAN eligibility is required";
     if(form.reportDates.length > 0 && !form.reportDates.every((date) => date !== "")) return "Report deadlines must have a value";
@@ -144,6 +158,9 @@ const EditGrant: React.FC<{
       : await createNewGrant(grantData);
 
     if (result.success) {
+      if (!grantToEdit && result.grantId != null) {
+        onGrantCreated?.(result.grantId);
+      }
       setSaving(false);
       onClose();
     } else {
@@ -194,7 +211,7 @@ const EditGrant: React.FC<{
           {/* Divider */}
           {grantToEdit && (<div>
           <hr className="border-grey-400 border-t-2 rounded-full" />
-          <Button text="Delete Grant" logo={faTrash} logoPosition="right" className="w-fit mt-6 ml-auto text-red bg-red-light" onClick={() => setShowDeleteModal(true)}/>
+          <Button text="Delete Grant" logo={faTrash} logoPosition="right" className="w-fit mt-6 ml-auto text-red hover:border-red bg-red-light" onClick={() => setShowDeleteModal(true)}/>
           <ActionConfirmation
                       isOpen={showDeleteModal}
                       onCloseDelete={() => setShowDeleteModal(false)}
@@ -204,7 +221,7 @@ const EditGrant: React.FC<{
                       title="Delete Grant"
                       subtitle={"Are you sure you want to delete"}
                       boldSubtitle={form.organization}
-                      warningMessage="By deleting this grant, they won't be available in the system anymore."
+                      warningMessage="If you delete this grant, it will be permanently removed from the system."
                     />
           </div>)}
         </div>

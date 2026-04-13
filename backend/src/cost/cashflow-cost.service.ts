@@ -9,6 +9,7 @@ import {
 import * as AWS from 'aws-sdk';
 import { CashflowCost } from '../../../middle-layer/types/CashflowCost';
 import { CostType } from '../../../middle-layer/types/CostType';
+import { Frequency } from '../../../middle-layer/types/Frequency';
 
 interface UpdateCostBody {
   amount?: number;
@@ -29,6 +30,15 @@ export class CostService {
       );
     }
   }
+
+  private validateFrequency(frequency: string) {
+    if (!Object.values(Frequency).includes(frequency as Frequency) || frequency === null) {
+      throw new BadRequestException(
+        `frequency must be one of: ${Object.values(Frequency).join(', ')}`,
+      );
+    }
+  }
+
 
   private validateAmount(amount: number) {
     if (!Number.isFinite(amount) || amount <= 0 || amount === null) {
@@ -121,6 +131,7 @@ export class CostService {
     const tableName = process.env.CASHFLOW_COST_TABLE_NAME || '';
     this.validateAmount(cost.amount);
     this.validateCostType(cost.type);
+    this.validateFrequency(cost.frequency);
     this.validateName(cost.name);
     const normalizedName = cost.name.trim();
 
@@ -178,6 +189,7 @@ export class CostService {
 
     this.validateAmount(updates.amount);
     this.validateCostType(updates.type);
+    this.validateFrequency(updates.frequency);
 
     if (updates.name !== undefined) {
       this.validateName(updates.name);
@@ -209,6 +221,7 @@ export class CostService {
       existingCost.name === updates.name &&
       existingCost.amount === updates.amount &&
       existingCost.type === updates.type &&
+      existingCost.frequency === updates.frequency &&
       datesAreEqual;
 
     if (isUnchanged) {

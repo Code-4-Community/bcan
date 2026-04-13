@@ -22,7 +22,7 @@ export default function SearchBar({
           transform: "translateY(-50%)",
           pointerEvents: "none",
           zIndex: 2,
-          marginLeft: "2px",
+          marginLeft: "0.2rem",
         }}
       />
       <input

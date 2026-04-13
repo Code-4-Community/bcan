@@ -70,7 +70,7 @@ const DateFilter: React.FC = observer(() => {
         <button
           className="close-button absolute top-3 right-4 text-lg"
           onClick={() => setShowDropdown(false)}
-          aria-label="Close notifications"
+          aria-label="Close"
         >
           <FontAwesomeIcon icon={faXmark} className="text-lg hover:text-red" />
         </button>

@@ -14,6 +14,7 @@ import { getAppStore } from "../../external/bcanSatchel/store";
 import { setActiveUsers, updateUserProfile } from "../../external/bcanSatchel/actions";
 import { User } from "../../../../middle-layer/types/User";
 import { fetchGrants } from "../grants/filter-bar/processGrantData";
+import { InputField } from "../../sign-up";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -247,40 +248,16 @@ function Settings() {
         editContent={
           <>
             <div className="grid grid-cols-2 gap-6 text-left mb-6">
-              <div>
-                <label className="block text-sm text-gray-500 mb-1">First Name</label>
-                <input
-                  type="text"
-                  value={editForm.firstName}
-                  onChange={(e) =>
+                <InputField required={true} id="firstName" error={personalInfoError?.includes("First") || false} label="First Name" value={editForm.firstName} onChange={(e) =>
                     setEditForm((f) => ({ ...f, firstName: e.target.value }))
-                  }
-                  className="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-gray-900"
-                />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-500 mb-1">Last Name</label>
-                <input
-                  type="text"
-                  value={editForm.lastName}
-                  onChange={(e) =>
+                  } />
+                <InputField required={true} id="lastName" label="Last Name" error={personalInfoError?.includes("Last") || false} value={editForm.lastName} onChange={(e) =>
                     setEditForm((f) => ({ ...f, lastName: e.target.value }))
-                  }
-                  className="w-full px-3 py-2 rounded-md border border-gray-300 bg-white text-gray-900"
-                />
-              </div>
+                  } />
               <div className="col-span-2">
-                <label className="block text-sm text-gray-500 mb-1">Email Address</label>
-                <input
-                  type="email"
-                  value={editForm.email}
-                  onChange={(e) =>
+                <InputField required={true} id="email" error={personalInfoError?.includes("Email") || false} label="Email Address" value={editForm.email} onChange={(e) =>
                     setEditForm((f) => ({ ...f, email: e.target.value }))
-                  }
-                  className={`w-full px-3 py-2 rounded-md border bg-white text-gray-900 ${
-                    personalInfoError ? "border-[#CC0000]" : "border-gray-300"
-                  }`}
-                />
+                  } />
               </div>
             </div>
             {personalInfoError && (
@@ -306,7 +283,7 @@ function Settings() {
 
       <div className="flex gap-24 items-center mt-12">
         <div>
-          <h2 className="text-2xl font-bold mb-1 flex justify-start">Change Password</h2>
+          <h2 className="text-2xl font-bold mb-1 flex justify-start text-start">Change Password</h2>
           <p className="text-gray-500 text-start">
             Re-enter your current password in order to change your password.
           </p>
