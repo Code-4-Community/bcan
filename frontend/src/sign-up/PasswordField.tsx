@@ -71,7 +71,7 @@ export default function PasswordField({
     <div className="w-full">
       <label htmlFor={id} className="block text-left font-semibold text-black text-sm lg:text-base">
         {label}
-        {required && <span className="text-red">*</span>}
+        {required && <span className="text-red ml-1">*</span>}
       </label>
       <div className="relative mt-2 flex items-center rounded-md">
         <input

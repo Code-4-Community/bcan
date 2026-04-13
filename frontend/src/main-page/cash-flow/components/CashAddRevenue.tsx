@@ -299,7 +299,7 @@ export default function CashAddRevenue() {
         text="Add Revenue Source"
         onClick={handleSubmit}
         disabled={isSubmitting}
-        className="bg-green text-white mt-2 text-sm lg:text-base"
+        className="bg-green hover:!border-green text-white mt-2 text-sm lg:text-base"
       />
     </div>
   );
