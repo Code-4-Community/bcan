@@ -162,8 +162,7 @@ export default function CashAddEditCost({
         <div className="flex flex-col col-span-1 w-full gap-1">
           <CashCategoryDropdown
             type={CostType}
-            onChange={(event) => {
-              const nextType = event.target.value;
+            onValueChange={(nextType) => {
               setType(nextType ? (nextType as CostType) : null);
             }}
             value={type ?? ""}
@@ -192,8 +191,7 @@ export default function CashAddEditCost({
         <div className="flex flex-col col-span-1 w-full gap-1">
           <CashCategoryDropdown
             type={Frequency}
-            onChange={(event) => {
-              const nextFrequency = event.target.value;
+            onValueChange={(nextFrequency) => {
               setFrequency(nextFrequency ? (nextFrequency as Frequency) : null);
             }}
             name="Frequency"

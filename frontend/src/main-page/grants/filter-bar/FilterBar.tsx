@@ -82,7 +82,9 @@ const FilterBar: React.FC = observer(() => {
   };
 
   const handleStatusSelect = (status: Status) => {
-    const newSelected = filterStatus === status ? null : status;
+    const newSelected = filterStatus.includes(status)
+      ? filterStatus.filter((s) => s !== status)
+      : [...filterStatus, status];
     updateFilter(newSelected);
   };
 
@@ -278,7 +280,7 @@ const FilterBar: React.FC = observer(() => {
             logo={showStatusDropdown ? faChevronUp : faChevronDown}
             logoPosition="right"
             className={`bg-white text-sm lg:text-base whitespace-nowrap ${
-              showStatusDropdown || filterStatus ? activeButtonClass : inactiveButtonClass
+              showStatusDropdown || filterStatus.length > 0 ? activeButtonClass : inactiveButtonClass
             }`}
           />
           {showStatusDropdown && (

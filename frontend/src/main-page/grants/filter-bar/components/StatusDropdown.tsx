@@ -5,9 +5,10 @@ import {
   getColorStatus,
 } from "../../../../../../middle-layer/types/Status.ts";
 import { observer } from "mobx-react-lite";
+import CheckboxField from "../../../../components/CheckboxField";
 
 interface StatusDropdownProps {
-  selected: Status | null;
+  selected: Status[];
   onSelect: (status: Status) => void;
 }
 
@@ -18,31 +19,23 @@ const StatusDropdown: React.FC<StatusDropdownProps> = observer(({ selected, onSe
     <div className="absolute left-0 top-full mt-2 bg-white border border-primary-900 rounded-md p-4 z-50 shadow-lg min-w-[25rem] overflow-x-auto">
       <div className="grid grid-cols-3 gap-2">
         {statuses.map((status) => (
-          <label
+          <CheckboxField
             key={status}
-            htmlFor={`status-filter-${String(status)}`}
-            className="flex items-center gap-2 cursor-pointer"
-          >
-            <input
-              id={`status-filter-${String(status)}`}
-              type="checkbox"
-              checked={selected === status}
-              onChange={() => onSelect(status)}
-              aria-label={`Filter by ${String(status)} status`}
-              className="cursor-pointer w-4 h-4 flex-shrink-0"
-            />
-            
-            <span
-              className="px-3 py-1 rounded-full text-sm font-medium"
-              style={{
-                backgroundColor: getColorStatus(status, "light"),
-                color: getColorStatus(status, "dark"),
-              }}
-            >
-              {status}
-            </span>
-          </label>
-          
+            id={`status-filter-${String(status)}`}
+            checked={selected.includes(status)}
+            onChange={() => onSelect(status)}
+            label={
+              <span
+                className="px-3 py-1 rounded-full text-sm font-medium"
+                style={{
+                  backgroundColor: getColorStatus(status, "light"),
+                  color: getColorStatus(status, "dark"),
+                }}
+              >
+                {status}
+              </span>
+            }
+          />
         ))}
       </div>
     </div>
