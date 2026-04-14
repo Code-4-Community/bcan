@@ -25,7 +25,7 @@ const UserRowHeader = () => {
   }
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-[30%_35%_25%_10%] cols border-b-2 border-grey-150 py-3 px-8 items-center">
+    <div className="grid grid-cols-2 xl:grid-cols-[30%_35%_25%_10%] cols border-b-2 border-grey-150 py-3 px-8 items-center">
       <UserRowHeaderButton
         header="Name"
         sort={labels.header == "firstName" ? labels.sort : "none"}
@@ -41,7 +41,7 @@ const UserRowHeader = () => {
         sort={labels.header == "position" ? labels.sort : "none"}
         onClick={() => buttonHandler("position")}
       />
-      <div className="col-span-1 font-medium text-grey-600">{"Action"}</div>
+      <div className="col-span-1 font-medium text-grey-600 xl:justify-self-center">{"Action"}</div>
     </div>
   );
 };
