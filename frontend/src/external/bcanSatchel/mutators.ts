@@ -123,6 +123,8 @@ mutator(clearAllFilters, () => {
   store.eligibleOnly = false;
   store.amountMinFilter = null;
   store.amountMaxFilter = null;
+  store.filterRevenueCategory = [];
+  store.filterCostCategory = [];
 });
 
 /**
