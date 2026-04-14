@@ -9,35 +9,17 @@ import {
 } from "recharts";
 import { observer } from "mobx-react-lite";
 import "../../dashboard/styles/Dashboard.css";
-import { CashflowRevenue } from "../../../../../middle-layer/types/CashflowRevenue";
-import { CashflowCost } from "../../../../../middle-layer/types/CashflowCost";
+import { ChartDataPoint } from "../projection";
 
-type ChartProps = {
-  costs: CashflowCost[];
-  revenues: CashflowRevenue[];
+type ProjectionProps = {
+  data: ChartDataPoint[];
 };
 
-const CashProjectionChart = observer(({}: ChartProps) => {
-
-  // replace with actual data, filter for 36 months
-  const data = [
-    { date: new Date(), cash_balance: 68333, revenue: 10000, costs: 833 },
-    {
-      date: new Date("2026-04-20"),
-      cash_balance: 7856,
-      revenue: 19000,
-      costs: 793,
-    },
-    {
-      date: new Date("2026-05-19"),
-      cash_balance: 98000,
-      revenue: 16789,
-      costs: 1000,
-    },
-  ];
-
+const CashProjectionChart = observer(({ data }: ProjectionProps) => {
   // Sort by date to ensure correct line order
-  data.sort((a, b) => a.date.getTime() - b.date.getTime());
+  data.sort(
+    (a, b) => new Date(a.month).getTime() - new Date(b.month).getTime(),
+  );
 
   return (
     <div className="h-full">
@@ -83,7 +65,9 @@ const CashProjectionChart = observer(({}: ChartProps) => {
             scale="time"
             dy={10}
             style={{ fontSize: "var(--font-size-sm)" }}
-            tickFormatter={(date: Date) => date.getMonth().toLocaleString() + "/" + date.getFullYear()}
+            tickFormatter={(date: Date) =>
+              date.getMonth().toLocaleString() + "/" + date.getFullYear()
+            }
             axisLine={false}
             tickLine={false}
           />

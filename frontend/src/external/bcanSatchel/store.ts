@@ -6,6 +6,7 @@ import { Notification } from '../../../../middle-layer/types/Notification'
 import { CashflowRevenue } from '../../../../middle-layer/types/CashflowRevenue'
 import { CashflowCost } from '../../../../middle-layer/types/CashflowCost'
 import { CashflowSettings } from '../../../../middle-layer/types/CashflowSettings'
+import { TDateISO } from '../../../../backend/src/utils/date';
 
 export interface AppState {
   isAuthenticated: boolean;

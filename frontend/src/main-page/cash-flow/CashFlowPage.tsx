@@ -12,6 +12,7 @@ import CashProjection from "./components/CashProjection";
 import CashSourceList from "./components/CashSourceList";
 import { ProcessCashflowData } from "./processCashflowData";
 import CashCreateLineItem from "./components/CashCreateLineItem";
+import { TDateISO } from "../../../../backend/src/utils/date";
 
 export const formatMoney = (amount: number) => {
   return amount.toLocaleString("en-US", {
@@ -36,13 +37,23 @@ const CashFlowPage = observer(() => {
         />
         <CashflowKPICard
           text="Total Revenue"
-          value={formatMoney(revenues.reduce((accumulator, currentValue) => accumulator + currentValue.amount, 0))}
+          value={formatMoney(
+            revenues.reduce(
+              (accumulator, currentValue) => accumulator + currentValue.amount,
+              0,
+            ),
+          )}
           logo={faArrowTrendUp}
           className="text-green"
         />
         <CashflowKPICard
           text="Monthly Costs"
-          value={formatMoney(costs.reduce((accumulator, currentValue) => accumulator + currentValue.amount, 0)/12)}
+          value={formatMoney(
+            costs.reduce(
+              (accumulator, currentValue) => accumulator + currentValue.amount,
+              0,
+            ) / 12,
+          )}
           logo={faUserGroup}
           className="text-primary"
         />
@@ -60,7 +71,18 @@ const CashFlowPage = observer(() => {
 
         {/* Row 3 */}
         <CashCreateLineItem />
-        <CashProjection costs={costs} revenues={revenues} />
+        <CashProjection
+          costs={costs}
+          revenues={revenues}
+          settings={
+            cashflowSettings || {
+              startingCash: 0,
+              salaryIncrease: 0,
+              benefitsIncrease: 0,
+              startDate: new Date().toISOString().split("T")[0] as TDateISO,
+            }
+          }
+        />
 
         {/* Row 4 */}
         <CashSourceList type="Revenue" lineItems={revenues} />
