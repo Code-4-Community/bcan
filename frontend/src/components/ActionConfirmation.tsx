@@ -68,7 +68,7 @@ import { IoIosWarning } from "react-icons/io";
             <Button text="Yes, confirm" onClick={() => {
                 onConfirmDelete();
                 onCloseDelete();
-              }} className="border-grey-500 hover:text-primary-900" />
+              }} className="border-grey-500" />
           </div>
 
           </div>
