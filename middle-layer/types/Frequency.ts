@@ -3,13 +3,15 @@
 export enum Frequency {
     Yearly = "Yearly",
     Monthly = "Monthly",
-    OneTime = "One Time"
+    OneTime = "One Time",
+    Recurring = "Recurring"
 }
 
 export const frequencyLabels = [
     { value: Frequency.Yearly, label: "/year" },
     { value: Frequency.Monthly, label: "/month" },
-    { value: Frequency.OneTime, label: "" }
+    { value: Frequency.OneTime, label: "" },
+    { value: Frequency.Recurring, label: " recurring" }
 ];
 
 export function formatDateByFrequency(

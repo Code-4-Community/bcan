@@ -23,6 +23,11 @@ export class CashflowCostDTO implements CashflowCost {
   @Min(0.01)
   amount!: number;
 
+  @ApiProperty({ description: 'The interval for the cost item', example: 12 })
+  @IsNumber({ allowInfinity: false, allowNaN: false })
+  @Min(0)
+  interval!: number;
+
   @ApiProperty({ description: 'The type of cost', enum: CostType, example: CostType.Salary })
   @IsEnum(CostType)
   type!: CostType;
