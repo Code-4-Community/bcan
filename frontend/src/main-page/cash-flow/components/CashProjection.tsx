@@ -10,7 +10,7 @@ export default function CashProjection({ data, kpis }: ProjectionProps) {
   // replace with actual data
   const cards = [
     {
-      field: "Final ProjectedBalance",
+      field: "Final Projected Balance",
       value: kpis.finalBalance,
       color: "text-blue",
     },
