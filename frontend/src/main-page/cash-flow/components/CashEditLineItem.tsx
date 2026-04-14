@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Button from "../../../components/Button";
-import { faTrash, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faPenToSquare, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import ActionConfirmation from "../../../components/ActionConfirmation";
 
 type CashEditLineItemProps = {
@@ -8,6 +8,8 @@ type CashEditLineItemProps = {
   children: (onClose: () => void) => React.ReactNode;
   sourceName: string;
   onRemove: () => Promise<void>;
+  isReadOnly: boolean;
+  onReadOnlyAction?: () => void;
 };
 
 export default function CashEditLineItem({
@@ -15,6 +17,8 @@ export default function CashEditLineItem({
   children,
   sourceName,
   onRemove,
+  isReadOnly,
+  onReadOnlyAction,
 }: CashEditLineItemProps) {
   const [editing, setEditing] = useState<boolean>(false);
 
@@ -41,6 +45,8 @@ export default function CashEditLineItem({
           </div>
 
           <div className="flex flex-wrap gap-2 justify-end h-fit">
+            {!isReadOnly && (
+              <>
             <Button
               text="Edit"
               onClick={onEdit}
@@ -55,6 +61,17 @@ export default function CashEditLineItem({
               onClick={() => setShowDeleteModal(true)}
               className="bg-red-light text-red hover:!border-red text-sm lg:text-base"
             />
+              </>
+            )}
+            {isReadOnly && (
+            <Button
+              text="Open in Grants"
+              onClick={() => onReadOnlyAction?.()}
+              logo={faArrowRight}
+              logoPosition="right"
+              className="bg-white text-black border-grey-500 text-sm lg:text-base"
+            />
+            )}
           </div>
         </div>
       )}

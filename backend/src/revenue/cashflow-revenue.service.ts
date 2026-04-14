@@ -14,7 +14,7 @@ import { Installment } from "../../../middle-layer/types/Installment";
 export class RevenueService {
   private readonly logger = new Logger(RevenueService.name);
   private dynamoDb = new AWS.DynamoDB.DocumentClient();
-  private revenueTableName : string = process.env.CASHFLOW_REVENUE_TABLE_NAME || ""
+  private revenueTableName : string = process.env.CASHFLOW_REVENUE_TABLE_NAME || "";
   /**
    * Helper method to check if an error is an AWS error and extract relevant information
    */
@@ -206,6 +206,7 @@ private validateTableName(tableName : string){
     }
 }
 
+
   /**
    * Method to retrieve all of the revenue data
    * @returns All the revenue objects in the data base
@@ -328,6 +329,15 @@ async updateRevenue(name: string, revenue: CashflowRevenue): Promise<CashflowRev
   this.validateRevenueObject(revenue);
   this.validateName(name);
   this.validateTableName(this.revenueTableName);
+
+  // Prevent editing grant-based revenues
+  // However, I don't think this will ever be useful since the frontend builds the request body without this field anyways
+  // so someone could just call the backend route with a body of the basic CashflowRevenue type, attempting to edit a real grant, and it would just throw the error that it doesn't exist since the grant-based revenues have additional fields and the name field is not editable, so the body name would never match an existing record. But leaving this here just in case we want to add the isGrantBased field to the frontend body in the future for some reason, or if someone tries to call the backend route with a body that includes that field.
+
+  // if ((revenue as GrantPageGrant).isGrantBased && (revenue as GrantPageGrant).isGrantBased === true) {
+  //   this.logger.error('Attempted to update a grant-based revenue');
+  //   throw new BadRequestException('You cannot edit a grant page grant as a revenue. Must be edited on Grant Page.');
+  // }
 
   const trimmedRouteName = name.trim();
   const trimmedBodyName = revenue.name.trim();
