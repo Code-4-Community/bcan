@@ -6,13 +6,14 @@ type ProjectionProps = {
   kpis: CashflowKPIs;
 };
 
-export default function CashProjection({
-  data, kpis
-}: ProjectionProps) {
-
+export default function CashProjection({ data, kpis }: ProjectionProps) {
   // replace with actual data
   const cards = [
-    { field: "Final Balance", value: kpis.finalBalance, color: "text-blue" },
+    {
+      field: "Final ProjectedBalance",
+      value: kpis.finalBalance,
+      color: "text-blue",
+    },
     {
       field: "Lowest Point",
       value: kpis.lowestBalancePoint,
