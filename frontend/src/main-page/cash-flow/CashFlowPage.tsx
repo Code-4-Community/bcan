@@ -86,8 +86,8 @@ const CashFlowPage = observer(() => {
         <CashProjection data={chartData} kpis={kpis} />
 
         {/* Row 4 */}
-        <CashSourceList type="Revenue" lineItems={revenues} />
-        <CashSourceList type="Cost" lineItems={costs} />
+        {revenues.length > 0 && <CashSourceList type="Revenue" lineItems={revenues} />}
+        {costs.length > 0 && <CashSourceList type="Cost" lineItems={costs} />}
       </div>
     </div>
   );

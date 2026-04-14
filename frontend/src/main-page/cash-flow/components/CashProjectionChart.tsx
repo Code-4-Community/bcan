@@ -37,8 +37,8 @@ const CashProjectionChart = observer(({ data }: ProjectionProps) => {
             type="monotone"
             dataKey="cashBalance"
             stroke="var(--color-blue)"
-            strokeWidth={2}
-            dot={{ r: 4 }}
+            strokeWidth={1.5}
+            dot={{ r: 2.5 }}
             name="Cash Balance"
           />
 
@@ -46,16 +46,16 @@ const CashProjectionChart = observer(({ data }: ProjectionProps) => {
             type="monotone"
             dataKey="revenue"
             stroke="var(--color-green)"
-            strokeWidth={2}
-            dot={{ r: 4 }}
+            strokeWidth={1.5}
+            dot={{ r: 2.5 }}
             name="Revenue"
           />
           <Line
             type="monotone"
             dataKey="costs"
             stroke="var(--color-primary)"
-            strokeWidth={2}
-            dot={{ r: 4 }}
+            strokeWidth={1.5}
+            dot={{ r: 2.5 }}
             name="Costs"
           />
           <XAxis
@@ -84,6 +84,7 @@ const CashProjectionChart = observer(({ data }: ProjectionProps) => {
               backgroundColor: "white",
               border: "1px solid lightgray",
               boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+              textAlign: "left",
             }}
             labelFormatter={formatMonthYear}
             formatter={(value: number) => `$${value.toLocaleString()}`}

@@ -34,7 +34,7 @@ export default function CashProjection({
             key={c.field}
             className="bg-grey-150 rounded px-2 py-2 min-w-0 flex-1 flex flex-col h-full text-sm lg:text-base"
           >
-            <div className={`font-semibold ${c.color}`}>{c.field}</div>
+            <div className={`font-semibold mb-auto ${c.color}`}>{c.field}</div>
             <div>
               {c.value.toLocaleString("en-US", {
                 style: "currency",
