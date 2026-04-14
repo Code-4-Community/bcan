@@ -1,4 +1,5 @@
-import { Grant, Status } from "../../../../../middle-layer/types/Grant.ts";
+import { Grant } from "../../../../../middle-layer/types/Grant.ts";
+import { Status } from "../../../../../middle-layer/types/Status.ts";
 import { User } from "../../../../../middle-layer/types/User.ts";
 
 // filters grants by looping thru all filters

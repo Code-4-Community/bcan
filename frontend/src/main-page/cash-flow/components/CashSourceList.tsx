@@ -9,6 +9,8 @@ import { formatDateByFrequency, frequencyLabels } from "../../../../../middle-la
 import CashAddEditCost from "./CashAddEditCost";
 import CategoryFilter from "./CategoryFilter";
 import { getAppStore } from "../../../external/bcanSatchel/store";
+import { RevenueType } from "../../../../../middle-layer/types/RevenueType";
+import { CostType } from "../../../../../middle-layer/types/CostType";
 
 type SourceProps = {
   type: "Revenue" | "Cost";
@@ -31,7 +33,9 @@ const CashSourceList = observer(({ type, lineItems }: SourceProps) => {
   const activeFilter = type === "Revenue" ? filterRevenueCategory : filterCostCategory;
 
   const filteredItems = activeFilter.length > 0
-    ? lineItems.filter((item) => (activeFilter as string[]).includes(item.type))
+    ? type === "Revenue"
+      ? (lineItems as CashflowRevenue[]).filter((item) => (activeFilter as RevenueType[]).includes(item.type))
+      : (lineItems as CashflowCost[]).filter((item) => (activeFilter as CostType[]).includes(item.type))
     : lineItems;
 
   return (

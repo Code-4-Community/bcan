@@ -21,9 +21,6 @@ const CategoryFilter: React.FC<CategoryFilterProps> = observer(({ type }) => {
 
   const { filterRevenueCategory, filterCostCategory } = getAppStore();
   const selected: RevenueType[] | CostType[] = type === "Revenue" ? filterRevenueCategory : filterCostCategory;
-  const categories = type === "Revenue"
-    ? Object.values(RevenueType)
-    : Object.values(CostType);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent | TouchEvent) => {
@@ -75,19 +72,33 @@ const CategoryFilter: React.FC<CategoryFilterProps> = observer(({ type }) => {
       {open && (
         <div className="absolute right-0 top-full mt-1.5 bg-white border border-primary-900 rounded-md pl-4 pr-2 py-2 z-50 shadow-lg">
           <div className="flex flex-col gap-2">
-            {categories.map((cat) => (
-              <CheckboxField
-                key={cat}
-                id={`category-filter-${String(cat)}`}
-                checked={selected.includes(cat as RevenueType & CostType)}
-                onChange={() => handleSelect(cat)}
-                label={
-                  <span className="px-3 py-1 rounded-full text-md lg:text-base font-medium text-left text-grey-600">
-                    {cat}
-                  </span>
-                }
-              />
-            ))}
+            {type === "Revenue"
+              ? Object.values(RevenueType).map((cat) => (
+                  <CheckboxField
+                    key={cat}
+                    id={`category-filter-${String(cat)}`}
+                    checked={filterRevenueCategory.includes(cat)}
+                    onChange={() => handleSelect(cat)}
+                    label={
+                      <span className="px-3 py-1 rounded-full text-md lg:text-base font-medium text-left text-grey-600">
+                        {cat}
+                      </span>
+                    }
+                  />
+                ))
+              : Object.values(CostType).map((cat) => (
+                  <CheckboxField
+                    key={cat}
+                    id={`category-filter-${String(cat)}`}
+                    checked={filterCostCategory.includes(cat)}
+                    onChange={() => handleSelect(cat)}
+                    label={
+                      <span className="px-3 py-1 rounded-full text-md lg:text-base font-medium text-left text-grey-600">
+                        {cat}
+                      </span>
+                    }
+                  />
+                ))}
           </div>
         </div>
       )}

@@ -7,7 +7,7 @@ import { Frequency } from "../../../../../middle-layer/types/Frequency";
 
 type CashCategoryDropdown = {
   type: typeof RevenueType | typeof CostType | typeof Frequency;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  onValueChange: (value: RevenueType | CostType | Frequency) => void;
   value: RevenueType | CostType | Frequency | "";
   name?: string;
   error?: boolean;
@@ -15,7 +15,7 @@ type CashCategoryDropdown = {
 
 export default function CashCategoryDropdown({
   type,
-  onChange,
+  onValueChange,
   value,
   name = "Category",
   error,
@@ -52,11 +52,7 @@ export default function CashCategoryDropdown({
   }, []);
 
   const handleSelect = (selectedValue: RevenueType | CostType | Frequency) => {
-    const syntheticEvent = {
-      target: { value: selectedValue }
-    } as React.ChangeEvent<HTMLSelectElement>;
-
-    onChange(syntheticEvent);
+    onValueChange(selectedValue);
     setIsOpen(false);
   };
 
@@ -73,9 +69,9 @@ export default function CashCategoryDropdown({
           type="button"
           id={generatedId}
           onClick={() => setIsOpen((previous) => !previous)}
-          className={`block w-full rounded-md py-2.5 pl-4 pr-10 text-left text-sm lg:text-base border-2 min-h-[2.5rem] lg:h-[3rem] overflow-auto focus:outline-none focus:border-primary-900 ${
+          className={`block w-full rounded-md py-2.5 pl-4 pr-10 text-left text-sm lg:text-base border-2 min-h-[2.5rem] lg:h-[3rem] overflow-hidden focus:outline-none focus:border-primary-900 ${
             error ? "border-red bg-red-lightest" : "border-grey-500 bg-grey-100"}
-            ${!value && "text-grey-700"}`}
+            ${!value ? "text-grey-700" : ""}`}
           aria-haspopup="listbox"
           aria-expanded={isOpen}
           aria-label={name}

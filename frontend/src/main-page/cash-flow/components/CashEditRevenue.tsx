@@ -236,8 +236,7 @@ export default function CashEditRevenue({
         <div className="flex flex-col gap-1">
           <CashCategoryDropdown
             type={RevenueType}
-            onChange={(event) => {
-              const nextType = event.target.value;
+            onValueChange={(nextType) => {
               setType(nextType ? (nextType as RevenueType) : null);
             }}
             value={type ?? ""}
