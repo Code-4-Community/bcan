@@ -227,7 +227,7 @@ export default function CashAddEditCost({
         <InputField
           type="number"
           id="interval"
-          label="Interval (months)"
+          label="Custom Interval (months)"
           value={interval ?? ""}
           placeholder="e.g. 6"
           className="w-full"

@@ -39,6 +39,7 @@ const CashPosition = observer(() => {
         <InputField
           type="date"
           id="start_date"
+          defaultValue={cashflowSettings?.startDate ?? new Date().toISOString().split("T")[0]} // default to today if no date is set
           label="Projection Start Date"
           value={
             cashflowSettings?.startDate
