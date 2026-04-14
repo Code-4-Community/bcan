@@ -43,7 +43,7 @@ export default function CashSourceList({ type, lineItems }: SourceProps) {
                         {formatMoney(item.amount)}{frequencyLabels.find(
                           (label) => label.value === (item as CashflowCost).frequency,
                         )?.label}
-                        {" on "}
+                        {" "}
                         {formatDateByFrequency((item as CashflowCost).date, (item as CashflowCost).frequency)}
                       </div>
                   )}

@@ -1,26 +1,14 @@
-import { CashflowCost } from "../../../../../middle-layer/types/CashflowCost";
-import { CashflowRevenue } from "../../../../../middle-layer/types/CashflowRevenue";
-import { CashflowSettings } from "../../../../../middle-layer/types/CashflowSettings";
-import { buildCashflowProjection } from "../projection";
+import { CashflowKPIs, ChartDataPoint } from "../projection";
 import CashProjectionChart from "./CashProjectionChart";
 
 type ProjectionProps = {
-  costs: CashflowCost[];
-  revenues: CashflowRevenue[];
-  settings: CashflowSettings;
+  data: ChartDataPoint[];
+  kpis: CashflowKPIs;
 };
 
 export default function CashProjection({
-  costs,
-  revenues,
-  settings,
+  data, kpis
 }: ProjectionProps) {
-  // replace with actual data, filter for 36 months
-  const { chartData, kpis } = buildCashflowProjection(
-    revenues,
-    costs,
-    settings,
-  );
 
   // replace with actual data
   const cards = [
@@ -31,7 +19,7 @@ export default function CashProjection({
       color: "text-grey",
     },
     { field: "Total Revenue", value: kpis.totalRevenue, color: "text-green" },
-    { field: "36-Mo Costs", value: kpis.totalCosts, color: "text-primary" },
+    { field: "Total Costs", value: kpis.totalCosts, color: "text-primary" },
   ];
 
   return (
@@ -39,7 +27,7 @@ export default function CashProjection({
       <div className="text-lg lg:text-xl mb-2 w-full text-left font-bold">
         {"36-Month Cash Flow Projection"}
       </div>
-      <CashProjectionChart data={chartData} />
+      <CashProjectionChart data={data} />
       <div className="flex-wrap gap-2 items-center grid grid-cols-2 xl:grid-cols-4 mt-1">
         {cards.map((c) => (
           <div

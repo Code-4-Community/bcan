@@ -10,8 +10,8 @@ import {
 
 /** One data point per month for the Recharts line chart */
 export interface ChartDataPoint {
-  /** Label shown on the x-axis, e.g. "Jan 2025" */
-  month: string;
+  /** End-of-month timestamp (ms since epoch) for the time-scale x-axis */
+  month: number;
   /** Cumulative cash balance at end of month */
   cashBalance: number;
   /** Total revenue received this month */
@@ -38,42 +38,33 @@ export interface CashflowProjectionResult {
 
 const PROJECTION_MONTHS = 36;
 
-/** Returns a zero-indexed month key like "2025-01" from a Date */
-function toMonthKey(d: Date): string {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
+/** Returns a month key like "2025-01" from a Date or date string.
+ *  For strings, parses directly to avoid UTC→local timezone shift. */
+function toMonthKey(input: Date | string): string {
+  if (typeof input === "string") {
+    // Parse "YYYY-MM-DD" or "YYYY-MM-..." directly — no timezone ambiguity
+    const [y, m] = input.split("-");
+    return `${y}-${m.padStart(2, "0")}`;
+  }
+  const y = input.getFullYear();
+  const m = String(input.getMonth() + 1).padStart(2, "0");
   return `${y}-${m}`;
 }
 
-/** Human-readable label for x-axis */
-function toMonthLabel(key: string): string {
-  const [y, m] = key.split("-");
-  const monthNames = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-  return `${monthNames[parseInt(m, 10) - 1]} ${y}`;
+/** Returns the end-of-month as a ms timestamp */
+function toEndOfMonth(key: string): number {
+  const [y, m] = key.split("-").map(Number);
+  // Day 0 of the next month = last day of current month
+  return new Date(y, m, 0).getTime();
 }
 
 /** Generate an ordered list of 36 month keys starting from startDate */
 function generateMonthKeys(startDate: TDateISO): string[] {
-  const d = new Date(startDate);
-  // Normalize to first of the month
-  d.setDate(1);
+  const [y, m] = startDate.split("-").map(Number);
   const keys: string[] = [];
   for (let i = 0; i < PROJECTION_MONTHS; i++) {
-    keys.push(toMonthKey(d));
-    d.setMonth(d.getMonth() + 1);
+    const date = new Date(y, m - 1 + i, 1); // local date, no UTC shift
+    keys.push(toMonthKey(date));
   }
   return keys;
 }
@@ -132,7 +123,7 @@ export function buildCashflowProjection(
       // Single occurrence
       const key = toMonthKey(new Date(cost.date));
       if (costBuckets.has(key)) {
-        const adjusted = getAdjustedCostAmount(cost, key, startKey, settings);
+        const adjusted = getAdjustedCostAmount(cost, key, settings);
         costBuckets.set(key, costBuckets.get(key)! + adjusted);
       }
     } else {
@@ -140,9 +131,9 @@ export function buildCashflowProjection(
       const interval = getIntervalMonths(cost);
       if (interval <= 0) continue; // safety guard
 
-      const costDate = new Date(cost.date);
-      costDate.setDate(1);
-      const cursor = new Date(costDate);
+      // Parse as local date to avoid UTC shift
+      const [cy, cm] = cost.date.split("-").map(Number);
+      const cursor = new Date(cy, cm - 1, 1);
 
       // If the cost starts before the projection, advance to the first
       // occurrence that falls within the window.
@@ -153,7 +144,7 @@ export function buildCashflowProjection(
       while (toMonthKey(cursor) <= endKey) {
         const key = toMonthKey(cursor);
         if (costBuckets.has(key)) {
-          const adjusted = getAdjustedCostAmount(cost, key, startKey, settings);
+          const adjusted = getAdjustedCostAmount(cost, key, settings);
           costBuckets.set(key, costBuckets.get(key)! + adjusted);
         }
         cursor.setMonth(cursor.getMonth() + interval);
@@ -164,7 +155,6 @@ export function buildCashflowProjection(
   // ---- Build chart data with running cash balance ----
   let balance = settings.startingCash;
   let lowestBalance = balance;
-  let lowestMonth = toMonthLabel(monthKeys[0]);
   let totalRevenue = 0;
   let totalCosts = 0;
 
@@ -177,11 +167,10 @@ export function buildCashflowProjection(
 
     if (balance < lowestBalance) {
       lowestBalance = balance;
-      lowestMonth = toMonthLabel(key);
     }
 
     return {
-      month: toMonthLabel(key),
+      month: toEndOfMonth(key),
       cashBalance: round2(balance),
       revenue: round2(rev),
       costs: round2(cost),
@@ -206,16 +195,16 @@ export function buildCashflowProjection(
 function getAdjustedCostAmount(
   cost: CashflowCost,
   currentMonthKey: string,
-  projectionStartKey: string,
   settings: CashflowSettings,
 ): number {
-  const years = yearsElapsed(projectionStartKey, currentMonthKey);
+  const costStartKey = toMonthKey(cost.date);
+  const years = yearsElapsed(costStartKey, currentMonthKey);
 
   if (cost.type === CostType.Salary) {
-    return cost.amount * Math.pow(1 + settings.salaryIncrease, years);
+    return cost.amount * Math.pow(1 + (settings.salaryIncrease/100), years);
   }
   if (cost.type === CostType.Benefits) {
-    return cost.amount * Math.pow(1 + settings.benefitsIncrease, years);
+    return cost.amount * Math.pow(1 + (settings.benefitsIncrease/100), years);
   }
   return cost.amount;
 }

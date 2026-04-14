@@ -13,6 +13,7 @@ import CashSourceList from "./components/CashSourceList";
 import { ProcessCashflowData } from "./processCashflowData";
 import CashCreateLineItem from "./components/CashCreateLineItem";
 import { TDateISO } from "../../../../backend/src/utils/date";
+import { buildCashflowProjection } from "./projection";
 
 export const formatMoney = (amount: number) => {
   return amount.toLocaleString("en-US", {
@@ -24,6 +25,17 @@ export const formatMoney = (amount: number) => {
 
 const CashFlowPage = observer(() => {
   const { costs, revenues, cashflowSettings } = ProcessCashflowData();
+
+  const { chartData, kpis } = buildCashflowProjection(
+    revenues,
+    costs,
+    cashflowSettings || {
+              startingCash: 0,
+              salaryIncrease: 0,
+              benefitsIncrease: 0,
+              startDate: new Date().toISOString().split("T")[0] as TDateISO,
+            },
+  );
 
   return (
     <div className="">
@@ -71,18 +83,7 @@ const CashFlowPage = observer(() => {
 
         {/* Row 3 */}
         <CashCreateLineItem />
-        <CashProjection
-          costs={costs}
-          revenues={revenues}
-          settings={
-            cashflowSettings || {
-              startingCash: 0,
-              salaryIncrease: 0,
-              benefitsIncrease: 0,
-              startDate: new Date().toISOString().split("T")[0] as TDateISO,
-            }
-          }
-        />
+        <CashProjection data={chartData} kpis={kpis} />
 
         {/* Row 4 */}
         <CashSourceList type="Revenue" lineItems={revenues} />

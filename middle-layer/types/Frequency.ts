@@ -30,37 +30,19 @@ export function formatDateByFrequency(
   if (isNaN(parsedDate.getTime())) return "";
 
   switch (frequency) {
-    case Frequency.Yearly:
-      return new Intl.DateTimeFormat("en-US", {
-        month: "short",
-      }).format(parsedDate) + " " + getOrdinal(parsedDate.getDate());
 
     case Frequency.OneTime:
-      return new Intl.DateTimeFormat("en-US", {
-        month: "numeric",
-        day: "numeric",
-        year: "numeric",
+      return "on " + new Intl.DateTimeFormat("en-US", {
+        month: "2-digit",
+        day: "2-digit",
+        year: "2-digit",
       }).format(parsedDate);
 
-    case Frequency.Monthly:
-  return `the ${getOrdinal(parsedDate.getDate())}`;
-
     default:
-      return "";
-  }
-}
-
-function getOrdinal(day: number): string {
-  if (day >= 11 && day <= 13) return `${day}th`;
-
-  switch (day % 10) {
-    case 1:
-      return `${day}st`;
-    case 2:
-      return `${day}nd`;
-    case 3:
-      return `${day}rd`;
-    default:
-      return `${day}th`;
+      return "starting " + new Intl.DateTimeFormat("en-US", {
+        month: "2-digit",
+        day: "2-digit",
+        year: "2-digit",
+      }).format(parsedDate);
   }
 }

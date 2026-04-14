@@ -15,12 +15,12 @@ type ProjectionProps = {
   data: ChartDataPoint[];
 };
 
-const CashProjectionChart = observer(({ data }: ProjectionProps) => {
-  // Sort by date to ensure correct line order
-  data.sort(
-    (a, b) => new Date(a.month).getTime() - new Date(b.month).getTime(),
-  );
+const formatMonthYear = (timestamp: number): string => {
+  const d = new Date(timestamp);
+  return `${d.getMonth() + 1}/${d.getFullYear()}`;
+};
 
+const CashProjectionChart = observer(({ data }: ProjectionProps) => {
   return (
     <div className="h-full">
       <ResponsiveContainer width="100%" height="100%">
@@ -35,7 +35,7 @@ const CashProjectionChart = observer(({ data }: ProjectionProps) => {
           />
           <Line
             type="monotone"
-            dataKey="cash_balance"
+            dataKey="cashBalance"
             stroke="var(--color-blue)"
             strokeWidth={2}
             dot={{ r: 4 }}
@@ -59,15 +59,13 @@ const CashProjectionChart = observer(({ data }: ProjectionProps) => {
             name="Costs"
           />
           <XAxis
-            dataKey="date"
+            dataKey="month"
             type="number"
-            domain={["auto", "auto"]}
+            domain={["dataMin", "dataMax"]}
             scale="time"
             dy={10}
             style={{ fontSize: "var(--font-size-sm)" }}
-            tickFormatter={(date: Date) =>
-              date.getMonth().toLocaleString() + "/" + date.getFullYear()
-            }
+            tickFormatter={formatMonthYear}
             axisLine={false}
             tickLine={false}
           />
@@ -75,7 +73,6 @@ const CashProjectionChart = observer(({ data }: ProjectionProps) => {
           <YAxis
             axisLine={false}
             tickLine={false}
-            width="auto"
             dx={-10}
             className="axis"
             tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
@@ -88,9 +85,7 @@ const CashProjectionChart = observer(({ data }: ProjectionProps) => {
               border: "1px solid lightgray",
               boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
             }}
-            labelFormatter={(date: Date) =>
-              date.getMonth().toLocaleString() + "/" + date.getFullYear()
-            }
+            labelFormatter={formatMonthYear}
             formatter={(value: number) => `$${value.toLocaleString()}`}
           />
         </LineChart>
