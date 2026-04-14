@@ -73,7 +73,7 @@ export default function CashCategoryDropdown({
           type="button"
           id={generatedId}
           onClick={() => setIsOpen((previous) => !previous)}
-          className={`block w-full rounded-md py-2.5 pl-4 pr-10 text-left text-sm lg:text-base border-2 min-h-[2.5rem] lg:h-[3rem] overflow-auto ${
+          className={`block w-full rounded-md py-2.5 pl-4 pr-10 text-left text-sm lg:text-base border-2 min-h-[2.5rem] lg:h-[3rem] overflow-auto focus:outline-none focus:border-primary-900 ${
             error ? "border-red bg-red-lightest" : "border-grey-500 bg-grey-100"}
             ${!value && "text-grey-700"}`}
           aria-haspopup="listbox"

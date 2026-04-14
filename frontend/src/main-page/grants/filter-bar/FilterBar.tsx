@@ -169,7 +169,7 @@ const FilterBar: React.FC = observer(() => {
   const activeButtonClass =
     "border-2 border-primary-900 text-primary-900 active:!border-primary-900 active:!text-primary-900 focus:!border-primary-900 focus:!text-primary-900 focus:outline-none focus-visible:outline-none";
   const inactiveButtonClass =
-    "border-2 border-grey-500 text-grey-600 active:!border-grey-500 active:!text-grey-600 focus:!border-grey-500 focus:!text-grey-600 focus:outline-none focus-visible:outline-none";
+    "border-2 border-grey-500 text-grey-600 active:!border-grey-100 active:!text-grey-100 focus:!border-grey-500 focus:!text-grey-600 focus:outline-none focus-visible:outline-none";
 
   return (
     <div className="relative w-full">
