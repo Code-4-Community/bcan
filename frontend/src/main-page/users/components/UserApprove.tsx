@@ -11,7 +11,7 @@ const UserApprove = ({ user }: UserApproveProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   return (
-    <div className="flex gap-3 w-full">
+    <div className="flex gap-3 w-full xl:justify-center">
       <button
         className={`bg-green-light flex-none w-8 h-8 focus:outline-none rounded-sm hover:border-green-dark ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
         onClick={() => approveUser(user, setIsLoading)}
