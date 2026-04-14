@@ -1,4 +1,4 @@
-import { Grant } from "../../../../../middle-layer/types/Grant.ts";
+import { Grant, Status } from "../../../../../middle-layer/types/Grant.ts";
 import { User } from "../../../../../middle-layer/types/User.ts";
 
 // filters grants by looping thru all filters
@@ -7,7 +7,7 @@ export const filterGrants = (
   predicates: ((grant: Grant) => boolean)[]
 ) => grants.filter((grant) => predicates.every((fn) => fn(grant)));
 
-export const statusFilter = (statuses: string[]) => (grant: Grant) =>
+export const statusFilter = (statuses: Status[]) => (grant: Grant) =>
   !statuses.length || statuses.includes(grant.status);
 
 // TODO note: what attribute to filter by? currently doing application deadline
