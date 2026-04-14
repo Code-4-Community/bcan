@@ -29,7 +29,7 @@ export default function CashflowKPICard({
           />
         </div>
         <div
-          className={`font-semibold text-start mt-auto  ${className} ${size == "small" ? "text-sm lg:text-base" : "text-lg lg:text-2xl"}`}
+          className={`font-semibold text-start mt-auto  ${className} ${size == "small" ? "text-sm lg:text-lg xl:text-xl" : "text-lg lg:text-2xl"}`}
         >
           {value}
         </div>

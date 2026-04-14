@@ -5,7 +5,7 @@ import Button from "../../../components/Button";
 import InputField from "../../../components/InputField";
 import CashCategoryDropdown from "./CashCategoryDropdown";
 import { createNewCost, saveCostEdits } from "../processCashflowDataEditSave";
-import { Frequency } from "../../../../../middle-layer/types/Frequency";
+import { Frequency, frequencyIntervalsInMonths } from "../../../../../middle-layer/types/Frequency";
 import { TDateISO } from "../../../../../backend/src/utils/date";
 import { getAppStore } from "../../../external/bcanSatchel/store";
 
@@ -16,6 +16,7 @@ type FieldErrors = {
   date?: string;
   amount?: string;
   submit?: string;
+  interval?: string;
 };
 
 type CashEditCostProps = {
@@ -38,6 +39,9 @@ export default function CashAddEditCost({
   );
   const [amount, setAmount] = useState<number | null>(
     costItem ? costItem.amount : null,
+  );
+  const [interval, setInterval] = useState<number | null>(
+    costItem ? costItem.interval : null,
   );
   const [date, setDate] = useState<TDateISO | null>(
     costItem ? costItem.date : null,
@@ -66,6 +70,10 @@ export default function CashAddEditCost({
       nextErrors.frequency = "Please select a frequency.";
     }
 
+    if (frequency === Frequency.Custom && (interval === null || interval <= 0 || !Number.isFinite(interval))) {
+      nextErrors.interval = "Please enter a valid interval.";
+    }
+
     if (!date) {
       nextErrors.date = "Please select a start date.";
     }
@@ -84,6 +92,7 @@ export default function CashAddEditCost({
       Object.keys(nextErrors).length > 0 ||
       !type ||
       !frequency ||
+      (frequency === Frequency.Custom && (interval === null || interval <= 0 || !Number.isFinite(interval))) ||
       !date ||
       amount === null
     ) {
@@ -95,6 +104,7 @@ export default function CashAddEditCost({
       type,
       amount,
       frequency,
+      interval: frequency === Frequency.Custom ? interval ?? 0 : frequencyIntervalsInMonths[frequency],
       date,
     };
   };
@@ -104,6 +114,7 @@ export default function CashAddEditCost({
     setFrequency(null);
     setCostName("");
     setAmount(null);
+    setInterval(null);
     setDate(null);
     setErrors({});
   };
@@ -211,6 +222,27 @@ export default function CashAddEditCost({
           ) : null}
         </div>
       </div>
+      {frequency === Frequency.Custom && 
+       (<div className="flex flex-col gap-1 mt-2">
+        <InputField
+          type="number"
+          id="interval"
+          label="Interval (months)"
+          value={interval ?? ""}
+          placeholder="e.g. 6"
+          className="w-full"
+          error={Boolean(errors.interval)}
+          onChange={(event) =>
+            setInterval(
+              event.target.value === "" ? null : Number(event.target.value),
+            )
+          }
+        />
+        {errors.interval ? (
+          <p className="text-red text-sm">{errors.interval}</p>
+        ) : null}
+      </div>)
+      }
       <div className="flex flex-col gap-1 mt-2">
         <InputField
           type="number"

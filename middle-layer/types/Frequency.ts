@@ -4,15 +4,22 @@ export enum Frequency {
     Yearly = "Yearly",
     Monthly = "Monthly",
     OneTime = "One Time",
-    Recurring = "Recurring"
+    Custom = "Custom"
 }
 
 export const frequencyLabels = [
     { value: Frequency.Yearly, label: "/year" },
     { value: Frequency.Monthly, label: "/month" },
     { value: Frequency.OneTime, label: "" },
-    { value: Frequency.Recurring, label: " recurring" }
+    { value: Frequency.Custom, label: " recurring" }
 ];
+
+export const frequencyIntervalsInMonths: Record<Frequency, number> = {
+    [Frequency.Yearly]: 12,
+    [Frequency.Monthly]: 1,
+    [Frequency.OneTime]: 0,
+    [Frequency.Custom]: 0, // Interval is determined by the user for recurring costs
+};
 
 export function formatDateByFrequency(
   date: string | Date,
