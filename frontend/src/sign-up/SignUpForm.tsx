@@ -16,6 +16,7 @@ export type SignUpFormProps = {
   values: SignUpFormValues;
   onChange: (field: keyof SignUpFormValues, value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
+  submitted?: boolean;
   error?: { state: boolean; message: string; item: string };
   /** When true, Sign Up button uses primary-900 and is clickable; when false, primary-700 and disabled. */
   passwordRequirementsMet?: boolean;
@@ -23,6 +24,8 @@ export type SignUpFormProps = {
   allFieldsFilled?: boolean;
   /** When true, password and re-enter password are exactly the same. */
   passwordsMatch?: boolean;
+  /** When true, form is in the process of being submitted; disables button and shows loading state. */
+  submitting: boolean;
 };
 
 /**
@@ -37,6 +40,7 @@ export default function SignUpForm({
   passwordRequirementsMet = false,
   allFieldsFilled = false,
   passwordsMatch = false,
+  submitting = false,
 }: SignUpFormProps) {
   const hasError = error?.state ?? false;
   const errorItem = error?.item ?? "";
@@ -113,7 +117,7 @@ export default function SignUpForm({
           </div>
         )}
 
-        <SignUpButton disabled={!canSubmit} />
+        <SignUpButton disabled={!canSubmit || submitting} />
         <LoginPrompt />
       </form>
     </div>
