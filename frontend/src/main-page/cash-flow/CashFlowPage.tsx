@@ -59,7 +59,7 @@ const CashFlowPage = observer(() => {
         />
         <CashflowKPICard
           text="Annual Increases"
-          value={`Salary: ${cashflowSettings?.salaryIncrease}% | Benefits: ${cashflowSettings?.benefitsIncrease}%`}
+          value={`Salary: ${Number.isNaN(cashflowSettings?.salaryIncrease) ? "N/A" : cashflowSettings?.salaryIncrease + "%"} | Benefits: ${Number.isNaN(cashflowSettings?.benefitsIncrease) ? "N/A" : cashflowSettings?.benefitsIncrease + "%"}`}
           logo={faArrowTrendUp}
           className="text-green"
           size="small"

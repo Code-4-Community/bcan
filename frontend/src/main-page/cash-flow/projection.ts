@@ -200,10 +200,10 @@ function getAdjustedCostAmount(
   const costStartKey = toMonthKey(cost.date);
   const years = yearsElapsed(costStartKey, currentMonthKey);
 
-  if (cost.type === CostType.Salary) {
+  if (cost.type === CostType.Salary && Number.isNaN(settings.salaryIncrease) === false) {
     return cost.amount * Math.pow(1 + (settings.salaryIncrease/100), years);
   }
-  if (cost.type === CostType.Benefits) {
+  if (cost.type === CostType.Benefits && Number.isNaN(settings.benefitsIncrease) === false) {
     return cost.amount * Math.pow(1 + (settings.benefitsIncrease/100), years);
   }
   return cost.amount;
