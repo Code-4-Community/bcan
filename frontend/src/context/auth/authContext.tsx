@@ -13,6 +13,7 @@ import {
 } from '../../main-page/cash-flow/processCashflowData.ts';
 import Button from '../../components/Button';
 import { UserStatus } from '../../../../middle-layer/types/UserStatus.ts';
+import { fetchNotifications } from '../../main-page/notifications/processNotificationData.ts';
 
 
 /**
@@ -60,6 +61,7 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
       fetchCosts(),
       fetchRevenues(),
       fetchCashflowSettings(),
+      fetchNotifications(),
     ]);
   };
 
