@@ -39,9 +39,8 @@ const CashProjectionChart = observer(({ data }: ProjectionProps) => {
             stroke="var(--color-blue)"
             strokeWidth={1.5}
             dot={{ r: 2.5 }}
-            name="Cash Balance"
+            name="End Balance"
           />
-
           <Line
             type="monotone"
             dataKey="revenue"
@@ -87,7 +86,7 @@ const CashProjectionChart = observer(({ data }: ProjectionProps) => {
               textAlign: "left",
             }}
             labelFormatter={formatMonthYear}
-            formatter={(value: number) => `$${value.toLocaleString()}`}
+            formatter={(value: number) => `$${value.toLocaleString("en-US", { minimumFractionDigits: 2 })}`}
           />
         </LineChart>
       </ResponsiveContainer>

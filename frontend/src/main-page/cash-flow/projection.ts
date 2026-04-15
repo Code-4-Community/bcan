@@ -96,7 +96,6 @@ export function buildCashflowProjection(
   settings: CashflowSettings,
 ): CashflowProjectionResult {
   const monthKeys = generateMonthKeys(settings.startDate);
-  const startKey = monthKeys[0];
   const endKey = monthKeys[monthKeys.length - 1];
 
   // Pre-allocate monthly buckets
@@ -110,8 +109,10 @@ export function buildCashflowProjection(
   // ---- Distribute revenues into monthly buckets ----
   for (const rev of revenues) {
     for (const installment of rev.installments) {
+      console.log(`Processing revenue installment of $${installment.amount} on ${installment.date}`);
       const key = toMonthKey(installment.date);
-      if (revenueBuckets.has(key) && installment.date >= new Date(settings.startDate)) {
+      if (revenueBuckets.has(key) && new Date(installment.date) >= new Date(settings.startDate)) {
+        console.log(`Adding revenue installment of $${installment.amount} to month ${key}`);
         revenueBuckets.set(key, revenueBuckets.get(key)! + installment.amount);
       }
     }
@@ -136,12 +137,11 @@ export function buildCashflowProjection(
       const cursor = new Date(cy, cm - 1, 1);
 
       // Advance past occurrences that fall before the exact start date
-      while (cursor < new Date(settings.startDate)) {
+      while (new Date(cost.date) < new Date(settings.startDate) && toMonthKey(cursor) < toMonthKey(new Date(cy, cm, 1))) {
         cursor.setMonth(cursor.getMonth() + interval);
       }
 
       while (toMonthKey(cursor) <= endKey) {
-        console.log(`Cost "${cost.name}" occurs on ${cost.date} with amount ${cost.amount}`);
         const key = toMonthKey(cursor);
         if (costBuckets.has(key)) {
           const adjusted = getAdjustedCostAmount(cost, key, settings);

@@ -46,24 +46,14 @@ const CashFlowPage = observer(() => {
           className="text-blue"
         />
         <CashflowKPICard
-          text="Total Revenue"
-          value={formatMoney(
-            revenues.reduce(
-              (accumulator, currentValue) => accumulator + currentValue.amount,
-              0,
-            ),
-          )}
+          text="Projected Total Revenue"
+          value={formatMoney(kpis.totalRevenue ?? 0)}
           logo={faArrowTrendUp}
           className="text-green"
         />
         <CashflowKPICard
-          text="Monthly Costs"
-          value={formatMoney(
-            costs.reduce(
-              (accumulator, currentValue) => accumulator + currentValue.amount,
-              0,
-            ) / 12,
-          )}
+          text="Projected Total Costs"
+          value={formatMoney(kpis.totalCosts ?? 0)}
           logo={faUserGroup}
           className="text-primary"
         />

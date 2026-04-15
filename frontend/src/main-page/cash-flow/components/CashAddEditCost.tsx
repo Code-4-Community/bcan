@@ -28,6 +28,9 @@ export default function CashAddEditCost({
   costItem,
   onClose = () => {},
 }: CashEditCostProps) {
+
+  const { cashflowSettings } = getAppStore();
+
   const [type, setType] = useState<CostType | null>(
     costItem ? costItem.type : null,
   );
@@ -44,13 +47,11 @@ export default function CashAddEditCost({
     costItem ? costItem.interval : null,
   );
   const [date, setDate] = useState<TDateISO | null>(
-    costItem ? costItem.date : null,
+    costItem ? costItem.date : cashflowSettings?.startDate ?? null,
   );
   const [errors, setErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
-  const { cashflowSettings } = getAppStore();
 
   const showSuccessMessage = (message: string) => {
     setSuccessMessage(message);
@@ -207,7 +208,7 @@ export default function CashAddEditCost({
             type="date"
             id="date"
             label="Start Date"
-            value={date ?? cashflowSettings?.startDate}
+            value={date ?? ""}
             onChange={(event) =>
               setDate(
                 event.target.value ? (event.target.value as TDateISO) : null,
