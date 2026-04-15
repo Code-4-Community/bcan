@@ -56,7 +56,10 @@ export class NotificationService {
     const currentTime = new Date();
 
     this.logger.log(`Found current notifications for userEmail ${userEmail}`);
-    return notifactions.filter(notification => new Date(notification.alertTime) <= currentTime);
+
+    const currentNotifications = notifactions.filter(notification => new Date(notification.alertTime) <= currentTime);
+    this.logger.log(`Filtered current notifications for userEmail ${userEmail}, count: ${currentNotifications.length}`);
+    return currentNotifications;
   } catch (error) {
     this.logger.error("Failed to notifications by user id error: " + error)
     throw error;

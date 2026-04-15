@@ -11,14 +11,7 @@ export const fetchNotifications = async () => {
     if (!response.ok) {
       throw new Error(`HTTP Error, Status: ${response.status}`);
     }
-
-    const payload = (await response.json()) as unknown;
-    const updatedNotifications: Notification[] = Array.isArray(payload)
-      ? (payload as Notification[])
-      : Array.isArray((payload as { Items?: unknown[] })?.Items)
-        ? ((payload as { Items: Notification[] }).Items)
-        : [];
-
+    const updatedNotifications: Notification[] = await response.json();
     console.log("Fetched notifications: ", updatedNotifications);
     setNotifications(updatedNotifications);
   } catch (error) {
