@@ -154,7 +154,7 @@ export class AuthController {
     response.cookie('access_token', result.access_token, {
       httpOnly: true,      // Cannot be accessed by JavaScript (XSS protection)
       secure: process.env.NODE_ENV === 'production', // Only HTTPS in production
-      sameSite: 'strict',  // CSRF protection
+      sameSite: 'none', 
       maxAge: 3600000,     // 1 hour in milliseconds
       path: '/',           // Cookie available on all routes
     });
@@ -167,7 +167,7 @@ export class AuthController {
     response.cookie('refresh_token', result.refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: 'none',
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days (match your Cognito refresh token expiry)
     path: '/auth/refresh',  // more restrictive path than access token
   });
@@ -177,7 +177,7 @@ export class AuthController {
     response.cookie('id_token', result.idToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'none',
       maxAge: 3600000, // 1 hour, same expiry as access token
       path: '/',
     });
@@ -240,7 +240,7 @@ export class AuthController {
     response.cookie('access_token', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'none',
       maxAge: 3600000, // 1 hour
       path: '/',
     });
@@ -248,7 +248,7 @@ export class AuthController {
     response.cookie('id_token', newIdToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'none',
       maxAge: 3600000, // 1 hour
       path: '/',
     });
@@ -256,7 +256,7 @@ export class AuthController {
     response.cookie('refresh_token', effectiveRefreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'none',
       maxAge: 30 * 24 * 60 * 60 * 1000, // match Cognito refresh token expiry (approx)
       path: '/auth/refresh',
     });

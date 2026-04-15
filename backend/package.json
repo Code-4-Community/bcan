@@ -8,8 +8,10 @@
     "build": "nest build",
     "test": "vitest --config vitest.config.ts",
     "zip": "zip -r lambda.zip dist/ package.json",
+    "zip:windows":"bestzip lambda.zip dist/ package.json",
     "upload-s3": "aws s3 cp lambda.zip s3://bcan-lambda-deployments/lambda.zip --region us-east-2",
-    "deploy": "npm run build && npm run zip && npm run upload-s3 && aws lambda update-function-code --function-name bcanBackendLambda --s3-bucket bcan-lambda-deployments --s3-key lambda.zip --region us-east-2"
+    "deploy": "npm run build && npm run zip && npm run upload-s3 && aws lambda update-function-code --function-name bcanBackendLambda --s3-bucket bcan-lambda-deployments --s3-key lambda.zip --region us-east-2",
+    "zip-deps": "bestzip layer.zip node_modules/ package.json package-lock.json"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.12",
@@ -41,7 +43,6 @@
     "@types/jest": "^30.0.0",
     "@types/multer": "^2.0.0",
     "@types/node": "^25.0.9",
-    "aws-sdk": "^2.1693.0",
     "esbuild": "^0.27.2",
     "jest": "^30.2.0",
     "ts-jest": "^29.4.6",
