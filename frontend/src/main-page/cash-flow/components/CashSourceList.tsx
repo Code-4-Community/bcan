@@ -51,11 +51,11 @@ const CashSourceList = observer(({ type, lineItems }: SourceProps) => {
       </div>
       {/* map over list of source and put casheditlineitem for each */}
       <div className="flex flex-col gap-2 h-[30rem] overflow-y-auto pr-1">
-        {filteredItems.map((item) => {
+        {filteredItems.map((item, index) => {
           const isGrantPageGrantRevenue = type === "Revenue" && (item as any).isGrantBased === true;
 
           return (
-            <div key={item.name}>
+            <div key={item.name+index}>
               <CashEditLineItem
                 cardText={
                   <div className="flex flex-col text-sm lg:text-base gap-1">

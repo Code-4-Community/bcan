@@ -135,13 +135,13 @@ export function buildCashflowProjection(
       const [cy, cm] = cost.date.split("-").map(Number);
       const cursor = new Date(cy, cm - 1, 1);
 
-      // If the cost starts before the projection, advance to the first
-      // occurrence that falls within the window.
-      while (toMonthKey(cursor) < startKey) {
+      // Advance past occurrences that fall before the exact start date
+      while (cursor < new Date(settings.startDate)) {
         cursor.setMonth(cursor.getMonth() + interval);
       }
 
       while (toMonthKey(cursor) <= endKey) {
+        console.log(`Cost "${cost.name}" occurs on ${cost.date} with amount ${cost.amount}`);
         const key = toMonthKey(cursor);
         if (costBuckets.has(key)) {
           const adjusted = getAdjustedCostAmount(cost, key, settings);

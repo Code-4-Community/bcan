@@ -29,7 +29,7 @@ const NavBar: React.FC = observer(() => {
   const handleLogout = async () => {
     const { cashflowSettings } = getAppStore();
     if (cashflowSettings) {
-    await saveCashflowSettings(cashflowSettings);
+    saveCashflowSettings(cashflowSettings);
   }
     logoutUser();
     clearAllFilters();

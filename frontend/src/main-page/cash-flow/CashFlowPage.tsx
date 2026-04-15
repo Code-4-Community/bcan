@@ -26,16 +26,14 @@ export const formatMoney = (amount: number) => {
 const CashFlowPage = observer(() => {
   const { costs, revenues, cashflowSettings } = ProcessCashflowData();
 
-  const { chartData, kpis } = buildCashflowProjection(
-    revenues,
-    costs,
-    cashflowSettings || {
-              startingCash: 0,
-              salaryIncrease: 0,
-              benefitsIncrease: 0,
-              startDate: new Date().toISOString().split("T")[0] as TDateISO,
-            },
-  );
+  const { chartData, kpis } = buildCashflowProjection(revenues, costs, {
+    startingCash: cashflowSettings?.startingCash ?? 0,
+    salaryIncrease: cashflowSettings?.salaryIncrease ?? 0,
+    benefitsIncrease: cashflowSettings?.benefitsIncrease ?? 0,
+    startDate:
+      cashflowSettings?.startDate ??
+      (new Date().toISOString().split("T")[0] as TDateISO),
+  });
 
   return (
     <div className="">
@@ -86,7 +84,9 @@ const CashFlowPage = observer(() => {
         <CashProjection data={chartData} kpis={kpis} />
 
         {/* Row 4 */}
-        {revenues.length > 0 && <CashSourceList type="Revenue" lineItems={revenues} />}
+        {revenues.length > 0 && (
+          <CashSourceList type="Revenue" lineItems={revenues} />
+        )}
         {costs.length > 0 && <CashSourceList type="Cost" lineItems={costs} />}
       </div>
     </div>
