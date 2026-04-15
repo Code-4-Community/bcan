@@ -596,6 +596,7 @@ describe('CostService', () => {
                 type: CostType.MealsFood,
                 frequency: Frequency.Yearly,
                 date: '2026-03-22',
+                interval: 12,
               },
               ConditionExpression: 'attribute_not_exists(#name)',
               ExpressionAttributeNames: {
