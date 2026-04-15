@@ -36,7 +36,6 @@ function GrantPage() {
   const mainContainer = document.getElementsByClassName('grant-container');
 
   useEffect(() => {
-    clearAllFilters();
     curGrant && mainContainer[0].scrollTo(0, 0);
   }, [curGrant]);
 
