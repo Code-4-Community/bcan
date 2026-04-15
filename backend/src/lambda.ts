@@ -2,11 +2,13 @@ import { Handler } from 'aws-lambda';
 import serverlessExpress from '@vendia/serverless-express';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import cookieparser from 'cookie-parser';
 
 let cachedHandler: any;
 
 async function bootstrapServer() {
   const app = await NestFactory.create(AppModule);
+  app.use(cookieparser())
   
   app.enableCors({
     origin: 'https://main.d3nms49d928y9k.amplifyapp.com',
