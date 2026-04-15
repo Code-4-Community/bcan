@@ -330,7 +330,6 @@ export class GrantService {
           this.logger.debug(`Executing DynamoDB update for grant ${grantData.grantId}`);
           const result = await this.dynamoDb.update(params).promise();
           this.logger.log(`Successfully updated grant ${grantData.grantId} in database`);
-          //await this.updateGrantNotifications(grantData);
 
           // IF BCAN POC IS UPDATED, UPDATE ALL NOTIFICATIONS LINKED TO THAT GRANT TO THE NEW POC EMAIL
           if (updateKeys.includes('bcan_poc') && grantData.bcan_poc?.POC_email) {
@@ -340,6 +339,75 @@ export class GrantService {
                   grantData.bcan_poc.POC_email,
               );
           }
+
+          const needsAppRebuild = updateKeys.includes('application_deadline');
+          const needsReportRebuild = updateKeys.includes('report_deadlines');
+
+          if (needsAppRebuild || needsReportRebuild) {
+              const email = grantData.bcan_poc?.POC_email || undefined;
+
+              if (!email) {
+                  this.logger.warn(`No POC email on grant ${grantData.grantId}; skipping notification rebuild`);
+              } else {
+                  const existingNotifs = await this.notificationService.getNotificationsByGrantId(grantData.grantId);
+
+                  if (needsAppRebuild) {
+                      this.logger.debug(`Rebuilding application notifications for grant ${grantData.grantId}`);
+                      const appNotifs = existingNotifs.filter(n => n.notificationId.includes('-app-'));
+                      for (const n of appNotifs) {
+                          try {
+                              await this.notificationService.deleteNotification(n.notificationId);
+                          } catch (err) {
+                              this.logger.warn(`Failed to delete app notification ${n.notificationId}: ${err instanceof Error ? err.message : err}`);
+                          }
+                      }
+                      
+                      if (grantData.application_deadline) {
+                          const alertTimes = this.getNotificationTimes(grantData.application_deadline);
+                          for (const alertTime of alertTimes) {
+                              const message = `Application due in ${this.daysUntil(alertTime, grantData.application_deadline)} days for ${grantData.organization}`;
+                              await this.notificationService.createNotification({
+                                  notificationId: `${grantData.grantId}-app-${alertTime}`,
+                                  userEmail: email,
+                                  message,
+                                  alertTime: alertTime as TDateISO,
+                                  sent: false,
+                                  grantId: grantData.grantId,
+                              });
+                          }
+                      }
+                  }
+
+                  if (needsReportRebuild) {
+                      this.logger.debug(`Rebuilding report notifications for grant ${grantData.grantId}`);
+                      const reportNotifs = existingNotifs.filter(n => n.notificationId.includes('-report-'));
+                      for (const n of reportNotifs) {
+                          try {
+                              await this.notificationService.deleteNotification(n.notificationId);
+                          } catch (err) {
+                              this.logger.warn(`Failed to delete report notification ${n.notificationId}: ${err instanceof Error ? err.message : err}`);
+                          }
+                      }
+                      if (grantData.report_deadlines && Array.isArray(grantData.report_deadlines)) {
+                          for (const reportDeadline of grantData.report_deadlines) {
+                              const alertTimes = this.getNotificationTimes(reportDeadline);
+                              for (const alertTime of alertTimes) {
+                                  const message = `Report due in ${this.daysUntil(alertTime, reportDeadline)} days for ${updatedGrant.organization}`;
+                                  await this.notificationService.createNotification({
+                                      notificationId: `${grantData.grantId}-report-${alertTime}`,
+                                      userEmail: email,
+                                      message,
+                                      alertTime: alertTime as TDateISO,
+                                      sent: false,
+                                      grantId: grantData.grantId,
+                                  });
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+
           return JSON.stringify(result);
       } catch(error: unknown) {
           // Re-throw NestJS exceptions
