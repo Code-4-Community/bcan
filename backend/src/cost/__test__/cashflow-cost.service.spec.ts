@@ -362,7 +362,7 @@ describe('CostService', () => {
         type: CostType.Services,
         frequency: Frequency.OneTime,
         date: '2026-03-22' as TDateISO,
-        interval: 12,
+        interval: 0,
       };
       mockPutPromise.mockResolvedValue({});
 
@@ -578,6 +578,7 @@ describe('CostService', () => {
         amount: 300,
         type: CostType.MealsFood,
         frequency: Frequency.Yearly,
+        interval: 12,
         date: '2026-03-22',
       });
       expect(mockGet).toHaveBeenCalledWith({
@@ -636,6 +637,7 @@ describe('CostService', () => {
         amount: 300,
         type: CostType.MealsFood,
         frequency: Frequency.Yearly,
+        interval: 12,
         date: '2026-03-22',
       });
     });
