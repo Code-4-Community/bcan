@@ -156,6 +156,10 @@ const FilterBar: React.FC = observer(() => {
     }
   };
 
+  const handleStatusClearAll = () => {
+    updateFilter([]);
+  }
+
   const dueDateActive = showDueDateCard || sort?.header === "application_deadline" || startDateFilter || endDateFilter;
   const amountActive = showAmountCard || sort?.header === "amount" || amountMinFilter !== null || amountMaxFilter !== null;
   
@@ -284,7 +288,11 @@ const FilterBar: React.FC = observer(() => {
             }`}
           />
           {showStatusDropdown && (
-            <StatusDropdown selected={filterStatus} onSelect={handleStatusSelect} />
+            <StatusDropdown 
+              selected={filterStatus} 
+              onSelect={handleStatusSelect}
+              onClearAll={handleStatusClearAll}
+            />
           )}
         </div>
       </div>
