@@ -95,7 +95,8 @@ describe('NotificationController', () => {
       userEmail: 'user1@example.com',
       message: 'New Grant Created 🎉 ',
       alertTime: '2024-01-15T10:30:00.000Z',
-      sent: false
+      sent: false,
+      grantId: 100,
     } as Notification;
 
     mockNotification_id1_user2 = {
@@ -103,7 +104,8 @@ describe('NotificationController', () => {
       userEmail: 'user2@example.com',
       message: 'New Grant Created',
       alertTime: '2025-01-15T10:30:00.000Z',
-      sent: false
+      sent: false,
+      grantId: 100,
     } as Notification;
 
     mockNotification_id2_user1 = {
@@ -111,7 +113,8 @@ describe('NotificationController', () => {
       userEmail: 'user1@example.com',
       message: 'New Grant Created',
       alertTime: '2025-01-15T10:30:00.000Z',
-      sent: false
+      sent: false,
+      grantId: 200,
     } as Notification;
 
     mockNotification_id2_user2 = {
@@ -119,7 +122,8 @@ describe('NotificationController', () => {
       userEmail: 'user2@example.com',
       message: 'New Grant Created',
       alertTime: '2025-01-15T10:30:00.000Z',
-      sent: false
+      sent: false,
+      grantId: 200,
     } as Notification;
 
     mockPut.mockReturnValue({ promise: mockPromise });
@@ -268,13 +272,14 @@ describe('NotificationController', () => {
   });
 
   it('should create notification with valid data in the set table', async () => {
-    const mockNotification = {
+    const mockNotification: Notification = {
       notificationId: '123',
       userEmail: 'user@example.com',
       message: 'Test notification',
       alertTime: '2024-01-15T10:30:00.000Z',
-      sent: false
-    } as Notification;
+      sent: false,
+      grantId: 42,
+    };
 
     const result = await notificationService.createNotification(mockNotification);
 
@@ -286,7 +291,8 @@ describe('NotificationController', () => {
         userEmail: 'user@example.com',
         message: 'Test notification',
         alertTime: '2024-01-15T10:30:00.000Z',
-        sent: false
+        sent: false,
+        grantId: 42,
       },
     });
     expect(result).toEqual(mockNotification);
@@ -295,13 +301,14 @@ describe('NotificationController', () => {
   it('should create notification with fallback table name when environment variable is not set', async () => {
     delete process.env.DYNAMODB_NOTIFICATION_TABLE_NAME;
 
-    const mockNotification = {
+    const mockNotification: Notification = {
       notificationId: '123',
       userEmail: 'user@example.com',
       message: 'Test notification',
       alertTime: '2024-01-15T10:30:00.000Z',
-      sent: false
-    } as Notification;
+      sent: false,
+      grantId: 42,
+    };
 
     const result = await notificationService.createNotification(mockNotification);
     expect(result).toEqual(mockNotification);
@@ -313,55 +320,60 @@ describe('NotificationController', () => {
         userEmail: 'user@example.com',
         message: 'Test notification',
         alertTime: '2024-01-15T10:30:00.000Z',
-        sent: false
+        sent: false,
+        grantId: 42,
       },
     });
   });
 
   it('should throw BadRequestException when userEmail is missing', async () => {
-    const invalidNotification = {
+    const invalidNotification: Notification = {
       notificationId: '123',
       userEmail: '',
       message: 'Test',
       alertTime: '2024-01-15T10:30:00.000Z',
-      sent: false
-    } as Notification;
+      sent: false,
+      grantId: 1,
+    };
 
     await expect(notificationService.createNotification(invalidNotification)).rejects.toThrow(BadRequestException);
   });
 
   it('should throw BadRequestException when notificationId is missing', async () => {
-    const invalidNotification = {
+    const invalidNotification: Notification = {
       notificationId: '',
       userEmail: 'user@example.com',
       message: 'Test',
       alertTime: '2024-01-15T10:30:00.000Z',
-      sent: false
-    } as Notification;
+      sent: false,
+      grantId: 1,
+    };
 
     await expect(notificationService.createNotification(invalidNotification)).rejects.toThrow(BadRequestException);
   });
 
   it('should throw BadRequestException for invalid alertTime', async () => {
-    const invalidNotification = {
+    const invalidNotification: Notification = {
       notificationId: '123',
       userEmail: 'user@example.com',
       message: 'Test',
       alertTime: 'not-a-valid-date' as any,
-      sent: false
-    } as Notification;
+      sent: false,
+      grantId: 1,
+    };
 
     await expect(notificationService.createNotification(invalidNotification)).rejects.toThrow(BadRequestException);
   });
 
   it('should throw InternalServerErrorException when DynamoDB fails on create', async () => {
-    const validNotification = {
+    const validNotification: Notification = {
       notificationId: '123',
       userEmail: 'user@example.com',
       message: 'Test',
       alertTime: '2024-01-15T10:30:00.000Z',
-      sent: false
-    } as Notification;
+      sent: false,
+      grantId: 1,
+    };
 
     mockPromise.mockRejectedValueOnce(new Error('DynamoDB service unavailable'));
 
@@ -471,6 +483,63 @@ describe('NotificationController', () => {
       mockPromise.mockRejectedValueOnce(new Error('DynamoDB service unavailable'));
 
       await expect(notificationService.deleteNotification('123')).rejects.toThrow(InternalServerErrorException);
+    });
+  });
+
+  describe('getNotificationsByGrantId', () => {
+    it('should return notifications matching the given grantId', async () => {
+      const matchingNotifications = [mockNotification_id1_user1, mockNotification_id1_user2];
+      mockScan.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: matchingNotifications }) });
+
+      const result = await notificationService.getNotificationsByGrantId(100);
+
+      expect(mockScan).toHaveBeenCalledWith({
+        TableName: 'BCANNotifications',
+        FilterExpression: 'grantId = :grantId',
+        ExpressionAttributeValues: { ':grantId': 100 },
+      });
+      expect(result).toEqual(matchingNotifications);
+    });
+
+    it('should return empty array when no notifications match', async () => {
+      mockScan.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: [] }) });
+
+      const result = await notificationService.getNotificationsByGrantId(999);
+
+      expect(result).toEqual([]);
+    });
+
+    it('should throw InternalServerErrorException when DynamoDB scan fails', async () => {
+      mockScan.mockReturnValueOnce({ promise: vi.fn().mockRejectedValue(new Error('scan failed')) });
+
+      await expect(notificationService.getNotificationsByGrantId(100)).rejects.toThrow(InternalServerErrorException);
+    });
+  });
+
+  describe('updateNotificationsUserEmailByGrantId', () => {
+    it('should update userEmail on all notifications for the given grantId', async () => {
+      const matchingNotifications = [mockNotification_id1_user1, mockNotification_id2_user1];
+      mockScan.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: matchingNotifications }) });
+      const mockUpdateResponse = { Attributes: {} };
+      mockUpdate.mockReturnValue({ promise: vi.fn().mockResolvedValue(mockUpdateResponse) });
+
+      await notificationService.updateNotificationsUserEmailByGrantId(100, 'newemail@example.com');
+
+      expect(mockUpdate).toHaveBeenCalledTimes(2);
+      expect(mockUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          Key: { notificationId: '1' },
+          ExpressionAttributeValues: expect.objectContaining({ ':userEmail': 'newemail@example.com' }),
+        })
+      );
+    });
+
+    it('should do nothing when no notifications exist for the grantId', async () => {
+      mockScan.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: [] }) });
+
+      await notificationService.updateNotificationsUserEmailByGrantId(999, 'newemail@example.com');
+
+      expect(mockUpdate).not.toHaveBeenCalled();
     });
   });
 });

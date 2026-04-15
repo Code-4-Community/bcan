@@ -5,15 +5,21 @@ import { setNotifications } from "../../external/bcanSatchel/actions";
 
 const store = getAppStore();
 
-export const fetchNotifications = async (
-    
-) => {
+export const fetchNotifications = async () => {
   try {
     const response = await api(`/notifications/user/${store.user?.email}/current`);
     if (!response.ok) {
       throw new Error(`HTTP Error, Status: ${response.status}`);
     }
-    const updatedNotifications: Notification[] = await response.json();
+
+    const payload = (await response.json()) as unknown;
+    const updatedNotifications: Notification[] = Array.isArray(payload)
+      ? (payload as Notification[])
+      : Array.isArray((payload as { Items?: unknown[] })?.Items)
+        ? ((payload as { Items: Notification[] }).Items)
+        : [];
+
+    console.log("Fetched notifications: ", updatedNotifications);
     setNotifications(updatedNotifications);
   } catch (error) {
     console.error("Error fetching notifications:", error);

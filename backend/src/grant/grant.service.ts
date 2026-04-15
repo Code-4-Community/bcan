@@ -331,6 +331,13 @@ export class GrantService {
           const result = await this.dynamoDb.update(params).promise();
           this.logger.log(`Successfully updated grant ${grantData.grantId} in database`);
           //await this.updateGrantNotifications(grantData);
+          if (updateKeys.includes('bcan_poc') && grantData.bcan_poc?.POC_email) {
+              this.logger.debug(`bcan_poc changed for grant ${grantData.grantId}; syncing notification userEmails`);
+              await this.notificationService.updateNotificationsUserEmailByGrantId(
+                  grantData.grantId,
+                  grantData.bcan_poc.POC_email,
+              );
+          }
           return JSON.stringify(result);
       } catch(error: unknown) {
           // Re-throw NestJS exceptions
@@ -513,11 +520,12 @@ export class GrantService {
         );
         const message = `Application due in ${this.daysUntil(alertTime, application_deadline)} days for ${organization}`;
         const notification: Notification = {
-          notificationId: `${grantId}-app`,
+          notificationId: `${grantId}-app-${alertTime}`,
           userEmail: email,
           message,
           alertTime: alertTime as TDateISO,
           sent: false,
+          grantId,
         };
         await this.notificationService.createNotification(notification);
       }
@@ -540,11 +548,12 @@ export class GrantService {
           );
           const message = `Report due in ${this.daysUntil(alertTime, reportDeadline)} days for ${organization}`;
           const notification: Notification = {
-            notificationId: `${grantId}-report`,
+            notificationId: `${grantId}-report-${alertTime}`,
             userEmail: email,
             message,
             alertTime: alertTime as TDateISO,
             sent: false,
+            grantId,
           };
           await this.notificationService.createNotification(notification);
         }
@@ -574,7 +583,7 @@ export class GrantService {
       );
       const alertTimes = this.getNotificationTimes(application_deadline);
       for (const alertTime of alertTimes) {
-        const notificationId = `${grantId}-app`;
+        const notificationId = `${grantId}-app-${alertTime}`;
         const message = `Application due in ${this.daysUntil(alertTime, application_deadline)} days for ${organization}`;
 
         this.logger.debug(
@@ -599,7 +608,7 @@ export class GrantService {
       for (const reportDeadline of report_deadlines) {
         const alertTimes = this.getNotificationTimes(reportDeadline);
         for (const alertTime of alertTimes) {
-          const notificationId = `${grantId}-report`;
+          const notificationId = `${grantId}-report-${alertTime}`;
           const message = `Report due in ${this.daysUntil(alertTime, reportDeadline)} days for ${organization}`;
 
           this.logger.debug(

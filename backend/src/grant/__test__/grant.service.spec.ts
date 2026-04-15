@@ -673,6 +673,7 @@ describe('Notification helpers', () => {
     notificationServiceMock = {
       createNotification: vi.fn().mockResolvedValue(undefined),
       updateNotification: vi.fn().mockResolvedValue(undefined),
+      updateNotificationsUserEmailByGrantId: vi.fn().mockResolvedValue(undefined),
     };
 
     grantServiceWithMockNotif = new GrantService(notificationServiceMock);
@@ -721,15 +722,17 @@ describe('Notification helpers', () => {
       expect(notificationServiceMock.createNotification).toHaveBeenCalledTimes(6);
       expect(notificationServiceMock.createNotification).toHaveBeenCalledWith(
         expect.objectContaining({
-          notificationId: expect.stringContaining('-app'),
+          notificationId: expect.stringContaining('-app-'),
           message: expect.stringContaining('Application due in'),
           alertTime: expect.any(String),
+          grantId: 100,
         })
       );
       expect(notificationServiceMock.createNotification).toHaveBeenCalledWith(
         expect.objectContaining({
-          notificationId: expect.stringContaining('-report'),
+          notificationId: expect.stringContaining('-report-'),
           message: expect.stringContaining('Report due in'),
+          grantId: 100,
         })
       );
     });
@@ -782,14 +785,14 @@ describe('Notification helpers', () => {
       // Expect 6 updateNotification calls (3 per deadline)
       expect(notificationServiceMock.updateNotification).toHaveBeenCalledTimes(6);
       expect(notificationServiceMock.updateNotification).toHaveBeenCalledWith(
-        expect.stringContaining('-app'),
+        expect.stringContaining('-app-'),
         expect.objectContaining({
           message: expect.stringContaining('Application due in'),
           alertTime: expect.any(String),
         })
       );
       expect(notificationServiceMock.updateNotification).toHaveBeenCalledWith(
-        expect.stringContaining('-report'),
+        expect.stringContaining('-report-'),
         expect.objectContaining({
           message: expect.stringContaining('Report due in'),
         })
@@ -817,6 +820,51 @@ describe('Notification helpers', () => {
       await (grantServiceWithMockNotif as any).updateGrantNotifications(mockGrant);
 
       expect(notificationServiceMock.updateNotification).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('updateGrant bcan_poc notification sync', () => {
+    it('should call updateNotificationsUserEmailByGrantId when bcan_poc is updated', async () => {
+      const mockUpdatedGrant: Grant = {
+        grantId: 100,
+        organization: 'Boston Cares',
+        does_bcan_qualify: true,
+        status: Status.Active,
+        amount: 10000,
+        grant_start_date: '2025-01-01',
+        application_deadline: '2025-12-31T00:00:00.000Z',
+        report_deadlines: [],
+        description: '',
+        timeline: 12,
+        estimated_completion_time: 365,
+        grantmaker_poc: { POC_name: 'Sarah', POC_email: 'sarah@test.com' },
+        bcan_poc: { POC_name: 'New POC', POC_email: 'newpoc@test.com' },
+        attachments: [],
+        isRestricted: false,
+      };
+
+      mockUpdate.mockReturnValue({ promise: vi.fn().mockResolvedValue({ Attributes: {} }) });
+
+      await grantServiceWithMockNotif.updateGrant(mockUpdatedGrant);
+
+      expect(notificationServiceMock.updateNotificationsUserEmailByGrantId).toHaveBeenCalledWith(
+        100,
+        'newpoc@test.com',
+      );
+    });
+
+    it('should not call updateNotificationsUserEmailByGrantId when bcan_poc is not in the update', async () => {
+      const mockUpdatedGrant = {
+        grantId: 100,
+        organization: 'Boston Cares Updated',
+        amount: 15000,
+      } as unknown as Grant;
+
+      mockUpdate.mockReturnValue({ promise: vi.fn().mockResolvedValue({ Attributes: {} }) });
+
+      await grantServiceWithMockNotif.updateGrant(mockUpdatedGrant);
+
+      expect(notificationServiceMock.updateNotificationsUserEmailByGrantId).not.toHaveBeenCalled();
     });
   });
 });

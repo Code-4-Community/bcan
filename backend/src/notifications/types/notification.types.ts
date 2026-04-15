@@ -6,4 +6,5 @@ export class NotificationBody {
     message!: string;
     alertTime!: TDateISO;
     sent!: boolean;
+    grantId!: number;
 }

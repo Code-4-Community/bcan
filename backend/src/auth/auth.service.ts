@@ -9,6 +9,7 @@ import { group, table } from "console";
 import * as crypto from "crypto";
 import { User } from "../../../middle-layer/types/User";
 import { UserStatus } from "../../../middle-layer/types/UserStatus";
+import { NotificationService } from "../notifications/notification.service";
 import {
   HttpException,
   HttpStatus,
@@ -37,7 +38,7 @@ export class AuthService {
       .digest("base64");
   }
 
-  constructor() {
+  constructor(private readonly notificationService: NotificationService) {
     try {
       this.logger.log("Starting AuthService constructor...");
       this.logger.log("AWS module:", typeof AWS);
@@ -882,6 +883,55 @@ async updateProfile(
 
       throw new InternalServerErrorException("Failed to update user data in database");
     }
+        // ── Step 3: Update grants where user is BCAN POC ──────────────────────
+    try {
+      await this.grantService.updateGrantsByPOC(
+        currentEmail,
+        newEmail,
+        `${firstName} ${lastName}`,
+      );
+      this.logger.log(`Grants updated for new POC info`);
+    } catch (grantError: any) {
+      this.logger.error(`Failed to update grants, rolling back profile changes`, grantError);
+
+      // Rollback DynamoDB
+      await this.dynamoDb.update({
+        TableName: tableName,
+        Key: { email: currentEmail },
+        UpdateExpression: "SET firstName = :firstName, lastName = :lastName, email = :email",
+        ExpressionAttributeValues: {
+          ":firstName": existingUser.firstName,
+          ":lastName": existingUser.lastName,
+          ":email": currentEmail,
+        },
+        ReturnValues: "NONE",
+      }).promise();
+      this.logger.log(`DynamoDB rolled back to original values`);
+
+      // Rollback Cognito if email changed
+      if (isEmailChanging) {
+        await this.cognito.updateUserAttributes({
+          AccessToken: accessToken,
+          UserAttributes: [{ Name: "email", Value: currentEmail }],
+        }).promise();
+        this.logger.log(`Cognito rolled back to ${currentEmail}`);
+      }
+
+      throw new InternalServerErrorException("Failed to update grants. All changes have been rolled back.");
+    }
+    
+
+    // Step 3: Sync bcan_poc on affected grants and notification userEmails
+    const grantTableName = process.env.DYNAMODB_GRANT_TABLE_NAME;
+    if (grantTableName) {
+      await this.syncGrantsAndNotifications(
+        currentEmail,
+        newEmail,
+        firstName,
+        lastName,
+        grantTableName,
+      );
+    }
   } catch (error) {
     if (error instanceof HttpException) {
       throw error;
@@ -898,7 +948,53 @@ async updateProfile(
   }
 }
 
-  // Add this to auth.service.ts
+  // Syncs bcan_poc on all grants where the user is the POC, then updates notification userEmails
+  private async syncGrantsAndNotifications(
+    currentEmail: string,
+    newEmail: string,
+    firstName: string,
+    lastName: string,
+    grantTableName: string,
+  ): Promise<void> {
+    let grants: any[] = [];
+    try {
+      const result = await this.dynamoDb.scan({
+        TableName: grantTableName,
+        FilterExpression: 'bcan_poc.POC_email = :email',
+        ExpressionAttributeValues: { ':email': currentEmail },
+      }).promise();
+      grants = result.Items || [];
+    } catch (error) {
+      this.logger.error(`Failed to scan grants for POC email ${currentEmail}:`, error);
+      return;
+    }
+
+    const newPocName = `${firstName} ${lastName}`;
+    const isEmailChanging = currentEmail.toLowerCase() !== newEmail.toLowerCase();
+
+    for (const grant of grants) {
+      try {
+        if (isEmailChanging) {
+          await this.dynamoDb.update({
+            TableName: grantTableName,
+            Key: { grantId: grant.grantId },
+            UpdateExpression: 'SET bcan_poc.POC_name = :name, bcan_poc.POC_email = :email',
+            ExpressionAttributeValues: { ':name': newPocName, ':email': newEmail },
+          }).promise();
+        } else {
+          await this.dynamoDb.update({
+            TableName: grantTableName,
+            Key: { grantId: grant.grantId },
+            UpdateExpression: 'SET bcan_poc.POC_name = :name',
+            ExpressionAttributeValues: { ':name': newPocName },
+          }).promise();
+        }
+        await this.notificationService.updateNotificationsUserEmailByGrantId(grant.grantId, newEmail);
+      } catch (error) {
+        this.logger.error(`Failed to sync grant ${grant.grantId} for user ${currentEmail}:`, error);
+      }
+    }
+  }
 
   // purpose statement: validates a user's session token via cognito and retrieves user data from dynamodb
   // use case: employee is accessing the app with an existing session token

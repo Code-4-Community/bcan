@@ -100,6 +100,7 @@ export class NotificationService {
       }
 
       this.logger.log(`Retrieved ${data.Items.length} notifications for user ${email}`);
+      console.log("Notifications retrieved: ", data.Items);
       return data.Items as Notification[];
     } catch (error) {
       this.logger.error(`Error retrieving notifications for user : ${email}`, error as string);
@@ -216,6 +217,42 @@ export class NotificationService {
   }
   }
   
+
+  // Function to get all notifications belonging to a given grant
+  async getNotificationsByGrantId(grantId: number): Promise<Notification[]> {
+    this.logger.log(`Fetching notifications for grantId: ${grantId}`);
+    const tableName = process.env.DYNAMODB_NOTIFICATION_TABLE_NAME || 'TABLE_FAILURE';
+
+    const params = {
+      TableName: tableName,
+      FilterExpression: 'grantId = :grantId',
+      ExpressionAttributeValues: {
+        ':grantId': grantId,
+      },
+    };
+
+    try {
+      const data = await this.dynamoDb.scan(params).promise();
+      this.logger.log(`Found ${data.Items?.length ?? 0} notifications for grantId: ${grantId}`);
+      return (data.Items || []) as Notification[];
+    } catch (error) {
+      this.logger.error(`Failed to retrieve notifications for grantId: ${grantId}`, error);
+      throw new InternalServerErrorException('Failed to retrieve notifications by grant');
+    }
+  }
+
+  // Updates the userEmail on all notifications belonging to a grant
+  async updateNotificationsUserEmailByGrantId(grantId: number, newEmail: string): Promise<void> {
+    this.logger.log(`Updating userEmail to ${newEmail} for all notifications of grantId: ${grantId}`);
+
+    const notifications = await this.getNotificationsByGrantId(grantId);
+
+    for (const notification of notifications) {
+      await this.updateNotification(notification.notificationId, { userEmail: newEmail });
+    }
+
+    this.logger.log(`Updated ${notifications.length} notifications for grantId: ${grantId}`);
+  }
 
   /**
    * Deletes the notification with the given id from the database and returns a success message if the deletion was successful

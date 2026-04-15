@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../auth.service';
+import { NotificationService } from '../../notifications/notification.service';
 import { User } from '../../../../middle-layer/types/User';
 import { UserStatus } from '../../../../middle-layer/types/UserStatus';
 import {
@@ -106,7 +107,13 @@ describe('AuthService', () => {
     mockDynamoPromise.mockResolvedValue({});
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthService],
+      providers: [
+        AuthService,
+        {
+          provide: NotificationService,
+          useValue: { updateNotificationsUserEmailByGrantId: vi.fn().mockResolvedValue(undefined) },
+        },
+      ],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
