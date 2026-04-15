@@ -61,13 +61,13 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
       fetchCosts(),
       fetchRevenues(),
       fetchCashflowSettings(),
-      fetchNotifications(),
     ]);
   };
 
     await Promise.all([
       fetchUsers(),
       fetchGrants(),
+      fetchNotifications(),
     ]);
   };
 

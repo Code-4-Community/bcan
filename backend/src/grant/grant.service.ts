@@ -340,6 +340,7 @@ export class GrantService {
               );
           }
 
+          // IF APPLICATION DEADLINE OR REPORT DEADLINES ARE UPDATED, RECALCULATE NOTIFICATIONS FOR THAT GRANT
           const needsAppRebuild = updateKeys.includes('application_deadline');
           const needsReportRebuild = updateKeys.includes('report_deadlines');
 
