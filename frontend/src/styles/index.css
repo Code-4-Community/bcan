@@ -125,19 +125,6 @@ textarea {
   border-color: var(--color-primary-900);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: var(--color-grey-800);
-    background-color: white;
-  }
-  a:hover {
-    color: var(--color-secondary-500);
-  }
-  button {
-    background-color: var(--color-grey-100);
-  }
-}
-
 input {
   border-width: 2px;
   background-color: white;
