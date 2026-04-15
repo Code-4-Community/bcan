@@ -37,7 +37,7 @@ function GrantPage() {
 
   useEffect(() => {
     clearAllFilters();
-    mainContainer[0].scrollTo(0, 0);
+    curGrant && mainContainer[0].scrollTo(0, 0);
   }, [curGrant]);
 
   const handleGrantCreated = (grantId: number) => {
