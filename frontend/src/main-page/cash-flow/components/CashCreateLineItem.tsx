@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Button from "../../../components/Button";
-import CashAddRevenue from "./CashAddRevenue";
+import CashAddEditRevenue from "./CashAddEditRevenue";
 import CashAddEditCost from "./CashAddEditCost";
 
 export default function CashCreateLineItem() {
@@ -42,7 +42,7 @@ export default function CashCreateLineItem() {
       </div>
 
       <div className="">
-        {!showCosts && <CashAddRevenue />}
+        {!showCosts && <CashAddEditRevenue />}
         {showCosts && <CashAddEditCost  />}
       </div>
     </div>

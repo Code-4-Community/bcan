@@ -3,7 +3,7 @@ import { CashflowCost } from "../../../../../middle-layer/types/CashflowCost";
 import { CashflowRevenue } from "../../../../../middle-layer/types/CashflowRevenue";
 import { deleteCost, deleteRevenue } from "../processCashflowDataEditSave";
 import CashEditLineItem from "./CashEditLineItem";
-import CashEditRevenue from "./CashEditRevenue";
+import CashAddEditRevenue from "./CashAddEditRevenue";
 import { formatMoney } from "../CashFlowPage";
 import { useNavigate } from "react-router-dom";
 import CashAddEditCost from "./CashAddEditCost";
@@ -110,7 +110,7 @@ const CashSourceList = observer(({ type, lineItems }: SourceProps) => {
                       onClose={onClose}
                     />
                   ) : (
-                    <CashEditRevenue
+                    <CashAddEditRevenue
                       revenueItem={item as CashflowRevenue}
                       onClose={onClose}
                     />
