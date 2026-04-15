@@ -51,7 +51,7 @@ export default function Button({
       )}
       {logo && logoPosition === "center" && (
         <span className="flex items-center justify-center">
-          <FontAwesomeIcon icon={logo} className="w-3 h-3 lg:w-4 lg:h-4" />
+          <FontAwesomeIcon icon={logo} className="w-6 h-6" />
         </span>
       )}
     </button>

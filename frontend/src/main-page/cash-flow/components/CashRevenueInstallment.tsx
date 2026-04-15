@@ -77,7 +77,7 @@ export default function CashRevenueInstallment({
             onClick={() => onDelete?.()}
             logo={faTrash}
             logoPosition="center"
-            className="bg-red-light text-red w-10 h-10 p-0 rounded-full mb-1.5 shrink-0 border-0"
+            className="bg-red-light text-red w-10 h-10 p-0 rounded-full mb-1.5 shrink-0 border-0 active:!bg-red active:!border-red hover:!border-red"
           />
         ) : (
           <div className="hidden xl:block w-8 h-8 shrink-0" />

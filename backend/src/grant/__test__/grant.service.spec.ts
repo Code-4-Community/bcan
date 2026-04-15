@@ -171,14 +171,15 @@ describe("GrantService", () => {
     grantService = Object.assign(module.get<GrantService>(GrantService), {
       notificationService: { 
         createNotification: vi.fn(), 
-        updateNotification: vi.fn() 
+        updateNotification: vi.fn(),
+        getNotificationByUserEmail: vi.fn().mockResolvedValue([]),
+        deleteNotification: vi.fn().mockResolvedValue('deleted') 
       }
     });
 
     
     
     controller = module.get<GrantController>(GrantController);
-    grantService = module.get<GrantService>(GrantService);
     
   });
 
@@ -585,8 +586,16 @@ describe("GrantService", () => {
   // Tests for deleteGrantById method
 describe('deleteGrantById', () => {
   it('should call DynamoDB delete with the correct params and return success message', async () => {
+    mockGet.mockReturnValue({
+      promise: vi.fn().mockResolvedValue({ Item: mockGrants[0] })
+    });
+
     mockDelete.mockReturnValue({
       promise: vi.fn().mockResolvedValue({})
+    });
+
+    mockQuery.mockReturnValue({
+      promise: vi.fn().mockResolvedValue({ Items: [] })
     });
 
     const result = await grantService.deleteGrantById(123);
@@ -610,6 +619,14 @@ describe('deleteGrantById', () => {
     const conditionalError = new Error('Conditional check failed');
     (conditionalError as any).code = 'ConditionalCheckFailedException';
 
+    mockGet.mockReturnValue({
+      promise: vi.fn().mockResolvedValue({ Item: mockGrants[0] })
+    });
+
+    mockQuery.mockReturnValue({
+      promise: vi.fn().mockResolvedValue({ Items: [] })
+    });
+
     mockDelete.mockReturnValue({
       promise: vi.fn().mockRejectedValue(conditionalError)
     });
@@ -629,6 +646,14 @@ describe('deleteGrantById', () => {
     const conditionalError = new Error('Conditional check failed');
     (conditionalError as any).code = 'ConditionalCheckFailedException';
 
+    mockGet.mockReturnValue({
+      promise: vi.fn().mockResolvedValue({ Item: mockGrants[0] })
+    });
+
+    mockQuery.mockReturnValue({
+      promise: vi.fn().mockResolvedValue({ Items: [] })
+    });
+
     mockDelete.mockReturnValue({
       promise: vi.fn().mockRejectedValue(conditionalError)
     });
@@ -643,6 +668,14 @@ describe('deleteGrantById', () => {
     const awsError = new Error('AWS DynamoDB error');
     (awsError as any).code = 'ThrottlingException';
 
+    mockGet.mockReturnValue({
+      promise: vi.fn().mockResolvedValue({ Item: mockGrants[0] })
+    });
+
+    mockQuery.mockReturnValue({
+      promise: vi.fn().mockResolvedValue({ Items: [] })
+    });
+
     mockDelete.mockReturnValue({
       promise: vi.fn().mockRejectedValue(awsError)
     });
@@ -654,6 +687,15 @@ describe('deleteGrantById', () => {
   });
 
   it('should throw InternalServerErrorException for generic DynamoDB errors', async () => {
+
+    mockGet.mockReturnValue({
+      promise: vi.fn().mockResolvedValue({ Item: mockGrants[0] })
+    });
+
+    mockQuery.mockReturnValue({
+      promise: vi.fn().mockResolvedValue({ Items: [] })
+    });
+
     mockDelete.mockReturnValue({
       promise: vi.fn().mockRejectedValue(new Error('Some other DynamoDB error'))
     });
@@ -684,11 +726,15 @@ describe('Notification helpers', () => {
       const result = (grantServiceWithMockNotif as any).getNotificationTimes(deadline);
 
       expect(result).toHaveLength(3);
-      result.forEach((date: any) => expect(date).toMatch(/^\d{4}-\d{2}-\d{2}T/));
+      result.forEach(({ alertTime, days }: { alertTime: string, days: number }) => {
+        expect(alertTime).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+        expect([14, 7, 3]).toContain(days);
+      });
 
-      const parsed = result.map((r: string | number | Date) => new Date(r));
       const main = new Date(deadline);
-      const diffs = parsed.map((d: string | number) => Math.round((+main - +d) / (1000 * 60 * 60 * 24)));
+      const diffs = result.map(({ alertTime }: { alertTime: string }) =>
+      Math.round((+main - +new Date(alertTime)) / (1000 * 60 * 60 * 24))
+      );
 
       expect(diffs).toEqual([14, 7, 3]);
     });
