@@ -10,14 +10,15 @@ import CheckboxField from "../../../../components/CheckboxField";
 interface StatusDropdownProps {
   selected: Status[];
   onSelect: (status: Status) => void;
+  onClearAll: () => void;
 }
 
-const StatusDropdown: React.FC<StatusDropdownProps> = observer(({ selected, onSelect }) => {
+const StatusDropdown: React.FC<StatusDropdownProps> = observer(({ selected, onSelect, onClearAll }) => {
   const statuses = Object.values(Status);
 
   return (
-    <div className="absolute left-0 top-full mt-2 bg-white border border-primary-900 rounded-md p-4 z-50 shadow-lg min-w-[25rem] overflow-x-auto">
-      <div className="grid grid-cols-3 gap-2">
+    <div className="absolute left-0 top-full mt-2 bg-white border border-primary-900 rounded-md p-4 z-50 shadow-lg w-[18rem] lg:w-[25rem] overflow-x-auto">
+      <div className="grid lg:grid-cols-3 grid-cols-2 gap-2 relative">
         {statuses.map((status) => (
           <CheckboxField
             key={status}
@@ -37,6 +38,11 @@ const StatusDropdown: React.FC<StatusDropdownProps> = observer(({ selected, onSe
             }
           />
         ))}
+        <button 
+          onClick={onClearAll} 
+          className="absolute bottom-0 right-2 text-xs font-semibold text-secondary-400 border-0 hover:text-secondary-400 hover:bg-opacity-0 focus:outline-none active:text-secondary">
+					{"Clear all"}
+				</button>
       </div>
     </div>
   );
