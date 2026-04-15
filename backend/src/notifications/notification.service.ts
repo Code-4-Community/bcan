@@ -103,7 +103,7 @@ export class NotificationService {
       }
 
       this.logger.log(`Retrieved ${data.Items.length} notifications for user ${email}`);
-      console.log("Notifications retrieved: ", data.Items);
+      console.log("Notifications retrieved: ", data.Items.map(item => item.message));
       return data.Items as Notification[];
     } catch (error) {
       this.logger.error(`Error retrieving notifications for user : ${email}`, error as string);
@@ -244,14 +244,27 @@ export class NotificationService {
     }
   }
 
-  // Updates the userEmail on all notifications belonging to a grant
-  async updateNotificationsUserEmailByGrantId(grantId: number, newEmail: string): Promise<void> {
-    this.logger.log(`Updating userEmail to ${newEmail} for all notifications of grantId: ${grantId}`);
+  // Updates the userEmail and organization on all notifications belonging to a grant
+  async updateNotificationsEmailAndOrgByGrantId(grantId: number, newEmail: string, newOrg: string): Promise<void> {
+    this.logger.log(`Updating userEmail to ${newEmail} and organization to ${newOrg} for all notifications of grantId: ${grantId}`);
 
     const notifications = await this.getNotificationsByGrantId(grantId);
 
-    for (const notification of notifications) {
-      await this.updateNotification(notification.notificationId, { userEmail: newEmail });
+    for (const n of notifications) {
+      const updates: Partial<Notification> = {};
+
+      if (n.userEmail !== newEmail) {
+        updates.userEmail = newEmail;
+      }
+
+      const updatedMessage = n.message.replace(/ for .+$/, ` for ${newOrg}`);
+      if (updatedMessage !== n.message) {
+        updates.message = updatedMessage;
+      }
+      
+      if (Object.keys(updates).length > 0) {
+        await this.updateNotification(n.notificationId, updates);
+      }
     }
 
     this.logger.log(`Updated ${notifications.length} notifications for grantId: ${grantId}`);

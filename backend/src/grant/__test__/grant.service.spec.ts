@@ -673,7 +673,9 @@ describe('Notification helpers', () => {
     notificationServiceMock = {
       createNotification: vi.fn().mockResolvedValue(undefined),
       updateNotification: vi.fn().mockResolvedValue(undefined),
-      updateNotificationsUserEmailByGrantId: vi.fn().mockResolvedValue(undefined),
+      updateNotificationsEmailAndOrgByGrantId: vi.fn().mockResolvedValue(undefined),
+      getNotificationsByGrantId: vi.fn().mockResolvedValue([]),
+      deleteNotification: vi.fn().mockResolvedValue(undefined),
     };
 
     grantServiceWithMockNotif = new GrantService(notificationServiceMock);
@@ -823,48 +825,75 @@ describe('Notification helpers', () => {
     });
   });
 
-  describe('updateGrant bcan_poc notification sync', () => {
-    it('should call updateNotificationsUserEmailByGrantId when bcan_poc is updated', async () => {
-      const mockUpdatedGrant: Grant = {
-        grantId: 100,
-        organization: 'Boston Cares',
-        does_bcan_qualify: true,
-        status: Status.Active,
-        amount: 10000,
-        grant_start_date: '2025-01-01',
-        application_deadline: '2025-12-31T00:00:00.000Z',
-        report_deadlines: [],
-        description: '',
-        timeline: 12,
-        estimated_completion_time: 365,
-        grantmaker_poc: { POC_name: 'Sarah', POC_email: 'sarah@test.com' },
-        bcan_poc: { POC_name: 'New POC', POC_email: 'newpoc@test.com' },
-        attachments: [],
-        isRestricted: false,
-      };
+  describe('updateGrant notification sync', () => {
+    const baseGrant: Grant = {
+      grantId: 100,
+      organization: 'Boston Cares',
+      does_bcan_qualify: true,
+      status: Status.Active,
+      amount: 10000,
+      grant_start_date: '2025-01-01',
+      application_deadline: '2025-12-31T00:00:00.000Z',
+      report_deadlines: [],
+      description: '',
+      timeline: 12,
+      estimated_completion_time: 365,
+      grantmaker_poc: { POC_name: 'Sarah', POC_email: 'sarah@test.com' },
+      bcan_poc: { POC_name: 'Tom', POC_email: 'tom@test.com' },
+      attachments: [],
+      isRestricted: false,
+    };
 
+    it('should call updateNotificationsEmailAndOrgByGrantId when bcan_poc email changes', async () => {
+      mockGet.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Item: baseGrant }) });
       mockUpdate.mockReturnValue({ promise: vi.fn().mockResolvedValue({ Attributes: {} }) });
 
-      await grantServiceWithMockNotif.updateGrant(mockUpdatedGrant);
+      const updatedGrant = { ...baseGrant, bcan_poc: { POC_name: 'New POC', POC_email: 'newpoc@test.com' } };
+      await grantServiceWithMockNotif.updateGrant(updatedGrant);
 
-      expect(notificationServiceMock.updateNotificationsUserEmailByGrantId).toHaveBeenCalledWith(
+      expect(notificationServiceMock.updateNotificationsEmailAndOrgByGrantId).toHaveBeenCalledWith(
         100,
         'newpoc@test.com',
+        'Boston Cares',
       );
     });
 
-    it('should not call updateNotificationsUserEmailByGrantId when bcan_poc is not in the update', async () => {
-      const mockUpdatedGrant = {
-        grantId: 100,
-        organization: 'Boston Cares Updated',
-        amount: 15000,
-      } as unknown as Grant;
-
+    it('should call updateNotificationsEmailAndOrgByGrantId when organization changes', async () => {
+      mockGet.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Item: baseGrant }) });
       mockUpdate.mockReturnValue({ promise: vi.fn().mockResolvedValue({ Attributes: {} }) });
 
-      await grantServiceWithMockNotif.updateGrant(mockUpdatedGrant);
+      const updatedGrant = { ...baseGrant, organization: 'Boston Cares Updated' };
+      await grantServiceWithMockNotif.updateGrant(updatedGrant);
 
-      expect(notificationServiceMock.updateNotificationsUserEmailByGrantId).not.toHaveBeenCalled();
+      expect(notificationServiceMock.updateNotificationsEmailAndOrgByGrantId).toHaveBeenCalledWith(
+        100,
+        'tom@test.com',
+        'Boston Cares Updated',
+      );
+    });
+
+    it('should not call updateNotificationsEmailAndOrgByGrantId when neither email nor org changed', async () => {
+      mockGet.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Item: baseGrant }) });
+      mockUpdate.mockReturnValue({ promise: vi.fn().mockResolvedValue({ Attributes: {} }) });
+
+      const updatedGrant = { ...baseGrant, amount: 99999 };
+      await grantServiceWithMockNotif.updateGrant(updatedGrant);
+
+      expect(notificationServiceMock.updateNotificationsEmailAndOrgByGrantId).not.toHaveBeenCalled();
+    });
+
+    it('should not call updateNotificationsEmailAndOrgByGrantId when deadlines change (rebuild takes priority)', async () => {
+      mockGet.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Item: baseGrant }) });
+      mockUpdate.mockReturnValue({ promise: vi.fn().mockResolvedValue({ Attributes: {} }) });
+
+      const updatedGrant = {
+        ...baseGrant,
+        bcan_poc: { POC_name: 'New POC', POC_email: 'newpoc@test.com' },
+        application_deadline: '2026-06-01T00:00:00.000Z' as TDateISO,
+      };
+      await grantServiceWithMockNotif.updateGrant(updatedGrant);
+
+      expect(notificationServiceMock.updateNotificationsEmailAndOrgByGrantId).not.toHaveBeenCalled();
     });
   });
 });

@@ -327,25 +327,24 @@ export class GrantService {
       }
 
       try {
+          const oldGrant = await this.getGrantById(grantData.grantId);
+
           this.logger.debug(`Executing DynamoDB update for grant ${grantData.grantId}`);
           const result = await this.dynamoDb.update(params).promise();
           this.logger.log(`Successfully updated grant ${grantData.grantId} in database`);
 
-          // IF BCAN POC IS UPDATED, UPDATE ALL NOTIFICATIONS LINKED TO THAT GRANT TO THE NEW POC EMAIL
-          if (updateKeys.includes('bcan_poc') && grantData.bcan_poc?.POC_email) {
-              this.logger.debug(`bcan_poc changed for grant ${grantData.grantId}; syncing notification userEmails`);
-              await this.notificationService.updateNotificationsUserEmailByGrantId(
-                  grantData.grantId,
-                  grantData.bcan_poc.POC_email,
-              );
-          }
+          // compare old to new fields to see if application deadline or report deadlines changed
+          const needsAppRebuild =
+              oldGrant.application_deadline !== grantData.application_deadline;
+          const needsReportRebuild =
+              JSON.stringify(oldGrant.report_deadlines) !== JSON.stringify(grantData.report_deadlines);
 
-          // IF APPLICATION DEADLINE OR REPORT DEADLINES ARE UPDATED, RECALCULATE NOTIFICATIONS FOR THAT GRANT
-          const needsAppRebuild = updateKeys.includes('application_deadline');
-          const needsReportRebuild = updateKeys.includes('report_deadlines');
+          const needsBCANPocEmailUpdate = oldGrant.bcan_poc?.POC_email !== grantData.bcan_poc?.POC_email;
+          const needsOrganizationUpdate = oldGrant.organization !== grantData.organization;
 
+          // IF APPLICATION DEADLINE OR REPORT DEADLINES ACTUALLY CHANGED, REBUILD NOTIFICATIONS BY DELETING OLD ONES AND CREATING NEW ONES 
           if (needsAppRebuild || needsReportRebuild) {
-              const email = grantData.bcan_poc?.POC_email || undefined;
+              const email = grantData.bcan_poc?.POC_email || oldGrant.bcan_poc?.POC_email;
 
               if (!email) {
                   this.logger.warn(`No POC email on grant ${grantData.grantId}; skipping notification rebuild`);
@@ -362,7 +361,7 @@ export class GrantService {
                               this.logger.warn(`Failed to delete app notification ${n.notificationId}: ${err instanceof Error ? err.message : err}`);
                           }
                       }
-                      
+
                       if (grantData.application_deadline) {
                           const alertTimes = this.getNotificationTimes(grantData.application_deadline);
                           for (const alertTime of alertTimes) {
@@ -408,6 +407,15 @@ export class GrantService {
                   }
               }
           }
+          // OTHERWISE, UPDATE EXISTING NOTIFS IF BCAN POC EMAIL/ORGANIZATION CHANGED, UPDATE ALL NOTIFICATIONS TO THE NEW EMAIL/ORG
+          else if (needsBCANPocEmailUpdate || needsOrganizationUpdate) {
+            this.logger.debug(`bcan_poc/organization changed for grant ${grantData.grantId}; syncing notification userEmails and messages`);
+            await this.notificationService.updateNotificationsEmailAndOrgByGrantId(
+                grantData.grantId,
+                grantData.bcan_poc.POC_email,
+                grantData.organization
+            );
+        }
 
           return JSON.stringify(result);
       } catch(error: unknown) {
@@ -539,19 +547,24 @@ export class GrantService {
         await this.dynamoDb.delete(params).promise();
         this.logger.log(`Successfully deleted grant ${grantId} from database`);
 
-        // Delete associated notifications
-        this.logger.debug(`Deleting notifications associated with grant ${grantId}`);
-        const notifications = await this.notificationService.getNotificationsByGrantId(grantId);
-        for (const n of notifications) {
-            try {
-                await this.notificationService.deleteNotification(n.notificationId);
-                this.logger.debug(`Deleted notification ${n.notificationId} associated with grant ${grantId}`);
-            } catch (err) {
-                this.logger.warn(`Failed to delete notification ${n.notificationId} associated with grant ${grantId}: ${err instanceof Error ? err.message : err}`);
+        // Delete associated notifications — isolated so failures don't affect the grant deletion response
+        try {
+            this.logger.debug(`Deleting notifications associated with grant ${grantId}`);
+            const notifications = await this.notificationService.getNotificationsByGrantId(grantId);
+            for (const n of notifications) {
+                try {
+                    await this.notificationService.deleteNotification(n.notificationId);
+                    this.logger.debug(`Deleted notification ${n.notificationId} for grant ${grantId}`);
+                } catch (err) {
+                    this.logger.warn(`Failed to delete notification ${n.notificationId} for grant ${grantId}: ${err instanceof Error ? err.message : err}`);
+                }
             }
+            this.logger.log(`Deleted ${notifications.length} notifications for grant ${grantId}`);
+        } catch (err) {
+            this.logger.error(`Failed to fetch notifications for grant ${grantId} during cleanup: ${err instanceof Error ? err.message : err}`);
         }
 
-        return `Grant ${grantId} and notifications deleted successfully`;
+        return `Grant ${grantId} deleted successfully`;
 
     } catch (error: unknown) {
         // Re-throw NestJS exceptions

@@ -516,28 +516,77 @@ describe('NotificationController', () => {
     });
   });
 
-  describe('updateNotificationsUserEmailByGrantId', () => {
-    it('should update userEmail on all notifications for the given grantId', async () => {
-      const matchingNotifications = [mockNotification_id1_user1, mockNotification_id2_user1];
-      mockScan.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: matchingNotifications }) });
-      const mockUpdateResponse = { Attributes: {} };
-      mockUpdate.mockReturnValue({ promise: vi.fn().mockResolvedValue(mockUpdateResponse) });
+  describe('updateNotificationsEmailAndOrgByGrantId', () => {
+    const notifWithOrg = (overrides: Partial<typeof mockNotification_id1_user1>) => ({
+      ...mockNotification_id1_user1,
+      message: 'Application due in 30 days for OldOrg',
+      ...overrides,
+    });
 
-      await notificationService.updateNotificationsUserEmailByGrantId(100, 'newemail@example.com');
+    it('should update userEmail when it differs from new email', async () => {
+      const notifications = [notifWithOrg({ userEmail: 'old@example.com', notificationId: '1' })];
+      mockScan.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: notifications }) });
+      mockUpdate.mockReturnValue({ promise: vi.fn().mockResolvedValue({ Attributes: {} }) });
 
-      expect(mockUpdate).toHaveBeenCalledTimes(2);
+      await notificationService.updateNotificationsEmailAndOrgByGrantId(100, 'new@example.com', 'OldOrg');
+
+      expect(mockUpdate).toHaveBeenCalledTimes(1);
       expect(mockUpdate).toHaveBeenCalledWith(
         expect.objectContaining({
           Key: { notificationId: '1' },
-          ExpressionAttributeValues: expect.objectContaining({ ':userEmail': 'newemail@example.com' }),
+          ExpressionAttributeValues: expect.objectContaining({ ':userEmail': 'new@example.com' }),
         })
       );
+    });
+
+    it('should update message when org differs', async () => {
+      const notifications = [notifWithOrg({ userEmail: 'same@example.com', notificationId: '1' })];
+      mockScan.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: notifications }) });
+      mockUpdate.mockReturnValue({ promise: vi.fn().mockResolvedValue({ Attributes: {} }) });
+
+      await notificationService.updateNotificationsEmailAndOrgByGrantId(100, 'same@example.com', 'NewOrg');
+
+      expect(mockUpdate).toHaveBeenCalledTimes(1);
+      expect(mockUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          Key: { notificationId: '1' },
+          ExpressionAttributeValues: expect.objectContaining({ ':message': 'Application due in 30 days for NewOrg' }),
+        })
+      );
+    });
+
+    it('should update both fields when both differ', async () => {
+      const notifications = [notifWithOrg({ userEmail: 'old@example.com', notificationId: '1' })];
+      mockScan.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: notifications }) });
+      mockUpdate.mockReturnValue({ promise: vi.fn().mockResolvedValue({ Attributes: {} }) });
+
+      await notificationService.updateNotificationsEmailAndOrgByGrantId(100, 'new@example.com', 'NewOrg');
+
+      expect(mockUpdate).toHaveBeenCalledTimes(1);
+      expect(mockUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          Key: { notificationId: '1' },
+          ExpressionAttributeValues: expect.objectContaining({
+            ':userEmail': 'new@example.com',
+            ':message': 'Application due in 30 days for NewOrg',
+          }),
+        })
+      );
+    });
+
+    it('should skip update when neither email nor org changed', async () => {
+      const notifications = [notifWithOrg({ userEmail: 'same@example.com', notificationId: '1' })];
+      mockScan.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: notifications }) });
+
+      await notificationService.updateNotificationsEmailAndOrgByGrantId(100, 'same@example.com', 'OldOrg');
+
+      expect(mockUpdate).not.toHaveBeenCalled();
     });
 
     it('should do nothing when no notifications exist for the grantId', async () => {
       mockScan.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: [] }) });
 
-      await notificationService.updateNotificationsUserEmailByGrantId(999, 'newemail@example.com');
+      await notificationService.updateNotificationsEmailAndOrgByGrantId(999, 'new@example.com', 'NewOrg');
 
       expect(mockUpdate).not.toHaveBeenCalled();
     });
