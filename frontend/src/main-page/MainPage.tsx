@@ -15,6 +15,7 @@ import { getAppStore } from "../external/bcanSatchel/store";
 import BellButton from "./notifications/Bell";
 import { useEffect, useState } from "react";
 import { clearAllFilters } from "../external/bcanSatchel/actions";
+import { saveCashflowSettings } from "./cash-flow/processCashflowDataEditSave";
 
 interface PositionGuardProps {
   children: React.ReactNode;
@@ -55,6 +56,10 @@ function MainPage() {
   useEffect(() => {
     clearAllFilters();
     mainContainer[0].scrollTo(0, 0);
+    const { cashflowSettings } = getAppStore();
+    if (cashflowSettings) {
+    saveCashflowSettings(cashflowSettings);
+  }
   }, [location]);
 
   return (
