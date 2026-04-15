@@ -1,6 +1,4 @@
 import InputField from "../../../components/InputField";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import Button from "../../../components/Button";
 import { FaXmark } from "react-icons/fa6";
 
 export type EditableInstallment = {
