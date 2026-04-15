@@ -11,7 +11,7 @@ export const frequencyLabels = [
     { value: Frequency.Yearly, label: "/year" },
     { value: Frequency.Monthly, label: "/month" },
     { value: Frequency.OneTime, label: "" },
-    { value: Frequency.Custom, label: " recurring" }
+    { value: Frequency.Custom, label: "" }
 ];
 
 export const frequencyIntervalsInMonths: Record<Frequency, number> = {
@@ -23,7 +23,8 @@ export const frequencyIntervalsInMonths: Record<Frequency, number> = {
 
 export function formatDateByFrequency(
   date: string | Date,
-  frequency: Frequency
+  frequency: Frequency,
+  interval: number
 ): string {
   const parsedDate = typeof date === "string" ? new Date(date + "T00:00:00") : new Date(date + "T00:00:00");
 
@@ -33,6 +34,13 @@ export function formatDateByFrequency(
 
     case Frequency.OneTime:
       return "on " + new Intl.DateTimeFormat("en-US", {
+        month: "2-digit",
+        day: "2-digit",
+        year: "2-digit",
+      }).format(parsedDate);
+
+    case Frequency.Custom:
+      return `every ${interval} month${interval > 1 ? "s" : ""} starting ` + new Intl.DateTimeFormat("en-US", {
         month: "2-digit",
         day: "2-digit",
         year: "2-digit",

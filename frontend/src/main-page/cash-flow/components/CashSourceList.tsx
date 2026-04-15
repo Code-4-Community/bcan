@@ -61,12 +61,12 @@ const CashSourceList = observer(({ type, lineItems }: SourceProps) => {
                   <div className="flex flex-col text-sm lg:text-base gap-1">
                     <div className="font-semibold">{item.type}</div>
                     {type === "Cost" && (
-                      <div>
+                      <div className="2xl:text-nowrap">
                         {formatMoney(item.amount)}{frequencyLabels.find(
                           (label) => label.value === (item as CashflowCost).frequency,
                         )?.label}
                         {" "}
-                        {formatDateByFrequency((item as CashflowCost).date, (item as CashflowCost).frequency)}
+                        {formatDateByFrequency((item as CashflowCost).date, (item as CashflowCost).frequency, (item as CashflowCost).interval)}
                       </div>
                     )}
                     {type === "Revenue" && (

@@ -1,6 +1,7 @@
 import InputField from "../../../components/InputField";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../../components/Button";
+import { FaXmark } from "react-icons/fa6";
 
 export type EditableInstallment = {
   amount: number | null;
@@ -72,13 +73,12 @@ export default function CashRevenueInstallment({
           />
         </div>
         {showDelete ? (
-          <Button
-            text=""
-            onClick={() => onDelete?.()}
-            logo={faTrash}
-            logoPosition="center"
-            className="bg-red-light text-red w-10 h-10 p-0 rounded-full mb-1.5 shrink-0 border-0 active:!bg-red active:!border-red hover:!border-red"
-          />
+          <div
+                  className={`rounded-full mb-3 bg-red hover:bg-red-light w-fit p-1 hover:cursor-pointer active:bg-red active:!border-red`}
+                  onClick={onDelete}
+                >
+                  <FaXmark className="text-white text-xs lg:text-base" />
+                </div>
         ) : (
           <div className="hidden xl:block w-8 h-8 shrink-0" />
         )}

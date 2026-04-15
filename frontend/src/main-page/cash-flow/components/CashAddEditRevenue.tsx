@@ -377,11 +377,12 @@ export default function CashAddEditRevenue({
           className="bg-green hover:!border-green text-white mt-2 text-sm lg:text-base active:!bg-green active:!border-green w-full"
         />
       ) : (
-        <div className="flex flex-wrap items-center gap-2 mt-2">
-          <div className="font-semibold ml-auto text-sm lg:text-base">
+        <div className="flex flex-wrap gap-2 mt-2 items-center">
+          <div className="font-semibold text-sm lg:text-base hidden lg:block">
             {"Total: "}
             {formatMoney(totalAmount)}
           </div>
+          <div className="ml-auto flex flex-wrap gap-2">
           <Button
             text="Cancel"
             onClick={onClose}
@@ -393,6 +394,7 @@ export default function CashAddEditRevenue({
             disabled={isSubmitting}
             className="bg-primary-900 text-white text-sm lg:text-base"
           />
+          </div>
         </div>
       )}
     </div>
