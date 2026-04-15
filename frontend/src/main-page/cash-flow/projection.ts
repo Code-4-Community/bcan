@@ -111,7 +111,7 @@ export function buildCashflowProjection(
   for (const rev of revenues) {
     for (const installment of rev.installments) {
       const key = toMonthKey(installment.date);
-      if (revenueBuckets.has(key)) {
+      if (revenueBuckets.has(key) && installment.date >= new Date(settings.startDate)) {
         revenueBuckets.set(key, revenueBuckets.get(key)! + installment.amount);
       }
     }
@@ -122,7 +122,7 @@ export function buildCashflowProjection(
     if (cost.frequency === Frequency.OneTime) {
       // Single occurrence
       const key = toMonthKey(new Date(cost.date));
-      if (costBuckets.has(key)) {
+      if (costBuckets.has(key) && new Date(cost.date) >= new Date(settings.startDate)) {
         const adjusted = getAdjustedCostAmount(cost, key, settings);
         costBuckets.set(key, costBuckets.get(key)! + adjusted);
       }
