@@ -117,6 +117,9 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
+    (service as any).grantService = {
+    updateGrantsByPOC: vi.fn().mockResolvedValue(undefined),
+    };
   });
 
   // ── register ────────────────────────────────────────────────────────────────

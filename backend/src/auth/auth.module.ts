@@ -3,6 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { NotificationsModule } from '../notifications/notification.module';
+import { GrantModule } from '../grant/grant.module';
 
 @Module({
   imports: [
@@ -11,14 +12,10 @@ import { NotificationsModule } from '../notifications/notification.module';
       signOptions: { expiresIn: '1h' },
     }),
     NotificationsModule,
+    GrantModule,
   ],
   controllers: [AuthController],
-  providers: [
-    {
-      provide: AuthService,
-      useClass: AuthService,
-    },
-  ],
+  providers: [AuthService],
   exports: [AuthService],
 })
 export class AuthModule {}
