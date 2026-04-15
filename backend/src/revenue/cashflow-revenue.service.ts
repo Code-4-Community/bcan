@@ -374,6 +374,19 @@ async updateRevenue(name: string, revenue: CashflowRevenue): Promise<CashflowRev
     throw new InternalServerErrorException('Internal Server Error');
   }
 
+  if (isRename) {
+    console.log(`Name change detected: '${trimmedRouteName}' to '${trimmedBodyName}' — checking for conflicts with existing items`);
+  const conflictParams = {
+    TableName: this.revenueTableName,
+    Key: { name: trimmedBodyName },
+  };
+  const conflict = await this.dynamoDb.get(conflictParams).promise();
+  if (conflict.Item) {
+    this.logger.error(`Cannot rename '${trimmedRouteName}' to '${trimmedBodyName}' — target name already exists`);
+    throw new BadRequestException(`A revenue item with the name '${trimmedBodyName}' already exists`);
+  }
+}
+
   // Put replaces the entire item at the given key with the new values
   const putParams = {
     TableName: this.revenueTableName,
