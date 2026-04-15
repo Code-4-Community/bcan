@@ -64,7 +64,7 @@ import { IoIosWarning } from "react-icons/io";
 
           {/* Buttons */}
           <div className="flex w-full justify-between ">
-            <Button text="No, cancel" onClick={onCloseDelete} className=" text-white bg-red hover:border-red hover:text-red hover:bg-white active:bg-red" />
+            <Button text="No, cancel" onClick={onCloseDelete} className=" text-white bg-red hover:border-red active:!border-red hover:text-red hover:bg-white active:bg-red" />
             <Button text="Yes, confirm" onClick={() => {
                 onConfirmDelete();
                 onCloseDelete();
