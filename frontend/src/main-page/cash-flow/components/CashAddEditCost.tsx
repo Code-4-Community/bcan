@@ -282,8 +282,9 @@ export default function CashAddEditCost({
             className="bg-white text-black border border-grey-500 mt-2 text-sm lg:text-base"
           />
           <Button
-            text="Save"
+            text={isSubmitting ? "Saving..." : "Save"}
             onClick={() => handleSubmit()}
+            disabled={isSubmitting}
             className="bg-primary-900 text-white mt-2 text-sm lg:text-base"
           />
         </div>

@@ -32,6 +32,7 @@ function Settings() {
   const [changePasswordError, setChangePasswordError] = useState<string | null>(null);
   const [isProfilePictureModalOpen, setIsProfilePictureModalOpen] = useState(false);
   const [profilePictureMessage, setProfilePictureMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -68,6 +69,7 @@ function Settings() {
   };
 
   const handleSaveEdit = async () => {
+    setIsSubmitting(true);
     if (!EMAIL_REGEX.test(editForm.email)) {
       setPersonalInfoError("Email is not valid.");
       return;
@@ -83,6 +85,8 @@ function Settings() {
           lastName: editForm.lastName,
         }),
       });
+
+      setIsSubmitting(false);
 
       if (!response.ok) {
         const errorBody = await response.json().catch(() => ({}));
@@ -270,8 +274,9 @@ function Settings() {
                 className="bg-white text-gray-600 border-2 border-grey-500"
               />
               <Button
-                text="Save"
+                text={isSubmitting ? "Saving..." : "Save"}
                 onClick={handleSaveEdit}
+                disabled={isSubmitting}
                 className="bg-primary-900 text-white"
               />
             </div>
