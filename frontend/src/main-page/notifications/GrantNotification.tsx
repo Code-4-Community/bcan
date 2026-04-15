@@ -11,7 +11,16 @@ interface GrantNotificationProps {
 }
 
 function formatAlertTime(dateStr: string): string {
-    return new Date(dateStr).toLocaleString('en-US', {
+    const date = new Date(dateStr);
+    const diffDays = (Date.now() - date.getTime()) / (1000 * 60 * 60 * 24);
+    if (diffDays > 6) {
+        const m = date.getMonth() + 1;
+        const d = date.getDate();
+        const y = date.getFullYear();
+        const time = date.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        return `${m}/${d}/${y} | ${time}`;
+    }
+    return date.toLocaleString('en-US', {
         weekday: 'long',
         hour: 'numeric',
         minute: '2-digit',

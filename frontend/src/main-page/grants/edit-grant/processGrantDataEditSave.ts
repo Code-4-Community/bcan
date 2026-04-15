@@ -88,8 +88,9 @@ export const deleteGrant = async (grantId: any) => {
   
           if (response.ok) {
             console.log("✅ Grant deleted successfully");
-            // Refetch grants to update UI
+            // Refetch grants and notifications to update UI
             await fetchGrants();
+            await fetchNotifications();
           } else {
             // Get error details
             const errorText = await response.text();

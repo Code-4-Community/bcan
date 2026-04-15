@@ -392,7 +392,7 @@ export class GrantService {
                           for (const reportDeadline of grantData.report_deadlines) {
                               const alertTimes = this.getNotificationTimes(reportDeadline);
                               for (const alertTime of alertTimes) {
-                                  const message = `Report due in ${this.daysUntil(alertTime, reportDeadline)} days for ${updatedGrant.organization}`;
+                                  const message = `Report due in ${this.daysUntil(alertTime, reportDeadline)} days for ${grantData.organization}`;
                                   await this.notificationService.createNotification({
                                       notificationId: `${grantData.grantId}-report-${alertTime}`,
                                       userEmail: email,
@@ -537,7 +537,21 @@ export class GrantService {
         this.logger.debug(`Executing DynamoDB delete for grant ${grantId}`);
         await this.dynamoDb.delete(params).promise();
         this.logger.log(`Successfully deleted grant ${grantId} from database`);
-        return `Grant ${grantId} deleted successfully`;
+
+        // Delete associated notifications
+        this.logger.debug(`Deleting notifications associated with grant ${grantId}`);
+        const notifications = await this.notificationService.getNotificationsByGrantId(grantId);
+        for (const n of notifications) {
+            try {
+                await this.notificationService.deleteNotification(n.notificationId);
+                this.logger.debug(`Deleted notification ${n.notificationId} associated with grant ${grantId}`);
+            } catch (err) {
+                this.logger.warn(`Failed to delete notification ${n.notificationId} associated with grant ${grantId}: ${err instanceof Error ? err.message : err}`);
+            }
+        }
+
+        return `Grant ${grantId} and notifications deleted successfully`;
+
     } catch (error: unknown) {
         // Re-throw NestJS exceptions
         if (error instanceof BadRequestException || error instanceof InternalServerErrorException) {
@@ -561,14 +575,19 @@ export class GrantService {
   }
 
   // Calculates notification times for a deadline (14, 7, and 3 days before)
+  // update: returns only relevant times (ex: if a deadline is 10 days away, only return 7 and 3 day notifications)
   private getNotificationTimes(deadlineISO: string): string[] {
     const deadline = new Date(deadlineISO);
     const daysBefore = [14, 7, 3];
-    return daysBefore.map(days => {
+    const allNotificationTimes = daysBefore.map(days => {
       const d = new Date(deadline);
       d.setDate(deadline.getDate() - days);
-      return d.toISOString();
+      return d;
     });
+
+    return allNotificationTimes
+      .filter(d => d > new Date()) // only return future notification times
+      .map(d => d.toISOString());
   }
 
   // Creates notifications for a grant's application and report deadlines
