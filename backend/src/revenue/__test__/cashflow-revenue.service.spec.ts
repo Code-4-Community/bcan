@@ -385,12 +385,12 @@ describe('RevenueService', () => {
       mockPut.mockReturnValue(resolved({}));
       mockDelete.mockReturnValue(resolved({}));
 
-      const renamed = { ...mockRevenue, name: 'New Name' };
+      const renamed = { ...mockRevenue, name: 'New Name 1' };
       const result = await service.updateRevenue('Test Revenue', renamed);
 
-      expect(result.name).toBe('New Name');
+      expect(result.name).toBe('New Name 1');
       expect(mockPut).toHaveBeenCalledWith(expect.objectContaining({
-        Item: expect.objectContaining({ name: 'New Name' }),
+        Item: expect.objectContaining({ name: 'New Name 1' }),
       }));
       expect(mockDelete).toHaveBeenCalledWith(expect.objectContaining({
         Key: { name: 'Test Revenue' },
@@ -407,9 +407,9 @@ describe('RevenueService', () => {
     it('should use the route param name as the DynamoDB get key, not the body name', async () => {
       mockGet.mockReturnValue(resolved({ Item: mockRevenue }));
       mockPut.mockReturnValue(resolved({}));
-      await service.updateRevenue('Test Revenue', { ...mockRevenue, name: 'Different Name' });
+      await service.updateRevenue('Test Revenue 2', { ...mockRevenue, name: 'Different Name' });
       expect(mockGet).toHaveBeenCalledWith(expect.objectContaining({
-        Key: { name: 'Test Revenue' },
+        Key: { name: 'Test Revenue 2' },
       }));
     });
 
@@ -418,7 +418,7 @@ describe('RevenueService', () => {
       mockPut.mockReturnValue(resolved({}));
       mockDelete.mockReturnValue(rejected(awsError('InternalServerError')));
       await expect(
-        service.updateRevenue('Test Revenue', { ...mockRevenue, name: 'New Name' })
+        service.updateRevenue('Test Revenue', { ...mockRevenue, name: 'New Name 3' })
       ).rejects.toThrow(InternalServerErrorException);
     });
 
