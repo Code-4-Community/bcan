@@ -164,7 +164,7 @@ export class GrantService {
         const params = {
             TableName: process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE',
             Key: {
-                grantId: grantId,
+                grantId: Number(grantId),
             },
         };
 
@@ -543,6 +543,7 @@ export class GrantService {
     }
 
     try {
+        await this.deleteGrantNotifications(grantId);
         this.logger.debug(`Executing DynamoDB delete for grant ${grantId}`);
         await this.dynamoDb.delete(params).promise();
         this.logger.log(`Successfully deleted grant ${grantId} from database`);
@@ -588,15 +589,27 @@ export class GrantService {
     }
   }
 
+  // Deletes notifications associated with a particular grant
+  private async deleteGrantNotifications(grantId: number): Promise<void> {
+    this.logger.log(`Deleting notifications for grant ${grantId}`);
+    const grant = await this.getGrantById(grantId);
+    const email = grant.bcan_poc.POC_email;
+    const notifications = await this.notificationService.getNotificationByUserEmail(email);
+    const grantNotifications = notifications.filter(n => n.notificationId.startsWith(`${grantId}-`));
+    for (const notification of grantNotifications) {
+        await this.notificationService.deleteNotification(notification.notificationId);
+    }
+    this.logger.log(`Successfully deleted notifications for grant ${grantId}`);
+}
+
   // Calculates notification times for a deadline (14, 7, and 3 days before)
-  // update: returns only relevant times (ex: if a deadline is 10 days away, only return 7 and 3 day notifications)
-  private getNotificationTimes(deadlineISO: string): string[] {
+  private getNotificationTimes(deadlineISO: string): { alertTime: string, days: number }[] {
     const deadline = new Date(deadlineISO);
     const daysBefore = [14, 7, 3];
     const allNotificationTimes = daysBefore.map(days => {
       const d = new Date(deadline);
       d.setDate(deadline.getDate() - days);
-      return d;
+      return { alertTime: d.toISOString(), days };
     });
 
     return allNotificationTimes
@@ -617,13 +630,13 @@ export class GrantService {
         `Creating application deadline notifications for grant ${grantId} with deadline ${application_deadline}`,
       );
       const alertTimes = this.getNotificationTimes(application_deadline);
-      for (const alertTime of alertTimes) {
+      for (const { alertTime, days } of alertTimes) {
         this.logger.debug(
           `Creating application notification for grant ${grantId} at alertTime ${alertTime}`,
         );
-        const message = `Application due in ${this.daysUntil(alertTime, application_deadline)} days for ${organization}`;
+        const message = `Application due in ${days} days for ${organization}`;
         const notification: Notification = {
-          notificationId: `${grantId}-app-${alertTime}`,
+          notificationId: `${grantId}-app-${days}`,
           userEmail: email,
           message,
           alertTime: alertTime as TDateISO,
@@ -643,15 +656,15 @@ export class GrantService {
       this.logger.debug(
         `Creating report deadline notifications for grant ${grantId} with ${report_deadlines.length} report_deadlines`,
       );
-      for (const reportDeadline of report_deadlines) {
+      for (const [i, reportDeadline] of report_deadlines.entries()) {
         const alertTimes = this.getNotificationTimes(reportDeadline);
-        for (const alertTime of alertTimes) {
+        for (const {alertTime, days} of alertTimes) {
           this.logger.debug(
             `Creating report notification for grant ${grantId} at alertTime ${alertTime} (report deadline ${reportDeadline})`,
           );
-          const message = `Report due in ${this.daysUntil(alertTime, reportDeadline)} days for ${organization}`;
+          const message = `Report due in ${days} days for ${organization}`;
           const notification: Notification = {
-            notificationId: `${grantId}-report-${alertTime}`,
+            notificationId: `${grantId}-report-${i}-${days}`,
             userEmail: email,
             message,
             alertTime: alertTime as TDateISO,
@@ -685,9 +698,9 @@ export class GrantService {
         `Updating application deadline notifications for grant ${grantId} with deadline ${application_deadline}`,
       );
       const alertTimes = this.getNotificationTimes(application_deadline);
-      for (const alertTime of alertTimes) {
-        const notificationId = `${grantId}-app-${alertTime}`;
-        const message = `Application due in ${this.daysUntil(alertTime, application_deadline)} days for ${organization}`;
+      for (const { alertTime, days } of alertTimes) {
+        const notificationId = `${grantId}-app-${days}`;
+        const message = `Application due in ${days} days for ${organization}`;
 
         this.logger.debug(
           `Updating application notification ${notificationId} for grant ${grantId} to alertTime ${alertTime}`,
@@ -708,11 +721,11 @@ export class GrantService {
       this.logger.debug(
         `Updating report deadline notifications for grant ${grantId} with ${report_deadlines.length} report_deadlines`,
       );
-      for (const reportDeadline of report_deadlines) {
+      for (const [i, reportDeadline] of report_deadlines.entries()) {
         const alertTimes = this.getNotificationTimes(reportDeadline);
-        for (const alertTime of alertTimes) {
-          const notificationId = `${grantId}-report-${alertTime}`;
-          const message = `Report due in ${this.daysUntil(alertTime, reportDeadline)} days for ${organization}`;
+        for (const { alertTime, days } of alertTimes) {
+          const notificationId = `${grantId}-report-${i}-${days}`;
+          const message = `Report due in ${days} days for ${organization}`;
 
           this.logger.debug(
             `Updating report notification ${notificationId} for grant ${grantId} to alertTime ${alertTime} (report deadline ${reportDeadline})`,
