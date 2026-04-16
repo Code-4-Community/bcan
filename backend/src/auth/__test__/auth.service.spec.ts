@@ -10,6 +10,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
+import { GrantService } from '../../grant/grant.service';
 
 // ─── Cognito mocks ────────────────────────────────────────────────────────────
 const mockCognitoPromise = vi.fn();
@@ -110,16 +111,13 @@ describe('AuthService', () => {
       providers: [
         AuthService,
         {
-          provide: NotificationService,
-          useValue: { updateNotificationsUserEmailByGrantId: vi.fn().mockResolvedValue(undefined) },
+          provide: GrantService,
+          useValue: { updateGrantsByPOC: vi.fn().mockResolvedValue(undefined) },
         },
       ],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    (service as any).grantService = {
-    updateGrantsByPOC: vi.fn().mockResolvedValue(undefined),
-    };
   });
 
   // ── register ────────────────────────────────────────────────────────────────

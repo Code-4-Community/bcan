@@ -11,7 +11,6 @@ import { GrantModule } from '../grant/grant.module';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1h' },
     }),
-    NotificationsModule,
     GrantModule,
   ],
   controllers: [AuthController],

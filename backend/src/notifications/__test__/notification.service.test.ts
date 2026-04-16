@@ -24,6 +24,7 @@ const mockDelete = vi.fn();
 const mockQuery = vi.fn();
 const mockSendEmail = vi.fn();
 const mockUpdate = vi.fn();
+const mockBatchWrite = vi.fn();
 
 const mockDocumentClient = {
   scan: mockScan,
@@ -32,6 +33,7 @@ const mockDocumentClient = {
   query: mockQuery,
   update: mockUpdate,
   delete: mockDelete,
+  batchWrite: mockBatchWrite,
 };
 
 const mockSES = {
@@ -69,6 +71,7 @@ describe('NotificationController', () => {
     mockQuery.mockReturnValue({ promise: mockPromise });
     mockSendEmail.mockReturnValue({ promise: mockPromise });
     mockSend.mockReturnValue({ promise: mockPromise });
+    mockBatchWrite.mockReturnValue({ promise: mockPromise });
 
     const originalEnv = process.env;
     process.env = { ...originalEnv };
@@ -514,6 +517,23 @@ describe('NotificationController', () => {
 
       await expect(notificationService.getNotificationsByGrantId(100)).rejects.toThrow(InternalServerErrorException);
     });
+
+    it('should accumulate results across multiple pages using LastEvaluatedKey', async () => {
+      const page1 = [mockNotification_id1_user1];
+      const page2 = [mockNotification_id1_user2];
+      mockScan
+        .mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: page1, LastEvaluatedKey: { notificationId: '1' } }) })
+        .mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: page2, LastEvaluatedKey: undefined }) });
+
+      const result = await notificationService.getNotificationsByGrantId(100);
+
+      expect(mockScan).toHaveBeenCalledTimes(2);
+      // second call must pass ExclusiveStartKey from first page's LastEvaluatedKey
+      expect(mockScan.mock.calls[1][0]).toMatchObject({
+        ExclusiveStartKey: { notificationId: '1' },
+      });
+      expect(result).toEqual([...page1, ...page2]);
+    });
   });
 
   describe('updateNotificationsEmailAndOrgByGrantId', () => {
@@ -589,6 +609,65 @@ describe('NotificationController', () => {
       await notificationService.updateNotificationsEmailAndOrgByGrantId(999, 'new@example.com', 'NewOrg');
 
       expect(mockUpdate).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteNotificationsByUserEmail', () => {
+    it('should do nothing when user has no notifications', async () => {
+      mockQuery.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: [] }) });
+
+      await notificationService.deleteNotificationsByUserEmail('user1@example.com');
+
+      expect(mockBatchWrite).not.toHaveBeenCalled();
+    });
+
+    it('should batch-delete all notifications for a user in a single call when <= 25', async () => {
+      const notifications = [mockNotification_id1_user1, mockNotification_id2_user1];
+      mockQuery.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: notifications }) });
+      mockBatchWrite.mockReturnValue({ promise: vi.fn().mockResolvedValue({}) });
+
+      await notificationService.deleteNotificationsByUserEmail('user1@example.com');
+
+      expect(mockBatchWrite).toHaveBeenCalledTimes(1);
+      expect(mockBatchWrite).toHaveBeenCalledWith({
+        RequestItems: {
+          BCANNotifications: [
+            { DeleteRequest: { Key: { notificationId: '1' } } },
+            { DeleteRequest: { Key: { notificationId: '2' } } },
+          ],
+        },
+      });
+    });
+
+    it('should split into multiple batchWrite calls when > 25 notifications', async () => {
+      const notifications = Array.from({ length: 30 }, (_, i) => ({
+        notificationId: String(i),
+        userEmail: 'user1@example.com',
+        message: 'msg',
+        alertTime: '2024-01-15T10:30:00.000Z' as TDateISO,
+        sent: false,
+        grantId: i,
+      }));
+      mockQuery.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: notifications }) });
+      mockBatchWrite.mockReturnValue({ promise: vi.fn().mockResolvedValue({}) });
+
+      await notificationService.deleteNotificationsByUserEmail('user1@example.com');
+
+      expect(mockBatchWrite).toHaveBeenCalledTimes(2);
+      // first call has 25 items, second has 5
+      const firstCall = mockBatchWrite.mock.calls[0][0];
+      const secondCall = mockBatchWrite.mock.calls[1][0];
+      expect(firstCall.RequestItems['BCANNotifications']).toHaveLength(25);
+      expect(secondCall.RequestItems['BCANNotifications']).toHaveLength(5);
+    });
+
+    it('should throw when batchWrite fails', async () => {
+      const notifications = [mockNotification_id1_user1];
+      mockQuery.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: notifications }) });
+      mockBatchWrite.mockReturnValue({ promise: vi.fn().mockRejectedValue(new Error('DynamoDB error')) });
+
+      await expect(notificationService.deleteNotificationsByUserEmail('user1@example.com'))
+        .rejects.toThrow();
     });
   });
 });

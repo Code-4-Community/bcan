@@ -15,6 +15,7 @@ import { setActiveUsers, updateUserProfile } from "../../external/bcanSatchel/ac
 import { User } from "../../../../middle-layer/types/User";
 import { fetchGrants } from "../grants/filter-bar/processGrantData";
 import { InputField } from "../../sign-up";
+import { fetchNotifications } from "../notifications/processNotificationData";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -109,6 +110,7 @@ function Settings() {
       updateUserProfile(updatedUser);
       setPersonalInfo(editForm);
       await fetchGrants();
+      await fetchNotifications();
 
       setIsEditingPersonalInfo(false);
       setPersonalInfoError(null);

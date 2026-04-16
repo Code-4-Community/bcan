@@ -103,7 +103,7 @@ export class NotificationService {
       }
 
       this.logger.log(`Retrieved ${data.Items.length} notifications for user ${email}`);
-      console.log("Notifications retrieved: ", data.Items.map(item => item.message));
+      this.logger.debug("Notifications retrieved: ", data.Items.map(item => item.message));
       return data.Items as Notification[];
     } catch (error) {
       this.logger.error(`Error retrieving notifications for user : ${email}`, error as string);
@@ -226,18 +226,25 @@ export class NotificationService {
     this.logger.log(`Fetching notifications for grantId: ${grantId}`);
     const tableName = process.env.DYNAMODB_NOTIFICATION_TABLE_NAME || 'TABLE_FAILURE';
 
-    const params = {
-      TableName: tableName,
-      FilterExpression: 'grantId = :grantId',
-      ExpressionAttributeValues: {
-        ':grantId': grantId,
-      },
-    };
+    const results: Notification[] = [];
+    let lastEvaluatedKey: AWS.DynamoDB.DocumentClient.Key | undefined = undefined;
 
     try {
-      const data = await this.dynamoDb.scan(params).promise();
-      this.logger.log(`Found ${data.Items?.length ?? 0} notifications for grantId: ${grantId}`);
-      return (data.Items || []) as Notification[];
+      do {
+        const params: AWS.DynamoDB.DocumentClient.ScanInput = {
+          TableName: tableName,
+          FilterExpression: 'grantId = :grantId',
+          ExpressionAttributeValues: { ':grantId': grantId },
+          ...(lastEvaluatedKey && { ExclusiveStartKey: lastEvaluatedKey }),
+        };
+
+        const data = await this.dynamoDb.scan(params).promise();
+        results.push(...((data.Items || []) as Notification[]));
+        lastEvaluatedKey = data.LastEvaluatedKey;
+      } while (lastEvaluatedKey);
+
+      this.logger.log(`Found ${results.length} notifications for grantId: ${grantId}`);
+      return results;
     } catch (error) {
       this.logger.error(`Failed to retrieve notifications for grantId: ${grantId}`, error);
       throw new InternalServerErrorException('Failed to retrieve notifications by grant');
@@ -268,6 +275,28 @@ export class NotificationService {
     }
 
     this.logger.log(`Updated ${notifications.length} notifications for grantId: ${grantId}`);
+  }
+
+  // Deletes all notifications for a given user email
+  async deleteNotificationsByUserEmail(email: string): Promise<void> {
+    const notifications = await this.getNotificationByUserEmail(email);
+    if (notifications.length === 0) {
+      this.logger.log(`No notifications to delete for user ${email}`);
+      return;
+    }
+
+    const tableName = process.env.DYNAMODB_NOTIFICATION_TABLE_NAME || 'TABLE_FAILURE';
+    for (let i = 0; i < notifications.length; i += 25) {
+      const chunk = notifications.slice(i, i + 25);
+      const deleteRequests = chunk.map(n => ({
+        DeleteRequest: { Key: { notificationId: n.notificationId } },
+      }));
+      await this.dynamoDb.batchWrite({
+        RequestItems: { [tableName]: deleteRequests },
+      }).promise();
+    }
+
+    this.logger.log(`Deleted ${notifications.length} notifications for user ${email}`);
   }
 
   /**

@@ -7,7 +7,12 @@ const store = getAppStore();
 
 export const fetchNotifications = async () => {
   try {
-    const response = await api(`/notifications/user/${store.user?.email}/current`);
+    const userEmail = store.user?.email;  
+    if (!userEmail) {  
+      return;  
+    }  
+
+    const response = await api(`/notifications/user/${userEmail}/current`);
     if (!response.ok) {
       throw new Error(`HTTP Error, Status: ${response.status}`);
     }
