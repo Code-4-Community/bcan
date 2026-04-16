@@ -117,7 +117,9 @@ describe('AuthService', () => {
       ],
     }).compile();
 
-    service = module.get<AuthService>(AuthService);
+    Object.assign(module.get<AuthService>(AuthService), {
+      grantService: { updateGrantsByPOC: vi.fn().mockResolvedValue(undefined) },
+    });
   });
 
   // ── register ────────────────────────────────────────────────────────────────
