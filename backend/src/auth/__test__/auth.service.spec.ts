@@ -117,6 +117,9 @@ describe('AuthService', () => {
       ],
     }).compile();
 
+    service = module.get<AuthService>(AuthService);
+    // Vitest uses esbuild which doesn't emit decorator metadata, so NestJS can't
+    // resolve constructor injection. Patch directly like the grant service spec does.
     Object.assign(module.get<AuthService>(AuthService), {
       grantService: { updateGrantsByPOC: vi.fn().mockResolvedValue(undefined) },
     });
