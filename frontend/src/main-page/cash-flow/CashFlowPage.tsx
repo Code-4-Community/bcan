@@ -27,12 +27,12 @@ const CashFlowPage = observer(() => {
   const { costs, revenues, cashflowSettings } = ProcessCashflowData();
 
   const { chartData, kpis } = buildCashflowProjection(revenues, costs, {
-    startingCash: cashflowSettings?.startingCash ?? 0,
-    salaryIncrease: cashflowSettings?.salaryIncrease ?? 0,
-    benefitsIncrease: cashflowSettings?.benefitsIncrease ?? 0,
-    startDate:
-      cashflowSettings?.startDate ??
-      (new Date().toISOString().split("T")[0] as TDateISO),
+    startingCash: Number.isNaN(cashflowSettings?.startingCash) ? 0 : cashflowSettings?.startingCash ?? 0,
+    salaryIncrease: Number.isNaN(cashflowSettings?.salaryIncrease) ? 0 : cashflowSettings?.salaryIncrease ?? 0,
+    benefitsIncrease: Number.isNaN(cashflowSettings?.benefitsIncrease) ? 0 : cashflowSettings?.benefitsIncrease ?? 0,
+    startDate: cashflowSettings?.startDate === undefined
+      ? (new Date().toISOString().split("T")[0] as TDateISO)
+      : cashflowSettings?.startDate ?? (new Date().toISOString().split("T")[0] as TDateISO),
   });
 
   return (
@@ -41,7 +41,7 @@ const CashFlowPage = observer(() => {
         {/* Row 1 */}
         <CashflowKPICard
           text="Current Cash"
-          value={formatMoney(cashflowSettings?.startingCash ?? 0)}
+          value={Number.isNaN(cashflowSettings?.startingCash) ? "N/A" : formatMoney(cashflowSettings?.startingCash ?? 0)}
           logo={faDollarSign}
           className="text-blue"
         />
