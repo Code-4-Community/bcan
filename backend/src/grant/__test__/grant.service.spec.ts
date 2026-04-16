@@ -169,11 +169,13 @@ describe("GrantService", () => {
     }).compile();
 
     grantService = Object.assign(module.get<GrantService>(GrantService), {
-      notificationService: { 
-        createNotification: vi.fn(), 
-        updateNotification: vi.fn(),
+      notificationService: {
+        createNotification: vi.fn().mockResolvedValue(undefined),
+        updateNotification: vi.fn().mockResolvedValue(undefined),
         getNotificationByUserEmail: vi.fn().mockResolvedValue([]),
-        deleteNotification: vi.fn().mockResolvedValue('deleted') 
+        getNotificationsByGrantId: vi.fn().mockResolvedValue([]),
+        updateNotificationsEmailAndOrgByGrantId: vi.fn().mockResolvedValue(undefined),
+        deleteNotification: vi.fn().mockResolvedValue('deleted'),
       }
     });
 
@@ -396,6 +398,10 @@ describe("GrantService", () => {
         status: mockUpdatedGrant.status,
         estimated_completion_time: mockUpdatedGrant.estimated_completion_time,
       };
+
+      mockGet.mockReturnValueOnce({
+        promise: vi.fn().mockResolvedValue({ Item: mockGrants[1] }),
+      });
 
       mockUpdate.mockReturnValue({
         promise: vi.fn().mockResolvedValue({ Attributes: updatedAttributes }),
@@ -725,7 +731,7 @@ describe('Notification helpers', () => {
 
   describe('getNotificationTimes', () => {
     it('should return ISO strings for 14, 7, and 3 days before deadline', () => {
-      const deadline = '2025-12-25T00:00:00.000Z';
+      const deadline = '2027-12-25T00:00:00.000Z';
       const result = (grantServiceWithMockNotif as any).getNotificationTimes(deadline);
 
       expect(result).toHaveLength(3);
@@ -752,8 +758,8 @@ describe('Notification helpers', () => {
         status: Status.Active,
         amount: 10000,
         grant_start_date: '2025-01-01',
-        application_deadline: '2025-12-31T00:00:00.000Z',
-        report_deadlines: ['2026-01-31T00:00:00.000Z'],
+        application_deadline: '2027-12-31T00:00:00.000Z',
+        report_deadlines: ['2027-01-31T00:00:00.000Z'],
         description: 'Helping local communities',
         timeline: 12,
         estimated_completion_time: 365,
@@ -817,8 +823,8 @@ describe('Notification helpers', () => {
         status: Status.Pending,
         amount: 5000,
         grant_start_date: '2025-01-01',
-        application_deadline: '2025-06-30T00:00:00.000Z',
-        report_deadlines: ['2025-07-15T00:00:00.000Z'],
+        application_deadline: '2027-06-30T00:00:00.000Z',
+        report_deadlines: ['2027-07-15T00:00:00.000Z'],
         description: 'Test desc',
         timeline: 1,
         estimated_completion_time: 100,

@@ -196,22 +196,36 @@ describe('AuthService', () => {
       const original = process.env.COGNITO_USER_POOL_ID;
       delete process.env.COGNITO_USER_POOL_ID;
 
-      const module = await Test.createTestingModule({ providers: [AuthService] }).compile();
-      const svc = module.get<AuthService>(AuthService);
-
-      await expect(svc.register('test@test.com', 'Pass123!', 'John', 'Doe')).rejects.toThrow('Server configuration error');
-      process.env.COGNITO_USER_POOL_ID = original;
+      try {
+        const module = await Test.createTestingModule({
+          providers: [
+            AuthService,
+            { provide: GrantService, useValue: { updateGrantsByPOC: vi.fn() } },
+          ],
+        }).compile();
+        const svc = module.get<AuthService>(AuthService);
+        await expect(svc.register('test@test.com', 'Pass123!', 'John', 'Doe')).rejects.toThrow('Server configuration error');
+      } finally {
+        process.env.COGNITO_USER_POOL_ID = original;
+      }
     });
 
     it('should throw InternalServerErrorException when DYNAMODB_USER_TABLE_NAME is missing', async () => {
       const original = process.env.DYNAMODB_USER_TABLE_NAME;
       delete process.env.DYNAMODB_USER_TABLE_NAME;
 
-      const module = await Test.createTestingModule({ providers: [AuthService] }).compile();
-      const svc = module.get<AuthService>(AuthService);
-
-      await expect(svc.register('test@test.com', 'Pass123!', 'John', 'Doe')).rejects.toThrow('Server configuration error');
-      process.env.DYNAMODB_USER_TABLE_NAME = original;
+      try {
+        const module = await Test.createTestingModule({
+          providers: [
+            AuthService,
+            { provide: GrantService, useValue: { updateGrantsByPOC: vi.fn() } },
+          ],
+        }).compile();
+        const svc = module.get<AuthService>(AuthService);
+        await expect(svc.register('test@test.com', 'Pass123!', 'John', 'Doe')).rejects.toThrow('Server configuration error');
+      } finally {
+        process.env.DYNAMODB_USER_TABLE_NAME = original;
+      }
     });
 
     it('should rollback Cognito user if adminSetUserPassword fails', async () => {
