@@ -109,10 +109,8 @@ export function buildCashflowProjection(
   // ---- Distribute revenues into monthly buckets ----
   for (const rev of revenues) {
     for (const installment of rev.installments) {
-      console.log(`Processing revenue installment of $${installment.amount} on ${installment.date}`);
       const key = toMonthKey(installment.date);
       if (revenueBuckets.has(key) && new Date(installment.date) >= new Date(settings.startDate)) {
-        console.log(`Adding revenue installment of $${installment.amount} to month ${key}`);
         revenueBuckets.set(key, revenueBuckets.get(key)! + installment.amount);
       }
     }

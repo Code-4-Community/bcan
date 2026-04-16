@@ -39,9 +39,11 @@ const generateMonthlyTicks = (data: ChartDataPoint[]) => {
     current.setMonth(current.getMonth() + 1);
   }
 
-  ticks.filter((_, i) => i % 4 === 0)
+  const filteredTicks = ticks.filter((_, i) => i % 6 === 0)
 
-  return ticks;
+  console.log("Generated ticks:", filteredTicks.map(formatMonthYear));
+
+  return filteredTicks;
 };
 
 const CashProjectionChart = observer(({ data }: ProjectionProps) => {
@@ -102,7 +104,7 @@ const normalizedData = data.map(d => ({
             axisLine={true}
             tickLine={true}
             tickFormatter={formatMonthYear}
-            interval="equidistantPreserveStart"
+            interval="preserveStart"
             tick={{ fontSize: 12, dy: 10, textAnchor: "middle" }}
             className="axis"
           />
