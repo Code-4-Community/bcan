@@ -42,7 +42,7 @@ const UserMenu = ({ user }: UserMenuProps) => {
         boldSubtitle={user.email}
         warningMessage="If you delete this user, they will be permanently removed from the system."
       />
-      <div className="flex items-center xl:justify-end gap-2">
+      <div className="flex items-center xl:justify-end gap-2 xl:mr-2">
         <div className="relative">
           <button
             type="button"
