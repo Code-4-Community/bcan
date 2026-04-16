@@ -31,7 +31,7 @@ const formatInstallmentDate = (dateValue: Date | string) => {
 };
 
 const CashSourceList = observer(({ type, lineItems }: SourceProps) => {
-  const { filterRevenueCategory, filterCostCategory, cashflowSettings } = getAppStore();
+  const { filterRevenueCategory, filterCostCategory } = getAppStore();
   const activeFilter = type === "Revenue" ? filterRevenueCategory : filterCostCategory;
 
   const filteredItems = activeFilter.length > 0
