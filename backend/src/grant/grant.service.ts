@@ -365,12 +365,12 @@ export class GrantService {
                       if (grantData.application_deadline) {
                           const alertTimes = this.getNotificationTimes(grantData.application_deadline);
                           for (const alertTime of alertTimes) {
-                              const message = `Application due in ${this.daysUntil(alertTime, grantData.application_deadline)} days for ${grantData.organization}`;
+                              const message = `Application due in ${alertTime.days} days for ${grantData.organization}`;
                               await this.notificationService.createNotification({
                                   notificationId: `${grantData.grantId}-app-${alertTime}`,
                                   userEmail: email,
                                   message,
-                                  alertTime: alertTime as TDateISO,
+                                  alertTime: alertTime.alertTime as TDateISO,
                                   sent: false,
                                   grantId: grantData.grantId,
                               });
@@ -392,12 +392,12 @@ export class GrantService {
                           for (const reportDeadline of grantData.report_deadlines) {
                               const alertTimes = this.getNotificationTimes(reportDeadline);
                               for (const alertTime of alertTimes) {
-                                  const message = `Report due in ${this.daysUntil(alertTime, reportDeadline)} days for ${grantData.organization}`;
+                                  const message = `Report due in ${alertTime.days} days for ${grantData.organization}`;
                                   await this.notificationService.createNotification({
                                       notificationId: `${grantData.grantId}-report-${alertTime}`,
                                       userEmail: email,
                                       message,
-                                      alertTime: alertTime as TDateISO,
+                                      alertTime: alertTime.alertTime as TDateISO,
                                       sent: false,
                                       grantId: grantData.grantId,
                                   });
@@ -613,8 +613,7 @@ export class GrantService {
     });
 
     return allNotificationTimes
-      .filter(d => d > new Date()) // only return future notification times
-      .map(d => d.toISOString());
+      .filter(d => new Date(d.alertTime) > new Date()); // only return future notification times
   }
 
   // Creates notifications for a grant's application and report deadlines
