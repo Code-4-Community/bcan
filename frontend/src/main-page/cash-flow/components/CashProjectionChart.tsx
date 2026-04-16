@@ -15,18 +15,54 @@ type ProjectionProps = {
   data: ChartDataPoint[];
 };
 
-const formatMonthYear = (timestamp: number): string => {
-  const d = new Date(timestamp);
-  return `${d.getMonth() + 1}/${d.getFullYear()}`;
+const formatMonthYear = (ts: number) =>
+  new Date(ts).toLocaleDateString("en-US", {
+    month: "short",
+    year: "2-digit",
+  });
+
+const generateMonthlyTicks = (data: ChartDataPoint[]) => {
+  if (!data.length) return [];
+
+  const sorted = [...data].sort((a, b) => a.month - b.month);
+
+  const start = new Date(sorted[0].month);
+  const end = new Date(sorted[sorted.length - 1].month);
+
+  // normalize to first of month
+  const current = new Date(start.getFullYear(), start.getMonth(), 1);
+
+  const ticks: number[] = [];
+
+  while (current <= end) {
+    ticks.push(current.getTime());
+    current.setMonth(current.getMonth() + 1);
+  }
+
+  ticks.filter((_, i) => i % 4 === 0)
+
+  return ticks;
 };
 
 const CashProjectionChart = observer(({ data }: ProjectionProps) => {
+
+  const normalizeToMonthStart = (ts: number) => {
+  const d = new Date(ts);
+  return new Date(d.getFullYear(), d.getMonth(), 1).getTime();
+};
+
+const normalizedData = data.map(d => ({
+  ...d,
+  month: normalizeToMonthStart(d.month),
+}));
+
+
   return (
     <div className="h-full">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
-          data={data}
-          margin={{ top: 20, right: 30, left: 30, bottom: 20 }}
+          data={normalizedData}
+          margin={{ top: 20, right: 60, left: 30, bottom: 20 }}
         >
           <CartesianGrid
             vertical={false}
@@ -60,18 +96,18 @@ const CashProjectionChart = observer(({ data }: ProjectionProps) => {
           <XAxis
             dataKey="month"
             type="number"
-            domain={["dataMin", "dataMax"]}
             scale="time"
-            dy={10}
-            style={{ fontSize: "var(--font-size-sm)" }}
+            domain={["dataMin", "dataMax"]}
+            ticks={generateMonthlyTicks(data)}
+            axisLine={true}
+            tickLine={true}
             tickFormatter={formatMonthYear}
-            axisLine={false}
-            tickLine={false}
+            tick={{ fontSize: 12, dy: 10, textAnchor: "middle" }}
+            className="axis"
           />
-
           <YAxis
-            axisLine={false}
-            tickLine={false}
+            axisLine={true}
+            tickLine={true}
             dx={-10}
             className="axis"
             tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
@@ -86,7 +122,9 @@ const CashProjectionChart = observer(({ data }: ProjectionProps) => {
               textAlign: "left",
             }}
             labelFormatter={formatMonthYear}
-            formatter={(value: number) => `$${value.toLocaleString("en-US", { minimumFractionDigits: 2 })}`}
+            formatter={(value: number) =>
+              `$${value.toLocaleString("en-US", { minimumFractionDigits: 2 })}`
+            }
           />
         </LineChart>
       </ResponsiveContainer>
