@@ -30,7 +30,7 @@ const CashFlowPage = observer(() => {
     startingCash: Number.isNaN(cashflowSettings?.startingCash) ? 0 : cashflowSettings?.startingCash ?? 0,
     salaryIncrease: Number.isNaN(cashflowSettings?.salaryIncrease) ? 0 : cashflowSettings?.salaryIncrease ?? 0,
     benefitsIncrease: Number.isNaN(cashflowSettings?.benefitsIncrease) ? 0 : cashflowSettings?.benefitsIncrease ?? 0,
-    startDate: cashflowSettings?.startDate === undefined
+    startDate: cashflowSettings?.startDate === "" as TDateISO
       ? (new Date().toISOString().split("T")[0] as TDateISO)
       : cashflowSettings?.startDate ?? (new Date().toISOString().split("T")[0] as TDateISO),
   });
