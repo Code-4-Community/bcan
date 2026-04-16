@@ -753,20 +753,31 @@ export class GrantService {
         throw new InternalServerErrorException('Server configuration error: DynamoDB table name not configured');
     }
 
-    const data = await this.dynamoDb.scan({ TableName: tableName }).promise();
-    const grants = (data.Items as Grant[]) || [];
+    const normalizedCurrentEmail = currentEmail.toLowerCase();
+    const grants: Grant[] = [];
+    let lastEvaluatedKey: AWS.DynamoDB.DocumentClient.Key | undefined;
+
+    do {
+      const data = await this.dynamoDb.scan({
+        TableName: tableName,
+        ExclusiveStartKey: lastEvaluatedKey,
+      }).promise();
+
+      grants.push(...(((data.Items as Grant[]) || [])));
+      lastEvaluatedKey = data.LastEvaluatedKey;
+    } while (lastEvaluatedKey);
 
     const affectedGrants = grants.filter(
-        (g) => g.bcan_poc?.POC_email?.toLowerCase() === currentEmail.toLowerCase()
+      (g) => g.bcan_poc?.POC_email?.toLowerCase() === normalizedCurrentEmail
     );
 
     this.logger.log(`Found ${affectedGrants.length} grants to update`);
 
     for (const grant of affectedGrants) {
-        await this.updateGrant({
+      await this.updateGrant({
         ...grant,
         bcan_poc: { POC_name: newName, POC_email: newEmail },
-        });
+      });
     }
 
     this.logger.log(`Successfully updated ${affectedGrants.length} grants for new POC info`);
