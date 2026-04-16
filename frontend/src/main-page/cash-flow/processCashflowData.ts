@@ -8,6 +8,7 @@ import { Grant } from "../../../../middle-layer/types/Grant.ts";
 import { RevenueType } from "../../../../middle-layer/types/RevenueType.ts";
 import { Status } from "../../../../middle-layer/types/Status.ts";
 import { api } from "../../api.ts";
+import { Frequency } from "../../../../middle-layer/types/Frequency.ts";
 
 // This has not been tested yet but the basic structure when implemented should be the same
 // Mirrored format for processGrantData.ts
@@ -80,6 +81,22 @@ export const fetchCashflowSettings = async () => {
   }
 };
 
+export const isInactive = (item: CashflowRevenue | CashflowCost) => {
+  const {
+        cashflowSettings
+  } = getAppStore();
+    const refDate = cashflowSettings?.startDate ? new Date(cashflowSettings.startDate) : new Date();
+    if ('frequency' in item && 'date' in item && item.frequency === Frequency.OneTime) {
+      const itemDate = new Date(item.date);
+      return itemDate < refDate;
+    }
+    if ('installments' in item) {
+      const futureInstallments = item.installments.filter(installment => new Date(installment.date) >= refDate);
+      return futureInstallments.length === 0;
+    }
+    return false;
+  };
+
 
 // could contain callbacks for sorting and filtering line items
 // stores state for list of costs/revenues
@@ -105,8 +122,12 @@ export const ProcessCashflowData = () => {
     if (!cashflowSettings) fetchCashflowSettings();
   }, [cashflowSettings]);
 
-  const sortedCosts = costSources.slice().sort((a, b) => a.name.localeCompare(b.name));
-  const sortedRevenues = revenueSources.slice().sort((a, b) => a.name.localeCompare(b.name));
+  const sortFn = (a: CashflowCost | CashflowRevenue, b: CashflowCost | CashflowRevenue) =>
+  (isInactive(a) === isInactive(b) ? 0 : isInactive(a) ? 1 : -1) ||
+  a.name.localeCompare(b.name);
+
+  const sortedCosts = costSources.slice().sort(sortFn);
+  const sortedRevenues = revenueSources.slice().sort(sortFn);
 
   return { costs: sortedCosts, revenues: sortedRevenues, cashflowSettings };
 };

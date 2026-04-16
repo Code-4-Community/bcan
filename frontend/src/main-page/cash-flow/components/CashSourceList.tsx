@@ -12,6 +12,7 @@ import { formatDateByFrequency, frequencyLabels } from "../../../../../middle-la
 import { getAppStore } from "../../../external/bcanSatchel/store";
 import { RevenueType } from "../../../../../middle-layer/types/RevenueType";
 import { CostType } from "../../../../../middle-layer/types/CostType";
+import { isInactive } from "../processCashflowData";
 
 type SourceProps = {
   type: "Revenue" | "Cost";
@@ -30,7 +31,7 @@ const formatInstallmentDate = (dateValue: Date | string) => {
 };
 
 const CashSourceList = observer(({ type, lineItems }: SourceProps) => {
-  const { filterRevenueCategory, filterCostCategory } = getAppStore();
+  const { filterRevenueCategory, filterCostCategory, cashflowSettings } = getAppStore();
   const activeFilter = type === "Revenue" ? filterRevenueCategory : filterCostCategory;
 
   const filteredItems = activeFilter.length > 0
@@ -102,6 +103,7 @@ const CashSourceList = observer(({ type, lineItems }: SourceProps) => {
                     }
                   }
                 }}
+                inactive={isInactive(item)}
               >
                 {(onClose) =>
                   type === "Cost" ? (

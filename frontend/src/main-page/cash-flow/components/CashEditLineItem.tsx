@@ -10,6 +10,7 @@ type CashEditLineItemProps = {
   onRemove: () => Promise<void>;
   isReadOnly: boolean;
   onReadOnlyAction?: () => void;
+  inactive?: boolean;
 };
 
 export default function CashEditLineItem({
@@ -19,6 +20,7 @@ export default function CashEditLineItem({
   onRemove,
   isReadOnly,
   onReadOnlyAction,
+  inactive = false,
 }: CashEditLineItemProps) {
   const [editing, setEditing] = useState<boolean>(false);
 
@@ -34,7 +36,7 @@ export default function CashEditLineItem({
   };
 
   return (
-    <div className="rounded border border-grey-500 p-4">
+    <div className={`rounded border border-grey-500 p-4 ${inactive ? "bg-grey-150 opacity-65" : ""}`}>
       {!editing && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
           <div className="flex flex-col text-start">
