@@ -102,6 +102,7 @@ const normalizedData = data.map(d => ({
             axisLine={true}
             tickLine={true}
             tickFormatter={formatMonthYear}
+            interval="equidistantPreserveStart"
             tick={{ fontSize: 12, dy: 10, textAnchor: "middle" }}
             className="axis"
           />
