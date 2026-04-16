@@ -606,12 +606,14 @@ describe('CostService', () => {
       ).rejects.toThrow('Cost with name Food not found');
     });
 
-    it('throws ConflictException when rename target already exists', async () => {
+    // --- Updated: was mocking ConditionalCheckFailedException directly which is wrong for transactWrite ---
+    it('throws ConflictException when rename target already exists (Put condition fails)', async () => {
       mockGetPromise.mockResolvedValue({
         Item: { name: 'Food', amount: 200, type: CostType.MealsFood },
       });
       mockTransactWritePromise.mockRejectedValue({
-        code: 'ConditionalCheckFailedException',
+        code: 'TransactionCanceledException',
+        CancellationReasons: [{ Code: 'ConditionalCheckFailed' }, { Code: 'None' }],
       });
 
       await expect(
@@ -632,6 +634,36 @@ describe('CostService', () => {
           date: '2026-03-22' as TDateISO,
         }),
       ).rejects.toThrow('Cost with name Meals already exists');
+    });
+
+    // --- New: covers the Delete condition failing mid-transaction ---
+    it('throws NotFoundException when rename source disappears mid-transaction (Delete condition fails)', async () => {
+      mockGetPromise.mockResolvedValue({
+        Item: { name: 'Food', amount: 200, type: CostType.MealsFood },
+      });
+      mockTransactWritePromise.mockRejectedValue({
+        code: 'TransactionCanceledException',
+        CancellationReasons: [{ Code: 'None' }, { Code: 'ConditionalCheckFailed' }],
+      });
+
+      await expect(
+        service.updateCost('Food', {
+          name: 'Meals',
+          amount: 300,
+          type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
+          date: '2026-03-22' as TDateISO,
+        }),
+      ).rejects.toThrow(NotFoundException);
+      await expect(
+        service.updateCost('Food', {
+          name: 'Meals',
+          amount: 300,
+          type: CostType.MealsFood,
+          frequency: Frequency.Yearly,
+          date: '2026-03-22' as TDateISO,
+        }),
+      ).rejects.toThrow('Cost with name Food not found');
     });
 
     it('throws InternalServerErrorException on rename transaction error', async () => {

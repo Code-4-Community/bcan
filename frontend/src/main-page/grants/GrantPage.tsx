@@ -33,6 +33,12 @@ function GrantPage() {
   grants[0] ??
   null;
 
+  const mainContainer = document.getElementsByClassName('grant-container');
+
+  useEffect(() => {
+    curGrant && mainContainer[0].scrollTo(0, 0);
+  }, [curGrant]);
+
   const handleGrantCreated = (grantId: number) => {
     setCurId(grantId);
 
@@ -110,7 +116,7 @@ function GrantPage() {
             />
           ))}
         </div>
-        <div className="flex-1 overflow-y-auto rounded-md">
+        <div className="grant-container flex-1 overflow-y-auto rounded-md">
           <GrantItem grant={curGrant} />
         </div>
       </div>) : (<div className="flex w-full h-full justify-center mt-24 text-gray-500 text-2xl">

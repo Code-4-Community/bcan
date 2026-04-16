@@ -7,6 +7,7 @@ import {
   isPasswordValid,
 } from "../../sign-up";
 import ActionConfirmation from "../../components/ActionConfirmation";
+import Button from "../../components/Button";
 
 export type ChangePasswordFormValues = {
   currentPassword: string;
@@ -140,15 +141,7 @@ export default function ChangePasswordModal({
               {error ?? "Your passwords do not match."}
             </div>
           )}
-
-          <button
-            type="button"
-            onClick={requestSave}
-            disabled={!canSave}
-            className="w-full rounded-md py-2.5 text-base font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-50 bg-primary-900 enabled:hover:opacity-90"
-          >
-            Save
-          </button>
+          <Button text="Save" onClick={requestSave} disabled={!canSave} className="bg-primary-900 text-white w-full" />
         </div>
       </div>
     </div>

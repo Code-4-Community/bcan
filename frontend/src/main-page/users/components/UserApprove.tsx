@@ -14,7 +14,7 @@ const UserApprove = ({ user }: UserApproveProps) => {
   const [isDenyModalOpen, setIsDenyModalOpen] = useState(false);
 
   return (
-    <div className="flex gap-3 w-full">
+    <div className="flex gap-3 w-full xl:justify-center">
       <ActionConfirmation
         isOpen={isApproveModalOpen}
         onCloseDelete={() => setIsApproveModalOpen(false)}
