@@ -9,6 +9,7 @@ import { RevenueType } from "../../../../middle-layer/types/RevenueType.ts";
 import { Status } from "../../../../middle-layer/types/Status.ts";
 import { api } from "../../api.ts";
 import { Frequency } from "../../../../middle-layer/types/Frequency.ts";
+import { TDateISO } from "../../../../backend/src/utils/date.ts";
 
 // This has not been tested yet but the basic structure when implemented should be the same
 // Mirrored format for processGrantData.ts
@@ -82,20 +83,27 @@ export const fetchCashflowSettings = async () => {
 };
 
 export const isInactive = (item: CashflowRevenue | CashflowCost) => {
-  const {
-        cashflowSettings
-  } = getAppStore();
-    const refDate = cashflowSettings?.startDate ? new Date(cashflowSettings.startDate) : new Date();
-    if ('frequency' in item && 'date' in item && item.frequency === Frequency.OneTime) {
-      const itemDate = new Date(item.date);
-      return itemDate < refDate;
-    }
-    if ('installments' in item) {
-      const futureInstallments = item.installments.filter(installment => new Date(installment.date) >= refDate);
-      return futureInstallments.length === 0;
-    }
-    return false;
-  };
+  const { cashflowSettings } = getAppStore();
+  const refDate = cashflowSettings?.startDate
+    ? new Date(cashflowSettings.startDate)
+    : new Date();
+  refDate.toISOString().split("T")[0] as TDateISO;
+
+  if ('frequency' in item && 'date' in item && item.frequency === Frequency.OneTime) {
+    const itemDate = new Date(item.date);
+    itemDate.toISOString().split("T")[0] as TDateISO;
+    return itemDate < refDate;
+  }
+  if ('installments' in item) {
+    const futureInstallments = item.installments.filter(installment => {
+      const instDate = new Date(installment.date);
+      instDate.toISOString().split("T")[0] as TDateISO;
+      return instDate > refDate;
+    });
+    return futureInstallments.length === 0;
+  }
+  return false;
+};
 
 
 // could contain callbacks for sorting and filtering line items
