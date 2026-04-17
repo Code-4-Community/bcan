@@ -57,7 +57,7 @@ const CashSourceList = observer(({ type, lineItems }: SourceProps) => {
 
           return (
             <div key={item.name+index}>
-              <CashEditLineItem
+              <CashEditLineItem key={item.name+index}
                 cardText={
                   <div className="flex flex-col text-sm lg:text-base gap-1">
                     <div className="font-semibold">{item.type}</div>

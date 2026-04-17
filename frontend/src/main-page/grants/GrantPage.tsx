@@ -139,7 +139,7 @@ function GrantPage() {
           ))}
         </div>
         <div className="grant-container flex-1 overflow-y-auto rounded-md">
-          <GrantItem grant={curGrant} />
+          <GrantItem key={curGrant.grantId} grant={curGrant} />
         </div>
       </div>) : (<div className="flex w-full h-full justify-center mt-24 text-gray-500 text-2xl">
               No grants found.
