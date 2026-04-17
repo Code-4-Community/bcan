@@ -117,6 +117,8 @@ function Settings() {
       console.error("Error updating profile:", error);
       setPersonalInfoError("An unexpected error occurred. Please try again.");
     }
+
+    setIsSubmitting(false);
   };
 
   const handleRemoveProfilePic = async () => {
