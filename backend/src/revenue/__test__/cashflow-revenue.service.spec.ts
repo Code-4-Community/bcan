@@ -102,7 +102,12 @@ describe('RevenueService', () => {
 
       return resolved({});
     });
-    mockGet.mockReturnValue(resolved({}));
+    mockGet.mockImplementation((params) => {
+      if (params.Key.name === 'Test Revenue') {
+        return resolved({ Item: mockRevenue });
+      }
+      return resolved({}); 
+    });
     mockPut.mockReturnValue(resolved({}));
     mockDelete.mockReturnValue(resolved({}));
 
@@ -418,7 +423,7 @@ describe('RevenueService', () => {
       mockPut.mockReturnValue(resolved({}));
       mockDelete.mockReturnValue(rejected(awsError('InternalServerError')));
       await expect(
-        service.updateRevenue('Test Revenue', { ...mockRevenue, name: 'New Name 3' })
+        service.updateRevenue('Test Revenue', { ...mockRevenue})
       ).rejects.toThrow(InternalServerErrorException);
     });
 
