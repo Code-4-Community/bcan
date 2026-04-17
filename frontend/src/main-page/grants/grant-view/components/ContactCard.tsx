@@ -2,16 +2,16 @@ import { getAppStore } from "../../../../external/bcanSatchel/store";
 import POC from "../../../../../../middle-layer/types/POC";
 import Avatar from "../../../../components/Avatar";
 import logo from "../../../../images/logo.svg";
+import { observer } from "mobx-react-lite";
 
 type ContactCardProps = {
   contact?: POC;
   type?: "BCAN" | "Granter";
 };
 
-const store = getAppStore();
+const ContactCard = observer(({ contact, type }: ContactCardProps) => {
+  const store = getAppStore();
 const activeUsers = store.activeUsers || [];
-
-export default function ContactCard({ contact, type }: ContactCardProps) {
   const contactPhoto =
     type === "BCAN"
       ? activeUsers.find((user) => user.email === contact?.POC_email)
@@ -52,4 +52,6 @@ export default function ContactCard({ contact, type }: ContactCardProps) {
       </div>
     </div>
   );
-}
+});
+
+export default ContactCard;
