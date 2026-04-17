@@ -37,20 +37,24 @@ const ActionConfirmation = ({
           labelClass: "text-green",
           textClass: "text-green-dark",
           cancelClass:
-            "text-grey-700 border-grey-500 hover:border-grey-600 hover:bg-grey-150 active:bg-grey-200",
+            "!border-2 border-grey-500 bg-white text-black hover:!border-grey-600 hover:bg-grey-150 active:bg-grey-200",
+          confirmClass:
+            "!border-0 bg-green text-white hover:!border-green hover:bg-green-dark active:bg-green-dark",
         }
       : variant === "update"
         ? {
-            panel: "border-t-4 border-grey-400 bg-grey-150",
-            stripe: "bg-grey-500",
-            box: "bg-grey-200",
+            panel: "border-t-4 border-yellow bg-yellow-light/50",
+            stripe: "bg-yellow",
+            box: "bg-yellow-light",
             Icon: FaInfoCircle,
-            iconClass: "text-grey-700",
+            iconClass: "text-yellow-dark",
             label: "Review",
-            labelClass: "text-grey-800",
-            textClass: "text-grey-800",
+            labelClass: "text-yellow-dark",
+            textClass: "text-yellow-dark",
             cancelClass:
-              "text-grey-700 border-grey-500 hover:border-grey-600 hover:bg-grey-200 active:bg-grey-300",
+              "!border-2 border-grey-500 bg-white text-black hover:!border-grey-600 hover:bg-grey-150 active:bg-grey-200",
+            confirmClass:
+              "!border-0 bg-yellow text-white hover:!border-yellow hover:bg-yellow-dark active:bg-yellow-dark",
           }
         : {
             panel: "border-t-4 border-red bg-red-lightest/40",
@@ -62,7 +66,9 @@ const ActionConfirmation = ({
             labelClass: "text-red",
             textClass: "text-red",
             cancelClass:
-              "text-red border-red hover:border-red hover:bg-red-light active:bg-red",
+              "!border-0 bg-red text-white hover:!border-red hover:bg-red-dark active:bg-red-dark",
+            confirmClass:
+              "!border-2 border-grey-500 bg-white text-black hover:!border-grey-600 hover:bg-grey-150 active:bg-grey-200",
           };
 
   const { Icon } = styles;
@@ -111,7 +117,7 @@ const ActionConfirmation = ({
                 onConfirmDelete();
                 onCloseDelete();
               }}
-              className="border-grey-500"
+              className={styles.confirmClass}
             />
           </div>
         </div>
