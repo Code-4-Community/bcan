@@ -41,7 +41,7 @@ const GrantNotification: React.FC<GrantNotificationProps> = ({
 
     return (
 
-        <div className="flex items-center gap-3 px-4 py-3 hover:bg-grey-100 transition-colors" role="listitem">
+        <div className="rounded-md flex items-center gap-3 px-4 py-3 hover:bg-grey-150 transition-colors" role="listitem">
             <div className="w-10 h-10 rounded-full overflow-hidden bg-grey-500 flex items-center justify-center flex-shrink-0">
                 {avatarUrl ? (
                     <img src={avatarUrl} alt={`${firstName} ${lastName}`} className="w-full h-full object-cover" />
@@ -51,7 +51,7 @@ const GrantNotification: React.FC<GrantNotificationProps> = ({
             </div>
 
             <div className="flex-1 min-w-0">
-                <div className="font-medium text-sm text-black truncate">{message}</div>
+                <div className="font-medium text-sm text-black">{message}</div>
                 <div className="text-xs text-grey-500 mt-0.5">{formatAlertTime(alertTime)}</div>
             </div>
 

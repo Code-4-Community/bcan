@@ -80,7 +80,7 @@ const NotificationPopup: React.FC<NotificationPopupProps> = observer(({
                 </div>
             </div>
 
-            <div className="max-h-80 overflow-y-auto mt-1.5 px-1 [scrollbar-width:none]">
+            <div className="max-h-80 overflow-y-auto my-1.5 px-1 [scrollbar-width:none]">
                 {liveNotifications && liveNotifications.length > 0 ? (
                     liveNotifications.map((n) => (
                         <GrantNotification 
