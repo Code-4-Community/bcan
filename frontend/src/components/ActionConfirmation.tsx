@@ -73,7 +73,7 @@ const ActionConfirmation = ({
       onClick={onCloseDelete}
     >
       <div
-        className={`rounded-md shadow-2xl p-8 max-w-xl w-full mx-4 transform transition-all duration-300 bg-white ${styles.panel}`}
+        className={`rounded-md shadow-2xl p-8 max-w-xl w-full mx-4 transform transition-all duration-300 !bg-white ${styles.panel}`}
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="text-2xl font-bold text-black text-center mb-2">{title}</h3>
