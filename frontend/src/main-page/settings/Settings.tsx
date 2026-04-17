@@ -87,8 +87,6 @@ function Settings() {
         }),
       });
 
-      setIsSubmitting(false);
-
       if (!response.ok) {
         const errorBody = await response.json().catch(() => ({}));
         const message =
