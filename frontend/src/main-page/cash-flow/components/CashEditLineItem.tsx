@@ -36,11 +36,11 @@ export default function CashEditLineItem({
   };
 
   return (
-    <div className={`rounded border border-grey-500 p-4 ${inactive ? "bg-grey-150 opacity-65" : ""}`}>
+    <div className={`rounded border border-grey-500 p-4 ${inactive && !editing ? "bg-grey-150 opacity-65" : ""}`}>
       {!editing && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">
           <div className="flex flex-col text-start">
-            <div className="text-lg lg:text-xl font-bold">
+            <div className="text-lg xl:text-xl font-bold">
               {sourceName}
             </div>
             {cardText}

@@ -84,7 +84,7 @@ const DateFilter: React.FC = observer(() => {
         onClick={() => setShowDropdown(!showDropdown)}
         logo={faChevronDown}
         logoPosition="right"
-        className="bg-white border-grey-500 inline-flex items-center justify-between text-sm lg:text-base"
+        className="bg-white border-grey-500 inline-flex items-center justify-between text-sm lg:text-base !min-w-60"
       />
       <div
         ref={ref}

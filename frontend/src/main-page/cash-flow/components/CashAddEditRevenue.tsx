@@ -382,7 +382,7 @@ export default function CashAddEditRevenue({
             {"Total: "}
             {formatMoney(totalAmount)}
           </div>
-          <div className="ml-auto flex flex-wrap gap-2">
+          <div className="ml-auto flex flex-row gap-2">
           <Button
             text="Cancel"
             onClick={onClose}
