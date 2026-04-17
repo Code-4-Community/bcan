@@ -371,7 +371,7 @@ export default function CashAddEditRevenue({
       />
       {!isEditing ? (
         <Button
-          text="Add Revenue Source"
+          text={isSubmitting ? "Adding..." : "Add Revenue Source"}
           onClick={handleSubmit}
           disabled={isSubmitting}
           className="bg-green hover:!border-green text-white mt-2 text-sm lg:text-base active:!bg-green active:!border-green w-full"

@@ -269,7 +269,7 @@ export default function CashAddEditCost({
       ) : null}
       {!costItem ? (
         <Button
-          text="Add Cost Item"
+          text={isSubmitting ? "Adding..." : "Add Cost Item"}
           onClick={handleSubmit}
           disabled={isSubmitting}
           className="bg-primary text-white mt-2 text-sm lg:text-base"
