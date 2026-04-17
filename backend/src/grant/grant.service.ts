@@ -641,4 +641,36 @@ export class GrantService {
     const diffMs = +new Date(deadline) - +new Date(alertTime);
     return Math.round(diffMs / (1000 * 60 * 60 * 24));
   }
+
+  // Updates the POC of grants after that POC changes their contact info
+  async updateGrantsByPOC(
+    currentEmail: string,
+    newEmail: string,
+    newName: string,
+  ): Promise<void> {
+    this.logger.log(`Updating grants where bcan_poc email is ${currentEmail}`);
+
+    const tableName = process.env.DYNAMODB_GRANT_TABLE_NAME || 'TABLE_FAILURE';
+    if (tableName === 'TABLE_FAILURE') {
+        throw new InternalServerErrorException('Server configuration error: DynamoDB table name not configured');
+    }
+
+    const data = await this.dynamoDb.scan({ TableName: tableName }).promise();
+    const grants = (data.Items as Grant[]) || [];
+
+    const affectedGrants = grants.filter(
+        (g) => g.bcan_poc?.POC_email?.toLowerCase() === currentEmail.toLowerCase()
+    );
+
+    this.logger.log(`Found ${affectedGrants.length} grants to update`);
+
+    for (const grant of affectedGrants) {
+        await this.updateGrant({
+        ...grant,
+        bcan_poc: { POC_name: newName, POC_email: newEmail },
+        });
+    }
+
+    this.logger.log(`Successfully updated ${affectedGrants.length} grants for new POC info`);
+  }
 }
