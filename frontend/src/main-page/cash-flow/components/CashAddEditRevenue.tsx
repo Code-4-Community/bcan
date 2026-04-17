@@ -366,7 +366,7 @@ export default function CashAddEditRevenue({
         logo={faPlus}
         logoPosition="left"
         className={isEditing
-          ? "bg-primary-900 text-white text-sm"
+          ? "bg-primary-900 text-white text-sm lg:w-fit lg:ml-auto mt-1"
           : "bg-primary-900 text-white w-fit ml-auto text-sm mt-2"}
       />
       {!isEditing ? (

@@ -213,7 +213,7 @@ const AddContactPopup = observer(
             <Button
               text="Cancel"
               onClick={setShowPopup}
-              className="text-black border-grey-500 text-sm"
+              className="text-black border-grey-500"
             />
 
             <Button
@@ -227,7 +227,7 @@ const AddContactPopup = observer(
                   selectedUser.email
                 )
               }
-              className="text-white bg-primary-900 text-sm"
+              className="text-white bg-primary-900"
             />
           </div>
         </div>
