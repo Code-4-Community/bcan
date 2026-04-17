@@ -530,7 +530,6 @@ describe("RevenueService", () => {
         }
         return resolved({});
       });
-      mockGet.mockReturnValue(resolved({ Item: mockRevenue }));
       mockPut.mockReturnValue(resolved({}));
       mockDelete.mockReturnValue(resolved({}));
 
@@ -567,7 +566,6 @@ describe("RevenueService", () => {
         }
         return resolved({});
       });
-      mockGet.mockReturnValue(resolved({ Item: mockRevenue }));
       mockPut.mockReturnValue(resolved({}));
       await service.updateRevenue("Test Revenue 2", {
         ...mockRevenue,
