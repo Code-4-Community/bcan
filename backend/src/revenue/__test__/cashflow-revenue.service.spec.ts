@@ -534,13 +534,13 @@ describe("RevenueService", () => {
       mockPut.mockReturnValue(resolved({}));
       mockDelete.mockReturnValue(resolved({}));
 
-      const renamed = { ...mockRevenue, name: "New Name 1" };
+      const renamed = { ...mockRevenue, name: "New Name 15" };
       const result = await service.updateRevenue("Test Revenue", renamed);
 
-      expect(result.name).toBe("New Name 1");
+      expect(result.name).toBe("New Name 15");
       expect(mockPut).toHaveBeenCalledWith(
         expect.objectContaining({
-          Item: expect.objectContaining({ name: "New Name 1" }),
+          Item: expect.objectContaining({ name: "New Name 15" }),
         }),
       );
       expect(mockDelete).toHaveBeenCalledWith(
@@ -571,7 +571,7 @@ describe("RevenueService", () => {
       mockPut.mockReturnValue(resolved({}));
       await service.updateRevenue("Test Revenue 2", {
         ...mockRevenue,
-        name: "Different Name",
+        name: "Different Name 52",
       });
       expect(mockGet).toHaveBeenCalledWith(
         expect.objectContaining({
