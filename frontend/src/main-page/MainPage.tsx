@@ -54,10 +54,10 @@ function MainPage() {
   const mainContainer = document.getElementsByClassName('main-container');
 
   useEffect(() => {
-    clearAllFilters();
     mainContainer[0].scrollTo(0, 0);
-    const { cashflowSettings } = getAppStore();
-    if (cashflowSettings) {
+    clearAllFilters();
+    const { cashflowSettings, user } = getAppStore();
+    if (user?.position === UserStatus.Admin && cashflowSettings) {
     saveCashflowSettings(cashflowSettings);
   }
   }, [location]);
