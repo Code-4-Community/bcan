@@ -5,9 +5,9 @@ import {
   PasswordField,
   PasswordRequirements,
   isPasswordValid,
-} from "../../sign-up";
-import ActionConfirmation from "../../components/ActionConfirmation";
-import Button from "../../components/Button";
+} from "../../../sign-up";
+import ActionConfirmation from "../../../components/ActionConfirmation";
+import Button from "../../../components/Button";
 
 export type ChangePasswordFormValues = {
   currentPassword: string;

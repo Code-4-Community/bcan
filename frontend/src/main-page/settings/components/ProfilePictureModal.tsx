@@ -2,20 +2,20 @@ import { useState, useCallback, useEffect } from "react";
 import Cropper, { Area } from "react-easy-crop";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import Button from "../../components/Button";
-import { getCroppedImg } from "./cropUtils";
+import Button from "../../../components/Button";
+import { getCroppedImg } from "../cropUtils";
 import {
   ALLOWED_PROFILE_PIC_MIME_TYPES,
   ALLOWED_PROFILE_PIC_EXTENSIONS,
   MAX_PROFILE_PIC_SIZE_BYTES,
   MAX_PROFILE_PIC_SIZE_MB,
-} from "./profilePictureConstants";
-import { api } from "../../api";
-import { getAppStore } from "../../external/bcanSatchel/store";
-import { updateUserProfile } from "../../external/bcanSatchel/actions";
-import { setActiveUsers } from "../../external/bcanSatchel/actions";
-import { User } from "../../../../middle-layer/types/User";
-import ActionConfirmation from "../../components/ActionConfirmation";
+} from "../profilePictureConstants";
+import { api } from "../../../api";
+import { getAppStore } from "../../../external/bcanSatchel/store";
+import { updateUserProfile } from "../../../external/bcanSatchel/actions";
+import { setActiveUsers } from "../../../external/bcanSatchel/actions";
+import { User } from "../../../../../middle-layer/types/User";
+import ActionConfirmation from "../../../components/ActionConfirmation";
 
 type ProfilePictureModalProps = {
   isOpen: boolean;

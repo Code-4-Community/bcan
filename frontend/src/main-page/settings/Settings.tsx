@@ -5,11 +5,11 @@ import InfoCard from "./components/InfoCard";
 import Avatar from "../../components/Avatar";
 import logo from "../../images/logo.svg";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
-import ProfilePictureModal from "./ProfilePictureModal";
+import ProfilePictureModal from "./components/ProfilePictureModal";
 import { ALLOWED_PROFILE_PIC_EXTENSIONS, MAX_PROFILE_PIC_SIZE_MB } from "./profilePictureConstants";
 import { removeProfilePic } from "../../external/bcanSatchel/actions";
 import {api} from "../../api"
-import ChangePasswordModal, { ChangePasswordFormValues } from "./ChangePasswordModal";
+import ChangePasswordModal, { ChangePasswordFormValues } from "./components/ChangePasswordModal";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { setActiveUsers, updateUserProfile } from "../../external/bcanSatchel/actions";
 import { User } from "../../../../middle-layer/types/User";
@@ -320,7 +320,6 @@ function Settings() {
       />
 
       <div className="flex gap-24 items-center mt-12">
-        // dumb change
         <div>
           <h2 className="text-2xl font-bold mb-1 flex justify-start text-start">Change Password</h2>
           <p className="text-gray-500 text-start">
