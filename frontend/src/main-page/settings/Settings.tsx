@@ -320,12 +320,14 @@ function Settings() {
       />
 
       <div className="flex gap-24 items-center mt-12">
+        // dumb change
         <div>
           <h2 className="text-2xl font-bold mb-1 flex justify-start text-start">Change Password</h2>
           <p className="text-gray-500 text-start">
             Re-enter your current password in order to change your password.
           </p>
         </div>
+
 
         <Button
           text="Change Password"
