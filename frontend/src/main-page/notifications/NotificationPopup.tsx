@@ -81,8 +81,8 @@ const NotificationPopup: React.FC<NotificationPopupProps> = observer(
           }}
           title={
             confirm.kind === "all"
-              ? "Delete all notifications"
-              : "Delete notification"
+              ? "Delete All Notifications"
+              : "Delete Notification"
           }
           subtitle="Are you sure you want to delete"
           boldSubtitle={

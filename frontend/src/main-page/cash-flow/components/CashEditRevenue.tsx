@@ -241,7 +241,7 @@ export default function CashEditRevenue({
           void handleConfirmedSave();
           setPendingRevenue(null);
         }}
-        title="Update revenue source"
+        title="Update Revenue Source"
         subtitle="Are you sure you want to save changes to"
         boldSubtitle={pendingRevenue?.name ?? revenueItem.name}
         warningMessage="This will update this revenue line in your cash flow."
