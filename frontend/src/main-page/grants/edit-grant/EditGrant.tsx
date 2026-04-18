@@ -172,6 +172,20 @@ const EditGrant: React.FC<{
     
   };
 
+  const handleSaveClick = () => {
+    const error = validateInputs();
+
+    if (error) {
+      setErrorMessage(error);
+      setShowSaveModal(false);
+      setShowErrorPopup(true);
+      return;
+    }
+
+    setShowErrorPopup(false);
+    setShowSaveModal(true);
+  };
+
   return (
     <div>
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -188,7 +202,7 @@ const EditGrant: React.FC<{
               <Button
                 text="Save"
                 className="bg-primary-900 text-white px-3 py-1"
-                onClick={() => setShowSaveModal(true)}
+                onClick={handleSaveClick}
                 disabled={saving}
               />
             </div>
