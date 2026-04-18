@@ -4,7 +4,7 @@ interface GrantNotificationProps {
     notificationId: string;
     message: string;
     alertTime: string;
-    onDelete: (notificationId: string) => void;
+    onRequestDelete: (notificationId: string) => void;
     avatarUrl: string | null;
     firstName: string;
     lastName: string;
@@ -23,7 +23,7 @@ const GrantNotification: React.FC<GrantNotificationProps> = ({
     notificationId, 
     message, 
     alertTime,
-    onDelete,
+    onRequestDelete,
     avatarUrl,
     firstName,
     lastName,
@@ -49,7 +49,7 @@ const GrantNotification: React.FC<GrantNotificationProps> = ({
             <FaTrash
                 className="flex-shrink-0 text-red hover:text-red-dark cursor-pointer text-sm"
                 title="Delete notification"
-                onClick={() => onDelete(notificationId)}
+                onClick={() => onRequestDelete(notificationId)}
             />
         </div>
     );

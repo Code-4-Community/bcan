@@ -36,6 +36,7 @@ export default function CashEditLineItem({
   };
 
   return (
+    <div>
     <div className={`rounded border border-grey-500 p-4 ${inactive && !editing ? "bg-grey-150 opacity-65" : ""}`}>
       {!editing && (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-2">
@@ -78,7 +79,8 @@ export default function CashEditLineItem({
         </div>
       )}
       {editing && <div>{children(() => setEditing(false))}</div>}
-      <ActionConfirmation
+    </div>
+    <ActionConfirmation
         isOpen={showDeleteModal}
         onCloseDelete={() => setShowDeleteModal(false)}
         onConfirmDelete={() => {
@@ -88,6 +90,7 @@ export default function CashEditLineItem({
         subtitle={"Are you sure you want to delete"}
         boldSubtitle={sourceName}
         warningMessage="If you delete this item, it will be permanently removed from the system."
+        variant="delete"
       />
     </div>
   );

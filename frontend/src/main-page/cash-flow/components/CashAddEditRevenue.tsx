@@ -16,6 +16,7 @@ import {
   toInstallment,
 } from "../processCashflowDataEditSave";
 import { formatMoney } from "../CashFlowPage";
+import ActionConfirmation from "../../../components/ActionConfirmation";
 
 type FieldErrors = {
   type?: string;
@@ -104,6 +105,10 @@ export default function CashAddEditRevenue({
   const [errors, setErrors] = useState<FieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingRevenue, setPendingRevenue] = useState<CashflowRevenue | null>(
+    null,
+  );
 
   const showSuccessMessage = (message: string) => {
     setSuccessMessage(message);
@@ -178,12 +183,26 @@ export default function CashAddEditRevenue({
     setErrors({});
   }
 
-  const handleSubmit = async () => {
+  const requestSubmit = () => {
+    console.log("Requesting submit with values:", {
+      type,
+      name,
+      singleInstallment,
+      installments,
+      isMultipleInstallments,
+    });
     setSuccessMessage(null);
     const payload = buildPayload();
     if (!payload) {
       return;
     }
+    setPendingRevenue(payload);
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmedSubmit = async () => {
+    if (!pendingRevenue) return;
+    const payload = pendingRevenue;
 
     setIsSubmitting(true);
     setErrors((previous) => ({ ...previous, submit: undefined }));
@@ -264,8 +283,34 @@ export default function CashAddEditRevenue({
   return (
     <div className="flex flex-col pt-2 px-2 col-span-2 h-full gap-2">
       {!isEditing && (
-        <div className="text-lg lg:text-xl w-full text-left font-bold">
+        <div>
+      <ActionConfirmation
+        isOpen={showConfirmModal}
+        onCloseDelete={() => {
+          setShowConfirmModal(false);
+          setPendingRevenue(null);
+        }}
+        onConfirmDelete={() => {
+          void handleConfirmedSubmit();
+          setPendingRevenue(null);
+        }}
+        title={revenueItem ? "Update revenue source" : "Create revenue source"}
+        subtitle={
+          revenueItem
+            ? "Are you sure you want to save changes to"
+            : "Are you sure you want to add"
+        }
+        boldSubtitle={pendingRevenue?.name ?? revenueItem?.name ?? ""}
+        warningMessage={
+          revenueItem
+            ? "This will update this revenue line in your cash flow."
+            : "This will create a new revenue line in your cash flow."
+        }
+        variant={revenueItem ? "update" : "create"}
+      />
+      <div className="text-lg lg:text-xl w-full text-left font-bold">
           {"Add Revenue Source"}
+        </div>
         </div>
       )}
       <div className="flex flex-col w-full gap-4">
@@ -372,7 +417,7 @@ export default function CashAddEditRevenue({
       {!isEditing ? (
         <Button
           text={isSubmitting ? "Adding..." : "Add Revenue Source"}
-          onClick={handleSubmit}
+          onClick={requestSubmit}
           disabled={isSubmitting}
           className="bg-green hover:!border-green text-white mt-2 text-sm lg:text-base active:!bg-green active:!border-green w-full"
         />
@@ -390,7 +435,7 @@ export default function CashAddEditRevenue({
           />
           <Button
             text={isSubmitting ? "Saving..." : "Save"}
-            onClick={handleSubmit}
+            onClick={requestSubmit}
             disabled={isSubmitting}
             className="bg-primary-900 text-white text-sm lg:text-base"
           />
