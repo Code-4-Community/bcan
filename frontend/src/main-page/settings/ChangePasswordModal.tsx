@@ -80,7 +80,7 @@ export default function ChangePasswordModal({
         isOpen={showConfirm}
         onCloseDelete={() => setShowConfirm(false)}
         onConfirmDelete={handleConfirmedSave}
-        title="Change password"
+        title="Change Password"
         subtitle="Are you sure you want to change"
         boldSubtitle="your password"
         warningMessage="You will use your new password the next time you sign in."

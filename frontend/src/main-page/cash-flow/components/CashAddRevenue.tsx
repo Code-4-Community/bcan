@@ -214,7 +214,7 @@ export default function CashAddRevenue() {
           void handleConfirmedSubmit();
           setPendingRevenue(null);
         }}
-        title="Create revenue source"
+        title="Create Revenue Source"
         subtitle="Are you sure you want to add"
         boldSubtitle={pendingRevenue?.name ?? ""}
         warningMessage="This will create a new revenue line in your cash flow."

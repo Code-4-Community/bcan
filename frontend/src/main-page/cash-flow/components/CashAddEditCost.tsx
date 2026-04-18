@@ -162,7 +162,7 @@ export default function CashAddEditCost({
           void handleConfirmedSubmit();
           setPendingCost(null);
         }}
-        title={costItem ? "Update cost source" : "Create cost source"}
+        title={costItem ? "Update Cost Source" : "Create Cost Source"}
         subtitle={
           costItem
             ? "Are you sure you want to save changes to"

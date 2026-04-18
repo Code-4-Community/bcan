@@ -165,7 +165,7 @@ export default function ProfilePictureModal({
         onConfirmDelete={() => {
           void performUpload();
         }}
-        title="Update profile picture"
+        title="Update Profile Picture"
         subtitle="Are you sure you want to upload"
         boldSubtitle="this profile picture"
         warningMessage="This will replace your current profile picture for your account."

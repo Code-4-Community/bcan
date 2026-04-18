@@ -47,7 +47,7 @@ const NavBar: React.FC = observer(() => {
         onConfirmDelete={() => {
           void performLogout();
         }}
-        title="Sign out"
+        title="Sign Out"
         subtitle="Are you sure you want to"
         boldSubtitle="sign out"
         warningMessage="Your cash flow settings will be saved to the server, then you will be logged out."
