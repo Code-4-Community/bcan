@@ -56,7 +56,10 @@ export class NotificationService {
     const currentTime = new Date();
 
     this.logger.log(`Found current notifications for userEmail ${userEmail}`);
-    return notifactions.filter(notification => new Date(notification.alertTime) <= currentTime);
+
+    const currentNotifications = notifactions.filter(notification => new Date(notification.alertTime) <= currentTime);
+    this.logger.log(`Filtered current notifications for userEmail ${userEmail}, count: ${currentNotifications.length}`);
+    return currentNotifications;
   } catch (error) {
     this.logger.error("Failed to notifications by user id error: " + error)
     throw error;
@@ -100,6 +103,7 @@ export class NotificationService {
       }
 
       this.logger.log(`Retrieved ${data.Items.length} notifications for user ${email}`);
+      this.logger.debug("Notifications retrieved: ", data.Items.map(item => item.message));
       return data.Items as Notification[];
     } catch (error) {
       this.logger.error(`Error retrieving notifications for user : ${email}`, error as string);
@@ -216,6 +220,84 @@ export class NotificationService {
   }
   }
   
+
+  // Function to get all notifications belonging to a given grant
+  async getNotificationsByGrantId(grantId: number): Promise<Notification[]> {
+    this.logger.log(`Fetching notifications for grantId: ${grantId}`);
+    const tableName = process.env.DYNAMODB_NOTIFICATION_TABLE_NAME || 'TABLE_FAILURE';
+
+    const results: Notification[] = [];
+    let lastEvaluatedKey: AWS.DynamoDB.DocumentClient.Key | undefined = undefined;
+
+    try {
+      do {
+        const params: AWS.DynamoDB.DocumentClient.ScanInput = {
+          TableName: tableName,
+          FilterExpression: 'grantId = :grantId',
+          ExpressionAttributeValues: { ':grantId': grantId },
+          ...(lastEvaluatedKey && { ExclusiveStartKey: lastEvaluatedKey }),
+        };
+
+        const data = await this.dynamoDb.scan(params).promise();
+        results.push(...((data.Items || []) as Notification[]));
+        lastEvaluatedKey = data.LastEvaluatedKey;
+      } while (lastEvaluatedKey);
+
+      this.logger.log(`Found ${results.length} notifications for grantId: ${grantId}`);
+      return results;
+    } catch (error) {
+      this.logger.error(`Failed to retrieve notifications for grantId: ${grantId}`, error);
+      throw new InternalServerErrorException('Failed to retrieve notifications by grant');
+    }
+  }
+
+  // Updates the userEmail and organization on all notifications belonging to a grant
+  async updateNotificationsEmailAndOrgByGrantId(grantId: number, newEmail: string, newOrg: string): Promise<void> {
+    this.logger.log(`Updating userEmail to ${newEmail} and organization to ${newOrg} for all notifications of grantId: ${grantId}`);
+
+    const notifications = await this.getNotificationsByGrantId(grantId);
+
+    for (const n of notifications) {
+      const updates: Partial<Notification> = {};
+
+      if (n.userEmail !== newEmail) {
+        updates.userEmail = newEmail;
+      }
+
+      const updatedMessage = n.message.replace(/ for .+$/, ` for ${newOrg}`);
+      if (updatedMessage !== n.message) {
+        updates.message = updatedMessage;
+      }
+      
+      if (Object.keys(updates).length > 0) {
+        await this.updateNotification(n.notificationId, updates);
+      }
+    }
+
+    this.logger.log(`Updated ${notifications.length} notifications for grantId: ${grantId}`);
+  }
+
+  // Deletes all notifications for a given user email
+  async deleteNotificationsByUserEmail(email: string): Promise<void> {
+    const notifications = await this.getNotificationByUserEmail(email);
+    if (notifications.length === 0) {
+      this.logger.log(`No notifications to delete for user ${email}`);
+      return;
+    }
+
+    const tableName = process.env.DYNAMODB_NOTIFICATION_TABLE_NAME || 'TABLE_FAILURE';
+    for (let i = 0; i < notifications.length; i += 25) {
+      const chunk = notifications.slice(i, i + 25);
+      const deleteRequests = chunk.map(n => ({
+        DeleteRequest: { Key: { notificationId: n.notificationId } },
+      }));
+      await this.dynamoDb.batchWrite({
+        RequestItems: { [tableName]: deleteRequests },
+      }).promise();
+    }
+
+    this.logger.log(`Deleted ${notifications.length} notifications for user ${email}`);
+  }
 
   /**
    * Deletes the notification with the given id from the database and returns a success message if the deletion was successful

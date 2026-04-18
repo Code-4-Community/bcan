@@ -169,11 +169,13 @@ describe("GrantService", () => {
     }).compile();
 
     grantService = Object.assign(module.get<GrantService>(GrantService), {
-      notificationService: { 
-        createNotification: vi.fn(), 
-        updateNotification: vi.fn(),
+      notificationService: {
+        createNotification: vi.fn().mockResolvedValue(undefined),
+        updateNotification: vi.fn().mockResolvedValue(undefined),
         getNotificationByUserEmail: vi.fn().mockResolvedValue([]),
-        deleteNotification: vi.fn().mockResolvedValue('deleted') 
+        getNotificationsByGrantId: vi.fn().mockResolvedValue([]),
+        updateNotificationsEmailAndOrgByGrantId: vi.fn().mockResolvedValue(undefined),
+        deleteNotification: vi.fn().mockResolvedValue('deleted'),
       }
     });
 
@@ -396,6 +398,10 @@ describe("GrantService", () => {
         status: mockUpdatedGrant.status,
         estimated_completion_time: mockUpdatedGrant.estimated_completion_time,
       };
+
+      mockGet.mockReturnValueOnce({
+        promise: vi.fn().mockResolvedValue({ Item: mockGrants[1] }),
+      });
 
       mockUpdate.mockReturnValue({
         promise: vi.fn().mockResolvedValue({ Attributes: updatedAttributes }),
@@ -715,6 +721,9 @@ describe('Notification helpers', () => {
     notificationServiceMock = {
       createNotification: vi.fn().mockResolvedValue(undefined),
       updateNotification: vi.fn().mockResolvedValue(undefined),
+      updateNotificationsEmailAndOrgByGrantId: vi.fn().mockResolvedValue(undefined),
+      getNotificationsByGrantId: vi.fn().mockResolvedValue([]),
+      deleteNotification: vi.fn().mockResolvedValue(undefined),
     };
 
     grantServiceWithMockNotif = new GrantService(notificationServiceMock);
@@ -722,7 +731,7 @@ describe('Notification helpers', () => {
 
   describe('getNotificationTimes', () => {
     it('should return ISO strings for 14, 7, and 3 days before deadline', () => {
-      const deadline = '2025-12-25T00:00:00.000Z';
+      const deadline = '2027-12-25T00:00:00.000Z';
       const result = (grantServiceWithMockNotif as any).getNotificationTimes(deadline);
 
       expect(result).toHaveLength(3);
@@ -749,8 +758,8 @@ describe('Notification helpers', () => {
         status: Status.Active,
         amount: 10000,
         grant_start_date: '2025-01-01',
-        application_deadline: '2025-12-31T00:00:00.000Z',
-        report_deadlines: ['2026-01-31T00:00:00.000Z'],
+        application_deadline: '2027-12-31T00:00:00.000Z',
+        report_deadlines: ['2027-01-31T00:00:00.000Z'],
         description: 'Helping local communities',
         timeline: 12,
         estimated_completion_time: 365,
@@ -767,15 +776,17 @@ describe('Notification helpers', () => {
       expect(notificationServiceMock.createNotification).toHaveBeenCalledTimes(6);
       expect(notificationServiceMock.createNotification).toHaveBeenCalledWith(
         expect.objectContaining({
-          notificationId: expect.stringContaining('-app'),
+          notificationId: expect.stringContaining('-app-'),
           message: expect.stringContaining('Application due in'),
           alertTime: expect.any(String),
+          grantId: 100,
         })
       );
       expect(notificationServiceMock.createNotification).toHaveBeenCalledWith(
         expect.objectContaining({
-          notificationId: expect.stringContaining('-report'),
+          notificationId: expect.stringContaining('-report-'),
           message: expect.stringContaining('Report due in'),
+          grantId: 100,
         })
       );
     });
@@ -812,8 +823,8 @@ describe('Notification helpers', () => {
         status: Status.Pending,
         amount: 5000,
         grant_start_date: '2025-01-01',
-        application_deadline: '2025-06-30T00:00:00.000Z',
-        report_deadlines: ['2025-07-15T00:00:00.000Z'],
+        application_deadline: '2027-06-30T00:00:00.000Z',
+        report_deadlines: ['2027-07-15T00:00:00.000Z'],
         description: 'Test desc',
         timeline: 1,
         estimated_completion_time: 100,
@@ -828,14 +839,14 @@ describe('Notification helpers', () => {
       // Expect 6 updateNotification calls (3 per deadline)
       expect(notificationServiceMock.updateNotification).toHaveBeenCalledTimes(6);
       expect(notificationServiceMock.updateNotification).toHaveBeenCalledWith(
-        expect.stringContaining('-app'),
+        expect.stringContaining('-app-'),
         expect.objectContaining({
           message: expect.stringContaining('Application due in'),
           alertTime: expect.any(String),
         })
       );
       expect(notificationServiceMock.updateNotification).toHaveBeenCalledWith(
-        expect.stringContaining('-report'),
+        expect.stringContaining('-report-'),
         expect.objectContaining({
           message: expect.stringContaining('Report due in'),
         })
@@ -863,6 +874,78 @@ describe('Notification helpers', () => {
       await (grantServiceWithMockNotif as any).updateGrantNotifications(mockGrant);
 
       expect(notificationServiceMock.updateNotification).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('updateGrant notification sync', () => {
+    const baseGrant: Grant = {
+      grantId: 100,
+      organization: 'Boston Cares',
+      does_bcan_qualify: true,
+      status: Status.Active,
+      amount: 10000,
+      grant_start_date: '2025-01-01',
+      application_deadline: '2025-12-31T00:00:00.000Z',
+      report_deadlines: [],
+      description: '',
+      timeline: 12,
+      estimated_completion_time: 365,
+      grantmaker_poc: { POC_name: 'Sarah', POC_email: 'sarah@test.com' },
+      bcan_poc: { POC_name: 'Tom', POC_email: 'tom@test.com' },
+      attachments: [],
+      isRestricted: false,
+    };
+
+    it('should call updateNotificationsEmailAndOrgByGrantId when bcan_poc email changes', async () => {
+      mockGet.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Item: baseGrant }) });
+      mockUpdate.mockReturnValue({ promise: vi.fn().mockResolvedValue({ Attributes: {} }) });
+
+      const updatedGrant = { ...baseGrant, bcan_poc: { POC_name: 'New POC', POC_email: 'newpoc@test.com' } };
+      await grantServiceWithMockNotif.updateGrant(updatedGrant);
+
+      expect(notificationServiceMock.updateNotificationsEmailAndOrgByGrantId).toHaveBeenCalledWith(
+        100,
+        'newpoc@test.com',
+        'Boston Cares',
+      );
+    });
+
+    it('should call updateNotificationsEmailAndOrgByGrantId when organization changes', async () => {
+      mockGet.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Item: baseGrant }) });
+      mockUpdate.mockReturnValue({ promise: vi.fn().mockResolvedValue({ Attributes: {} }) });
+
+      const updatedGrant = { ...baseGrant, organization: 'Boston Cares Updated' };
+      await grantServiceWithMockNotif.updateGrant(updatedGrant);
+
+      expect(notificationServiceMock.updateNotificationsEmailAndOrgByGrantId).toHaveBeenCalledWith(
+        100,
+        'tom@test.com',
+        'Boston Cares Updated',
+      );
+    });
+
+    it('should not call updateNotificationsEmailAndOrgByGrantId when neither email nor org changed', async () => {
+      mockGet.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Item: baseGrant }) });
+      mockUpdate.mockReturnValue({ promise: vi.fn().mockResolvedValue({ Attributes: {} }) });
+
+      const updatedGrant = { ...baseGrant, amount: 99999 };
+      await grantServiceWithMockNotif.updateGrant(updatedGrant);
+
+      expect(notificationServiceMock.updateNotificationsEmailAndOrgByGrantId).not.toHaveBeenCalled();
+    });
+
+    it('should not call updateNotificationsEmailAndOrgByGrantId when deadlines change (rebuild takes priority)', async () => {
+      mockGet.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Item: baseGrant }) });
+      mockUpdate.mockReturnValue({ promise: vi.fn().mockResolvedValue({ Attributes: {} }) });
+
+      const updatedGrant = {
+        ...baseGrant,
+        bcan_poc: { POC_name: 'New POC', POC_email: 'newpoc@test.com' },
+        application_deadline: '2026-06-01T00:00:00.000Z' as TDateISO,
+      };
+      await grantServiceWithMockNotif.updateGrant(updatedGrant);
+
+      expect(notificationServiceMock.updateNotificationsEmailAndOrgByGrantId).not.toHaveBeenCalled();
     });
   });
 });

@@ -11,6 +11,7 @@ import {
 import * as AWS from "aws-sdk";
 import { User } from "../../../middle-layer/types/User";
 import { UserStatus } from "../../../middle-layer/types/UserStatus";
+import { NotificationService } from "../notifications/notification.service";
 
 /**
  * File could use safer 'User' typing after grabbing users, verifying type after the scan.
@@ -24,6 +25,8 @@ export class UserService {
   private ses = new AWS.SES({ region: process.env.AWS_REGION });
   private s3 = new AWS.S3();
   private profilePicBucket : string = process.env.PROFILE_PICTURE_BUCKET!;
+
+  constructor(private readonly notificationService: NotificationService) {}
 
 async uploadProfilePic(user: User, pic: Express.Multer.File): Promise<String> {
   const tableName = process.env.DYNAMODB_USER_TABLE_NAME;
@@ -309,6 +312,13 @@ private validateUploadInputs(user: User, pic: Express.Multer.File, tableName: st
   this.logger.log(
     `✅ User ${email} deleted successfully by ${requestedBy.email}`
   );
+
+  // Delete any associated notifications
+  try {
+    await this.notificationService.deleteNotificationsByUserEmail(email);
+  } catch (notifError) {
+    this.logger.error(`Failed to delete notifications for ${email}:`, notifError);
+  }
 
   return userToDelete;
 }

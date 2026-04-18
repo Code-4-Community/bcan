@@ -16,6 +16,7 @@ import { User } from "../../../../middle-layer/types/User";
 import ActionConfirmation from "../../components/ActionConfirmation";
 import { fetchGrants } from "../grants/filter-bar/processGrantData";
 import { InputField } from "../../sign-up";
+import { fetchNotifications } from "../notifications/processNotificationData";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -38,6 +39,7 @@ function Settings() {
   const [profilePictureMessage, setProfilePictureMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const isEmailChanged =
     editForm.email.trim().toLowerCase() !== (store.user?.email ?? "").trim().toLowerCase();
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -79,6 +81,7 @@ function Settings() {
       return;
     }
 
+    setIsSaving(true);
     try {
       const response = await api("/auth/update-profile", {
         method: "POST",
@@ -96,6 +99,7 @@ function Settings() {
           (errorBody && (errorBody.message as string)) ||
           "Failed to update profile. Please try again.";
         setPersonalInfoError(message);
+        setIsSaving(false);
         return;
       }
       const updatedUser = {
@@ -111,12 +115,15 @@ function Settings() {
       updateUserProfile(updatedUser);
       setPersonalInfo(editForm);
       await fetchGrants();
+      await fetchNotifications();
 
       setIsEditingPersonalInfo(false);
       setPersonalInfoError(null);
     } catch (error) {
       console.error("Error updating profile:", error);
       setPersonalInfoError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -308,6 +315,7 @@ function Settings() {
                 text="Save"
                 onClick={() => setIsSaveProfileModalOpen(true)}
                 className="bg-primary-900 text-white"
+                disabled={isSaving}
               />
             </div>
           </>

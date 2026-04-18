@@ -2,10 +2,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
 import NotificationPopup from "./NotificationPopup";
-import { setNotifications as setNotificationsAction } from "../../external/bcanSatchel/actions";
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { observer } from "mobx-react-lite";
-import { api } from "../../api";
 
 // get current user id
 
@@ -28,17 +26,7 @@ const BellButton: React.FC<BellButtonProps> = observer(({ setOpenModal, openModa
 
   // function that handles when button is clicked and fetches notifications
   const handleClick = async () => {
-    const response = await api(
-    `/notifications/user/${store.user?.email}/current`,
-    {
-    method: "GET",
-    }
-    );
-    console.log(response);
-    const currNotifications = await response.json();
-    setNotificationsAction(currNotifications);
     setOpenModal(!openModal);
-    return notifications;
   };
 
   return (
