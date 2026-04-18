@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Put, Body, Patch, Post, Delete, ValidationPipe, Logger, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Put, Body, Patch, Post, Delete, ValidationPipe, Logger, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { GrantService } from './grant.service';
 import { Grant } from '../../../middle-layer/types/Grant';
 import { VerifyUserGuard } from '../guards/auth.guard';
@@ -100,7 +100,7 @@ export class GrantController {
     @ApiResponse({ status: 401, description: 'Unauthorized - Invalid or missing authentication token' })
     @ApiResponse({ status: 403, description: 'Forbidden - User does not have access to this resource' })
     @ApiResponse({ status: 500, description: 'Internal Server Error - AWS error or server configuration issue', example: '{Error occurred}' })
-    async deleteGrant(@Param('grantId') grantId: number): Promise<string> {
+    async deleteGrant(@Param('grantId', ParseIntPipe) grantId: number): Promise<string> {
         this.logger.log(`DELETE /grant/${grantId} - Deleting grant`);
         const result = await this.grantService.deleteGrantById(grantId);
         this.logger.log(`DELETE /grant/${grantId} - Successfully deleted grant`);

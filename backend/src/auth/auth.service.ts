@@ -883,42 +883,45 @@ async updateProfile(
 
       throw new InternalServerErrorException("Failed to update user data in database");
     }
-          // ── Step 3: Update grants where user is BCAN POC ──────────────────────
-      try {
-        await this.grantService.updateGrantsByPOC(
-          currentEmail,
-          newEmail,
-          `${firstName} ${lastName}`,
-        );
-        this.logger.log(`Grants updated for new POC info`);
-      } catch (grantError: any) {
-        this.logger.error(`Failed to update grants, rolling back profile changes`, grantError);
 
-        // Rollback DynamoDB
-        await this.dynamoDb.update({
-          TableName: tableName,
-          Key: { email: currentEmail },
-          UpdateExpression: "SET firstName = :firstName, lastName = :lastName, email = :email",
-          ExpressionAttributeValues: {
-            ":firstName": existingUser.firstName,
-            ":lastName": existingUser.lastName,
-            ":email": currentEmail,
-          },
-          ReturnValues: "NONE",
+    // ── Step 3: Update grants where user is BCAN POC ──────────────────────
+    try {
+      await this.grantService.updateGrantsByPOC(
+        currentEmail,
+        newEmail,
+        `${firstName} ${lastName}`,
+      );
+      this.logger.log(`Grants updated for new POC info`);
+    } catch (grantError: any) {
+      this.logger.error(`Failed to update grants, rolling back profile changes`, grantError);
+
+      // Rollback DynamoDB
+      await this.dynamoDb.update({
+        TableName: tableName,
+        Key: { email: currentEmail },
+        UpdateExpression: "SET firstName = :firstName, lastName = :lastName, email = :email",
+        ExpressionAttributeValues: {
+          ":firstName": existingUser.firstName,
+          ":lastName": existingUser.lastName,
+          ":email": currentEmail,
+        },
+        ReturnValues: "NONE",
+      }).promise();
+      this.logger.log(`DynamoDB rolled back to original values`);
+
+      // Rollback Cognito if email changed
+      if (isEmailChanging) {
+        await this.cognito.updateUserAttributes({
+          AccessToken: accessToken,
+          UserAttributes: [{ Name: "email", Value: currentEmail }],
         }).promise();
-        this.logger.log(`DynamoDB rolled back to original values`);
-
-        // Rollback Cognito if email changed
-        if (isEmailChanging) {
-          await this.cognito.updateUserAttributes({
-            AccessToken: accessToken,
-            UserAttributes: [{ Name: "email", Value: currentEmail }],
-          }).promise();
-          this.logger.log(`Cognito rolled back to ${currentEmail}`);
-        }
-
-        throw new InternalServerErrorException("Failed to update grants. All changes have been rolled back.");
+        this.logger.log(`Cognito rolled back to ${currentEmail}`);
       }
+
+      throw new InternalServerErrorException("Failed to update grants. All changes have been rolled back.");
+    }
+
+
   } catch (error) {
     if (error instanceof HttpException) {
       throw error;
@@ -934,8 +937,6 @@ async updateProfile(
     throw new InternalServerErrorException("Updating the profile failed");
   }
 }
-
-  // Add this to auth.service.ts
 
   // purpose statement: validates a user's session token via cognito and retrieves user data from dynamodb
   // use case: employee is accessing the app with an existing session token
