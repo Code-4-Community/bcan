@@ -181,16 +181,9 @@ export default function CashAddEditRevenue({
     setInstallments([]);
     setIsMultipleInstallments(false);
     setErrors({});
-  }
+  };
 
   const requestSubmit = () => {
-    console.log("Requesting submit with values:", {
-      type,
-      name,
-      singleInstallment,
-      installments,
-      isMultipleInstallments,
-    });
     setSuccessMessage(null);
     const payload = buildPayload();
     if (!payload) {
@@ -236,7 +229,10 @@ export default function CashAddEditRevenue({
       return;
     }
 
-    setInstallments((previousInstallments) => [...previousInstallments, EMPTY_INSTALLMENT]);
+    setInstallments((previousInstallments) => [
+      ...previousInstallments,
+      EMPTY_INSTALLMENT,
+    ]);
   };
 
   const updateInstallment = (
@@ -282,8 +278,6 @@ export default function CashAddEditRevenue({
 
   return (
     <div className="flex flex-col pt-2 px-2 col-span-2 h-full gap-2">
-      {!isEditing && (
-        <div>
       <ActionConfirmation
         isOpen={showConfirmModal}
         onCloseDelete={() => {
@@ -308,9 +302,11 @@ export default function CashAddEditRevenue({
         }
         variant={revenueItem ? "update" : "create"}
       />
-      <div className="text-lg lg:text-xl w-full text-left font-bold">
-          {"Add Revenue Source"}
-        </div>
+      {!isEditing && (
+        <div>
+          <div className="text-lg lg:text-xl w-full text-left font-bold">
+            {"Add Revenue Source"}
+          </div>
         </div>
       )}
       <div className="flex flex-col w-full gap-4">
@@ -324,7 +320,9 @@ export default function CashAddEditRevenue({
               value={type ?? ""}
               error={Boolean(errors.type)}
             />
-            {errors.type ? <p className="text-red text-sm">{errors.type}</p> : null}
+            {errors.type ? (
+              <p className="text-red text-sm">{errors.type}</p>
+            ) : null}
           </div>
           <div className="flex flex-col gap-1">
             <InputField
@@ -336,7 +334,9 @@ export default function CashAddEditRevenue({
               onChange={(event) => setName(event.target.value)}
               error={Boolean(errors.name)}
             />
-            {errors.name ? <p className="text-red text-sm">{errors.name}</p> : null}
+            {errors.name ? (
+              <p className="text-red text-sm">{errors.name}</p>
+            ) : null}
           </div>
         </div>
         {isMultipleInstallments ? (
@@ -346,8 +346,12 @@ export default function CashAddEditRevenue({
                 key={index}
                 id={isEditing ? `edit_${index}` : index}
                 installment={installment}
-                onAmountChange={(value) => updateInstallment(index, "amount", value)}
-                onDateChange={(value) => updateInstallment(index, "date", value)}
+                onAmountChange={(value) =>
+                  updateInstallment(index, "amount", value)
+                }
+                onDateChange={(value) =>
+                  updateInstallment(index, "date", value)
+                }
                 onDelete={() => removeInstallment(index)}
               />
             ))}
@@ -369,7 +373,9 @@ export default function CashAddEditRevenue({
                   setSingleInstallment((previous) => ({
                     ...previous,
                     amount:
-                      event.target.value === "" ? null : Number(event.target.value),
+                      event.target.value === ""
+                        ? null
+                        : Number(event.target.value),
                   }))
                 }
               />
@@ -400,9 +406,13 @@ export default function CashAddEditRevenue({
             </div>
           </div>
         )}
-        {errors.submit ? <p className="text-red text-sm">{errors.submit}</p> : null}
+        {errors.submit ? (
+          <p className="text-red text-sm">{errors.submit}</p>
+        ) : null}
         {successMessage ? (
-          <p className="text-green text-sm animate-[fadeout_0.3s_ease-in-out_3s_forwards]">{successMessage}</p>
+          <p className="text-green text-sm animate-[fadeout_0.3s_ease-in-out_3s_forwards]">
+            {successMessage}
+          </p>
         ) : null}
       </div>
       <Button
@@ -410,9 +420,11 @@ export default function CashAddEditRevenue({
         onClick={addInstallment}
         logo={faPlus}
         logoPosition="left"
-        className={isEditing
-          ? "bg-primary-900 text-white text-sm lg:w-fit lg:ml-auto mt-1"
-          : "bg-primary-900 text-white w-fit ml-auto text-sm mt-2"}
+        className={
+          isEditing
+            ? "bg-primary-900 text-white text-sm lg:w-fit lg:ml-auto mt-1"
+            : "bg-primary-900 text-white w-fit ml-auto text-sm mt-2"
+        }
       />
       {!isEditing ? (
         <Button
@@ -428,17 +440,17 @@ export default function CashAddEditRevenue({
             {formatMoney(totalAmount)}
           </div>
           <div className="ml-auto flex flex-row gap-2">
-          <Button
-            text="Cancel"
-            onClick={onClose}
-            className="bg-white text-black border border-grey-500 text-sm lg:text-base"
-          />
-          <Button
-            text={isSubmitting ? "Saving..." : "Save"}
-            onClick={requestSubmit}
-            disabled={isSubmitting}
-            className="bg-primary-900 text-white text-sm lg:text-base"
-          />
+            <Button
+              text="Cancel"
+              onClick={onClose}
+              className="bg-white text-black border border-grey-500 text-sm lg:text-base"
+            />
+            <Button
+              text={isSubmitting ? "Saving..." : "Save"}
+              onClick={requestSubmit}
+              disabled={isSubmitting}
+              className="bg-primary-900 text-white text-sm lg:text-base"
+            />
           </div>
         </div>
       )}
