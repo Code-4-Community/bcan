@@ -13,8 +13,8 @@ import ChangePasswordModal, { ChangePasswordFormValues } from "./ChangePasswordM
 import { getAppStore } from "../../external/bcanSatchel/store";
 import { setActiveUsers, updateUserProfile } from "../../external/bcanSatchel/actions";
 import { User } from "../../../../middle-layer/types/User";
-import { fetchGrants } from "../grants/filter-bar/processGrantData";
 import ActionConfirmation from "../../components/ActionConfirmation";
+import { fetchGrants } from "../grants/filter-bar/processGrantData";
 import { InputField } from "../../sign-up";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

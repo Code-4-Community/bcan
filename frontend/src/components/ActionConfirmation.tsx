@@ -28,7 +28,7 @@ const ActionConfirmation = ({
   const styles =
     variant === "create"
       ? {
-          panel: "border-t-4 border-green bg-green-light/30",
+          panel: "border-t-4 border-green",
           stripe: "bg-green",
           box: "bg-green-light",
           Icon: FaCheckCircle,
@@ -37,23 +37,27 @@ const ActionConfirmation = ({
           labelClass: "text-green",
           textClass: "text-green-dark",
           cancelClass:
-            "text-grey-700 border-grey-500 hover:border-grey-600 hover:bg-grey-150 active:bg-grey-200",
+            "!border-2 active:!border-grey-500 border-grey-500 bg-white text-black active:!text-grey-600 hover:!border-grey-600 hover:bg-grey-150 active:bg-grey-200",
+          confirmClass:
+            "!border-0 bg-green text-white hover:!border-green hover:bg-green-dark active:bg-green-dark active:!bg-opacity-75",
         }
       : variant === "update"
         ? {
-            panel: "border-t-4 border-grey-400 bg-grey-150",
-            stripe: "bg-grey-500",
-            box: "bg-grey-200",
+            panel: "border-t-4 border-yellow",
+            stripe: "bg-yellow",
+            box: "bg-yellow-light",
             Icon: FaInfoCircle,
-            iconClass: "text-grey-700",
+            iconClass: "text-yellow-dark",
             label: "Review",
-            labelClass: "text-grey-800",
-            textClass: "text-grey-800",
+            labelClass: "text-yellow-dark",
+            textClass: "text-yellow-dark",
             cancelClass:
-              "text-grey-700 border-grey-500 hover:border-grey-600 hover:bg-grey-200 active:bg-grey-300",
+              "!border-2 active:!border-grey-500 border-grey-500 bg-white text-black active:!text-grey-600 hover:!border-grey-600 hover:bg-grey-150 active:bg-grey-200",
+            confirmClass:
+              "!border-0 bg-yellow text-white hover:!border-yellow hover:bg-opacity-75 active:bg-yellow",
           }
         : {
-            panel: "border-t-4 border-red bg-red-lightest/40",
+            panel: "border-t-4 border-red",
             stripe: "bg-red",
             box: "bg-red-light",
             Icon: IoIosWarning,
@@ -62,7 +66,9 @@ const ActionConfirmation = ({
             labelClass: "text-red",
             textClass: "text-red",
             cancelClass:
-              "text-red border-red hover:border-red hover:bg-red-light active:bg-red",
+              "!border-0 bg-red text-white hover:!border-red hover:bg-opacity-75 active:bg-red",
+            confirmClass:
+              "!border-2 active:!border-grey-500 border-grey-500 bg-white text-black active:!text-grey-600 hover:!border-grey-600 hover:bg-grey-150 active:bg-grey-200",
           };
 
   const { Icon } = styles;
@@ -73,7 +79,7 @@ const ActionConfirmation = ({
       onClick={onCloseDelete}
     >
       <div
-        className={`rounded-md shadow-2xl p-8 max-w-xl w-full mx-4 transform transition-all duration-300 !bg-white ${styles.panel}`}
+        className={`rounded-md shadow-2xl p-8 max-w-xl w-full mx-4 transform transition-all duration-300 bg-white ${styles.panel}`}
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="text-2xl font-bold text-black text-center mb-2">{title}</h3>
@@ -86,11 +92,11 @@ const ActionConfirmation = ({
 
         <div className="max-w-md mx-auto ">
           <div className="flex mb-6">
-            <div className={`w-3 shrink-0 ${styles.stripe}`} />
+            <div className={`w-1 shrink-0 ${styles.stripe}`} />
             <div className={`p-3 flex-1 min-w-0 ${styles.box}`}>
               <div className="flex items-center">
-                <Icon size={24} className={`shrink-0 ${styles.iconClass}`} />
-                <p className={`font-bold px-1 text-lg ${styles.labelClass}`}>
+                <Icon size={20} className={`shrink-0 ${styles.iconClass}`} />
+                <p className={`ml-1 font-bold px-1 text-lg ${styles.labelClass}`}>
                   {styles.label}
                 </p>
               </div>
@@ -111,7 +117,7 @@ const ActionConfirmation = ({
                 onConfirmDelete();
                 onCloseDelete();
               }}
-              className="border-grey-500"
+              className={styles.confirmClass}
             />
           </div>
         </div>
