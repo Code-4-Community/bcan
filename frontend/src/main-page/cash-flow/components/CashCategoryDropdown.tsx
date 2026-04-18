@@ -76,7 +76,7 @@ export default function CashCategoryDropdown({
           aria-expanded={isOpen}
           aria-label={name}
         >
-          {selectedLabel}
+          <span className="block truncate">{selectedLabel}</span>
         </button>
         <FontAwesomeIcon
           icon={faChevronDown}

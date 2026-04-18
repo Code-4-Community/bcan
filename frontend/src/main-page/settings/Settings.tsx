@@ -113,7 +113,6 @@ function Settings() {
       updateUserProfile(updatedUser);
       setPersonalInfo(editForm);
       await fetchGrants();
-      await fetchGrants();
 
       setIsEditingPersonalInfo(false);
       setPersonalInfoError(null);

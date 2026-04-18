@@ -20,26 +20,58 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({
 }) => {
   const [hourlyRate, setHourlyRate] = useState<string>("");
   const [timePerReport, setTimePerReport] = useState<string>("");
+  const [inputErrors, setInputErrors] = useState<{
+    hourlyRate?: string;
+    timePerReport?: string;
+  }>({});
   const [costBenefitResult, setCostBenefitResult] =
     useState<CostBenefitResult | null>(null);
 
+    const validatePositiveNumber = (
+    value: string,
+    fieldLabel: string,
+  ): string | null => {
+    const trimmedValue = value.trim();
+
+    if (!trimmedValue) {
+      return `${fieldLabel} is required.`;
+    }
+
+    // Require a full decimal number match to reject values like "2;0".
+    if (!/^(?:\d+\.?\d*|\.\d+)$/.test(trimmedValue)) {
+      return `${fieldLabel} must be a valid number.`;
+    }
+
+    const parsedValue = Number(trimmedValue);
+
+    if (!Number.isFinite(parsedValue) || parsedValue <= 0) {
+      return `${fieldLabel} must be greater than 0.`;
+    }
+
+    return null;
+  };
+
   const calculateCostBenefit = () => {
-    console.log("Called calculate");
-    console.log("hourlyRate state:", hourlyRate);
-    console.log("timePerReport state:", timePerReport);
-    const rate = parseFloat(hourlyRate);
-    const timeReport = parseFloat(timePerReport);
+    const hourlyRateError = validatePositiveNumber(hourlyRate, "Hourly rate");
+    const timePerReportError = validatePositiveNumber(
+      timePerReport,
+      "Time per report",
+    );
 
-    console.log("Parsed rate:", rate);
-    console.log("Parsed timeReport:", timeReport);
+    const nextErrors = {
+      hourlyRate: hourlyRateError ?? undefined,
+      timePerReport: timePerReportError ?? undefined,
+    };
 
-    // Validation
-    if (isNaN(rate) || isNaN(timeReport) || rate <= 0 || timeReport <= 0) {
-      alert(
-        "Please enter valid positive numbers for hourly rate and time per report.",
-      );
+    setInputErrors(nextErrors);
+
+    if (hourlyRateError || timePerReportError) {
+      setCostBenefitResult(null);
       return;
     }
+
+    const rate = Number(hourlyRate.trim());
+    const timeReport = Number(timePerReport.trim());
 
     const reportCount = grant.report_deadlines?.length ?? 0;
     const grantAmount = grant.amount;
@@ -88,8 +120,18 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({
             label="Hourly Rate"
             placeholder="Enter rate"
             value={hourlyRate}
-            onChange={(e) => setHourlyRate(e.target.value)}
+            inputMode="decimal"
+            error={Boolean(inputErrors.hourlyRate)}
+            onChange={(e) => {
+              setHourlyRate(e.target.value);
+              if (inputErrors.hourlyRate) {
+                setInputErrors((previous) => ({ ...previous, hourlyRate: undefined }));
+              }
+            }}
           />
+          {inputErrors.hourlyRate && (
+            <p className="mt-1 text-xs text-red">{inputErrors.hourlyRate}</p>
+          )}
         </div>
 
         {/* Time Per Report Input */}
@@ -99,8 +141,18 @@ export const CostBenefitAnalysis: React.FC<CostBenefitAnalysisProps> = ({
             label="Time Per Report (hours)"
             placeholder="Enter time"
             value={timePerReport}
-            onChange={(e) => setTimePerReport(e.target.value)}
+            inputMode="decimal"
+            error={Boolean(inputErrors.timePerReport)}
+            onChange={(e) => {
+              setTimePerReport(e.target.value);
+              if (inputErrors.timePerReport) {
+                setInputErrors((previous) => ({ ...previous, timePerReport: undefined }));
+              }
+            }}
           />
+          {inputErrors.timePerReport && (
+            <p className="mt-1 text-xs text-red">{inputErrors.timePerReport}</p>
+          )}
         </div>
 
         {/* Calculate Button */}
