@@ -109,10 +109,6 @@ export default function CashAddEditRevenue({
   const [pendingRevenue, setPendingRevenue] = useState<CashflowRevenue | null>(
     null,
   );
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [pendingRevenue, setPendingRevenue] = useState<CashflowRevenue | null>(
-    null,
-  );
 
   const showSuccessMessage = (message: string) => {
     setSuccessMessage(message);
@@ -188,19 +184,11 @@ export default function CashAddEditRevenue({
   };
 
   const requestSubmit = () => {
-  const requestSubmit = () => {
     setSuccessMessage(null);
     const payload = buildPayload();
     if (!payload) {
       return;
     }
-    setPendingRevenue(payload);
-    setShowConfirmModal(true);
-  };
-
-  const handleConfirmedSubmit = async () => {
-    if (!pendingRevenue) return;
-    const payload = pendingRevenue;
     setPendingRevenue(payload);
     setShowConfirmModal(true);
   };
