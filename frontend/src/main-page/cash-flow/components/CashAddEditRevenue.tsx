@@ -9,14 +9,7 @@ import CashCategoryDropdown from "./CashCategoryDropdown";
 import CashRevenueInstallment, {
   EditableInstallment,
 } from "./CashRevenueInstallment";
-import {
-  createNewRevenue,
-  isValidInstallment,
-  saveRevenueEdits,
-  toInstallment,
-} from "../processCashflowDataEditSave";
-import { formatMoney } from "../CashFlowPage";
-import ActionConfirmation from "../../../components/ActionConfirmation";
+import { createNewRevenue, isValidInstallment, toInstallment } from "../../cash-flow/processCashflowDataEditSave";
 
 type FieldErrors = {
   type?: string;
@@ -278,37 +271,9 @@ export default function CashAddEditRevenue({
 
   return (
     <div className="flex flex-col pt-2 px-2 col-span-2 h-full gap-2">
-      <ActionConfirmation
-        isOpen={showConfirmModal}
-        onCloseDelete={() => {
-          setShowConfirmModal(false);
-          setPendingRevenue(null);
-        }}
-        onConfirmDelete={() => {
-          void handleConfirmedSubmit();
-          setPendingRevenue(null);
-        }}
-        title={revenueItem ? "Update revenue source" : "Create revenue source"}
-        subtitle={
-          revenueItem
-            ? "Are you sure you want to save changes to"
-            : "Are you sure you want to add"
-        }
-        boldSubtitle={pendingRevenue?.name ?? revenueItem?.name ?? ""}
-        warningMessage={
-          revenueItem
-            ? "This will update this revenue line in your cash flow."
-            : "This will create a new revenue line in your cash flow."
-        }
-        variant={revenueItem ? "update" : "create"}
-      />
-      {!isEditing && (
-        <div>
-          <div className="text-lg lg:text-xl w-full text-left font-bold">
-            {"Add Revenue Source"}
-          </div>
-        </div>
-      )}
+      <div className="text-lg lg:text-xl w-full text-left font-bold">
+        {"Add Revenue Source"}
+      </div>
       <div className="flex flex-col w-full gap-4">
         <div className="grid grid-cols-1 xl:grid-cols-2 w-full gap-4">
           <div className="flex flex-col gap-1">
@@ -426,34 +391,12 @@ export default function CashAddEditRevenue({
             : "bg-primary-900 text-white w-fit ml-auto text-sm mt-2"
         }
       />
-      {!isEditing ? (
-        <Button
-          text={isSubmitting ? "Adding..." : "Add Revenue Source"}
-          onClick={requestSubmit}
-          disabled={isSubmitting}
-          className="bg-green hover:!border-green text-white mt-2 text-sm lg:text-base active:!bg-green active:!border-green w-full"
-        />
-      ) : (
-        <div className="flex flex-wrap gap-2 mt-2 items-center">
-          <div className="font-semibold text-sm lg:text-base hidden lg:block">
-            {"Total: "}
-            {formatMoney(totalAmount)}
-          </div>
-          <div className="ml-auto flex flex-row gap-2">
-            <Button
-              text="Cancel"
-              onClick={onClose}
-              className="bg-white text-black border border-grey-500 text-sm lg:text-base"
-            />
-            <Button
-              text={isSubmitting ? "Saving..." : "Save"}
-              onClick={requestSubmit}
-              disabled={isSubmitting}
-              className="bg-primary-900 text-white text-sm lg:text-base"
-            />
-          </div>
-        </div>
-      )}
+      <Button
+        text="Add Revenue Source"
+        onClick={handleSubmit}
+        disabled={isSubmitting}
+        className="bg-green hover:!border-green text-white mt-2 text-sm lg:text-base active:!bg-green active:!border-green w-full"
+      />
     </div>
   );
 }

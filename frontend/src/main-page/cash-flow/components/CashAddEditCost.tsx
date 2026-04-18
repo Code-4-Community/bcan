@@ -9,6 +9,7 @@ import { Frequency, frequencyIntervalsInMonths } from "../../../../../middle-lay
 import { TDateISO } from "../../../../../backend/src/utils/date";
 import { getAppStore } from "../../../external/bcanSatchel/store";
 import ActionConfirmation from "../../../components/ActionConfirmation";
+import ActionConfirmation from "../../../components/ActionConfirmation";
 
 type FieldErrors = {
   type?: string;
@@ -124,6 +125,7 @@ export default function CashAddEditCost({
   };
 
   const requestConfirm = () => {
+  const requestConfirm = () => {
     setSuccessMessage(null);
     const payload = buildPayload();
     if (!payload) {
@@ -136,11 +138,19 @@ export default function CashAddEditCost({
   const handleConfirmedSubmit = async () => {
     if (!pendingCost) return;
     const payload = pendingCost;
+    setPendingCost(payload);
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmedSubmit = async () => {
+    if (!pendingCost) return;
+    const payload = pendingCost;
 
     setIsSubmitting(true);
     setErrors((previous) => ({ ...previous, submit: undefined }));
 
     const result = costItem
+      ? await saveCostEdits(payload, costItem.name)
       ? await saveCostEdits(payload, costItem.name)
       : await createNewCost(payload);
     if (!result.success) {
@@ -164,6 +174,30 @@ export default function CashAddEditCost({
 
   return (
     <div className="flex flex-col pt-2 px-2 col-span-2 h-full gap-2">
+      <ActionConfirmation
+        isOpen={showConfirmModal}
+        onCloseDelete={() => {
+          setShowConfirmModal(false);
+          setPendingCost(null);
+        }}
+        onConfirmDelete={() => {
+          void handleConfirmedSubmit();
+          setPendingCost(null);
+        }}
+        title={costItem ? "Update Cost Source" : "Create Cost Source"}
+        subtitle={
+          costItem
+            ? "Are you sure you want to save changes to"
+            : "Are you sure you want to add"
+        }
+        boldSubtitle={pendingCost?.name ?? costItem?.name ?? ""}
+        warningMessage={
+          costItem
+            ? "This will update this cost line in your cash flow."
+            : "This will create a new cost line in your cash flow."
+        }
+        variant={costItem ? "update" : "create"}
+      />
       <ActionConfirmation
         isOpen={showConfirmModal}
         onCloseDelete={() => {
@@ -307,6 +341,7 @@ export default function CashAddEditCost({
           onClick={requestConfirm}
           disabled={isSubmitting}
           className="bg-green hover:!border-green text-white mt-2 text-sm lg:text-base active:!bg-green active:!border-green w-full"
+          className="bg-green hover:!border-green text-white mt-2 text-sm lg:text-base active:!bg-green active:!border-green w-full"
         />
       ) : (
         <div className="flex flex-row justify-end gap-2 mt-2 items-center">
@@ -316,6 +351,9 @@ export default function CashAddEditCost({
             className="bg-white text-black border border-grey-500 mt-2 text-sm lg:text-base"
           />
           <Button
+            text={isSubmitting ? "Saving..." : "Save"}
+            onClick={requestConfirm}
+            disabled={isSubmitting}
             text={isSubmitting ? "Saving..." : "Save"}
             onClick={requestConfirm}
             disabled={isSubmitting}
