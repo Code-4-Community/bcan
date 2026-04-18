@@ -41,8 +41,6 @@ const generateMonthlyTicks = (data: ChartDataPoint[]) => {
 
   const filteredTicks = ticks.filter((_, i) => i % 6 === 0)
 
-  console.log("Generated ticks:", filteredTicks.map(formatMonthYear));
-
   return filteredTicks;
 };
 
