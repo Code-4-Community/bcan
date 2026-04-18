@@ -28,11 +28,7 @@ const NavBar: React.FC = observer(() => {
   const isAdmin = user?.position === UserStatus.Admin;
   const [signOutConfirmOpen, setSignOutConfirmOpen] = useState(false);
 
-  const handleLogout = async () => {
-    const { cashflowSettings } = getAppStore();
-    if (cashflowSettings) {
-    await saveCashflowSettings(cashflowSettings);
-  }
+  const performLogout = async () => {
     logoutUser();
     clearAllFilters();
     navigate("/login");
