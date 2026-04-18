@@ -9,7 +9,6 @@ import { Frequency, frequencyIntervalsInMonths } from "../../../../../middle-lay
 import { TDateISO } from "../../../../../backend/src/utils/date";
 import { getAppStore } from "../../../external/bcanSatchel/store";
 import ActionConfirmation from "../../../components/ActionConfirmation";
-import ActionConfirmation from "../../../components/ActionConfirmation";
 
 type FieldErrors = {
   type?: string;
@@ -125,7 +124,6 @@ export default function CashAddEditCost({
   };
 
   const requestConfirm = () => {
-  const requestConfirm = () => {
     setSuccessMessage(null);
     const payload = buildPayload();
     if (!payload) {
@@ -138,19 +136,11 @@ export default function CashAddEditCost({
   const handleConfirmedSubmit = async () => {
     if (!pendingCost) return;
     const payload = pendingCost;
-    setPendingCost(payload);
-    setShowConfirmModal(true);
-  };
-
-  const handleConfirmedSubmit = async () => {
-    if (!pendingCost) return;
-    const payload = pendingCost;
 
     setIsSubmitting(true);
     setErrors((previous) => ({ ...previous, submit: undefined }));
 
     const result = costItem
-      ? await saveCostEdits(payload, costItem.name)
       ? await saveCostEdits(payload, costItem.name)
       : await createNewCost(payload);
     if (!result.success) {
@@ -341,7 +331,6 @@ export default function CashAddEditCost({
           onClick={requestConfirm}
           disabled={isSubmitting}
           className="bg-green hover:!border-green text-white mt-2 text-sm lg:text-base active:!bg-green active:!border-green w-full"
-          className="bg-green hover:!border-green text-white mt-2 text-sm lg:text-base active:!bg-green active:!border-green w-full"
         />
       ) : (
         <div className="flex flex-row justify-end gap-2 mt-2 items-center">
@@ -351,9 +340,6 @@ export default function CashAddEditCost({
             className="bg-white text-black border border-grey-500 mt-2 text-sm lg:text-base"
           />
           <Button
-            text={isSubmitting ? "Saving..." : "Save"}
-            onClick={requestConfirm}
-            disabled={isSubmitting}
             text={isSubmitting ? "Saving..." : "Save"}
             onClick={requestConfirm}
             disabled={isSubmitting}
