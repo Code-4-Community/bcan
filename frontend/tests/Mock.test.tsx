@@ -42,7 +42,6 @@ describe("Account component", () => {
     getStoreMock.mockReturnValue({
       // simulate store content:
       isAuthenticated: true,
-      accessToken: "fake-token",
       user: { userId: "TestUser123", email: "test@example.com", biography: "" },
     });
 
