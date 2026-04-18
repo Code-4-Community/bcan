@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -6,6 +6,7 @@ import {
   PasswordRequirements,
   isPasswordValid,
 } from "../../sign-up";
+import ActionConfirmation from "../../components/ActionConfirmation";
 import Button from "../../components/Button";
 
 export type ChangePasswordFormValues = {
@@ -29,6 +30,11 @@ export default function ChangePasswordModal({
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [reEnterPassword, setReEnterPassword] = useState("");
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) setShowConfirm(false);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -47,11 +53,16 @@ export default function ChangePasswordModal({
     setCurrentPassword("");
     setNewPassword("");
     setReEnterPassword("");
+    setShowConfirm(false);
     onClose();
   };
 
-  const handleSave = () => {
+  const requestSave = () => {
     if (!canSave) return;
+    setShowConfirm(true);
+  };
+
+  const handleConfirmedSave = () => {
     onSubmit?.({
       currentPassword: currentPassword.trim(),
       newPassword,
@@ -65,6 +76,16 @@ export default function ChangePasswordModal({
       aria-modal="true"
       aria-labelledby="change-password-title"
     >
+      <ActionConfirmation
+        isOpen={showConfirm}
+        onCloseDelete={() => setShowConfirm(false)}
+        onConfirmDelete={handleConfirmedSave}
+        title="Change Password"
+        subtitle="Are you sure you want to change"
+        boldSubtitle="your password"
+        warningMessage="You will use your new password the next time you sign in."
+        variant="update"
+      />
       <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-lg">
         <div className="flex items-start justify-between gap-4">
           <h2
@@ -120,7 +141,7 @@ export default function ChangePasswordModal({
               {error ?? "Your passwords do not match."}
             </div>
           )}
-          <Button text="Save" onClick={handleSave} disabled={!canSave} className="bg-primary-900 text-white w-full" />
+          <Button text="Save" onClick={requestSave} disabled={!canSave} className="bg-primary-900 text-white w-full" />
         </div>
       </div>
     </div>

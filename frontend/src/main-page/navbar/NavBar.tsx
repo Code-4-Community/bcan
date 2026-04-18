@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   clearAllFilters,
@@ -12,6 +13,7 @@ import NavTab, { NavTabProps } from "./NavTab.tsx";
 import { faChartLine, faMoneyBill, faClipboardCheck } from "@fortawesome/free-solid-svg-icons";
 import { NavBarBranding } from "../../translations/general.ts";
 import { saveCashflowSettings } from "../cash-flow/processCashflowDataEditSave";
+import ActionConfirmation from "../../components/ActionConfirmation";
 
 const tabs: NavTabProps[] = [
   { name: "Dashboard", linkTo: "/main/dashboard", icon: faChartLine },
@@ -25,19 +27,32 @@ const NavBar: React.FC = observer(() => {
   const navigate = useNavigate();
   const user = getAppStore().user;
   const isAdmin = user?.position === UserStatus.Admin;
+  const [signOutConfirmOpen, setSignOutConfirmOpen] = useState(false);
 
-  const handleLogout = async () => {
+  const performLogout = async () => {
     const { cashflowSettings } = getAppStore();
     if (cashflowSettings) {
-    await saveCashflowSettings(cashflowSettings);
-  }
+      await saveCashflowSettings(cashflowSettings);
+    }
     logoutUser();
     clearAllFilters();
     navigate("/login");
   };
-  
+
   return (
     <aside className="left-0 top-0 min-h-screen w-48 lg:w-56 bg-white flex flex-col">
+      <ActionConfirmation
+        isOpen={signOutConfirmOpen}
+        onCloseDelete={() => setSignOutConfirmOpen(false)}
+        onConfirmDelete={() => {
+          void performLogout();
+        }}
+        title="Sign Out"
+        subtitle="Are you sure you want to"
+        boldSubtitle="sign out"
+        warningMessage="Your cash flow settings will be saved to the server, then you will be logged out."
+        variant="update"
+      />
       {/* Logo at top */}
       <div className="p-6 flex items-center justify-center mr-2">
         <img className="w-12 h-12" src={NavBarBranding.logo} alt={`${NavBarBranding.name} Logo`} />
@@ -90,7 +105,8 @@ const NavBar: React.FC = observer(() => {
             icon={faGear}
           />
           <button
-            onClick={handleLogout}
+            type="button"
+            onClick={() => setSignOutConfirmOpen(true)}
             className="flex items-center gap-3 w-[85%] pl-8 pr-4 py-3 rounded-r-full transition-colors hover:bg-grey-500 hover:text-white text-left border-none font-medium"
           >
             <FontAwesomeIcon icon={faRightFromBracket} className="w-5 h-5" />
