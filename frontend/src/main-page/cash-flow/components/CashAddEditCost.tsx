@@ -188,30 +188,6 @@ export default function CashAddEditCost({
         }
         variant={costItem ? "update" : "create"}
       />
-      <ActionConfirmation
-        isOpen={showConfirmModal}
-        onCloseDelete={() => {
-          setShowConfirmModal(false);
-          setPendingCost(null);
-        }}
-        onConfirmDelete={() => {
-          void handleConfirmedSubmit();
-          setPendingCost(null);
-        }}
-        title={costItem ? "Update Cost Source" : "Create Cost Source"}
-        subtitle={
-          costItem
-            ? "Are you sure you want to save changes to"
-            : "Are you sure you want to add"
-        }
-        boldSubtitle={pendingCost?.name ?? costItem?.name ?? ""}
-        warningMessage={
-          costItem
-            ? "This will update this cost line in your cash flow."
-            : "This will create a new cost line in your cash flow."
-        }
-        variant={costItem ? "update" : "create"}
-      />
       {!costItem && (
         <div className="text-lg lg:text-xl w-full text-left font-bold">
           {"Add Cost Source"}

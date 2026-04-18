@@ -288,7 +288,7 @@ export default function CashAddEditRevenue({
           void handleConfirmedSubmit();
           setPendingRevenue(null);
         }}
-        title={revenueItem ? "Update revenue source" : "Create revenue source"}
+        title={revenueItem ? "Update Revenue Source" : "Create Revenue Source"}
         subtitle={
           revenueItem
             ? "Are you sure you want to save changes to"
