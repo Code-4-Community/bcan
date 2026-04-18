@@ -45,22 +45,11 @@ export async function api(
 ): Promise<Response> {
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
   const url = `${BASE}${cleanPath}`;
-
-  const response = await fetch(url, {
-    credentials: 'include',
-    ...init,
-  });
-
-  if (response.status === 401) {
-    notifyCookieMissing(cleanPath);
-  }
-
-  return response;
   const typedInit = init as ApiInit;
   const { __retry, ...fetchInit } = typedInit;
 
   const resp = await fetch(url, {
-    credentials: 'include', // send & receive the jwt cookie
+    credentials: 'include',
     ...fetchInit,
   });
 
@@ -73,6 +62,10 @@ export async function api(
         ...fetchInit,
       });
     }
+  }
+
+  if (resp.status === 401) {
+    notifyCookieMissing(cleanPath);
   }
 
   return resp;

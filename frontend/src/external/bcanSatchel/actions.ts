@@ -15,10 +15,9 @@ import { CostType } from '../../../../middle-layer/types/CostType';
  */
 export const setAuthState = action(
   "setAuthState",
-  (isAuthenticated: boolean, user: User, accessToken: string | null) => ({
+  (isAuthenticated: boolean, user: User) => ({
     isAuthenticated,
     user,
-    accessToken,
   })
 );
 

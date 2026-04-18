@@ -55,7 +55,6 @@ mutator(setAuthState, (actionMessage) => {
   console.log("Setting user:", actionMessage.user);
   store.isAuthenticated = actionMessage.isAuthenticated;
   store.user = actionMessage.user;
-  store.accessToken = actionMessage.accessToken;
   console.log("Calling persistToSessionStorage...");
   persistToSessionStorage();
 });
@@ -106,7 +105,6 @@ mutator(logoutUser, () => {
   const store = getAppStore();
   store.isAuthenticated = false;
   store.user = null;
-  store.accessToken = null;
   sessionStorage.removeItem("bcanAppStore");
 });
 
