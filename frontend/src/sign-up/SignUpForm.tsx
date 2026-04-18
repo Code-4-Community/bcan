@@ -117,7 +117,7 @@ export default function SignUpForm({
           </div>
         )}
 
-        <SignUpButton disabled={!canSubmit || submitting} />
+        <SignUpButton disabled={!canSubmit || submitting} submitting={submitting} />
         <LoginPrompt />
       </form>
     </div>

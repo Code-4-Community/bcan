@@ -46,6 +46,12 @@ export class CostService {
     }
   }
 
+  private validateInterval(interval: number) {
+    if (!Number.isFinite(interval) || interval < 0 || interval === null || interval > 36) {
+      throw new BadRequestException("interval must be a finite number between 0 and 36");
+    }
+  }
+
   private validateName(name: string) {
     if (name === null || name.trim().length === 0) {
       throw new BadRequestException("name must be a non-empty string");
@@ -143,6 +149,7 @@ export class CostService {
     this.validateAmount(cost.amount);
     this.validateCostType(cost.type);
     this.validateFrequency(cost.frequency);
+    this.validateInterval(cost.interval);
     this.validateName(cost.name);
     const normalizedName = cost.name.trim();
 
@@ -206,6 +213,7 @@ export class CostService {
     this.validateAmount(updates.amount);
     this.validateCostType(updates.type);
     this.validateFrequency(updates.frequency);
+    this.validateInterval(updates.interval);
 
     if (updates.name !== undefined) {
       this.validateName(updates.name);
@@ -238,6 +246,7 @@ export class CostService {
       existingCost.amount === updates.amount &&
       existingCost.type === updates.type &&
       existingCost.frequency === updates.frequency &&
+      existingCost.interval === updates.interval &&
       datesAreEqual;
 
     if (isUnchanged) {

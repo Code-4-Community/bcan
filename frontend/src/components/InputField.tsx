@@ -25,12 +25,12 @@ export default function InputField({
         {label}
         {required && <span className="text-red ml-1">*</span>}
       </label>
-      <div className="mt-2 flex items-center rounded-md">
+      <div className="mt-1 flex items-center rounded-md">
         <input
           id={id}
           {...inputProps}
-          className={`block w-full rounded-md py-2.5 pl-4 pr-3 text-sm lg:text-base border-2 placeholder:text-grey-500 ${
-            error ? "border-red bg-red-lightest" : "border-grey-500 bg-grey-100 " 
+          className={`block w-full rounded-md py-2.5 pl-4 pr-3 text-sm lg:text-base border-2 placeholder:text-grey-500 focus:outline-none focus:border-primary-900 ${
+            error ? "border-red bg-red-lightest" : "border-grey-500 bg-grey-100"
           }`}
           
         />

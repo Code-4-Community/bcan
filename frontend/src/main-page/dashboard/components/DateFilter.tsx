@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { updateYearFilter } from "../../../external/bcanSatchel/actions";
 import { getAppStore } from "../../../external/bcanSatchel/store";
 import { observer } from "mobx-react-lite";
@@ -6,10 +6,32 @@ import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../../components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import CheckboxField from "../../../components/CheckboxField";
+
+function useOutsideClick(callback: () => void) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClick = (event: MouseEvent) => {
+      // Check if the click happened outside the referenced element
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        callback();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClick);
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+    };
+  }, [callback]);
+
+  return ref;
+}
 
 const DateFilter: React.FC = observer(() => {
   const { allGrants, yearFilter } = getAppStore();
   const [showDropdown, setShowDropdown] = useState(false);
+  const ref = useOutsideClick(() => setShowDropdown(false));
 
   // Generate unique years dynamically from grants
   const uniqueYears = Array.from(
@@ -62,10 +84,11 @@ const DateFilter: React.FC = observer(() => {
         onClick={() => setShowDropdown(!showDropdown)}
         logo={faChevronDown}
         logoPosition="right"
-        className="bg-white border-grey-500 inline-flex items-center justify-between text-sm lg:text-base"
+        className="bg-white border-grey-500 inline-flex items-center justify-between text-sm lg:text-base !min-w-60"
       />
       <div
-        className={`z-[100] absolute  top-10 w-64 bg-white ${showDropdown ? "" : "hidden"} rounded-md border-2 border-grey-500 shadow-lg`}
+        ref={ref}
+        className={`z-[100] absolute top-10 sm:w-[14.2rem] lg:w-64 bg-white ${showDropdown ? "" : "hidden"} rounded-md border-2 border-grey-500 shadow-lg`}
       >
         <button
           className="close-button absolute top-3 right-4 text-lg"
@@ -75,29 +98,17 @@ const DateFilter: React.FC = observer(() => {
           <FontAwesomeIcon icon={faXmark} className="text-lg hover:text-red" />
         </button>
         <ul
-          className="h-42 p-4 pb-3 overflow-y-auto text-sm "
+          className="h-42 p-4 pb-3 overflow-y-auto text-sm gap-1 flex flex-col"
           aria-labelledby="dropdownSearchButton"
         >
           {uniqueYears.map((year) => (
-            <li key={year}>
-              <div className="flex items-center p-2 rounded-sm">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 rounded-sm accent-primary-900 bg-grey-150"
-                  id={year.toString()}
-                  value={year}
-                  checked={selectedYears.includes(year)}
-                  onChange={handleCheckboxChange}
-                />
-                <label
-                  htmlFor={year.toString()}
+            <CheckboxField
                   key={year}
-                  className="ms-2 text-sm"
-                >
-                  {year}
-                </label>
-              </div>
-            </li>
+                  id={`year-filter-${year}`}
+                  checked={selectedYears.includes(year)}
+                  onChange={() => handleCheckboxChange({ target: { value: year.toString(), checked: !selectedYears.includes(year) } } as React.ChangeEvent<HTMLInputElement>)}
+                  label={<div className="text-base ml-1">{year.toString()}</div>}
+                />
           ))}
         </ul>
         <hr className="border-t mx-4 border-grey-400" />

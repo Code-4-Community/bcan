@@ -28,14 +28,12 @@ import { createStore } from 'satcheljs'
 interface AuthStore {
   isAuthenticated: boolean
   user: any | null
-  accessToken: string | null
 }
 
 // We'll export a getter function to keep it consistent with how Satchel works
 export let getStore = createStore<AuthStore>('authStore', {
   isAuthenticated: false,
   user: null,
-  accessToken: null,
 })
 ```
 
@@ -53,10 +51,9 @@ import { action } from 'satcheljs';
 // This will create and dispatch the action in one go.
 export let setAuthentication = action(
   'SET_AUTHENTICATION',
-  (isAuthenticated: boolean, user: any, accessToken: string | null) => ({
+  (isAuthenticated: boolean, user: any) => ({
     isAuthenticated,
     user,
-    accessToken,
   })
 );
 ```
@@ -78,7 +75,6 @@ mutator(setAuthentication, actionMessage => {
   const store = getStore();
   store.isAuthenticated = actionMessage.isAuthenticated;
   store.user = actionMessage.user;
-  store.accessToken = actionMessage.accessToken;
 });
 ```
 

@@ -5,45 +5,44 @@ import {
   getColorStatus,
 } from "../../../../../../middle-layer/types/Status.ts";
 import { observer } from "mobx-react-lite";
+import CheckboxField from "../../../../components/CheckboxField";
 
 interface StatusDropdownProps {
-  selected: Status | null;
+  selected: Status[];
   onSelect: (status: Status) => void;
+  onClearAll: () => void;
 }
 
-const StatusDropdown: React.FC<StatusDropdownProps> = observer(({ selected, onSelect }) => {
+const StatusDropdown: React.FC<StatusDropdownProps> = observer(({ selected, onSelect, onClearAll }) => {
   const statuses = Object.values(Status);
 
   return (
-    <div className="absolute left-0 top-full mt-2 bg-white border border-primary-900 rounded-md p-4 z-50 shadow-lg min-w-[25rem] overflow-x-auto">
-      <div className="grid grid-cols-3 gap-2">
+    <div className="absolute left-0 top-full mt-2 bg-white border border-primary-900 rounded-md p-4 z-50 shadow-lg w-[18rem] lg:w-[25rem] overflow-x-auto">
+      <div className="grid lg:grid-cols-3 grid-cols-2 gap-2 relative">
         {statuses.map((status) => (
-          <label
+          <CheckboxField
             key={status}
-            htmlFor={`status-filter-${String(status)}`}
-            className="flex items-center gap-2 cursor-pointer"
-          >
-            <input
-              id={`status-filter-${String(status)}`}
-              type="checkbox"
-              checked={selected === status}
-              onChange={() => onSelect(status)}
-              aria-label={`Filter by ${String(status)} status`}
-              className="cursor-pointer w-4 h-4 flex-shrink-0"
-            />
-            
-            <span
-              className="px-3 py-1 rounded-full text-sm font-medium"
-              style={{
-                backgroundColor: getColorStatus(status, "light"),
-                color: getColorStatus(status, "dark"),
-              }}
-            >
-              {status}
-            </span>
-          </label>
-          
+            id={`status-filter-${String(status)}`}
+            checked={selected.includes(status)}
+            onChange={() => onSelect(status)}
+            label={
+              <span
+                className="px-3 py-1 rounded-full text-sm font-medium"
+                style={{
+                  backgroundColor: getColorStatus(status, "light"),
+                  color: getColorStatus(status, "dark"),
+                }}
+              >
+                {status}
+              </span>
+            }
+          />
         ))}
+        <button 
+          onClick={onClearAll} 
+          className="absolute bottom-0 right-2 text-xs font-semibold text-secondary-400 border-0 hover:text-secondary-400 hover:bg-opacity-0 focus:outline-none active:text-secondary">
+					{"Clear all"}
+				</button>
       </div>
     </div>
   );

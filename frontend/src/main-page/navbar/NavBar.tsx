@@ -12,7 +12,6 @@ import { UserStatus } from "../../../../middle-layer/types/UserStatus";
 import NavTab, { NavTabProps } from "./NavTab.tsx";
 import { faChartLine, faMoneyBill, faClipboardCheck } from "@fortawesome/free-solid-svg-icons";
 import { NavBarBranding } from "../../translations/general.ts";
-import { saveCashflowSettings } from "../cash-flow/processCashflowDataEditSave";
 import ActionConfirmation from "../../components/ActionConfirmation";
 
 const tabs: NavTabProps[] = [
@@ -30,10 +29,6 @@ const NavBar: React.FC = observer(() => {
   const [signOutConfirmOpen, setSignOutConfirmOpen] = useState(false);
 
   const performLogout = async () => {
-    const { cashflowSettings } = getAppStore();
-    if (cashflowSettings) {
-      await saveCashflowSettings(cashflowSettings);
-    }
     logoutUser();
     clearAllFilters();
     navigate("/login");
@@ -50,7 +45,7 @@ const NavBar: React.FC = observer(() => {
         title="Sign Out"
         subtitle="Are you sure you want to"
         boldSubtitle="sign out"
-        warningMessage="Your cash flow settings will be saved to the server, then you will be logged out."
+        warningMessage="You will be logged out of your account."
         variant="update"
       />
       {/* Logo at top */}

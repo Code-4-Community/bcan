@@ -17,7 +17,7 @@ export default function CashflowKPICard({
   size,
 }: CardProps) {
   return (
-    <div className="sm:col-span-2 h-full">
+    <div className="col-span-2 xl:col-span-1 h-full">
       <div className="flex flex-col bg-white rounded-md py-4 px-6 h-full">
         <div className="flex flex-row justify-between mb-1 lg:mb-2 items-center">
           <div className="text-md lg:text-lg  w-full text-left font-semibold">
@@ -29,7 +29,7 @@ export default function CashflowKPICard({
           />
         </div>
         <div
-          className={`font-semibold text-start mt-auto  ${className} ${size == "small" ? "text-sm lg:text-base" : "text-lg lg:text-2xl"}`}
+          className={`font-semibold text-start mt-auto  ${className} ${size == "small" ? "text-sm lg:text-lg" : "text-lg lg:text-2xl"}`}
         >
           {value}
         </div>

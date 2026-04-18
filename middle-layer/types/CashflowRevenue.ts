@@ -10,3 +10,8 @@ export interface CashflowRevenue {
     installments: Installment[];
 
 }
+
+export interface GrantPageGrant extends CashflowRevenue {
+isGrantBased: true; // Required to be true
+grantId: number; // Required when isGrantBased is true
+}

@@ -200,7 +200,7 @@ const EditGrant: React.FC<{
                 onClick={onClose}
               />
               <Button
-                text="Save"
+                text={saving ? "Saving..." : "Save"}
                 className="bg-primary-900 text-white px-3 py-1"
                 onClick={handleSaveClick}
                 disabled={saving}

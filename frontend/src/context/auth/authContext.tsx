@@ -83,7 +83,7 @@ export const AuthProvider = observer(({ children }: { children: ReactNode }) => 
       const data = await response.json();
       if (response.ok && data.user) {
         console.log("Login successful:", data.user);
-        setAuthState(true, data.user, null);
+        setAuthState(true, data.user);
         await fetchAllData();
         return true;
       } else {

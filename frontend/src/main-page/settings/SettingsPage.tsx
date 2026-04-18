@@ -37,9 +37,9 @@ function Settings() {
   const [isRemoveProfilePicModalOpen, setIsRemoveProfilePicModalOpen] = useState(false);
   const [isSaveProfileModalOpen, setIsSaveProfileModalOpen] = useState(false);
   const [profilePictureMessage, setProfilePictureMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const isEmailChanged =
     editForm.email.trim().toLowerCase() !== (store.user?.email ?? "").trim().toLowerCase();
-  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -76,12 +76,12 @@ function Settings() {
   };
 
   const handleSaveEdit = async () => {
+    setIsSubmitting(true);
     if (!EMAIL_REGEX.test(editForm.email)) {
       setPersonalInfoError("Email is not valid.");
       return;
     }
 
-    setIsSaving(true);
     try {
       const response = await api("/auth/update-profile", {
         method: "POST",
@@ -99,7 +99,6 @@ function Settings() {
           (errorBody && (errorBody.message as string)) ||
           "Failed to update profile. Please try again.";
         setPersonalInfoError(message);
-        setIsSaving(false);
         return;
       }
       const updatedUser = {
@@ -122,9 +121,11 @@ function Settings() {
     } catch (error) {
       console.error("Error updating profile:", error);
       setPersonalInfoError("An unexpected error occurred. Please try again.");
-    } finally {
-      setIsSaving(false);
-    }
+    } 
+    // finally {
+    // }
+
+    setIsSubmitting(false);
   };
 
   const handleRemoveProfilePic = async () => {
@@ -312,10 +313,10 @@ function Settings() {
                 className="bg-white text-gray-600 border-2 border-grey-500"
               />
               <Button
-                text="Save"
+                text={isSubmitting ? "Saving..." : "Save"}
                 onClick={() => setIsSaveProfileModalOpen(true)}
+                disabled={isSubmitting}
                 className="bg-primary-900 text-white"
-                disabled={isSaving}
               />
             </div>
           </>
@@ -323,12 +324,14 @@ function Settings() {
       />
 
       <div className="flex gap-24 items-center mt-12">
+       
         <div>
           <h2 className="text-2xl font-bold mb-1 flex justify-start text-start">Change Password</h2>
           <p className="text-gray-500 text-start">
             Re-enter your current password in order to change your password.
           </p>
         </div>
+
 
         <Button
           text="Change Password"

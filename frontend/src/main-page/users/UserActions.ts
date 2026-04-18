@@ -85,15 +85,17 @@ export const approveUser = async (
       }),
     });
     if (response.ok) {
-      alert(`User ${user.email} has been approved successfully`);
       const body = await response.json();
       moveUserToActive(body as User);
+      console.log(`User ${user.email} has been approved successfully`);
+      return { success: true, message: `User ${user.email} has been approved successfully` };
     } else {
-      alert("Failed to approve user");
-    }
+      const errorBody = await response.json();
+      console.error("Error: ", errorBody);
+      return { success: false, message: errorBody.message || "Failed to delete user" };    }
   } catch (error) {
     console.error("Error approving user:", error);
-    alert("Error approving user");
+    return { success: false, message: "Error deleting user" };
   } finally {
     setIsLoading(false);
   }
@@ -122,17 +124,17 @@ export const deleteUser = async (
 
     if (response.ok) {
       console.log(`User ${user.email} has been deleted successfully`);
-      alert(`User ${user.email} has been deleted successfully`);
       const body = await response.json();
       removeUser(body);
+      return { success: true, message: `User ${user.email} has been deleted successfully` };
     } else {
       const errorBody = await response.json();
       console.error("Error: ", errorBody);
-      alert("Failed to delete user");
+      return { success: false, message: errorBody.message || "Failed to delete user" };
     }
   } catch (error) {
     console.error("Error deleting user:", error);
-    alert("Error deleting user");
+    return { success: false, message: "Error deleting user" };
   } finally {
     setIsLoading(false);
   }
@@ -168,21 +170,19 @@ export const changeUserGroup = async (user: User) => {
           user.position === UserStatus.Admin ? "employee" : "admin"
         }`,
       );
-      alert(
-        `User ${user.email} successfully changed to ${
-          user.position === UserStatus.Admin ? "employee" : "admin"
-        }`,
-      );
       const updatedUser = await response.json();
       setActiveUsers([
         ...store.activeUsers.filter((u) => u.email !== user.email),
         updatedUser as User,
       ]);
+      return { success: true, message: `User ${user.email} has been changed to ${user.position === UserStatus.Admin ? "employee" : "admin"} successfully` };
     } else {
       const errorBody = await response.json();
       console.error("Error: ", errorBody);
+      return { success: false, message: errorBody.message || `Failed to change user group` };
     }
   } catch (error) {
     console.error("Error changing user group: ", error);
+    return { success: false, message: "Error changing user group" };
   }
 };

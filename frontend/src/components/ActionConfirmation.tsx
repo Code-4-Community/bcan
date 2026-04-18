@@ -37,9 +37,9 @@ const ActionConfirmation = ({
           labelClass: "text-green",
           textClass: "text-green-dark",
           cancelClass:
-            "!border-2 active:!border-grey-500 border-grey-500 bg-white text-black active:!text-grey-600 hover:!border-grey-600 hover:bg-grey-150 active:bg-grey-200",
+            "!border-2 active:!border-grey-500 border-grey-500 active:!bg-white text-black active:!text-grey-600 hover:!border-grey-600 hover:bg-grey-150 active:bg-grey-200",
           confirmClass:
-            "!border-0 bg-green text-white hover:!border-green hover:bg-green-dark active:bg-green-dark active:!bg-opacity-75",
+            "!border-2 bg-green text-white hover:!border-green hover:bg-green-dark active:!bg-green-dark active:!bg-opacity-75 active:!border-green",
         }
       : variant === "update"
         ? {
@@ -52,9 +52,9 @@ const ActionConfirmation = ({
             labelClass: "text-yellow-dark",
             textClass: "text-yellow-dark",
             cancelClass:
-              "!border-2 active:!border-grey-500 border-grey-500 bg-white text-black active:!text-grey-600 hover:!border-grey-600 hover:bg-grey-150 active:bg-grey-200",
+              "!border-2 active:!border-grey-500 border-grey-500 active:!bg-white text-black active:!text-grey-600 hover:!border-grey-600 hover:bg-grey-150 active:bg-grey-200",
             confirmClass:
-              "!border-0 bg-yellow text-white hover:!border-yellow hover:bg-opacity-75 active:bg-yellow",
+              "!border-2 bg-yellow text-white hover:!border-yellow hover:bg-opacity-75 active:bg-yellow active:!border-yellow active:!bg-yellow-dark",
           }
         : {
             panel: "border-t-4 border-red",
@@ -66,9 +66,9 @@ const ActionConfirmation = ({
             labelClass: "text-red",
             textClass: "text-red",
             cancelClass:
-              "!border-0 bg-red text-white hover:!border-red hover:bg-opacity-75 active:bg-red",
+              "!border-2 bg-red text-white hover:!border-red hover:bg-opacity-75 active:bg-red active:!border-red active:!bg-red-dark",
             confirmClass:
-              "!border-2 active:!border-grey-500 border-grey-500 bg-white text-black active:!text-grey-600 hover:!border-grey-600 hover:bg-grey-150 active:bg-grey-200",
+              "!border-2 active:!border-grey-500 border-grey-500 active:!bg-white text-black active:!text-grey-600 hover:!border-grey-600 hover:bg-grey-150 active:bg-grey-200",
           };
 
   const { Icon } = styles;

@@ -20,13 +20,18 @@ import EditGrant from "./edit-grant/EditGrant.tsx";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { clearAllFilters } from "../../external/bcanSatchel/actions.ts";
 import { getAppStore } from "../../external/bcanSatchel/store.ts";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function GrantPage() {
   const [showEditGrant, setShowEditGrant] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   // Use ProcessGrantData reactively to get filtered grants
   const { grants } = ProcessGrantData();
   const [curId, setCurId] = useState<number | null>(null);
+  const selectedGrantId =
+    (location.state as { selectedGrantId?: number } | null)?.selectedGrantId;
 
   const curGrant =
   grants.find((g) => g.grantId === curId) ??
@@ -76,10 +81,27 @@ function GrantPage() {
     }
   };
 
-  // Preserve current selection when still visible; otherwise show the first visible grant.
   useEffect(() => {
     if (grants.length === 0) {
       setCurId(null);
+      return;
+    }
+
+    if (typeof selectedGrantId === "number") {
+      const selectedGrantIsVisible = grants.some(
+        (grant) => grant.grantId === selectedGrantId,
+      );
+
+      if (!selectedGrantIsVisible) {
+        clearAllFilters();
+        return;
+      }
+
+      if (curId !== selectedGrantId) {
+        setCurId(selectedGrantId);
+      }
+
+      navigate(location.pathname, { replace: true, state: null });
       return;
     }
 
@@ -87,7 +109,7 @@ function GrantPage() {
     if (!currentSelectionStillVisible) {
       setCurId(grants[0].grantId);
     }
-  }, [curId, grants]);
+  }, [curId, grants, selectedGrantId, navigate, location.pathname]);
 
   return (
     <div className="grant-page w-full items-end flex flex-col h-[86vh]">
@@ -117,7 +139,7 @@ function GrantPage() {
           ))}
         </div>
         <div className="grant-container flex-1 overflow-y-auto rounded-md">
-          <GrantItem grant={curGrant} />
+          <GrantItem key={curGrant.grantId} grant={curGrant} />
         </div>
       </div>) : (<div className="flex w-full h-full justify-center mt-24 text-gray-500 text-2xl">
               No grants found.

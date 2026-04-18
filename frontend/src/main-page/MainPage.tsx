@@ -4,7 +4,7 @@ import GrantPage from "./grants/GrantPage";
 import NavBar from "./navbar/NavBar";
 import RestrictedPage from "./restricted/RestrictedPage";
 import CashFlowPage from "./cash-flow/CashFlowPage";
-import Settings from "./settings/Settings";
+import Settings from "./settings/SettingsPage";
 import Footer from "../Footer";
 import UsersPage from "./users/UsersPage";
 
@@ -15,6 +15,7 @@ import { getAppStore } from "../external/bcanSatchel/store";
 import BellButton from "./notifications/Bell";
 import { useEffect, useState } from "react";
 import { clearAllFilters } from "../external/bcanSatchel/actions";
+import { saveCashflowSettings } from "./cash-flow/processCashflowDataEditSave";
 
 interface PositionGuardProps {
   children: React.ReactNode;
@@ -53,8 +54,12 @@ function MainPage() {
   const mainContainer = document.getElementsByClassName('main-container');
 
   useEffect(() => {
-    clearAllFilters();
     mainContainer[0].scrollTo(0, 0);
+    clearAllFilters();
+    const { cashflowSettings, user } = getAppStore();
+    if (user?.position === UserStatus.Admin && cashflowSettings) {
+    saveCashflowSettings(cashflowSettings);
+  }
   }, [location]);
 
   return (
