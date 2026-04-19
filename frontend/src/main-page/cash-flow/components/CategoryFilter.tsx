@@ -52,6 +52,15 @@ const CategoryFilter: React.FC<CategoryFilterProps> = observer(({ type }) => {
     }
   };
 
+  const handleClearAll = () => {
+    if (type === "Revenue") {
+      updateRevenueCategoryFilter([]);
+    } else {
+      updateCostCategoryFilter([]);
+    }
+  };
+
+
   const activeButtonClass =
     "border-2 border-primary-900 text-primary-900 active:!border-primary-900 active:!text-white focus:!border-primary-900 focus:!text-primary-900 focus:outline-none focus-visible:outline-none";
   const inactiveButtonClass =
@@ -70,7 +79,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = observer(({ type }) => {
       />
 
       {open && (
-        <div className="absolute right-0 top-full mt-1.5 bg-white border border-primary-900 rounded-md pl-4 pr-2 py-2 z-50 shadow-lg">
+        <div className="absolute right-0 top-full mt-1.5 pt-4 pb-8 bg-white border border-primary-900 rounded-md pl-4 pr-2 z-50 shadow-lg min-w-[12rem] lg:min-w-[16rem]">
           <div className="flex flex-col gap-2">
             {type === "Revenue"
               ? Object.values(RevenueType).map((cat) => (
@@ -99,6 +108,11 @@ const CategoryFilter: React.FC<CategoryFilterProps> = observer(({ type }) => {
                     }
                   />
                 ))}
+            <button 
+              onClick={handleClearAll} 
+              className="absolute bottom-4 right-4 text-xs font-semibold text-secondary-400 border-0 hover:text-secondary-400 hover:bg-opacity-0 focus:outline-none active:text-secondary">
+              {"Clear all"}
+            </button>
           </div>
         </div>
       )}
