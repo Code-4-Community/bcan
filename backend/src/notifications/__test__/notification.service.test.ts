@@ -195,7 +195,7 @@ describe('NotificationController', () => {
     await notificationService.sendEmailNotification('user@example.com', 'Test Subject', 'Test Body');
 
     expect(mockSendEmail).toHaveBeenCalledWith({
-      Source: 'u&@nveR1ified-failure@dont-send.com',
+      Source: 'noreply@c4cneu.com ',
       Destination: { ToAddresses: ['user@example.com'] },
       Message: {
         Subject: { Charset: 'UTF-8', Data: 'Test Subject' },
