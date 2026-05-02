@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from '../user.controller';
 import { UserService } from '../user.service';
+import { NotificationService } from '../../notifications/notification.service';
 import { User } from '../../../../middle-layer/types/User';
 import { UserStatus } from '../../../../middle-layer/types/UserStatus';
 import { VerifyUserGuard, VerifyAdminRoleGuard, VerifyAdminOrEmployeeRoleGuard } from '../../guards/auth.guard';
@@ -114,6 +115,7 @@ describe('UserController', () => {
     process.env.DYNAMODB_USER_TABLE_NAME = 'test-users-table';
     process.env.COGNITO_USER_POOL_ID     = 'test-pool-id';
     process.env.PROFILE_PICTURE_BUCKET   = 'test-profile-pics-bucket';
+    process.env.NOTIFICATION_EMAIL_SENDER = 'noreply@c4cneu.com';
   });
 
   beforeEach(async () => {
@@ -134,7 +136,7 @@ describe('UserController', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
-      providers: [UserService],
+      providers: [UserService, NotificationService],
     }).compile();
 
     controller  = module.get<UserController>(UserController);
