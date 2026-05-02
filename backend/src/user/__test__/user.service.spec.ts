@@ -400,13 +400,12 @@ describe('UserController', () => {
       .mockResolvedValueOnce({ Item: user })
       .mockResolvedValueOnce({})
       .mockResolvedValueOnce({})
-      .mockResolvedValueOnce({ MessageId: 'test-id' })
       .mockResolvedValueOnce({ Attributes: { ...user, position: UserStatus.Employee } });
 
     const result = await userService.addUserToGroup(user, UserStatus.Employee, admin);
     expect(result.position).toBe(UserStatus.Employee);
     expect(mockAdminAddUserToGroup).toHaveBeenCalledWith({ GroupName: 'Employee', UserPoolId: 'test-pool-id', Username: 'inactive1@example.com' });
-    expect(mockSendEmail).toHaveBeenCalled();
+    expect(mockSendEmail).not.toHaveBeenCalled();
     expect(mockUpdate).toHaveBeenCalled();
   });
 
