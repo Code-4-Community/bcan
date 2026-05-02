@@ -21,7 +21,6 @@ const mockAdminRemoveUserFromGroup = vi.fn(() => ({ promise: mockPromise }));
 const mockAdminDeleteUser          = vi.fn(() => ({ promise: mockPromise }));
 const mockSendEmail                = vi.fn(() => ({ promise: mockPromise }));
 const mockS3Upload                 = vi.fn(() => ({ promise: mockPromise }));
-const mockSendEmailNotification    = vi.fn(() => mockPromise);
 
 // ─── AWS SDK mock ─────────────────────────────────────────────────────────────
 vi.mock('aws-sdk', () => {
@@ -62,12 +61,7 @@ vi.mock('../../guards/auth.guard', () => ({
   VerifyAdminOrEmployeeRoleGuard: vi.fn(class { canActivate = vi.fn().mockResolvedValue(true); }),
 }));
 
-// ─── NotificationService mock ─────────────────────────────────────────────────
-vi.mock('../../notifications/notification.service', () => ({
-  NotificationService: vi.fn(class {
-    sendEmailNotification = mockSendEmailNotification;
-  }),
-}));
+
 
 // ─── Mock database (email is now the partition key) ───────────────────────────
 const mockDatabase = {
@@ -138,14 +132,13 @@ describe('UserController', () => {
     mockAdminRemoveUserFromGroup.mockReturnValue({ promise: mockPromise });
     mockAdminDeleteUser.mockReturnValue({ promise: mockPromise });
     mockSendEmail.mockReturnValue({ promise: mockPromise });
-    mockSendEmailNotification.mockReturnValue(mockPromise);
     mockS3Upload.mockReturnValue({ promise: mockPromise });
 
     mockPromise.mockResolvedValue({});
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
-      providers: [UserService],
+      providers: [UserService, NotificationService],
     }).compile();
 
     controller  = module.get<UserController>(UserController);
