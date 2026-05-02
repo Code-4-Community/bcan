@@ -189,19 +189,14 @@ describe('NotificationController', () => {
     expect(mockPromise).toHaveBeenCalled();
   });
 
-  it('should use fallback email when NOTIFICATION_EMAIL_SENDER is not set', async () => {
+  it('should throw when NOTIFICATION_EMAIL_SENDER is not set', async () => {
     delete process.env.NOTIFICATION_EMAIL_SENDER;
 
-    await notificationService.sendEmailNotification('user@example.com', 'Test Subject', 'Test Body');
+    await expect(
+      notificationService.sendEmailNotification('user@example.com', 'Test Subject', 'Test Body')
+    ).rejects.toThrow(InternalServerErrorException);
 
-    expect(mockSendEmail).toHaveBeenCalledWith({
-      Source: 'noreply@c4cneu.com ',
-      Destination: { ToAddresses: ['user@example.com'] },
-      Message: {
-        Subject: { Charset: 'UTF-8', Data: 'Test Subject' },
-        Body: { Text: { Charset: 'UTF-8', Data: 'Test Body' } },
-      },
-    });
+    expect(mockSendEmail).not.toHaveBeenCalled();
   });
 
   it('should handle special characters in email content', async () => {
