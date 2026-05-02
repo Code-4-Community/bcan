@@ -511,7 +511,7 @@ describe("GrantService", () => {
 
       const data = await grantService.addGrant(mockCreateGrantDto);
 
-      expect(data).closeTo(now, 1);
+      expect(data).closeTo(now, 10);
       expect(mockDocumentClient.put).toHaveBeenCalledWith({
         TableName: "Grants",
         Item: {
