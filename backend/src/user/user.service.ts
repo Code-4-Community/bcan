@@ -832,7 +832,7 @@ async getAllActiveUsers(): Promise<User[]> {
       }
 
       // remove actual email and add to env later!!
-      const fromEmail = process.env.NOTIFICATION_EMAIL_SENDER || 'c4cneu.bcan@gmail.com';
+      const fromEmail = process.env.NOTIFICATION_EMAIL_SENDER || 'noreply@c4cneu.com';
 
       const params: AWS.SES.SendEmailRequest = {
         Source: fromEmail,

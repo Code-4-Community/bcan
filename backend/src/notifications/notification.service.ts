@@ -167,7 +167,7 @@ export class NotificationService {
     // if BCAN's is not defined in the environment
     this.logger.log(`Sending email notification to: ${to}, subject: ${subject}`);
     const fromEmail = process.env.NOTIFICATION_EMAIL_SENDER ||
-     'u&@nveR1ified-failure@dont-send.com';
+     'noreply@c4cneu.com';
 
     const params: AWS.SES.SendEmailRequest = {
       Source: fromEmail,
