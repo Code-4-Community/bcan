@@ -136,9 +136,17 @@ describe('UserController', () => {
 
     mockPromise.mockResolvedValue({});
 
+    const mockNotificationService = {
+      sendEmailNotification: vi.fn().mockResolvedValue({ MessageId: 'test-id' }),
+      deleteNotificationsByUserEmail: vi.fn().mockResolvedValue(undefined),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
-      providers: [UserService, NotificationService],
+      providers: [
+        UserService,
+        { provide: NotificationService, useValue: mockNotificationService },
+      ],
     }).compile();
 
     controller  = module.get<UserController>(UserController);
