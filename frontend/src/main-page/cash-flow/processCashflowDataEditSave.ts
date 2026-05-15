@@ -220,6 +220,9 @@ export const saveCashflowSettings = async (settings: CashflowSettings) => {
     ];
 
     for (const update of updates) {
+      if (update.value === undefined || update.value === null || (Number.isNaN(update.value) && typeof update.value === "number")) {
+        continue; // Skip undefined or null values
+      }
       const response = await api("/default-values", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },

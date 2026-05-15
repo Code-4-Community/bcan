@@ -6,6 +6,8 @@ import { Notification } from '../../../../middle-layer/types/Notification';
 import { CashflowCost } from '../../../../middle-layer/types/CashflowCost';
 import { CashflowRevenue } from '../../../../middle-layer/types/CashflowRevenue';
 import { CashflowSettings } from '../../../../middle-layer/types/CashflowSettings';
+import { RevenueType } from '../../../../middle-layer/types/RevenueType';
+import { CostType } from '../../../../middle-layer/types/CostType';
 
 /**
  * Set whether the user is authenticated, update the user object,
@@ -13,10 +15,9 @@ import { CashflowSettings } from '../../../../middle-layer/types/CashflowSetting
  */
 export const setAuthState = action(
   "setAuthState",
-  (isAuthenticated: boolean, user: User, accessToken: string | null) => ({
+  (isAuthenticated: boolean, user: User) => ({
     isAuthenticated,
     user,
-    accessToken,
   })
 );
 
@@ -64,7 +65,7 @@ export const setCashflowSettings = action("setCashflowSettings",
   (cashflowSettings: CashflowSettings) => ({ cashflowSettings })
 );
 
-export const updateFilter = action("updateFilter", (status: Status | null) => ({
+export const updateFilter = action("updateFilter", (status: Status[]) => ({
   status,
 }));
 
@@ -130,3 +131,13 @@ export const setNotifications = action(
   'setNotifications',
   (notifications: Notification[]) => ({notifications})
 )
+
+export const updateRevenueCategoryFilter = action(
+  'updateRevenueCategoryFilter',
+  (category: RevenueType[]) => ({ category })
+);
+
+export const updateCostCategoryFilter = action(
+  'updateCostCategoryFilter',
+  (category: CostType[]) => ({ category })
+);

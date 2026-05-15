@@ -32,6 +32,7 @@ const UserMenu = ({ user }: UserMenuProps) => {
             ? "lose access to sensitive data."
             : "gain access to admin pages."
         }`}
+        variant="update"
       />
       <ActionConfirmation
         isOpen={isDeleteUserModalOpen}
@@ -41,8 +42,9 @@ const UserMenu = ({ user }: UserMenuProps) => {
         subtitle="Are you sure you want to delete"
         boldSubtitle={user.email}
         warningMessage="If you delete this user, they will be permanently removed from the system."
+        variant="delete"
       />
-      <div className="flex items-center xl:justify-end gap-2">
+      <div className="flex items-center xl:justify-end gap-2 xl:mr-2">
         <div className="relative">
           <button
             type="button"

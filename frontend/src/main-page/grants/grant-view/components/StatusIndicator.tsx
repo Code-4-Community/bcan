@@ -25,7 +25,7 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({ curStatus, onClick, a
 
      // text-gray-700 px-3 py-1 text-sm border-2 ${status === btn.id ? "bg-primary-800 border-primary-800" : "border-grey-300
     >
-      <span className="text-md">{labelText}</span>
+      <span className="text-sm xl:text-base">{labelText}</span>
     </button>
   );
 };

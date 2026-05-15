@@ -2,6 +2,7 @@ import Button from "../components/Button";
 
 type SignUpButtonProps = {
   disabled?: boolean;
+  submitting?: boolean;
 };
 
 /**
@@ -9,10 +10,10 @@ type SignUpButtonProps = {
  * When requirements are met: primary-900 (#E16F39), clickable.
  * When not met: primary-700 (current/inactive), disabled.
  */
-export default function SignUpButton({ disabled }: SignUpButtonProps) {
+export default function SignUpButton({ disabled, submitting }: SignUpButtonProps) {
   return (
     <Button
-                text="Sign Up"
+                text={submitting ? "Submitting..." : "Sign Up"}
                 type="submit"
                 disabled={disabled}
                 onClick={() => {}}

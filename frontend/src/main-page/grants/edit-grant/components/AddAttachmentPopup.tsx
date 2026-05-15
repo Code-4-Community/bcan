@@ -67,7 +67,7 @@ const AddAttachmentPopup = observer(
             <Button
               text="Cancel"
               onClick={setShowPopup}
-              className="text-black border-grey-500 text-sm"
+              className="text-black border-grey-500"
             />
 
             <Button
@@ -76,7 +76,7 @@ const AddAttachmentPopup = observer(
               disabled={
                 !(attachment && attachment.attachment_name && attachment.url)
               }
-              className="text-white bg-primary-900 text-sm"
+              className="text-white bg-primary-900"
             />
           </div>
         </div>

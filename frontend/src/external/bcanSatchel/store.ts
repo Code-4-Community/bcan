@@ -6,13 +6,14 @@ import { Notification } from '../../../../middle-layer/types/Notification'
 import { CashflowRevenue } from '../../../../middle-layer/types/CashflowRevenue'
 import { CashflowCost } from '../../../../middle-layer/types/CashflowCost'
 import { CashflowSettings } from '../../../../middle-layer/types/CashflowSettings'
+import { RevenueType } from '../../../../middle-layer/types/RevenueType'
+import { CostType } from '../../../../middle-layer/types/CostType'
 
 export interface AppState {
   isAuthenticated: boolean;
   user: User | null;
-  accessToken: string | null;
   allGrants: Grant[] | []
-  filterStatus: Status | null;
+  filterStatus: Status[];
   // TODO: should this be the ISODate type?
   startDateFilter: Date | null;
   endDateFilter: Date | null;
@@ -31,15 +32,16 @@ export interface AppState {
   revenueSources: CashflowRevenue[];
   costSources: CashflowCost[];
   cashflowSettings: CashflowSettings | null;
+  filterRevenueCategory: RevenueType[];
+  filterCostCategory: CostType[];
 }
 
 // Define initial state
 const initialState: AppState = {
   isAuthenticated: false,
   user: null,
-  accessToken: null,
   allGrants: [],
-  filterStatus: null,
+  filterStatus: [],
   startDateFilter: null,
   endDateFilter: null,
   searchQuery: '',
@@ -57,6 +59,8 @@ const initialState: AppState = {
   revenueSources: [],
   costSources: [],
   cashflowSettings: null,
+  filterRevenueCategory: [],
+  filterCostCategory: [],
 };
 
 /**
@@ -72,7 +76,6 @@ function hydrateFromSessionStorage(): AppState {
         ...initialState,
         isAuthenticated: data.isAuthenticated ?? false,
         user: data.user ?? null,
-        accessToken: data.accessToken ?? null,
         activeUsers: data.activeUsers ?? [],
         inactiveUsers: data.inactiveUsers ?? [],
       };
@@ -96,7 +99,6 @@ export function persistToSessionStorage() {
     const dataToSave = {
       isAuthenticated: state.isAuthenticated,
       user: state.user ? JSON.parse(JSON.stringify(state.user)) : null,
-      accessToken: state.accessToken,
       activeUsers: state.activeUsers ? state.activeUsers.map(u => JSON.parse(JSON.stringify(u))) : [],
       inactiveUsers: state.inactiveUsers ? state.inactiveUsers.map(u => JSON.parse(JSON.stringify(u))) : [],
     };

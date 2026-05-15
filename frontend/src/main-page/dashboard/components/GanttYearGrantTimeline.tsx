@@ -5,6 +5,7 @@ import { SetStateAction, useCallback, useState } from "react";
 import { Grant } from "../../../../../middle-layer/types/Grant";
 import { getColorStatus } from "../../../../../middle-layer/types/Status";
 import "../styles/Dashboard.css";
+import { useNavigate } from "react-router-dom";
 
 export const GanttYearGrantTimeline = observer(
   ({
@@ -16,6 +17,8 @@ export const GanttYearGrantTimeline = observer(
     grants: Grant[];
     uniqueYears: number[];
   }) => {
+    const navigate = useNavigate();
+
     //  Filter grants for the max selected year
     // and if the current year is selected in the filter include that as well
     const filterYear =
@@ -42,12 +45,12 @@ export const GanttYearGrantTimeline = observer(
       const startDate = new Date(
         application_deadline.getFullYear(),
         application_deadline.getMonth(),
-        application_deadline.getDate() - 14
+        application_deadline.getDate() - 14,
       );
       const endDate = new Date(
         application_deadline.getFullYear(),
         application_deadline.getMonth(),
-        application_deadline.getDate()
+        application_deadline.getDate(),
       );
 
       // Create application task
@@ -70,12 +73,12 @@ export const GanttYearGrantTimeline = observer(
           const report_startDate = new Date(
             report_deadline.getFullYear(),
             report_deadline.getMonth(),
-            report_deadline.getDate() - 14
+            report_deadline.getDate() - 14,
           );
           const report_endDate = new Date(
             report_deadline.getFullYear(),
             report_deadline.getMonth(),
-            report_deadline.getDate()
+            report_deadline.getDate(),
           );
 
           tasks.push({
@@ -110,8 +113,16 @@ export const GanttYearGrantTimeline = observer(
       (range: SetStateAction<{ startDate: Date; endDate: Date }>) => {
         setRange(range);
       },
-      []
+      [],
     );
+
+    const handleClick = (grantId: number ) => {
+      if (typeof grantId === "number") {
+        navigate("/main/all-grants", {
+          state: { selectedGrantId: grantId },
+        });
+      }
+    };
 
     // Filtering events that are included in current date range
     // Example can be also found on video https://youtu.be/9oy4rTVEfBQ?t=118&si=52BGKSIYz6bTZ7fx
@@ -162,11 +173,13 @@ export const GanttYearGrantTimeline = observer(
               filterButtonState: -1,
               showTooltip: false,
             }}
+            onItemClick={(data) => handleClick(parseInt(data.id))}
+            onTileClick={(data) => handleClick(parseInt(data.id))}
           />
         </div>
       </div>
     );
-  }
+  },
 );
 
 export default GanttYearGrantTimeline;

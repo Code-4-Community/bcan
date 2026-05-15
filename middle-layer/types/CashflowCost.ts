@@ -9,4 +9,5 @@ export interface CashflowCost {
     type: CostType;
     date: TDateISO;
     frequency: Frequency;
+    interval: number; // Only applicable for recurring costs, represents the number of months between each occurrence
 }

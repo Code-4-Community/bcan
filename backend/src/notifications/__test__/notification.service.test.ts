@@ -24,6 +24,7 @@ const mockDelete = vi.fn();
 const mockQuery = vi.fn();
 const mockSendEmail = vi.fn();
 const mockUpdate = vi.fn();
+const mockBatchWrite = vi.fn();
 
 const mockDocumentClient = {
   scan: mockScan,
@@ -32,6 +33,7 @@ const mockDocumentClient = {
   query: mockQuery,
   update: mockUpdate,
   delete: mockDelete,
+  batchWrite: mockBatchWrite,
 };
 
 const mockSES = {
@@ -69,6 +71,7 @@ describe('NotificationController', () => {
     mockQuery.mockReturnValue({ promise: mockPromise });
     mockSendEmail.mockReturnValue({ promise: mockPromise });
     mockSend.mockReturnValue({ promise: mockPromise });
+    mockBatchWrite.mockReturnValue({ promise: mockPromise });
 
     const originalEnv = process.env;
     process.env = { ...originalEnv };
@@ -95,7 +98,8 @@ describe('NotificationController', () => {
       userEmail: 'user1@example.com',
       message: 'New Grant Created 🎉 ',
       alertTime: '2024-01-15T10:30:00.000Z',
-      sent: false
+      sent: false,
+      grantId: 100,
     } as Notification;
 
     mockNotification_id1_user2 = {
@@ -103,7 +107,8 @@ describe('NotificationController', () => {
       userEmail: 'user2@example.com',
       message: 'New Grant Created',
       alertTime: '2025-01-15T10:30:00.000Z',
-      sent: false
+      sent: false,
+      grantId: 100,
     } as Notification;
 
     mockNotification_id2_user1 = {
@@ -111,7 +116,8 @@ describe('NotificationController', () => {
       userEmail: 'user1@example.com',
       message: 'New Grant Created',
       alertTime: '2025-01-15T10:30:00.000Z',
-      sent: false
+      sent: false,
+      grantId: 200,
     } as Notification;
 
     mockNotification_id2_user2 = {
@@ -119,7 +125,8 @@ describe('NotificationController', () => {
       userEmail: 'user2@example.com',
       message: 'New Grant Created',
       alertTime: '2025-01-15T10:30:00.000Z',
-      sent: false
+      sent: false,
+      grantId: 200,
     } as Notification;
 
     mockPut.mockReturnValue({ promise: mockPromise });
@@ -182,19 +189,14 @@ describe('NotificationController', () => {
     expect(mockPromise).toHaveBeenCalled();
   });
 
-  it('should use fallback email when NOTIFICATION_EMAIL_SENDER is not set', async () => {
+  it('should throw when NOTIFICATION_EMAIL_SENDER is not set', async () => {
     delete process.env.NOTIFICATION_EMAIL_SENDER;
 
-    await notificationService.sendEmailNotification('user@example.com', 'Test Subject', 'Test Body');
+    await expect(
+      notificationService.sendEmailNotification('user@example.com', 'Test Subject', 'Test Body')
+    ).rejects.toThrow(InternalServerErrorException);
 
-    expect(mockSendEmail).toHaveBeenCalledWith({
-      Source: 'u&@nveR1ified-failure@dont-send.com',
-      Destination: { ToAddresses: ['user@example.com'] },
-      Message: {
-        Subject: { Charset: 'UTF-8', Data: 'Test Subject' },
-        Body: { Text: { Charset: 'UTF-8', Data: 'Test Body' } },
-      },
-    });
+    expect(mockSendEmail).not.toHaveBeenCalled();
   });
 
   it('should handle special characters in email content', async () => {
@@ -268,13 +270,14 @@ describe('NotificationController', () => {
   });
 
   it('should create notification with valid data in the set table', async () => {
-    const mockNotification = {
+    const mockNotification: Notification = {
       notificationId: '123',
       userEmail: 'user@example.com',
       message: 'Test notification',
       alertTime: '2024-01-15T10:30:00.000Z',
-      sent: false
-    } as Notification;
+      sent: false,
+      grantId: 42,
+    };
 
     const result = await notificationService.createNotification(mockNotification);
 
@@ -286,7 +289,8 @@ describe('NotificationController', () => {
         userEmail: 'user@example.com',
         message: 'Test notification',
         alertTime: '2024-01-15T10:30:00.000Z',
-        sent: false
+        sent: false,
+        grantId: 42,
       },
     });
     expect(result).toEqual(mockNotification);
@@ -295,13 +299,14 @@ describe('NotificationController', () => {
   it('should create notification with fallback table name when environment variable is not set', async () => {
     delete process.env.DYNAMODB_NOTIFICATION_TABLE_NAME;
 
-    const mockNotification = {
+    const mockNotification: Notification = {
       notificationId: '123',
       userEmail: 'user@example.com',
       message: 'Test notification',
       alertTime: '2024-01-15T10:30:00.000Z',
-      sent: false
-    } as Notification;
+      sent: false,
+      grantId: 42,
+    };
 
     const result = await notificationService.createNotification(mockNotification);
     expect(result).toEqual(mockNotification);
@@ -313,55 +318,60 @@ describe('NotificationController', () => {
         userEmail: 'user@example.com',
         message: 'Test notification',
         alertTime: '2024-01-15T10:30:00.000Z',
-        sent: false
+        sent: false,
+        grantId: 42,
       },
     });
   });
 
   it('should throw BadRequestException when userEmail is missing', async () => {
-    const invalidNotification = {
+    const invalidNotification: Notification = {
       notificationId: '123',
       userEmail: '',
       message: 'Test',
       alertTime: '2024-01-15T10:30:00.000Z',
-      sent: false
-    } as Notification;
+      sent: false,
+      grantId: 1,
+    };
 
     await expect(notificationService.createNotification(invalidNotification)).rejects.toThrow(BadRequestException);
   });
 
   it('should throw BadRequestException when notificationId is missing', async () => {
-    const invalidNotification = {
+    const invalidNotification: Notification = {
       notificationId: '',
       userEmail: 'user@example.com',
       message: 'Test',
       alertTime: '2024-01-15T10:30:00.000Z',
-      sent: false
-    } as Notification;
+      sent: false,
+      grantId: 1,
+    };
 
     await expect(notificationService.createNotification(invalidNotification)).rejects.toThrow(BadRequestException);
   });
 
   it('should throw BadRequestException for invalid alertTime', async () => {
-    const invalidNotification = {
+    const invalidNotification: Notification = {
       notificationId: '123',
       userEmail: 'user@example.com',
       message: 'Test',
       alertTime: 'not-a-valid-date' as any,
-      sent: false
-    } as Notification;
+      sent: false,
+      grantId: 1,
+    };
 
     await expect(notificationService.createNotification(invalidNotification)).rejects.toThrow(BadRequestException);
   });
 
   it('should throw InternalServerErrorException when DynamoDB fails on create', async () => {
-    const validNotification = {
+    const validNotification: Notification = {
       notificationId: '123',
       userEmail: 'user@example.com',
       message: 'Test',
       alertTime: '2024-01-15T10:30:00.000Z',
-      sent: false
-    } as Notification;
+      sent: false,
+      grantId: 1,
+    };
 
     mockPromise.mockRejectedValueOnce(new Error('DynamoDB service unavailable'));
 
@@ -471,6 +481,188 @@ describe('NotificationController', () => {
       mockPromise.mockRejectedValueOnce(new Error('DynamoDB service unavailable'));
 
       await expect(notificationService.deleteNotification('123')).rejects.toThrow(InternalServerErrorException);
+    });
+  });
+
+  describe('getNotificationsByGrantId', () => {
+    it('should return notifications matching the given grantId', async () => {
+      const matchingNotifications = [mockNotification_id1_user1, mockNotification_id1_user2];
+      mockScan.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: matchingNotifications }) });
+
+      const result = await notificationService.getNotificationsByGrantId(100);
+
+      expect(mockScan).toHaveBeenCalledWith({
+        TableName: 'BCANNotifications',
+        FilterExpression: 'grantId = :grantId',
+        ExpressionAttributeValues: { ':grantId': 100 },
+      });
+      expect(result).toEqual(matchingNotifications);
+    });
+
+    it('should return empty array when no notifications match', async () => {
+      mockScan.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: [] }) });
+
+      const result = await notificationService.getNotificationsByGrantId(999);
+
+      expect(result).toEqual([]);
+    });
+
+    it('should throw InternalServerErrorException when DynamoDB scan fails', async () => {
+      mockScan.mockReturnValueOnce({ promise: vi.fn().mockRejectedValue(new Error('scan failed')) });
+
+      await expect(notificationService.getNotificationsByGrantId(100)).rejects.toThrow(InternalServerErrorException);
+    });
+
+    it('should accumulate results across multiple pages using LastEvaluatedKey', async () => {
+      const page1 = [mockNotification_id1_user1];
+      const page2 = [mockNotification_id1_user2];
+      mockScan
+        .mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: page1, LastEvaluatedKey: { notificationId: '1' } }) })
+        .mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: page2, LastEvaluatedKey: undefined }) });
+
+      const result = await notificationService.getNotificationsByGrantId(100);
+
+      expect(mockScan).toHaveBeenCalledTimes(2);
+      // second call must pass ExclusiveStartKey from first page's LastEvaluatedKey
+      expect(mockScan.mock.calls[1][0]).toMatchObject({
+        ExclusiveStartKey: { notificationId: '1' },
+      });
+      expect(result).toEqual([...page1, ...page2]);
+    });
+  });
+
+  describe('updateNotificationsEmailAndOrgByGrantId', () => {
+    const notifWithOrg = (overrides: Partial<typeof mockNotification_id1_user1>) => ({
+      ...mockNotification_id1_user1,
+      message: 'Application due in 30 days for OldOrg',
+      ...overrides,
+    });
+
+    it('should update userEmail when it differs from new email', async () => {
+      const notifications = [notifWithOrg({ userEmail: 'old@example.com', notificationId: '1' })];
+      mockScan.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: notifications }) });
+      mockUpdate.mockReturnValue({ promise: vi.fn().mockResolvedValue({ Attributes: {} }) });
+
+      await notificationService.updateNotificationsEmailAndOrgByGrantId(100, 'new@example.com', 'OldOrg');
+
+      expect(mockUpdate).toHaveBeenCalledTimes(1);
+      expect(mockUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          Key: { notificationId: '1' },
+          ExpressionAttributeValues: expect.objectContaining({ ':userEmail': 'new@example.com' }),
+        })
+      );
+    });
+
+    it('should update message when org differs', async () => {
+      const notifications = [notifWithOrg({ userEmail: 'same@example.com', notificationId: '1' })];
+      mockScan.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: notifications }) });
+      mockUpdate.mockReturnValue({ promise: vi.fn().mockResolvedValue({ Attributes: {} }) });
+
+      await notificationService.updateNotificationsEmailAndOrgByGrantId(100, 'same@example.com', 'NewOrg');
+
+      expect(mockUpdate).toHaveBeenCalledTimes(1);
+      expect(mockUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          Key: { notificationId: '1' },
+          ExpressionAttributeValues: expect.objectContaining({ ':message': 'Application due in 30 days for NewOrg' }),
+        })
+      );
+    });
+
+    it('should update both fields when both differ', async () => {
+      const notifications = [notifWithOrg({ userEmail: 'old@example.com', notificationId: '1' })];
+      mockScan.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: notifications }) });
+      mockUpdate.mockReturnValue({ promise: vi.fn().mockResolvedValue({ Attributes: {} }) });
+
+      await notificationService.updateNotificationsEmailAndOrgByGrantId(100, 'new@example.com', 'NewOrg');
+
+      expect(mockUpdate).toHaveBeenCalledTimes(1);
+      expect(mockUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          Key: { notificationId: '1' },
+          ExpressionAttributeValues: expect.objectContaining({
+            ':userEmail': 'new@example.com',
+            ':message': 'Application due in 30 days for NewOrg',
+          }),
+        })
+      );
+    });
+
+    it('should skip update when neither email nor org changed', async () => {
+      const notifications = [notifWithOrg({ userEmail: 'same@example.com', notificationId: '1' })];
+      mockScan.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: notifications }) });
+
+      await notificationService.updateNotificationsEmailAndOrgByGrantId(100, 'same@example.com', 'OldOrg');
+
+      expect(mockUpdate).not.toHaveBeenCalled();
+    });
+
+    it('should do nothing when no notifications exist for the grantId', async () => {
+      mockScan.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: [] }) });
+
+      await notificationService.updateNotificationsEmailAndOrgByGrantId(999, 'new@example.com', 'NewOrg');
+
+      expect(mockUpdate).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteNotificationsByUserEmail', () => {
+    it('should do nothing when user has no notifications', async () => {
+      mockQuery.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: [] }) });
+
+      await notificationService.deleteNotificationsByUserEmail('user1@example.com');
+
+      expect(mockBatchWrite).not.toHaveBeenCalled();
+    });
+
+    it('should batch-delete all notifications for a user in a single call when <= 25', async () => {
+      const notifications = [mockNotification_id1_user1, mockNotification_id2_user1];
+      mockQuery.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: notifications }) });
+      mockBatchWrite.mockReturnValue({ promise: vi.fn().mockResolvedValue({}) });
+
+      await notificationService.deleteNotificationsByUserEmail('user1@example.com');
+
+      expect(mockBatchWrite).toHaveBeenCalledTimes(1);
+      expect(mockBatchWrite).toHaveBeenCalledWith({
+        RequestItems: {
+          BCANNotifications: [
+            { DeleteRequest: { Key: { notificationId: '1' } } },
+            { DeleteRequest: { Key: { notificationId: '2' } } },
+          ],
+        },
+      });
+    });
+
+    it('should split into multiple batchWrite calls when > 25 notifications', async () => {
+      const notifications = Array.from({ length: 30 }, (_, i) => ({
+        notificationId: String(i),
+        userEmail: 'user1@example.com',
+        message: 'msg',
+        alertTime: '2024-01-15T10:30:00.000Z' as TDateISO,
+        sent: false,
+        grantId: i,
+      }));
+      mockQuery.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: notifications }) });
+      mockBatchWrite.mockReturnValue({ promise: vi.fn().mockResolvedValue({}) });
+
+      await notificationService.deleteNotificationsByUserEmail('user1@example.com');
+
+      expect(mockBatchWrite).toHaveBeenCalledTimes(2);
+      // first call has 25 items, second has 5
+      const firstCall = mockBatchWrite.mock.calls[0][0];
+      const secondCall = mockBatchWrite.mock.calls[1][0];
+      expect(firstCall.RequestItems['BCANNotifications']).toHaveLength(25);
+      expect(secondCall.RequestItems['BCANNotifications']).toHaveLength(5);
+    });
+
+    it('should throw when batchWrite fails', async () => {
+      const notifications = [mockNotification_id1_user1];
+      mockQuery.mockReturnValueOnce({ promise: vi.fn().mockResolvedValue({ Items: notifications }) });
+      mockBatchWrite.mockReturnValue({ promise: vi.fn().mockRejectedValue(new Error('DynamoDB error')) });
+
+      await expect(notificationService.deleteNotificationsByUserEmail('user1@example.com'))
+        .rejects.toThrow();
     });
   });
 });

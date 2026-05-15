@@ -82,7 +82,9 @@ const FilterBar: React.FC = observer(() => {
   };
 
   const handleStatusSelect = (status: Status) => {
-    const newSelected = filterStatus === status ? null : status;
+    const newSelected = filterStatus.includes(status)
+      ? filterStatus.filter((s) => s !== status)
+      : [...filterStatus, status];
     updateFilter(newSelected);
   };
 
@@ -153,6 +155,10 @@ const FilterBar: React.FC = observer(() => {
       updateSort(null);
     }
   };
+
+  const handleStatusClearAll = () => {
+    updateFilter([]);
+  }
 
   const dueDateActive = showDueDateCard || sort?.header === "application_deadline" || startDateFilter || endDateFilter;
   const amountActive = showAmountCard || sort?.header === "amount" || amountMinFilter !== null || amountMaxFilter !== null;
@@ -278,11 +284,15 @@ const FilterBar: React.FC = observer(() => {
             logo={showStatusDropdown ? faChevronUp : faChevronDown}
             logoPosition="right"
             className={`bg-white text-sm lg:text-base whitespace-nowrap ${
-              showStatusDropdown || filterStatus ? activeButtonClass : inactiveButtonClass
+              showStatusDropdown || filterStatus.length > 0 ? activeButtonClass : inactiveButtonClass
             }`}
           />
           {showStatusDropdown && (
-            <StatusDropdown selected={filterStatus} onSelect={handleStatusSelect} />
+            <StatusDropdown 
+              selected={filterStatus} 
+              onSelect={handleStatusSelect}
+              onClearAll={handleStatusClearAll}
+            />
           )}
         </div>
       </div>

@@ -11,6 +11,7 @@ import {
 import * as AWS from "aws-sdk";
 import { User } from "../../../middle-layer/types/User";
 import { UserStatus } from "../../../middle-layer/types/UserStatus";
+import { NotificationService } from "../notifications/notification.service";
 
 /**
  * File could use safer 'User' typing after grabbing users, verifying type after the scan.
@@ -21,9 +22,10 @@ export class UserService {
 
   private readonly logger = new Logger(UserService.name);
   private dynamoDb = new AWS.DynamoDB.DocumentClient();
-  private ses = new AWS.SES({ region: process.env.AWS_REGION });
   private s3 = new AWS.S3();
   private profilePicBucket : string = process.env.PROFILE_PICTURE_BUCKET!;
+
+  constructor(private readonly notificationService: NotificationService) {}
 
 async uploadProfilePic(user: User, pic: Express.Multer.File): Promise<String> {
   const tableName = process.env.DYNAMODB_USER_TABLE_NAME;
@@ -310,6 +312,13 @@ private validateUploadInputs(user: User, pic: Express.Multer.File, tableName: st
     `✅ User ${email} deleted successfully by ${requestedBy.email}`
   );
 
+  // Delete any associated notifications
+  try {
+    await this.notificationService.deleteNotificationsByUserEmail(email);
+  } catch (notifError) {
+    this.logger.error(`Failed to delete notifications for ${email}:`, notifError);
+  }
+
   return userToDelete;
 }
 
@@ -504,7 +513,11 @@ async addUserToGroup(
         groupName === UserStatus.Employee
       ) {
         try {
-          await this.sendVerificationEmail(user.email);
+          await this.notificationService.sendEmailNotification(
+            user.email,
+            "BCAN Account Approval",
+            "Your account has been approved; Try using your login credentials now!"
+          );
           this.logger.log(
             `✓ Verification email sent to ${user.email} upon group change to ${groupName}`
           );
@@ -810,45 +823,6 @@ async getAllActiveUsers(): Promise<User[]> {
   }
 
 
-
-  // purpose statement: sends email to user once account is approved, used in method above when a user
-  // is added to the Employee or Admin group from Inactive
-  async sendVerificationEmail(userEmail: string): Promise<AWS.SES.SendEmailResponse> {
-      this.logger.log(`Starting sendVerificationEmail for email: ${userEmail}`);
-      
-      if (!userEmail || !this.isValidEmail(userEmail)) {
-        this.logger.error(`Invalid email address provided: ${userEmail}`);
-        throw new BadRequestException("Valid email address is required");
-      }
-
-      // remove actual email and add to env later!!
-      const fromEmail = process.env.NOTIFICATION_EMAIL_SENDER || 'c4cneu.bcan@gmail.com';
-
-      const params: AWS.SES.SendEmailRequest = {
-        Source: fromEmail,
-        Destination: {
-          ToAddresses: [userEmail],
-        },
-        Message: {
-          // UTF-8 is a top reliable way to define special characters and symbols in emails
-          Subject: { Charset: 'UTF-8', Data: "BCAN Account Approval" },
-          Body: {
-            Text: { Charset: 'UTF-8', Data: "Your account has been approved; Try using your login credentials now!" },
-          },
-        },
-      };
-
-      try {
-        this.logger.log(`Calling AWS SES to send email to ${userEmail}...`);
-        const result = await this.ses.sendEmail(params).promise();
-        this.logger.log(`✅ Verification email sent successfully to ${userEmail}. MessageId: ${result.MessageId}`);
-        return result;
-      } catch (err: unknown) {
-        this.logger.error('Error sending email: ', err);
-        const errMessage = (err instanceof Error) ? err.message : 'Unknown error'; 
-        throw new InternalServerErrorException(`Failed to send email: ${errMessage}`);
-      }
-  }
 
     async removeProfilePicture(email: string): Promise<string> {
     const tableName = process.env.DYNAMODB_USER_TABLE_NAME;

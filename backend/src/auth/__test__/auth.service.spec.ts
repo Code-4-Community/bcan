@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../auth.service';
+import { NotificationService } from '../../notifications/notification.service';
 import { User } from '../../../../middle-layer/types/User';
 import { UserStatus } from '../../../../middle-layer/types/UserStatus';
 import {
@@ -9,6 +10,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
+import { GrantService } from '../../grant/grant.service';
 
 // ─── Cognito mocks ────────────────────────────────────────────────────────────
 const mockCognitoPromise = vi.fn();
@@ -106,10 +108,18 @@ describe('AuthService', () => {
     mockDynamoPromise.mockResolvedValue({});
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthService],
+      providers: [
+        AuthService,
+        {
+          provide: GrantService,
+          useValue: { updateGrantsByPOC: vi.fn().mockResolvedValue(undefined) },
+        },
+      ],
     }).compile();
 
-    service = module.get<AuthService>(AuthService);
+    service = Object.assign(module.get<AuthService>(AuthService), {
+      grantService: { updateGrantsByPOC: vi.fn().mockResolvedValue(undefined) },
+    });
   });
 
   // ── register ────────────────────────────────────────────────────────────────
@@ -188,22 +198,36 @@ describe('AuthService', () => {
       const original = process.env.COGNITO_USER_POOL_ID;
       delete process.env.COGNITO_USER_POOL_ID;
 
-      const module = await Test.createTestingModule({ providers: [AuthService] }).compile();
-      const svc = module.get<AuthService>(AuthService);
-
-      await expect(svc.register('test@test.com', 'Pass123!', 'John', 'Doe')).rejects.toThrow('Server configuration error');
-      process.env.COGNITO_USER_POOL_ID = original;
+      try {
+        const module = await Test.createTestingModule({
+          providers: [
+            AuthService,
+            { provide: GrantService, useValue: { updateGrantsByPOC: vi.fn() } },
+          ],
+        }).compile();
+        const svc = module.get<AuthService>(AuthService);
+        await expect(svc.register('test@test.com', 'Pass123!', 'John', 'Doe')).rejects.toThrow('Server configuration error');
+      } finally {
+        process.env.COGNITO_USER_POOL_ID = original;
+      }
     });
 
     it('should throw InternalServerErrorException when DYNAMODB_USER_TABLE_NAME is missing', async () => {
       const original = process.env.DYNAMODB_USER_TABLE_NAME;
       delete process.env.DYNAMODB_USER_TABLE_NAME;
 
-      const module = await Test.createTestingModule({ providers: [AuthService] }).compile();
-      const svc = module.get<AuthService>(AuthService);
-
-      await expect(svc.register('test@test.com', 'Pass123!', 'John', 'Doe')).rejects.toThrow('Server configuration error');
-      process.env.DYNAMODB_USER_TABLE_NAME = original;
+      try {
+        const module = await Test.createTestingModule({
+          providers: [
+            AuthService,
+            { provide: GrantService, useValue: { updateGrantsByPOC: vi.fn() } },
+          ],
+        }).compile();
+        const svc = module.get<AuthService>(AuthService);
+        await expect(svc.register('test@test.com', 'Pass123!', 'John', 'Doe')).rejects.toThrow('Server configuration error');
+      } finally {
+        process.env.DYNAMODB_USER_TABLE_NAME = original;
+      }
     });
 
     it('should rollback Cognito user if adminSetUserPassword fails', async () => {

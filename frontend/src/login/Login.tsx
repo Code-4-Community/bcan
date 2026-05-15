@@ -13,11 +13,13 @@ const Login = observer(() => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [failure, setFailure] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuthContext();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
     const success = await login(email, password);
 
@@ -26,6 +28,8 @@ const Login = observer(() => {
     } else {
       setFailure(true);
     }
+
+    setLoading(false);
   };
 
   return (
@@ -65,8 +69,8 @@ const Login = observer(() => {
             )}
           </div>
           <Button
-            text="Log in"
-            disabled={!email || !password}
+            text={loading ? "Logging in..." : "Log in"}
+            disabled={!email || !password || loading}
             type="submit"
             onClick={() => {}}
             className="w-full block grow bg-primary-900 text-white mt-8 text-base placeholder:text-gray-500"

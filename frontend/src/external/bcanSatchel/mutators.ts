@@ -22,7 +22,9 @@ import {
   removeProfilePic,
   fetchCashflowRevenues,
   fetchCashflowCosts,
-  setCashflowSettings
+  setCashflowSettings,
+  updateRevenueCategoryFilter,
+  updateCostCategoryFilter
 } from "./actions";
 import { getAppStore, persistToSessionStorage } from "./store";
 
@@ -53,7 +55,6 @@ mutator(setAuthState, (actionMessage) => {
   console.log("Setting user:", actionMessage.user);
   store.isAuthenticated = actionMessage.isAuthenticated;
   store.user = actionMessage.user;
-  store.accessToken = actionMessage.accessToken;
   console.log("Calling persistToSessionStorage...");
   persistToSessionStorage();
 });
@@ -104,14 +105,13 @@ mutator(logoutUser, () => {
   const store = getAppStore();
   store.isAuthenticated = false;
   store.user = null;
-  store.accessToken = null;
   sessionStorage.removeItem("bcanAppStore");
 });
 
 // Clears all store filters
 mutator(clearAllFilters, () => {
   const store = getAppStore();
-  store.filterStatus = null;
+  store.filterStatus = [];
   store.startDateFilter = null;
   store.endDateFilter = null;
   store.searchQuery = "";
@@ -121,6 +121,8 @@ mutator(clearAllFilters, () => {
   store.eligibleOnly = false;
   store.amountMinFilter = null;
   store.amountMaxFilter = null;
+  store.filterRevenueCategory = [];
+  store.filterCostCategory = [];
 });
 
 /**
@@ -148,6 +150,7 @@ mutator(updateFilter, (actionMessage) => {
   const store = getAppStore();
   store.filterStatus = actionMessage.status;
 });
+
 
 mutator(updateStartDateFilter, (actionMessage) => {
   const store = getAppStore();
@@ -246,4 +249,14 @@ mutator(removeProfilePic, () => {
 mutator(setCashflowSettings, (actionMessage) => {
   const store = getAppStore();
   store.cashflowSettings = actionMessage.cashflowSettings;
+});
+
+mutator(updateRevenueCategoryFilter, (actionMessage) => {
+  const store = getAppStore();
+  store.filterRevenueCategory = actionMessage.category;
+});
+
+mutator(updateCostCategoryFilter, (actionMessage) => {
+  const store = getAppStore();
+  store.filterCostCategory = actionMessage.category;
 });

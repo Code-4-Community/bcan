@@ -3,6 +3,7 @@ import { Grant } from "../../../../../middle-layer/types/Grant.ts";
 import { api } from "../../../api.ts";
 import { GrantFormState } from "./EditGrant.tsx";
 import { fetchGrants } from "../filter-bar/processGrantData.ts";
+import { fetchNotifications } from "../../../main-page/notifications/processNotificationData.ts";
 
 export type GrantMutationResult =
   | { success: true; grantId?: number }
@@ -22,6 +23,7 @@ export const createNewGrant = async (
     if (response.ok) {
       const createdGrantId = (await response.json()) as number;
       await fetchGrants();
+      await fetchNotifications();
       return { success: true, grantId: createdGrantId };
     } else {
       const errorData = await response.json();
@@ -53,6 +55,7 @@ export const saveGrantEdits = async (
 
     if (response.ok) {
       await fetchGrants();
+      await fetchNotifications();
       return { success: true };
     } else {
       const errorData = await response.json();
@@ -85,8 +88,9 @@ export const deleteGrant = async (grantId: any) => {
   
           if (response.ok) {
             console.log("✅ Grant deleted successfully");
-            // Refetch grants to update UI
+            // Refetch grants and notifications to update UI
             await fetchGrants();
+            await fetchNotifications();
           } else {
             // Get error details
             const errorText = await response.text();

@@ -1,11 +1,18 @@
+import { observer } from "mobx-react-lite";
 import { CashflowCost } from "../../../../../middle-layer/types/CashflowCost";
 import { CashflowRevenue } from "../../../../../middle-layer/types/CashflowRevenue";
 import { deleteCost, deleteRevenue } from "../processCashflowDataEditSave";
 import CashEditLineItem from "./CashEditLineItem";
-import CashEditRevenue from "./CashEditRevenue";
+import CashAddEditRevenue from "./CashAddEditRevenue";
 import { formatMoney } from "../CashFlowPage";
-import { formatDateByFrequency, frequencyLabels } from "../../../../../middle-layer/types/Frequency";
+import { useNavigate } from "react-router-dom";
 import CashAddEditCost from "./CashAddEditCost";
+import CategoryFilter from "./CategoryFilter";
+import { formatDateByFrequency, frequencyLabels } from "../../../../../middle-layer/types/Frequency";
+import { getAppStore } from "../../../external/bcanSatchel/store";
+import { RevenueType } from "../../../../../middle-layer/types/RevenueType";
+import { CostType } from "../../../../../middle-layer/types/CostType";
+import { isInactive } from "../processCashflowData";
 
 type SourceProps = {
   type: "Revenue" | "Cost";
@@ -23,73 +30,101 @@ const formatInstallmentDate = (dateValue: Date | string) => {
   return parsedDate.toLocaleDateString();
 };
 
-export default function CashSourceList({ type, lineItems }: SourceProps) {
+const CashSourceList = observer(({ type, lineItems }: SourceProps) => {
+  const { filterRevenueCategory, filterCostCategory } = getAppStore();
+  const activeFilter = type === "Revenue" ? filterRevenueCategory : filterCostCategory;
+
+  const filteredItems = activeFilter.length > 0
+    ? type === "Revenue"
+      ? (lineItems as CashflowRevenue[]).filter((item) => (activeFilter as RevenueType[]).includes(item.type))
+      : (lineItems as CashflowCost[]).filter((item) => (activeFilter as CostType[]).includes(item.type))
+    : lineItems;
+
+  const navigate = useNavigate();
+
   return (
     <div className="chart-container col-span-2 h-fit">
-      <div className="text-lg lg:text-xl mb-2 w-full text-left font-bold">
-        {type}
-        {" Sources"}
+      <div className="flex items-center justify-between mb-2 md:flex-row flex-col">
+        <div className="text-lg lg:text-2xl text-left font-bold">
+          {type}{" Sources"}
+        </div>
+        <CategoryFilter type={type} />
       </div>
       {/* map over list of source and put casheditlineitem for each */}
-      <div className="flex flex-col gap-2 h-[38rem] overflow-y-auto pr-1">
-        {lineItems.map((item) => (
-          <div key={item.name}>
-            <CashEditLineItem
-              cardText={
-                <div className="flex flex-col text-sm lg:text-base gap-1">
-                  <div className="font-semibold">{item.type}</div>
-                  {type === "Cost" && (
-                      <div>
+      <div className="flex flex-col gap-2 h-[30rem] overflow-y-auto pr-1">
+        {filteredItems.map((item, index) => {
+          const isGrantPageGrantRevenue = type === "Revenue" && (item as any).isGrantBased === true;
+
+          return (
+            <div key={item.name+index}>
+              <CashEditLineItem key={item.name+index}
+                cardText={
+                  <div className="flex flex-col text-sm lg:text-base gap-1">
+                    <div className="font-semibold">{item.type}</div>
+                    {type === "Cost" && (
+                      <div className="2xl:text-nowrap">
                         {formatMoney(item.amount)}{frequencyLabels.find(
                           (label) => label.value === (item as CashflowCost).frequency,
                         )?.label}
-                        {" on "}
-                        {formatDateByFrequency((item as CashflowCost).date, (item as CashflowCost).frequency)}
+                        {" "}
+                        {formatDateByFrequency((item as CashflowCost).date, (item as CashflowCost).frequency, (item as CashflowCost).interval)}
                       </div>
-                  )}
-                  {type === "Revenue" && (
-                    <div>
-                      {(item as CashflowRevenue).installments.map(
-                        (installment, index) => (
+                    )}
+                    {type === "Revenue" && (
+                      <div>
+                        {(item as CashflowRevenue).installments.map((installment, index) => (
                           <div key={`${item.name}-installment-${index}`}>
                             {formatMoney(installment.amount)}
                             {" • "}
                             {formatInstallmentDate(installment.date)}
                           </div>
-                        ),
-                      )}
-                      <div className="font-semibold pt-1">
-                        {"Total: "}
-                        {formatMoney(item.amount)}
+                        ))}
+                        <div className="font-semibold pt-1">
+                          {"Total: "}{formatMoney(item.amount)}
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-              }
-              sourceName={item.name}
-              onRemove={() =>
-                type === "Cost"
-                  ? deleteCost(item.name)
-                  : deleteRevenue(item.name)
-              }
-            >
-              {(onClose) =>
-                type === "Cost" ? (
-                  <CashAddEditCost
-                    costItem={item as CashflowCost}
-                    onClose={onClose}
-                  />
-                ) : (
-                  <CashEditRevenue
-                    revenueItem={item as CashflowRevenue}
-                    onClose={onClose}
-                  />
-                )
-              }
-            </CashEditLineItem>
-          </div>
-        ))}
+                    )}
+                  </div>
+                }
+                sourceName={item.name}
+                onRemove={() =>
+                  type === "Cost"
+                    ? deleteCost(item.name)
+                    : deleteRevenue(item.name)
+                }
+                isReadOnly={isGrantPageGrantRevenue}
+                onReadOnlyAction={() => {
+                  if (isGrantPageGrantRevenue) {
+                    const grantId = (item as any).grantId;
+                    if (typeof grantId === "number") {
+                      navigate("/main/all-grants", {
+                        state: { selectedGrantId: grantId },
+                      });
+                    }
+                  }
+                }}
+                inactive={isInactive(item)}
+              >
+                {(onClose) =>
+                  type === "Cost" ? (
+                    <CashAddEditCost
+                      costItem={item as CashflowCost}
+                      onClose={onClose}
+                    />
+                  ) : (
+                    <CashAddEditRevenue
+                      revenueItem={item as CashflowRevenue}
+                      onClose={onClose}
+                    />
+                  )
+                }
+              </CashEditLineItem>
+            </div> 
+          )
+        })}
       </div>
     </div>
   );
-}
+});
+
+export default CashSourceList;

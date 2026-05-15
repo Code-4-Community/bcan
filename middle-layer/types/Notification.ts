@@ -9,4 +9,5 @@ export interface Notification {
     message: string;
     alertTime: TDateISO; // Sort
     sent: boolean; // email has been sent for this notification
+    grantId: number; // the grant this notification belongs to
   }

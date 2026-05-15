@@ -14,21 +14,10 @@ const UsersPage = observer(() => {
   const [showAll, setShowAll] = useState(true);
 
   const { activeUsers, inactiveUsers } = ProcessUserData();
-  //const ITEMS_PER_PAGE = 8;
-
-  //const [currentPage, setCurrentPage] = useState(1);
 
   const filteredUsers = showAll ? activeUsers : inactiveUsers;
 
-  // const numUsers = filteredUsers.length;
-  // const pageStartIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  // const pageStartIndex = 1; // Temporarily disable pagination by always starting at index 0
-  // const pageEndIndex =
-  //   pageStartIndex + ITEMS_PER_PAGE > numUsers
-  //     ? numUsers
-  //     : pageStartIndex + ITEMS_PER_PAGE;
-  // const currentPageUsers = filteredUsers.slice(pageStartIndex, pageEndIndex);
-  const currentPageUsers = filteredUsers; // Temporarily disable pagination by showing all users
+  const currentPageUsers = filteredUsers // Temporarily disable pagination by showing all users
   return (
     <div className="grant-page w-full min-h-[86vh] items-end">
       <UserSearch />
@@ -74,51 +63,6 @@ const UsersPage = observer(() => {
           )}
         </div>
       </div>
-      {/* Commenting out pagination for now to check if needed */}
-      {/* <Pagination.Root
-          className="pt-4 mt-auto pb-4"
-          count={numUsers}
-          pageSize={ITEMS_PER_PAGE}
-          page={currentPage}
-          onPageChange={(e) => {
-            setCurrentPage(e.page);
-          }}
-        >
-          <ButtonGroup variant="ghost" size="md">
-            <Pagination.PrevTrigger asChild>
-              <IconButton>
-                <HiChevronLeft />
-              </IconButton>
-            </Pagination.PrevTrigger>
-            <Pagination.Context>
-              {({ pages }) =>
-                pages.map((page, index) =>
-                  page.type === "page" ? (
-                    <IconButton
-                      key={index}
-                      className={
-                        currentPage === page.value
-                          ? "text-secondary-500 underline"
-                          : "ghost"
-                      }
-                      onClick={() => setCurrentPage(page.value)}
-                      aria-label={`Go to page ${page.value}`}
-                    >
-                      {page.value}
-                    </IconButton>
-                  ) : (
-                    "..."
-                  ),
-                )
-              }
-            </Pagination.Context>
-            <Pagination.NextTrigger asChild>
-              <IconButton>
-                <HiChevronRight />
-              </IconButton>
-            </Pagination.NextTrigger>
-          </ButtonGroup>
-        </Pagination.Root> */}
     </div>
   );
 });
