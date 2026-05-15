@@ -13,7 +13,7 @@ function RestrictedPage() {
         <div className="w-full">
           <h1 className="text-4xl pb-8 font-bold">So Sorry!</h1>
           <h2 className="text-lg">
-            {user?.position === UserStatus.Inactive ? "Your account is currently inactive or pending approval." : "You don't have access to this page."} Contact the admin if you think
+            {user?.position === UserStatus.Inactive ? "Your account is currently pending approval." : "You don't have access to this page."} Contact the admin if you think
             there's a mistake.
           </h2>
           <Link to="/login">
