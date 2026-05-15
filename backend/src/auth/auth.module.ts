@@ -7,10 +7,6 @@ import { GrantModule } from '../grant/grant.module';
 
 @Module({
   imports: [
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1h' },
-    }),
     GrantModule,
   ],
   controllers: [AuthController],

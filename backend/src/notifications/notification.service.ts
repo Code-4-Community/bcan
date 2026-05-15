@@ -57,7 +57,7 @@ export class NotificationService {
 
     this.logger.log(`Found current notifications for userEmail ${userEmail}`);
 
-    const currentNotifications = notifactions.filter(notification => new Date(notification.alertTime) <= currentTime);
+    const currentNotifications = notifactions.filter(notification => new Date(notification.alertTime) >= currentTime);
     this.logger.log(`Filtered current notifications for userEmail ${userEmail}, count: ${currentNotifications.length}`);
     return currentNotifications;
   } catch (error) {

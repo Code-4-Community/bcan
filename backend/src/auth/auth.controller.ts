@@ -149,36 +149,38 @@ export class AuthController {
   ): Promise<{ message: string; user: User }> {
     const result = await this.authService.login(body.email, body.password);
   
+  const isProduction = process.env.NODE_ENV === 'production';
+
   // Set cookie with access token
   if (result.access_token) {
     response.cookie('access_token', result.access_token, {
-      httpOnly: true,      // Cannot be accessed by JavaScript (XSS protection)
-      secure: process.env.NODE_ENV === 'production', // Only HTTPS in production
-      sameSite: 'none', 
-      maxAge: 3600000,     // 1 hour in milliseconds
-      path: '/',           // Cookie available on all routes
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      maxAge: 3600000,
+      path: '/',
     });
   }
 
   response.clearCookie('refresh_token', { path: '/auth/refresh' });
 
   if (result.refreshToken) {
-    console.log("refresh token set")
-    response.cookie('refresh_token', result.refreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'none',
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days (match your Cognito refresh token expiry)
-    path: '/auth/refresh',  // more restrictive path than access token
-  });
-}
+    const refreshPayload = JSON.stringify({ username: result.user.email, token: result.refreshToken });
+    response.cookie('refresh_token', refreshPayload, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      path: '/auth/refresh',
+    });
+  }
 
- if (result.idToken) {
+  if (result.idToken) {
     response.cookie('id_token', result.idToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none',
-      maxAge: 3600000, // 1 hour, same expiry as access token
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      maxAge: 3600000,
       path: '/',
     });
   }
@@ -211,23 +213,24 @@ export class AuthController {
     @Res({ passthrough: true}) response: Response,
   ): Promise<{ message: string }> {
 
-    const refreshToken = req.cookies?.refresh_token;
+    const rawRefreshCookie = req.cookies?.refresh_token;
 
-    const idToken = req.cookies?.id_token;
-
-    if (!refreshToken || !idToken ) {
-      throw new UnauthorizedException('Missing required token cookies');
+    if (!rawRefreshCookie) {
+      throw new UnauthorizedException('Missing refresh token cookie');
     }
 
-    const idTokenPayload = JSON.parse(
-      Buffer.from(idToken.split('.')[1], 'base64').toString('utf8')
-    );
+    let cognitoUsername: string;
+    let refreshToken: string;
+    try {
+      const parsed = JSON.parse(rawRefreshCookie);
+      cognitoUsername = parsed.username;
+      refreshToken = parsed.token;
+    } catch {
+      throw new UnauthorizedException('Malformed refresh token cookie');
+    }
 
-    const email = idTokenPayload.email;
-    const cognitoUsername = idTokenPayload['cognito:username'];
-
-    if (!email || !cognitoUsername) {
-      throw new UnauthorizedException('Could not extract user identity from token');
+    if (!cognitoUsername || !refreshToken) {
+      throw new UnauthorizedException('Could not extract user identity from refresh token');
     }
 
     const { accessToken, idToken: newIdToken, refreshToken: newRefreshToken } =
@@ -237,27 +240,30 @@ export class AuthController {
     // To keep frontend contract stable, we always return the refresh token we're using.
     const effectiveRefreshToken = newRefreshToken ?? refreshToken;
 
+    const isProduction = process.env.NODE_ENV === 'production';
+
     response.cookie('access_token', accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none',
-      maxAge: 3600000, // 1 hour
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      maxAge: 3600000,
       path: '/',
     });
 
     response.cookie('id_token', newIdToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none',
-      maxAge: 3600000, // 1 hour
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      maxAge: 3600000,
       path: '/',
     });
 
-    response.cookie('refresh_token', effectiveRefreshToken, {
+    const newRefreshPayload = JSON.stringify({ username: cognitoUsername, token: effectiveRefreshToken });
+    response.cookie('refresh_token', newRefreshPayload, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none',
-      maxAge: 30 * 24 * 60 * 60 * 1000, // match Cognito refresh token expiry (approx)
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
       path: '/auth/refresh',
     });
 

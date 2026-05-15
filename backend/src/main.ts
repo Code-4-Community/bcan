@@ -10,8 +10,8 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 async function bootstrap() {
   AWS.config.update({
     region: process.env.AWS_REGION,
-    accessKeyId: process.env.OPEN_HATCH,
-    secretAccessKey: process.env.CLOSED_HATCH
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
   });
   
   const app = await NestFactory.create(AppModule);
