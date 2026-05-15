@@ -163,11 +163,14 @@ export class NotificationService {
     subject: string,
     body: string
   ): Promise<AWS.SES.SendEmailResponse> {
-    // Default to an invalid email to prevent non-verified sender mails
-    // if BCAN's is not defined in the environment
+    
+    if (!process.env.NOTIFICATION_EMAIL_SENDER) {
+      this.logger.error('NOTIFICATION_EMAIL_SENDER is not defined in environment variables');
+      throw new InternalServerErrorException("Internal Server Error")
+    }
+
     this.logger.log(`Sending email notification to: ${to}, subject: ${subject}`);
-    const fromEmail = process.env.NOTIFICATION_EMAIL_SENDER ||
-     'u&@nveR1ified-failure@dont-send.com';
+    const fromEmail = process.env.NOTIFICATION_EMAIL_SENDER;
 
     const params: AWS.SES.SendEmailRequest = {
       Source: fromEmail,

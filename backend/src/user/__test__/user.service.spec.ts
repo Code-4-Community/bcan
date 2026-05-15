@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from '../user.controller';
 import { UserService } from '../user.service';
+import { NotificationService } from '../../notifications/notification.service';
 import { User } from '../../../../middle-layer/types/User';
 import { UserStatus } from '../../../../middle-layer/types/UserStatus';
 import { VerifyUserGuard, VerifyAdminRoleGuard, VerifyAdminOrEmployeeRoleGuard } from '../../guards/auth.guard';
@@ -60,6 +61,8 @@ vi.mock('../../guards/auth.guard', () => ({
   VerifyAdminOrEmployeeRoleGuard: vi.fn(class { canActivate = vi.fn().mockResolvedValue(true); }),
 }));
 
+
+
 // ─── Mock database (email is now the partition key) ───────────────────────────
 const mockDatabase = {
   users: [
@@ -114,6 +117,7 @@ describe('UserController', () => {
     process.env.DYNAMODB_USER_TABLE_NAME = 'test-users-table';
     process.env.COGNITO_USER_POOL_ID     = 'test-pool-id';
     process.env.PROFILE_PICTURE_BUCKET   = 'test-profile-pics-bucket';
+    process.env.NOTIFICATION_EMAIL_SENDER = 'noreply@c4cneu.com';
   });
 
   beforeEach(async () => {
@@ -132,9 +136,17 @@ describe('UserController', () => {
 
     mockPromise.mockResolvedValue({});
 
+    const mockNotificationService = {
+      sendEmailNotification: vi.fn().mockResolvedValue({ MessageId: 'test-id' }),
+      deleteNotificationsByUserEmail: vi.fn().mockResolvedValue(undefined),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
-      providers: [UserService],
+      providers: [
+        UserService,
+        { provide: NotificationService, useValue: mockNotificationService },
+      ],
     }).compile();
 
     controller  = module.get<UserController>(UserController);
@@ -388,13 +400,12 @@ describe('UserController', () => {
       .mockResolvedValueOnce({ Item: user })
       .mockResolvedValueOnce({})
       .mockResolvedValueOnce({})
-      .mockResolvedValueOnce({ MessageId: 'test-id' })
       .mockResolvedValueOnce({ Attributes: { ...user, position: UserStatus.Employee } });
 
     const result = await userService.addUserToGroup(user, UserStatus.Employee, admin);
     expect(result.position).toBe(UserStatus.Employee);
     expect(mockAdminAddUserToGroup).toHaveBeenCalledWith({ GroupName: 'Employee', UserPoolId: 'test-pool-id', Username: 'inactive1@example.com' });
-    expect(mockSendEmail).toHaveBeenCalled();
+    expect(mockSendEmail).not.toHaveBeenCalled();
     expect(mockUpdate).toHaveBeenCalled();
   });
 
