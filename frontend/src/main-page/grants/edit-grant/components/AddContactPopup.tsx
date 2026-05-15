@@ -88,7 +88,7 @@ const AddContactPopup = observer(
 
           {/* Contact Type Selector */}
           <div className="flex gap-2">
-            {(["BCAN", "Granter"] as ContactType[]).map((t) => (
+            {(["BCAN", "Granter"] as ContactType[]).filter((t): t is ContactType => form.bcanPocEmail ? t === "Granter" : form.grantProviderPocEmail ? t === "BCAN" : true).map((t) => (
               <button
                 key={t}
                 onClick={() => {
@@ -102,7 +102,9 @@ const AddContactPopup = observer(
                       ? t === "BCAN"
                         ? "bg-primary-900 text-white"
                         : "bg-secondary-500 text-white"
-                      : "bg-white border-grey-400"
+                      : t !== "BCAN"
+                      ? "hover:border-secondary-500 bg-white border-grey-400"
+                      : "hover:border-primary-900 bg-white border-grey-400"
                   }`}
               >
                 {t}

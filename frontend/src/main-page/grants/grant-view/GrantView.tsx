@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ContactCard from "./components/ContactCard";
 import GrantFieldCol from "./components/GrantFieldCol";
 import { CostBenefitAnalysis } from "./components/CostBenefitAnalysis";
+
 import EditGrant from "../edit-grant/EditGrant";
 import Footer from "../../../Footer";
 
@@ -204,7 +205,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
               {
                 label: "Contacts",
                 item: (
-                  <div className="grid grid-cols-1 2xl:grid-cols-2 w-full h-full lg:w-[85%] gap-6">
+                  <div className="grid grid-cols-1 2xl:grid-cols-2 w-full h-full lg:w-[90%] gap-6">
                     <ContactCard contact={grant.bcan_poc} type="BCAN" />
                     <ContactCard
                       contact={grant.grantmaker_poc}
@@ -251,7 +252,7 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
             fields={[
               {
                 label: "Cost Analysis Calculator",
-                item: <CostBenefitAnalysis grant={grant} />,
+                item: <CostBenefitAnalysis key={grant.grantId} grant={grant} />,
               },
             ]}
           />

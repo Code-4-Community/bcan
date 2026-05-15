@@ -31,27 +31,27 @@ export default function Button({
       className={`
         px-4 py-2 rounded-3xl font-medium text-black border-2 
       active:bg-primary-900 active:border-primary-900 active:text-white
-        h-fit flex-grow-0 items-center justify-center     
+        h-fit flex-grow-0 items-center justify-center hover:border-primary-900    
         transition-opacity flex whitespace-nowrap
         ${className} ${
-          disabled ? "cursor-not-allowed opacity-50" : "hover:opacity-90"
+          disabled ? "cursor-not-allowed opacity-50" : "hover:opacity-85"
         }
       `}
     >
       {logo && logoPosition === "left" && (
-        <span className="mr-2">
-          <FontAwesomeIcon icon={logo} className="" />
+        <span className="mr-2 flex items-center justify-center">
+          <FontAwesomeIcon icon={logo} className="w-3 h-3 xl:w-4 xl:h-4" />
         </span>
       )}
       {text}
       {logo && logoPosition === "right" && (
-        <span className="ml-2">
-          <FontAwesomeIcon icon={logo} className="" />
+        <span className="ml-2 flex items-center justify-center">
+          <FontAwesomeIcon icon={logo} className="w-3 h-3 lg:w-4 lg:h-4" />
         </span>
       )}
       {logo && logoPosition === "center" && (
-        <span className="">
-          <FontAwesomeIcon icon={logo} className="" />
+        <span className="flex items-center justify-center">
+          <FontAwesomeIcon icon={logo} className="w-6 h-6" />
         </span>
       )}
     </button>

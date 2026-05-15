@@ -12,7 +12,6 @@ import { BrandingPanel, InputField, PasswordField } from "../sign-up";
 const Login = observer(() => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
   const [failure, setFailure] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuthContext();
@@ -37,7 +36,7 @@ const Login = observer(() => {
           <h1 className="text-3xl lg:text-4xl font-bold flex justify-start">Log in</h1>
         </div>
         <form onSubmit={handleSubmit} className="w-full">
-          <div className="grid grid-cols-1 gap-x-6 gap-y-4">
+          <div className="grid grid-cols-1 gap-x-6">
             <div className="mb-4">
               <div>
                 <InputField id="email" label="Email" type="email" required placeholder="Enter your email address" value={email} onChange={(e) => setEmail(e.target.value)} error={failure} />
@@ -57,27 +56,6 @@ const Login = observer(() => {
               </div>
             </div>
           </div>
-
-          {/* Remember Me & Forgot Password */}
-          <div className="flex items-center justify-between mb-6">
-            <label className="flex items-center cursor pointer">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="w-4 h-4 rounded border-grey-400 text-primary-900 focus:ring-primary-900 focus:ring-2 cursor-pointer"
-              />
-              <span className="ml-2 text-base text-start">Remember Me</span>
-            </label>
-            <button
-              type="button"
-              onClick={() => navigate("/forgot-password")}
-              className="text-base text-start text-black hover:text-primary-900 transition-colors border-0"
-            >
-              Forgot Password?
-            </button>
-          </div>
-
           {/* Error Message */}
           <div className="">
             {failure && (
