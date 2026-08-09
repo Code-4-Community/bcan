@@ -81,27 +81,27 @@ const EditGrant: React.FC<{
     if (!form.organization.trim()) return "Organization Name is required";
     if (!form.status) return "Status is required";
     if (form.amount == null || form.amount <= 0) return "Amount must be greater than 0";
-    if (!form.applicationDeadline) return "Due Date is required";
     if (
       form.applicationDate &&
+      form.applicationDeadline &&
       new Date(form.applicationDate).getTime() >
         new Date(form.applicationDeadline).getTime()
     ) {
       return "Application Date cannot be after Due Date";
     }
-    if (!form.grantStartDate) return "Grant Start Date is required";
     if (
+      form.grantStartDate &&
+      form.applicationDeadline &&
       new Date(form.grantStartDate).getTime() <
         new Date(form.applicationDeadline).getTime()
     ) {
       return "Grant Start Date cannot be before Due Date";
     }
-    if (!form.estimatedCompletionTime || form.estimatedCompletionTime <= 0) return "Estimated completion time must be greater than 0";
+    if (form.estimatedCompletionTime < 0) return "Estimated completion time cannot be negative";
     if (!form.doesBcanQualify) return "BCAN eligibility is required";
     if(form.reportDates.length > 0 && !form.reportDates.every((date) => date !== "")) return "Report deadlines must have a value";
     if (!form.timeline || form.timeline <= 0) return "Timeline must be greater than 0";
     if (!form.bcanPocEmail) return "BCAN contact required";
-    if (!form.grantProviderPocEmail) return "Grant provider contact required";
     if(form.attachments.length > 0 && !form.attachments.every((attachment) => attachment.url !== "")) return "Attachments must have a value";
     return null;
   };

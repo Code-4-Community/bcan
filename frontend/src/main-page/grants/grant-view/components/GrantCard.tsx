@@ -12,11 +12,13 @@ interface GrantCardProps {
 
 const GrantCard: React.FC<GrantCardProps> = ({ grant, isSelected, onClick }) => {
 
-  const formattedDate = new Date(grant.application_deadline).toLocaleDateString('en-US', {
-    month: 'numeric',
-    day: 'numeric',
-    year: '2-digit',
-  });
+  const formattedDate = grant.application_deadline
+    ? new Date(grant.application_deadline).toLocaleDateString('en-US', {
+        month: 'numeric',
+        day: 'numeric',
+        year: '2-digit',
+      })
+    : "N/A";
 
   return (
     <div
