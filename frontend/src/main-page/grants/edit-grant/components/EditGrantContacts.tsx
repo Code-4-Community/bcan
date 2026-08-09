@@ -7,6 +7,7 @@ import { Action } from "../processGrantDataEditSave";
 import { useState } from "react";
 import AddContactPopup from "./AddContactPopup";
 import { observer } from "mobx-react-lite";
+import FieldLabel from "../../../../components/FieldLabel";
 
 type EditGrantProps = {
   form: GrantFormState;
@@ -34,9 +35,9 @@ const EditGrantContacts = ({ dispatch, form }: EditGrantProps) => {
 
   return (
     <div className="w-full h-full">
-      <label className="flex text-gray-700 sm:text-sm lg:text-base mb-1">
+      <FieldLabel isRequired className="flex text-gray-700 sm:text-sm lg:text-base mb-1">
         Contacts
-      </label>
+      </FieldLabel>
 
       <div className="grid grid-cols-2 gap-4 min-h-24 w-full lg:w-[80%] ml-2">
         {form.bcanPocEmail !== "" && (
