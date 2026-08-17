@@ -8,6 +8,7 @@ import {
   faSquareXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import EditGrantDeleteItem from "./EditGrantDeleteItem";
+import FieldLabel from "../../../../components/FieldLabel";
 
 type EditGrantProps = {
   form: GrantFormState;
@@ -18,9 +19,9 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
   return (
     <div className="w-full">
       <div className="mb-6">
-        <label className="flex text-gray-700 sm:text-sm lg:text-base mb-1">
+        <FieldLabel className="flex text-gray-700 sm:text-sm lg:text-base mb-1">
           Description
-        </label>
+        </FieldLabel>
         <textarea
           className="h-32 block w-full text-gray-700 border bg-white border-grey-300 rounded placeholder:text-gray-700 p-2"
           placeholder="Enter grant description..."
@@ -39,9 +40,9 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
         <div className="flex flex-col w-full gap-6 items-start text-left col-span-1">
           {/* Amount */}
           <div className="w-3/4">
-            <label className="flex text-gray-700 sm:text-sm lg:text-base mb-1">
+            <FieldLabel isRequired className="flex text-gray-700 sm:text-sm lg:text-base mb-1">
               Amount ($)
-            </label>
+            </FieldLabel>
             <input
               type="number"
               min={0}
@@ -59,9 +60,9 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
 
           {/* BCAN Eligible */}
           <div className="w-fit">
-            <label className="flex text-gray-700 sm:text-sm lg:text-base mb-1 whitespace-nowrap">
+            <FieldLabel isRequired className="flex text-gray-700 sm:text-sm lg:text-base mb-1 whitespace-nowrap">
               BCAN Eligible?
-            </label>
+            </FieldLabel>
             <div className="flex flex-col gap-1">
               <Button
                 logo={faCheckSquare}
@@ -97,9 +98,9 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
         <div className="flex flex-col w-full gap-6 items-start text-left col-span-1">
           {/* Due Date */}
           <div className="">
-            <label className="flex text-gray-700 sm:text-sm lg:text-base mb-1">
+            <FieldLabel className="flex text-gray-700 sm:text-sm lg:text-base mb-1">
               Due Date
-            </label>
+            </FieldLabel>
             <input
               type="date"
               className="appearance-none block w-full h-[2.25rem] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
@@ -115,9 +116,9 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
           </div>
           {/* Application Date */}
           <div className="">
-            <label className="flex text-gray-700 sm:text-sm lg:text-base mb-1">
+            <FieldLabel className="flex text-gray-700 sm:text-sm lg:text-base mb-1">
               Application Date
-            </label>
+            </FieldLabel>
             <input
               type="date"
               className="appearance-none block w-full h-[2.25rem] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
@@ -136,9 +137,9 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
         <div className="flex flex-col w-full gap-6 items-start text-left col-span-1">
           {/* Grant Start Date */}
           <div>
-            <label className="flex text-gray-700 sm:text-sm lg:text-base mb-1">
+            <FieldLabel className="flex text-gray-700 sm:text-sm lg:text-base mb-1">
               Grant Start Date
-            </label>
+            </FieldLabel>
             <input
               type="date"
               className="appearance-none block w-full h-[2.25rem] text-gray-700 placeholder:text-gray-700 border border-grey-300 rounded-md py-2 px-4"
@@ -155,9 +156,9 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
 
           {/* Report Deadlines */}
           <div className="">
-            <label className="flex text-gray-700 sm:text-sm lg:text-base mb-1">
+            <FieldLabel className="flex text-gray-700 sm:text-sm lg:text-base mb-1">
               Report Deadlines
-            </label>
+            </FieldLabel>
             <div className="flex flex-col gap-2">
               <div className="ml-2 flex flex-col gap-2">
               {form.reportDates.map((date, index) => (
@@ -200,9 +201,9 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
         <div className="flex flex-col w-full gap-6 items-start text-left col-span-1">
           {/* Timeline */}
           <div className="">
-            <label className="flex text-gray-700 sm:text-sm lg:text-base mb-1 ">
+            <FieldLabel isRequired className="flex text-gray-700 sm:text-sm lg:text-base mb-1 ">
               Timeline (years)
-            </label>
+            </FieldLabel>
             <input
               type="number"
               min="0"
@@ -219,9 +220,9 @@ export default function EditGrantInfo({ form, dispatch }: EditGrantProps) {
           </div>
           {/* Estimated Completion Time */}
           <div className="">
-            <label className="flex text-gray-700 sm:text-sm lg:text-base mb-1 whitespace-nowrap">
+            <FieldLabel className="flex text-gray-700 sm:text-sm lg:text-base mb-1 whitespace-nowrap">
               Estimated Completion Time (hours)
-            </label>
+            </FieldLabel>
             <input
               type="number"
               min="0"
