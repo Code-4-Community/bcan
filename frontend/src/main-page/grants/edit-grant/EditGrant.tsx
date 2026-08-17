@@ -81,6 +81,9 @@ const EditGrant: React.FC<{
     if (!form.organization.trim()) return "Organization Name is required";
     if (!form.status) return "Status is required";
     if (form.amount == null || form.amount <= 0) return "Amount must be greater than 0";
+    if (!grantToEdit && !form.applicationDeadline) return "Due Date is required";
+    if (!grantToEdit && !form.grantStartDate) return "Grant Start Date is required";
+    if (!grantToEdit && !Number.isFinite(form.estimatedCompletionTime)) return "Estimated completion time is required";
     if (
       form.applicationDate &&
       form.applicationDeadline &&
