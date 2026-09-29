@@ -189,7 +189,9 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
                 },
                 {
                   label: "Estimated Completion Time (hours)",
-                  value: grant.estimated_completion_time,
+                  value: grant.estimated_completion_time
+                    ? grant.estimated_completion_time
+                    : "N/A",
                 },
               ]}
             />
@@ -205,12 +207,16 @@ const GrantItem: React.FC<GrantItemProps> = observer(({ grant }) => {
               {
                 label: "Contacts",
                 item: (
-                  <div className="grid grid-cols-1 2xl:grid-cols-2 w-full h-full lg:w-[90%] gap-6">
+                  <div
+                    className={`grid ${grant.grantmaker_poc?.POC_email ? "grid-cols-1 2xl:grid-cols-2" : "grid-cols-1"} w-full h-full lg:w-[90%] gap-6`}
+                  >
                     <ContactCard contact={grant.bcan_poc} type="BCAN" />
-                    <ContactCard
-                      contact={grant.grantmaker_poc}
-                      type="Granter"
-                    />
+                    {grant.grantmaker_poc?.POC_email && (
+                      <ContactCard
+                        contact={grant.grantmaker_poc}
+                        type="Granter"
+                      />
+                    )}
                   </div>
                 ),
               },
