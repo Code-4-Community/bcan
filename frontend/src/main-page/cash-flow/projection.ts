@@ -127,25 +127,46 @@ export function buildCashflowProjection(
       }
     } else {
       // Recurring: expand occurrences within the projection window
-      const interval = getIntervalMonths(cost);
-      if (interval <= 0) continue; // safety guard
+      const interval = Number(getIntervalMonths(cost));
+      if (!Number.isFinite(interval) || interval <= 0) continue; // bad data guard
+
+      // Sub-monthly (e.g. weekly = 0.25): setMonth can't step by fractions,
+      // so charge every month from the start, scaled by occurrences per month
+      if (interval < 1) {
+        const startKey = toMonthKey(cost.date);
+        const perMonth = 1 / interval;
+        for (const key of monthKeys) {
+          if (key < startKey) continue;
+          const adjusted = getAdjustedCostAmount(cost, key, settings) * perMonth;
+          costBuckets.set(key, costBuckets.get(key)! + adjusted);
+        }
+        continue;
+      }
+
+      const step = Math.round(interval); // setMonth only takes whole months
+      const MAX_STEPS = 1000;            // hard stop so bad data can't freeze the tab
+      let steps = 0;
 
       // Parse as local date to avoid UTC shift
       const [cy, cm] = cost.date.split("-").map(Number);
       const cursor = new Date(cy, cm - 1, 1);
 
       // Advance past occurrences that fall before the exact start date
-      while (new Date(cost.date) < new Date(settings.startDate) && toMonthKey(cursor) < toMonthKey(new Date(cy, cm, 1))) {
-        cursor.setMonth(cursor.getMonth() + interval);
+      while (
+        new Date(cost.date) < new Date(settings.startDate) &&
+        toMonthKey(cursor) < toMonthKey(new Date(cy, cm, 1)) &&
+        steps++ < MAX_STEPS
+      ) {
+        cursor.setMonth(cursor.getMonth() + step);
       }
 
-      while (toMonthKey(cursor) <= endKey) {
+      while (toMonthKey(cursor) <= endKey && steps++ < MAX_STEPS) {
         const key = toMonthKey(cursor);
         if (costBuckets.has(key)) {
           const adjusted = getAdjustedCostAmount(cost, key, settings);
           costBuckets.set(key, costBuckets.get(key)! + adjusted);
         }
-        cursor.setMonth(cursor.getMonth() + interval);
+        cursor.setMonth(cursor.getMonth() + step);
       }
     }
   }
